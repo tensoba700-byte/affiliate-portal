@@ -13,6 +13,8 @@ import { amazonUrl, rakutenUrl } from './affiliateHelpers';
 
 // Cache for Yahoo Shopping results (TTL: 1 hour)
 const yahooCache = new SimpleCache<{ price: string; url: string }>();
+// Cache for Unsplash image results (TTL: 24 hours)
+const imageCache = new SimpleCache<string>();
 
 // Directory containing markdown articles (fallback)
 const articlesDirectory = path.join(process.cwd(), 'src/content/articles');
@@ -62,6 +64,33 @@ async function fetchYahooProduct(query: string): Promise<{ price: string; url: s
     }
   } catch (err) {
     console.error(`Yahoo API error for "${query}":`, err);
+  }
+  return null;
+}
+
+/**
+ * Fetch a high-quality product image from Unsplash API
+ */
+async function fetchUnsplashImage(query: string): Promise<string | null> {
+  const cached = imageCache.get(query);
+  if (cached) return cached;
+
+  const accessKey = process.env.UNSPLASH_ACCESS_KEY;
+  if (!accessKey) return null;
+
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=1&client_id=${accessKey}`
+    );
+    const data = await res.json();
+    const url = data.results?.[0]?.urls?.small;
+
+    if (url) {
+      imageCache.set(query, url);
+      return url;
+    }
+  } catch (err) {
+    console.error(`Unsplash API error for "${query}":`, err);
   }
   return null;
 }
@@ -232,31 +261,56 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
   const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
 
-  // Automatic conversion for ASIN/RAKUTEN strings in content
-  content = content.replace(/ASIN:\s*([A-Z0-9]{10})/gi, (m, asin) => {
-    const url = amazonUrl(asin);
-    return `<a href="${url}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a>`;
-  });
-  content = content.replace(/RAKUTEN:\s*(https?:\/\/[^\s]+)/gi, (m, rawUrl) => {
-    const url = rakutenUrl(rawUrl);
-    return `<a href="${url}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a>`;
-  });
+  // Helper to build a set of affiliate buttons dynamically
+  const buildButtons = (asin?: string, rakuten?: string, yahoo?: string) => {
+    const amazonL = asin ? amazonUrl(asin) : `https://www.amazon.co.jp/s?k=${encodeURIComponent(decodedSlug)}`;
+    const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(decodedSlug)}/`;
+    const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(decodedSlug)}`;
 
-  const BOTH_BUTTONS = `<div class="affiliate-buttons"><a href="https://amazon.co.jp/" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a><a href="https://rakuten.co.jp/" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a><a href="" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a></div>`;
-  content = content.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, BOTH_BUTTONS);
-  content = content.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, BOTH_BUTTONS);
-  content = content.replace(/\[AMAZON_LINK_HERE\]/g, BOTH_BUTTONS);
-  content = content.replace(/\[RAKUTEN_LINK_HERE\]/g, BOTH_BUTTONS);
+    return `<div class="affiliate-buttons">
+      <a href="${amazonL}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a>
+      <a href="${rakutenL}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a>
+      <a href="${yahooL}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a>
+    </div>`;
+  };
+
+  // 1. First, find all identifiers in the content
+  const asinMatches = content.matchAll(/ASIN:\s*([A-Z0-9]{10})/gi);
+  const rakutenMatches = content.matchAll(/RAKUTEN:\s*(https?:\/\/[^\s]+)/gi);
+  const yahooMatches = content.matchAll(/YAHOO:\s*(https?:\/\/[^\s]+)/gi);
+
+  // Store the FIRST found identifier as the current product context (for simple articles)
+  const currentAsin = Array.from(asinMatches)[0]?.[1];
+  const currentRakuten = Array.from(rakutenMatches)[0]?.[1];
+  const currentYahoo = Array.from(yahooMatches)[0]?.[1];
+
+  // 2. Hide the ID lines from the final HTML
+  content = content.replace(/ASIN:\s*[A-Z0-9]{10}\n?/gi, '');
+  content = content.replace(/RAKUTEN:\s*https?:\/\/[^\s]+\n?/gi, '');
+  content = content.replace(/YAHOO:\s*https?:\/\/[^\s]+\n?/gi, '');
+
+  // 3. Replace placeholders with dynamic buttons
+  const DYNAMIC_BUTTONS = buildButtons(currentAsin, currentRakuten, currentYahoo);
+  content = content.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+  content = content.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+  content = content.replace(/\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+  content = content.replace(/\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
 
   const processed = await remark().use(html, { sanitize: false }).process(content);
   const contentHtml = processed.toString();
 
   const rankings = parseRankingsFromMarkdown(matterResult.content);
-  // Enrich rankings with Yahoo API data
+  // Enrich rankings with Yahoo API data and Unsplash images
   for (const product of rankings) {
-    const yahooData = await fetchYahooProduct(product.name);
+    const [yahooData, imageUrl] = await Promise.all([
+      fetchYahooProduct(product.name),
+      fetchUnsplashImage(product.name),
+    ]);
     if (yahooData) {
       product.yahoo = { price: yahooData.price, url: yahooData.url };
+    }
+    if (imageUrl) {
+      product.imageUrl = imageUrl;
     }
   }
 
