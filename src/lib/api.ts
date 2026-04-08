@@ -300,15 +300,21 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
     // Replace placeholders with dynamic buttons for THIS section
     const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo);
-    s = s.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-    s = s.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-    s = s.replace(/\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-    s = s.replace(/\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+    
+    // Check if any placeholder exists (case-insensitive)
+    const hasPlaceholder = /\[(AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/i.test(s);
+    
+    if (hasPlaceholder) {
+      // 1. Replace the first cluster of placeholders with the full button set
+      s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\](?:\s*\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\])*/i, DYNAMIC_BUTTONS);
+      // 2. Clean up any remaining single placeholders in the same section to prevent duplicates
+      s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
+    }
 
     return s;
   });
 
-  content = processedSections.join('\n');
+  content = processedSections.join('\n\n');
 
   // Convert any remaining raw affiliate URLs in text into buttons (Global cleanup)
   content = content.replace(/(?<!href=")https:\/\/shopping\.yahoo\.co\.jp\/[^\s)\]]+/gi, (url) => {
