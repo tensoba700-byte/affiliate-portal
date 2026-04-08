@@ -236,13 +236,13 @@ body {
 
 /* Spec Tables */
 .cute-html-content table {
-  @apply w-full border-collapse my-8 rounded-2xl overflow-hidden shadow-sm border border-primary/10;
+  @apply w-full border-collapse my-6 rounded-xl overflow-hidden shadow-sm border border-primary/10 mx-auto max-w-[500px];
 }
 .cute-html-content th {
-  @apply bg-primary/5 text-primary font-black p-4 text-left border-b border-white;
+  @apply bg-primary/5 text-primary font-black p-2.5 text-xs text-left border-b border-white w-1/3;
 }
 .cute-html-content td {
-  @apply bg-white p-4 border-b border-primary/5 text-sm font-bold;
+  @apply bg-white p-2.5 border-b border-primary/5 text-xs font-bold leading-tight;
 }
 
 /* Amazon / Rakuten / Yahoo Buttons */

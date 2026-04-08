@@ -10,7 +10,7 @@ import { contentfulClient } from '@/src/lib/contentful';
 
 import type { Product } from '@/src/components/RankingTable';
 import { SimpleCache } from './cache';
-import { amazonUrl, rakutenUrl } from './affiliateHelpers';
+import { amazonUrl, amazonSearchUrl, rakutenUrl } from './affiliateHelpers';
 
 // Cache for Yahoo Shopping results (TTL: 1 hour)
 const yahooCache = new SimpleCache<{ price: string; url: string }>();
@@ -264,7 +264,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
   // Helper to build a set of affiliate buttons dynamically
   const buildButtons = (asin?: string, rakuten?: string, yahoo?: string) => {
-    const amazonL = asin ? amazonUrl(asin) : `https://www.amazon.co.jp/s?k=${encodeURIComponent(decodedSlug)}`;
+    const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(decodedSlug);
     const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(decodedSlug)}/`;
     const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(decodedSlug)}`;
 
@@ -289,10 +289,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     const rakuten = rakutenMatch ? rakutenMatch[1] : undefined;
     const yahoo = yahooMatch ? yahooMatch[1] : undefined;
 
-    // Remove the identifier lines from final HTML
-    s = s.replace(/ASIN:\s*[A-Z0-9]{10}\n?/gi, '');
-    s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+\n?/gi, '');
-    s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+\n?/gi, '');
+    // Remove the identifier lines from final HTML (handle multiple spaces and optional trailing newlines)
+    s = s.replace(/ASIN:\s*[A-Z0-9]{10}[ \t]*\n?/gi, '');
+    s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+    s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
     // Replace placeholders with dynamic buttons for THIS section
     const DYNAMIC_BUTTONS = buildButtons(asin, rakuten, yahoo);
