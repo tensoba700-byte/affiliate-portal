@@ -150,7 +150,7 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
   const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
 
   const markdownArticles = fileNames
-    .filter((fn) => fn.endsWith('.md'))
+    .filter((fn) => fn.endsWith('.md') && fn !== 'GENERATION_RULES.md')
     .map((fn) => {
       const slug = fn.replace(/\.md$/, '');
       const fullPath = path.join(articlesDirectory, fn);
