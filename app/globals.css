@@ -1,26 +1,307 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
+  --font-sans: var(--current-font), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  
+  --animate-fade-in-up: fade-in-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-float: float 6s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================
+   ✒️ FONT DEFINITIONS
+   ========================================= */
+
+html { --current-font: var(--font-noto-sans); } /* デフォルト（未設定時）*/
+html[data-font="sans"] { --current-font: var(--font-noto-sans); }
+html[data-font="maru"] { --current-font: var(--font-zen-maru); }
+html[data-font="serif"] { --current-font: var(--font-noto-serif); }
+
+/* =========================================
+   🎨 THEME DEFINITIONS
+   ========================================= */
+
+/* デフォルトフォールバック */
+:root {
+  --background: #fff8f5; 
+  --foreground: #5a4b49; 
+  --primary: #ff8fa3; 
+  --primary-foreground: #ffffff;
+  --muted: #a89f9e;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(255, 143, 163, 0.15); 
+  --theme-shadow: rgba(255, 143, 163, 0.2);
+  --theme-grad-1: rgba(255, 143, 163, 0.08);
+  --theme-grad-2: rgba(255, 219, 143, 0.08);
+}
+
+/* 1. ピーチピンク（可愛い・温かい） */
+html[data-theme="peach"] {
+  --background: #fff8f5; 
+  --foreground: #5a4b49; 
+  --primary: #ff8fa3; 
+  --primary-foreground: #ffffff;
+  --muted: #a89f9e;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(255, 143, 163, 0.15); 
+  --theme-shadow: rgba(255, 143, 163, 0.2);
+  --theme-grad-1: rgba(255, 143, 163, 0.08);
+  --theme-grad-2: rgba(255, 219, 143, 0.08);
+}
+
+/* 2. ミントグリーン */
+html[data-theme="mint"] {
+  --background: #f4fcfa; 
+  --foreground: #475a5c; 
+  --primary: #4fdaab; 
+  --primary-foreground: #ffffff;
+  --muted: #95a3a1;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(79, 218, 171, 0.15); 
+  --theme-shadow: rgba(79, 218, 171, 0.2);
+  --theme-grad-1: rgba(79, 218, 171, 0.08);
+  --theme-grad-2: rgba(143, 227, 255, 0.08);
+}
+
+/* 3. ラベンダーパープル */
+html[data-theme="lavender"] {
+  --background: #fcfaff; 
+  --foreground: #514b5c; 
+  --primary: #a88be8; 
+  --primary-foreground: #ffffff;
+  --muted: #9e9ba8;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(168, 139, 232, 0.15); 
+  --theme-shadow: rgba(168, 139, 232, 0.2);
+  --theme-grad-1: rgba(168, 139, 232, 0.08);
+  --theme-grad-2: rgba(255, 186, 213, 0.08);
+}
+
+/* 4. レモンイエロー */
+html[data-theme="lemon"] {
+  --background: #fffcf4; 
+  --foreground: #5c5647; 
+  --primary: #f2ba49; 
+  --primary-foreground: #ffffff;
+  --muted: #a6a195;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(242, 186, 73, 0.15); 
+  --theme-shadow: rgba(242, 186, 73, 0.2);
+  --theme-grad-1: rgba(242, 186, 73, 0.08);
+  --theme-grad-2: rgba(255, 143, 163, 0.05);
+}
+
+/* 5. 水色（スカイブルー） */
+html[data-theme="skyblue"] {
+  --background: #f5fbff; 
+  --foreground: #47545c; 
+  --primary: #76c0ff; 
+  --primary-foreground: #ffffff;
+  --muted: #93a2ad;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(118, 192, 255, 0.15); 
+  --theme-shadow: rgba(118, 192, 255, 0.2);
+  --theme-grad-1: rgba(118, 192, 255, 0.08);
+  --theme-grad-2: rgba(255, 255, 255, 0.1);
+}
+
+/* 6. 初めのオレンジ（オリジナル版・スッキリ） */
+html[data-theme="original-orange"] {
+  --background: #f5f6f8; 
+  --foreground: #333333; 
+  --primary: #ff5a36; 
+  --primary-foreground: #ffffff;
+  --muted: #888888;
+  --card: rgba(255, 255, 255, 0.95);
+  --card-border: rgba(255, 90, 54, 0.15); 
+  --theme-shadow: rgba(255, 90, 54, 0.2);
+  --theme-grad-1: rgba(255, 90, 54, 0.08);
+  --theme-grad-2: rgba(255, 255, 255, 0.1);
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-image: radial-gradient(circle at 80% 10%, var(--theme-grad-1) 0%, transparent 40%),
+                    radial-gradient(circle at 10% 90%, var(--theme-grad-2) 0%, transparent 40%);
+  background-attachment: fixed;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Cute & Soft Shadows responsive to theme */
+.cute-shadow {
+  box-shadow: 0 10px 25px -5px var(--theme-shadow), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+}
+
+.cute-glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--card-border);
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* =========================================
+   📝 HTML CUTE RENDERER STYLES
+   ========================================= */
+.cute-html-content h2 {
+  @apply text-xl md:text-2xl font-black mt-12 mb-6 text-foreground flex items-center gap-2;
+}
+.cute-html-content h2::before {
+  content: "🎀";
+}
+.cute-html-content h3 {
+  @apply text-lg font-black mt-8 mb-4 border-b-2 border-primary/20 pb-2 inline-block text-foreground;
+}
+.cute-html-content p {
+  @apply text-base leading-loose mb-6 text-foreground font-medium;
+}
+.cute-html-content blockquote {
+  @apply bg-primary/5 rounded-2xl p-6 my-8 text-base font-bold text-foreground border border-primary/10 relative;
+}
+.cute-html-content blockquote::before {
+  content: '"';
+  @apply text-4xl text-primary/20 absolute -top-2 left-4 font-serif;
+}
+.cute-html-content ul {
+  @apply list-none pl-0 mb-8 space-y-3 text-base text-foreground font-medium bg-white rounded-3xl p-6 border border-card-border;
+  box-shadow: 0 10px 25px -5px var(--theme-shadow), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+}
+.cute-html-content li {
+  @apply relative pl-6;
+}
+.cute-html-content li::before {
+  content: "♡";
+  @apply absolute left-0 top-0 text-primary font-bold;
+}
+.cute-html-content ol {
+  @apply list-decimal pl-6 mb-8 space-y-3 text-base text-foreground font-medium;
+}
+.cute-html-content a {
+  @apply text-primary hover:text-white font-bold bg-primary/10 hover:bg-primary px-2 py-0.5 rounded-md transition-colors;
+}
+
+/* =========================================
+   👑 RANKING & REVIEW STYLES
+   ========================================= */
+
+/* Ranking Titles */
+.cute-html-content h3 {
+  @apply text-2xl font-black mt-16 mb-8 p-4 bg-primary/5 rounded-2xl flex items-center gap-3 border-l-8 border-primary text-foreground;
+}
+
+/* Pro / Con Boxes */
+.pro-box, .con-box {
+  @apply rounded-2xl p-6 my-6 border-2 font-bold;
+}
+.pro-box {
+  @apply bg-green-50 border-green-100 text-green-800;
+}
+.con-box {
+  @apply bg-red-50 border-red-100 text-red-800;
+}
+.pro-title, .con-title {
+  @apply text-sm font-black mb-3 flex items-center gap-2;
+}
+
+/* Rating Stars */
+.rating-container {
+  @apply inline-flex items-center gap-2 px-4 py-2 bg-yellow-400/10 text-yellow-600 rounded-full font-black text-sm my-4;
+}
+.stars {
+  @apply text-yellow-500 tracking-wider;
+}
+
+/* Spec Tables */
+.cute-html-content table {
+  @apply w-full border-collapse my-8 rounded-2xl overflow-hidden shadow-sm border border-primary/10;
+}
+.cute-html-content th {
+  @apply bg-primary/5 text-primary font-black p-4 text-left border-b border-white;
+}
+.cute-html-content td {
+  @apply bg-white p-4 border-b border-primary/5 text-sm font-bold;
+}
+
+/* Amazon / Rakuten / Yahoo Buttons */
+.affiliate-buttons {
+  @apply flex gap-3 mt-8 mb-12;
+  flex-wrap: wrap;
+}
+.btn-amazon, .btn-rakuten, .btn-yahoo {
+  flex: 1 1 0%;
+  min-width: 0;
+  @apply py-4 rounded-2xl font-black text-white transition-all shadow-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  transform: translateY(0);
+  font-size: 13px;
+}
+@media (max-width: 640px) {
+  .btn-amazon, .btn-rakuten, .btn-yahoo {
+    flex: 1 1 100%;
+  }
+}
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 9999px;
+  padding: 3px;
+  flex-shrink: 0;
+}
+.btn-icon img {
+  border-radius: 2px;
+  display: block;
+}
+.btn-amazon:hover, .btn-rakuten:hover, .btn-yahoo:hover {
+  transform: translateY(-4px);
+}
+.btn-amazon {
+  background-color: #ff9900;
+}
+.btn-rakuten {
+  background-color: #bf0000;
+}
+.btn-yahoo {
+  background-color: #e06a8c;
+}
+.btn-amazon:hover {
+  background-color: #e68a00;
+  box-shadow: 0 10px 15px -3px rgba(255, 153, 0, 0.4);
+}
+.btn-rakuten:hover {
+  background-color: #a30000;
+  box-shadow: 0 10px 15px -3px rgba(191, 0, 0, 0.4);
+}
+.btn-yahoo:hover {
+  background-color: #c85878;
+  box-shadow: 0 10px 15px -3px rgba(224, 106, 140, 0.4);
+}
+

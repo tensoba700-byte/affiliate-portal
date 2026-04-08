@@ -1,65 +1,146 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { getAllArticles, ArticleItem } from '@/src/lib/api';
 
-export default function Home() {
+export default async function Home() {
+  let recentArticles: ArticleItem[] = [];
+  try {
+    const articles = await getAllArticles();
+    recentArticles = articles.slice(0, 6);
+  } catch (error) {
+    console.error("Failed to fetch articles:", error);
+  }
+
+  // Cute Categories
+  const categories = [
+    { id: '1', name: 'Beauty & Skincare', jp: '美容・スキンケア', image: '/images/category_beauty_1775564212926.png' },
+    { id: '2', name: 'Tech & Gadgets', jp: 'ガジェット', image: '/images/cat_gadget_1775565122276.png' },
+    { id: '3', name: 'Interior', jp: 'インテリア', image: '/images/category_lifestyle_1775564225940.png' },
+    { id: '4', name: 'Daily Goods', jp: '生活雑貨', image: '/images/cat_daily_1775565137707.png' },
+    { id: '5', name: 'Useful Goods', jp: '便利グッズ', image: '/images/cat_useful_1775565153706.png' },
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-col items-center w-full pb-24 overflow-x-hidden">
+      
+      {/* 🌸 Cute Hero Section */}
+      <section className="w-full relative px-6 pt-20 pb-28 flex flex-col items-center justify-center min-h-[50vh] animate-fade-in-up">
+        {/* Soft background blobs */}
+        <div className="absolute top-10 left-[10%] w-[50vw] h-[50vw] bg-primary/10 rounded-full blur-[80px] -z-10 mix-blend-multiply pointer-events-none"></div>
+        <div className="absolute bottom-10 right-[10%] w-[40vw] h-[40vw] bg-yellow-300/10 rounded-full blur-[60px] -z-10 mix-blend-multiply pointer-events-none"></div>
+
+        <div className="container mx-auto text-center max-w-3xl z-10">
+          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white cute-shadow text-sm font-bold text-primary mb-8 animate-float">
+            <span className="text-lg">✨</span>
+            あなたにぴったりのアイテムがここに
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-6 text-foreground leading-[1.2] tracking-normal">
+            お気に入りを、<br className="md:hidden" />
+            <span className="text-primary relative inline-block">
+              みっけ！
+              <svg className="absolute -bottom-2 md:-bottom-4 left-0 w-full" viewBox="0 0 200 20" preserveAspectRatio="none">
+                <path d="M0,10 Q100,20 200,5" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" className="text-primary/30" />
+              </svg>
+            </span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-base md:text-xl text-muted font-bold max-w-2xl mx-auto mb-10 leading-relaxed">
+            暮らしをちょっと可愛く、もっと楽しく。<br className="hidden md:block" />
+            話題のアイテムから隠れた名品まで徹底レビュー♡
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* 🌟 Cute Category Cards */}
+      <section className="w-full px-4 -mt-10 relative z-20">
+        <div className="container mx-auto max-w-6xl">
+          {/* Scrollable container for mobile to prevent squishing, grid on larger screens */}
+          <div className="flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 md:gap-5 pb-8 lg:pb-0 hide-scrollbar snap-x snap-mandatory px-2">
+            {categories.map((cat, i) => (
+              <Link 
+                key={cat.id} 
+                href="#" 
+                className="snap-start flex-shrink-0 w-40 md:w-56 lg:w-auto group relative h-48 md:h-64 lg:h-72 rounded-[2rem] overflow-hidden cute-shadow block transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-black/20 to-transparent group-hover:from-primary/90 transition-colors z-10 duration-500 mix-blend-overlay"></div>
+                <div className="absolute inset-0 bg-black/10 z-10"></div>
+                {/* Image */}
+                <img 
+                  src={cat.image} 
+                  alt={cat.name} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                {/* Text Content */}
+                <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 z-20 text-center">
+                  <h3 className="text-base md:text-lg lg:text-xl font-black text-white leading-tight drop-shadow-md whitespace-nowrap">
+                    {cat.jp}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* 📚 Main Article List */}
+      <section className="w-full pt-20 md:pt-32 px-6">
+        <div className="container mx-auto max-w-5xl">
+          <div className="flex flex-col items-center justify-center mb-12 text-center">
+            <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3 flex items-center gap-2">
+              <span className="text-primary">💌</span> 新着のおすすめ
+            </h2>
+            <p className="text-muted font-bold text-sm">毎日のお買い物がもっと楽しくなる情報をピックアップ！</p>
+          </div>
+
+          {recentArticles.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+              {recentArticles.map((article) => (
+                <Link 
+                  href={`/articles/${article.slug}`} 
+                  key={article.id}
+                  className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border"
+                >
+                  <div className="aspect-square sm:aspect-[4/3] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4">
+                    {article.coverImage ? (
+                      // @ts-ignore
+                      <img src={article.coverImage} alt={article.title} className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-110" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
+                        <span className="text-3xl">🎀</span>
+                      </div>
+                    )}
+                    {/* Cute Badge */}
+                    <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-[10px] font-black text-primary shadow-sm border border-primary/10">
+                      NEW
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col flex-1 px-3 pb-2 text-center">
+                    <p className="text-[10px] font-bold text-primary mb-2">
+                       {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
+                     </p>
+                    <h3 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                      {article.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+             <div className="text-center py-20 bg-white rounded-3xl border border-card-border cute-shadow">
+              <span className="text-5xl mb-4 block">🥺</span>
+              <p className="text-lg text-foreground font-black mb-2">まだ記事がありません</p>
+              <p className="text-muted font-bold text-sm">Discordでかわいい記事を生成してね！</p>
+            </div>
+          )}
+          
+          <div className="mt-16 text-center">
+            <Link href="/articles" className="inline-flex items-center justify-center px-12 py-4 rounded-full bg-primary text-white font-black text-sm hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-primary/30 hover:-translate-y-1">
+              もっと見る 👀
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
