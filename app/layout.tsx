@@ -4,6 +4,7 @@ import Link from "next/link";
 import ThemeSwitcher from "@/src/components/ThemeSwitcher";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
+import Script from "next/script";
 import "./globals.css";
 
 const zenMaru = Zen_Maru_Gothic({
@@ -39,6 +40,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} ${notoSerif.variable} h-full antialiased`} data-theme="peach" data-font="sans">
+      <head>
+        <Script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5656025362252156" 
+          crossOrigin="anonymous" 
+          strategy="afterInteractive"
+        />
+      </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-500">
         
         {/* Navigation Bar - Cute Glassmorphism */}
