@@ -263,10 +263,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
 
   // Helper to build a set of affiliate buttons dynamically
-  const buildButtons = (asin?: string, rakuten?: string, yahoo?: string) => {
-    const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(decodedSlug);
-    const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(decodedSlug)}/`;
-    const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(decodedSlug)}`;
+  const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string) => {
+    const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(productName);
+    const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(productName)}/`;
+    const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(productName)}`;
 
     return `<div class="affiliate-buttons">
       <a href="${amazonL}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a>
@@ -280,6 +280,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   const processedSections = sections.map(section => {
     let s = section;
     
+    // Extract product name from heading (e.g. "### 👑 第1位: ダイソン 掃除機" -> "ダイソン 掃除機")
+    const nameMatch = s.match(/第\d+位:?\s*(.*?)(?:\n|$)/i);
+    const productName = nameMatch ? nameMatch[1].trim() : decodedSlug;
+
     // Find identifiers SPECIFIC to this section
     const asinMatch = s.match(/ASIN:\s*([A-Z0-9]{10})/i);
     const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
@@ -295,7 +299,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
     // Replace placeholders with dynamic buttons for THIS section
-    const DYNAMIC_BUTTONS = buildButtons(asin, rakuten, yahoo);
+    const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo);
     s = s.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
     s = s.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
     s = s.replace(/\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
@@ -305,6 +309,11 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   });
 
   content = processedSections.join('\n');
+
+  // Convert any remaining raw affiliate URLs in text into buttons (Global cleanup)
+  content = content.replace(/(?<!href=")https:\/\/shopping\.yahoo\.co\.jp\/[^\s)\]]+/gi, (url) => {
+    return `<div class="affiliate-buttons"><a href="${url}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a></div>`;
+  });
 
   const processed = await remark()
     .use(remarkGfm)
