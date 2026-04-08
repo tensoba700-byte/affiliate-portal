@@ -1,4 +1,12 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Affiliate Portal
+
+このプロジェクトは、Next.jsとMarkdownベースのコンテンツ管理を組み合わせたアフィリエイトポータルです。
+
+## ✍️ 記事生成ルール
+新しい記事を生成する際は、以下のデフォルトルールを遵守してください。
+[GENERATION_RULES.md](./src/content/articles/GENERATION_RULES.md)
+
+---
 
 ## Getting Started
 
