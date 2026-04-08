@@ -8,6 +8,11 @@ import type { Document } from '@contentful/rich-text-types';
 import { contentfulClient } from '@/src/lib/contentful';
 
 import type { Product } from '@/src/components/RankingTable';
+import { SimpleCache } from './cache';
+import { amazonUrl, rakutenUrl } from './affiliateHelpers';
+
+// Cache for Yahoo Shopping results (TTL: 1 hour)
+const yahooCache = new SimpleCache<{ price: string; url: string }>();
 
 // Directory containing markdown articles (fallback)
 const articlesDirectory = path.join(process.cwd(), 'src/content/articles');
@@ -31,6 +36,37 @@ export interface ArticleItem {
 }
 
 /**
+ * Fetch product data from Yahoo! Shopping API v3
+ */
+async function fetchYahooProduct(query: string): Promise<{ price: string; url: string } | null> {
+  const cached = yahooCache.get(query);
+  if (cached) return cached;
+
+  const appid = process.env.YAHOO_SHOPPING_APP_ID;
+  if (!appid) return null;
+
+  try {
+    const res = await fetch(
+      `https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid=${appid}&query=${encodeURIComponent(query)}&results=1`
+    );
+    const data = await res.json();
+    const hit = data.hits?.[0];
+
+    if (hit) {
+      const result = {
+        price: `¥${hit.price.toLocaleString()}`,
+        url: hit.url,
+      };
+      yahooCache.set(query, result);
+      return result;
+    }
+  } catch (err) {
+    console.error(`Yahoo API error for "${query}":`, err);
+  }
+  return null;
+}
+
+/**
  * Parse ranking sections from raw markdown content.
  * Looks for headings like "### 👑 第1位: 商品名" and rating tags like "[総合評価: 4.5]".
  */
@@ -46,7 +82,7 @@ function parseRankingsFromMarkdown(raw: string): Product[] {
     const ratingMatch = section.match(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)\]/);
     const score = ratingMatch ? parseFloat(ratingMatch[1]) : 4.0;
     const q = encodeURIComponent(name);
-    products.push({
+    const product: Product = {
       rank,
       brand: '',
       name,
@@ -55,7 +91,19 @@ function parseRankingsFromMarkdown(raw: string): Product[] {
       amazon: { price: '価格を見る', url: `https://www.amazon.co.jp/s?k=${q}` },
       yahoo: { price: '価格を見る', url: `https://shopping.yahoo.co.jp/search?p=${q}` },
       rakuten: { price: '価格を見る', url: `https://search.rakuten.co.jp/search/mall/${q}/` },
-    });
+    };
+
+    // Detect specific IDs in section
+    const asinMatch = section.match(/ASIN:\s*([A-Z0-9]{10})/i);
+    if (asinMatch) {
+      product.amazon = { price: '価格を見る', url: amazonUrl(asinMatch[1]) };
+    }
+    const rakutenMatch = section.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
+    if (rakutenMatch) {
+      product.rakuten = { price: '価格を見る', url: rakutenUrl(rakutenMatch[1]) };
+    }
+
+    products.push(product);
   }
   return products.sort((a, b) => a.rank - b.rank);
 }
@@ -181,8 +229,20 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     const score = parseFloat(p1);
     return `<div class="rating-container"><span>総合評価:</span> <span class="stars">${'★'.repeat(Math.floor(score))}${'☆'.repeat(5 - Math.floor(score))}</span> <span class="score">${score}</span></div>`;
   });
+
   const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
-  const BOTH_BUTTONS = `<div class="affiliate-buttons"><a href="https://amazon.co.jp/" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico','Amazon')} Amazonで見る</a><a href="https://rakuten.co.jp/" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico','楽天')} 楽天市場で見る</a><a href="" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico','Yahoo')} Yahoo!で見る</a></div>`;
+
+  // Automatic conversion for ASIN/RAKUTEN strings in content
+  content = content.replace(/ASIN:\s*([A-Z0-9]{10})/gi, (m, asin) => {
+    const url = amazonUrl(asin);
+    return `<a href="${url}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a>`;
+  });
+  content = content.replace(/RAKUTEN:\s*(https?:\/\/[^\s]+)/gi, (m, rawUrl) => {
+    const url = rakutenUrl(rawUrl);
+    return `<a href="${url}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a>`;
+  });
+
+  const BOTH_BUTTONS = `<div class="affiliate-buttons"><a href="https://amazon.co.jp/" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a><a href="https://rakuten.co.jp/" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a><a href="" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a></div>`;
   content = content.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, BOTH_BUTTONS);
   content = content.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, BOTH_BUTTONS);
   content = content.replace(/\[AMAZON_LINK_HERE\]/g, BOTH_BUTTONS);
@@ -190,6 +250,15 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
   const processed = await remark().use(html, { sanitize: false }).process(content);
   const contentHtml = processed.toString();
+
+  const rankings = parseRankingsFromMarkdown(matterResult.content);
+  // Enrich rankings with Yahoo API data
+  for (const product of rankings) {
+    const yahooData = await fetchYahooProduct(product.name);
+    if (yahooData) {
+      product.yahoo = { price: yahooData.price, url: yahooData.url };
+    }
+  }
 
   return {
     id: decodedSlug,
@@ -199,7 +268,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     excerpt: matterResult.data.excerpt || '',
     publishedAt: matterResult.data.publishDate || '',
     content: contentHtml,
-    rankings: parseRankingsFromMarkdown(matterResult.content),
+    rankings: rankings,
     category: matterResult.data.category || '',
     thumbnail: null,
     body: undefined,
