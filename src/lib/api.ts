@@ -3,6 +3,7 @@ import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
 import html from 'remark-html';
+import remarkGfm from 'remark-gfm';
 
 import type { Document } from '@contentful/rich-text-types';
 import { contentfulClient } from '@/src/lib/contentful';
@@ -274,29 +275,41 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     </div>`;
   };
 
-  // 1. First, find all identifiers in the content
-  const asinMatches = content.matchAll(/ASIN:\s*([A-Z0-9]{10})/gi);
-  const rakutenMatches = content.matchAll(/RAKUTEN:\s*(https?:\/\/[^\s]+)/gi);
-  const yahooMatches = content.matchAll(/YAHOO:\s*(https?:\/\/[^\s]+)/gi);
+  // Divide content into sections by rank headings to ensure buttons match the correct item
+  const sections = content.split(/(?=###\s*👑?\s*第\d+位)/);
+  const processedSections = sections.map(section => {
+    let s = section;
+    
+    // Find identifiers SPECIFIC to this section
+    const asinMatch = s.match(/ASIN:\s*([A-Z0-9]{10})/i);
+    const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
+    const yahooMatch = s.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
 
-  // Store the FIRST found identifier as the current product context (for simple articles)
-  const currentAsin = Array.from(asinMatches)[0]?.[1];
-  const currentRakuten = Array.from(rakutenMatches)[0]?.[1];
-  const currentYahoo = Array.from(yahooMatches)[0]?.[1];
+    const asin = asinMatch ? asinMatch[1] : undefined;
+    const rakuten = rakutenMatch ? rakutenMatch[1] : undefined;
+    const yahoo = yahooMatch ? yahooMatch[1] : undefined;
 
-  // 2. Hide the ID lines from the final HTML
-  content = content.replace(/ASIN:\s*[A-Z0-9]{10}\n?/gi, '');
-  content = content.replace(/RAKUTEN:\s*https?:\/\/[^\s]+\n?/gi, '');
-  content = content.replace(/YAHOO:\s*https?:\/\/[^\s]+\n?/gi, '');
+    // Remove the identifier lines from final HTML
+    s = s.replace(/ASIN:\s*[A-Z0-9]{10}\n?/gi, '');
+    s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+\n?/gi, '');
+    s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+\n?/gi, '');
 
-  // 3. Replace placeholders with dynamic buttons
-  const DYNAMIC_BUTTONS = buildButtons(currentAsin, currentRakuten, currentYahoo);
-  content = content.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-  content = content.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-  content = content.replace(/\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
-  content = content.replace(/\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+    // Replace placeholders with dynamic buttons for THIS section
+    const DYNAMIC_BUTTONS = buildButtons(asin, rakuten, yahoo);
+    s = s.replace(/\[AMAZON_LINK_HERE\]\s*\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+    s = s.replace(/\[RAKUTEN_LINK_HERE\]\s*\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+    s = s.replace(/\[AMAZON_LINK_HERE\]/g, DYNAMIC_BUTTONS);
+    s = s.replace(/\[RAKUTEN_LINK_HERE\]/g, DYNAMIC_BUTTONS);
 
-  const processed = await remark().use(html, { sanitize: false }).process(content);
+    return s;
+  });
+
+  content = processedSections.join('\n');
+
+  const processed = await remark()
+    .use(remarkGfm)
+    .use(html, { sanitize: false })
+    .process(content);
   const contentHtml = processed.toString();
 
   const rankings = parseRankingsFromMarkdown(matterResult.content);

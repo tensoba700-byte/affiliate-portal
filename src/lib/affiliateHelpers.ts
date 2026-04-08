@@ -5,8 +5,8 @@
  */
 
 export const amazonUrl = (asin: string): string => {
-  const tag = process.env.AMAZON_ASSOCIATE_TAG ?? '';
-  return `https://www.amazon.co.jp/dp/${asin}/?tag=${tag}`;
+  const tag = process.env.AMAZON_ASSOCIATE_TAG || 'mikkestyle-22';
+  return `https://www.amazon.co.jp/dp/${asin}?tag=${tag}`;
 };
 
 export const rakutenUrl = (originalUrl: string): string => {
