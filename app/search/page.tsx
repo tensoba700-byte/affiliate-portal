@@ -15,7 +15,7 @@ export default async function SearchPage({
   const rawQuery = resolvedParams.q || "";
   const query = rawQuery.trim().toLowerCase();
 
-  let allArticles = [];
+  let allArticles: any[] = [];
   try {
     allArticles = await getAllArticles();
   } catch (error) {
