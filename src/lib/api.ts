@@ -100,7 +100,7 @@ async function fetchUnsplashImage(query: string): Promise<string | null> {
  * Parse ranking sections from raw markdown content.
  * Looks for headings like "### 👑 第1位: 商品名" and rating tags like "[総合評価: 4.5]".
  */
-function parseRankingsFromMarkdown(raw: string): Product[] {
+export function parseRankingsFromMarkdown(raw: string): Product[] {
   const products: Product[] = [];
   const sections = raw.split(/(?=###[^\n]*第\d+位)/);
   for (const section of sections) {
