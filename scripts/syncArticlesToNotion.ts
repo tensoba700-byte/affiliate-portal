@@ -29,20 +29,11 @@ async function syncAllArticles() {
     const products = parseRankingsFromMarkdown(content);
     console.log(`Syncing ${products.length} products from "${data.title}"...`);
 
-    // Split content by ranking sections to re-extract ASINs for each product
-    const sections = content.split(/(?=###[^\n]*第\d+位)/);
-
     for (const product of products) {
-      // Find the corresponding section for this product to get the ASIN
-      const section = sections.find(s => s.includes(product.name)) || '';
-      const asinMatch = section.match(/ASIN:\s*([A-Z0-9]{10})/i);
-      const asin = asinMatch ? asinMatch[1] : '不明';
-
       try {
         await addProductToNotion({
           articleTitle: data.title,
           name: product.name,
-          productNumber: asin,
           category: category,
           amazonUrl: product.amazon?.url || '',
           rakutenUrl: product.rakuten?.url || '',

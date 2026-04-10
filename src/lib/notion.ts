@@ -16,7 +16,6 @@ const getDatabaseId = () => process.env.NOTION_DATABASE_ID!;
 export interface NotionProductData {
   articleTitle: string;
   name: string;
-  productNumber: string;
   category: string;
   amazonUrl: string;
   rakutenUrl: string;
@@ -32,7 +31,6 @@ export async function addProductToNotion(data: NotionProductData) {
     const response = await getNotionClient().pages.create({
       parent: { database_id: getDatabaseId() },
       properties: {
-        /*
         '記事タイトル': {
           rich_text: [
             {
@@ -42,7 +40,6 @@ export async function addProductToNotion(data: NotionProductData) {
             },
           ],
         },
-        */
         '商品名': {
           title: [
             {
@@ -52,15 +49,17 @@ export async function addProductToNotion(data: NotionProductData) {
             },
           ],
         },
+        /* ASINは使用しない
         'ASIN': {
           rich_text: [
             {
               text: {
-                content: data.productNumber,
+                content: '',
               },
             },
           ],
         },
+        */
         'カテゴリ': {
           select: {
             name: data.category || '未分類',
