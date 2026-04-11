@@ -44,25 +44,21 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "popular",   label: "人気順"     },
 ];
 
-/** ランクバッジ */
+/** ランクバッジ — 金・銀・銅 */
 function RankBadge({ rank }: { rank: number }) {
-  const map: Record<number, { bg: string; border: string; emoji: string }> = {
-    1: { bg: "#FFF8E7", border: "#F4C430", emoji: "👑" },
-    2: { bg: "#F5F5F5", border: "#B0BEC5", emoji: "🥈" },
-    3: { bg: "#FFF3E0", border: "#BCAAA4", emoji: "🥉" },
+  const configs: Record<number, { bg: string; text: string; border: string; label: string }> = {
+    1: { bg: 'linear-gradient(135deg, #FFD700, #FFA500)', text: '#5C3D00', border: '#FFA500', label: '1位' },
+    2: { bg: 'linear-gradient(135deg, #E8E8E8, #B8B8B8)', text: '#333',    border: '#B0B0B0', label: '2位' },
+    3: { bg: 'linear-gradient(135deg, #D4934A, #A96A2A)', text: '#FFF8F0', border: '#A96A2A', label: '3位' },
   };
-  const s = map[rank] ?? { bg: "#FDF0F5", border: "#F8BBD0", emoji: "" };
+  const cfg = configs[rank] ?? { bg: '#FDF0F5', text: '#e06a8c', border: '#F8BBD0', label: `${rank}位` };
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-9 h-9 rounded-full text-xs font-black flex-shrink-0"
-      style={{ background: s.bg, border: `2px solid ${s.border}`, color: "#555" }}
+      className="flex flex-col items-center justify-center w-10 h-10 rounded-full flex-shrink-0"
+      style={{ background: cfg.bg, border: `2px solid ${cfg.border}`, color: cfg.text, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
     >
-      {s.emoji ? (
-        <span className="text-base leading-none">{s.emoji}</span>
-      ) : (
-        <span className="text-[11px] font-black" style={{ color: "#e06a8c" }}>{rank}位</span>
-      )}
+      <span style={{ fontSize: '11px', fontWeight: 900, lineHeight: 1 }}>{cfg.label}</span>
     </div>
   );
 }
@@ -80,11 +76,11 @@ function Stars({ score }: { score: number }) {
   );
 }
 
-/** 購入ボタン（ロゴアイコン付き） */
+/** 購入ボタン */
 function BuyButton({
-  label, price, url, bg, iconUrl,
+  label, price, url, bg, textColor = '#FFFFFF', iconUrl,
 }: {
-  label: string; price: string; url: string; bg: string; iconUrl: string;
+  label: string; price: string; url: string; bg: string; textColor?: string; iconUrl: string;
 }) {
   if (!url && !price) return null;
   return (
@@ -92,24 +88,29 @@ function BuyButton({
       href={url || "#"}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-white text-[10px] font-black transition-all hover:opacity-90 hover:-translate-y-0.5 active:scale-95 whitespace-nowrap shadow-sm"
-      style={{ background: bg, minWidth: "80px" }}
+      className="flex items-center gap-2 px-3 py-2 font-bold transition-all whitespace-nowrap active:scale-95"
+      style={{
+        background: bg,
+        color: textColor,
+        minHeight: '42px',
+        fontSize: '11px',
+        borderRadius: '10px',
+        boxShadow: '0 3px 10px rgba(0,0,0,0.2)',
+        textDecoration: 'none',
+        minWidth: '80px',
+        filter: 'brightness(1)',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.filter = 'brightness(0.88)')}
+      onMouseLeave={e => (e.currentTarget.style.filter = 'brightness(1)')}
     >
       {/* ロゴアイコン */}
-      <span className="bg-white rounded-full p-0.5 flex-shrink-0 flex items-center justify-center">
-        <img
-          src={iconUrl}
-          alt={label}
-          width={16}
-          height={16}
-          className="object-contain"
-          style={{ borderRadius: "2px" }}
-        />
+      <span className="rounded p-0.5 flex-shrink-0 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.25)' }}>
+        <img src={iconUrl} alt={label} width={14} height={14} className="object-contain" style={{ borderRadius: '2px' }} />
       </span>
       {/* テキスト */}
-      <span className="flex flex-col leading-tight">
-        <span className="opacity-80">{label}</span>
-        {price && <span className="text-[11px]">{price}</span>}
+      <span className="flex flex-col leading-tight text-left">
+        <span style={{ fontWeight: 700 }}>{label}で見る</span>
+        {price && <span style={{ fontSize: '10px', opacity: 0.9 }}>{price}</span>}
       </span>
     </a>
   );
@@ -294,25 +295,28 @@ export default function RankingTable({ products, title }: Props) {
                   label="Amazon"
                   price={p.amazon.price}
                   url={p.amazon.url}
-                  bg="#F2994A"
+                  bg="#FF9900"
+                  textColor="#111111"
                   iconUrl="https://www.amazon.co.jp/favicon.ico"
                 />
               )}
               {p.rakuten && (
                 <BuyButton
-                  label="楽天"
+                  label="楽天市場"
                   price={p.rakuten.price}
                   url={p.rakuten.url}
-                  bg="#b85c7a"
+                  bg="#BF0000"
+                  textColor="#FFFFFF"
                   iconUrl="https://www.rakuten.co.jp/favicon.ico"
                 />
               )}
               {p.yahoo && (
                 <BuyButton
-                  label="ヤフー"
+                  label="Yahoo!"
                   price={p.yahoo.price}
                   url={p.yahoo.url}
-                  bg="#e06a8c"
+                  bg="#FF0033"
+                  textColor="#FFFFFF"
                   iconUrl="https://shopping.yahoo.co.jp/favicon.ico"
                 />
               )}

@@ -300,20 +300,46 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
   const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
 
-  // Helper to build a set of affiliate buttons dynamically
+  // Helper to build a set of affiliate buttons with stacked price layout
   const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string, prices?: { amazon?: string; rakuten?: string; yahoo?: string }) => {
     const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(productName);
     const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(productName)}/`;
     const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(productName)}`;
 
-    const formatPrice = (p?: string) => (p && p !== '0' ? ` ${Number(p).toLocaleString()}円` : '');
+    const fmtPrice = (p?: string) => (p && p !== '0') ? `<span class="btn-price">${Number(p).toLocaleString()}円</span>` : '';
+
+    const btn = (cls: string, url: string, iconSrc: string, label: string, price?: string) =>
+      `<a href="${url}" target="_blank" class="${cls}">${ICON(iconSrc, label)}<span class="btn-text-stack"><span class="btn-label">${label}で見る</span>${fmtPrice(price)}</span></a>`;
 
     return `<div class="affiliate-buttons">
-      <a href="${amazonL}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る${formatPrice(prices?.amazon)}</a>
-      <a href="${rakutenL}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る${formatPrice(prices?.rakuten)}</a>
-      <a href="${yahooL}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る${formatPrice(prices?.yahoo)}</a>
+      ${btn('btn-amazon',  amazonL,  'https://www.amazon.co.jp/favicon.ico',       'Amazon',   prices?.amazon)}
+      ${btn('btn-rakuten', rakutenL, 'https://www.rakuten.co.jp/favicon.ico',      '楽天市場', prices?.rakuten)}
+      ${btn('btn-yahoo',   yahooL,   'https://shopping.yahoo.co.jp/favicon.ico',   'Yahoo!',   prices?.yahoo)}
     </div>`;
   };
+
+  // Build comparison table from raw markdown sections (before any transformation)
+  const rawRankSections = matterResult.content.split(/(?=###\s*👑?\s*第\d+位)/);
+  const filteredRankSections = rawRankSections.filter(s => /第\d+位/.test(s));
+  let comparisonTableHtml = '';
+  if (filteredRankSections.length >= 2) {
+    const medals = ['🥇', '🥈', '🥉'];
+    const rows = filteredRankSections.map((sec, idx) => {
+      const nameMatch = sec.match(/第\d+位:?\s*(.*?)(?:\n|$)/i);
+      const name = nameMatch ? nameMatch[1].trim() : '';
+      if (!name) return '';
+      const amzPriceMatch = sec.match(/AMAZON_PRICE:\s*(\d+)/i);
+      const ratingMatch = sec.match(/\[総合評価:\s*([0-9.]+)\]/);
+      const score = ratingMatch ? parseFloat(ratingMatch[1]) : 0;
+      const priceNum = amzPriceMatch ? Number(amzPriceMatch[1]) : null;
+      const price = priceNum ? `¥${priceNum.toLocaleString()}` : '—';
+      const medal = medals[idx] ?? '';
+      return `<tr><td class="ctbl-rank">${medal} ${idx + 1}位</td><td class="ctbl-name">${name}</td><td class="ctbl-price">${price}</td><td class="ctbl-score">${score > 0 ? score.toFixed(1) + ' ★' : '—'}</td></tr>`;
+    }).filter(Boolean).join('');
+    if (rows) {
+      comparisonTableHtml = `<div class="comparison-table-wrap"><p class="ctbl-title">📊 商品比較一覧</p><div class="ctbl-scroll"><table class="ctbl"><thead><tr><th>順位</th><th>商品名</th><th>Amazon価格</th><th>スコア</th></tr></thead><tbody>${rows}</tbody></table></div></div>\n\n`;
+    }
+  }
 
   // Divide content into sections by rank headings to ensure buttons match the correct item
   const sections = content.split(/(?=###\s*👑?\s*第\d+位)/);
@@ -385,6 +411,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   });
 
   content = processedSections.join('\n\n');
+  // Prepend comparison table before full content
+  if (comparisonTableHtml) content = comparisonTableHtml + content;
 
   const processed = await remark()
     .use(remarkGfm)

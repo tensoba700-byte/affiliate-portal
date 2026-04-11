@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import RankingTable from '@/src/components/RankingTable';
 import ShareButtons from '@/src/components/ShareButtons';
+import { EyecatchImage } from '@/src/components/EyecatchImage';
 
 export async function generateStaticParams() {
   try {
@@ -81,7 +82,10 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
       <article className="w-full pb-24 animate-fade-in-up bg-background">
         
         <div className="container mx-auto max-w-3xl px-4 pt-8">
-          
+
+          {/* アイキャッチ画像 — 記事最上部・フル幅 */}
+          <EyecatchImage slug={slug} alt={article.title} />
+
           {/* Navigation (Breadcrumbs) */}
           <nav className="text-[10px] md:text-xs font-bold mb-6 flex items-center justify-center gap-2 text-muted" aria-label="パンくずリスト">
             <Link href="/" className="hover:text-primary transition-colors">ホーム</Link>
@@ -105,7 +109,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               Review
             </div>
             
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black leading-snug mb-6 text-foreground">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-6 text-foreground">
               {article.title}
             </h1>
             
@@ -119,18 +123,6 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               </p>
             )}
           </header>
-
-          {/* Eyecatch / Cover Image — フル幅・角丸16px・下マージン24px */}
-          {article.coverImage && (
-            <div className="w-full rounded-2xl overflow-hidden mb-6" style={{ borderRadius: '16px' }}>
-              <img
-                src={article.coverImage}
-                alt={`${article.title} アイキャッチ画像`}
-                loading="eager"
-                className="w-full h-auto block"
-              />
-            </div>
-          )}
 
           {/* 📝 Article Content Area */}
           <div className="bg-white rounded-[2rem] p-6 md:p-10 cute-shadow border border-card-border mb-12">
