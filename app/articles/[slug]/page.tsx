@@ -120,13 +120,15 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             )}
           </header>
 
-          {/* Cover Image */}
+          {/* Eyecatch / Cover Image — フル幅・角丸16px・下マージン24px */}
           {article.coverImage && (
-            <div className="w-full aspect-[4/3] md:aspect-[16/9] bg-white rounded-[2rem] p-3 cute-shadow border border-card-border mb-8">
-              <div className="w-full h-full rounded-3xl overflow-hidden relative">
-                {/* @ts-ignore */}
-                <img src={article.coverImage} alt={article.title} loading="lazy" className="w-full h-full object-cover" />
-              </div>
+            <div className="w-full rounded-2xl overflow-hidden mb-6" style={{ borderRadius: '16px' }}>
+              <img
+                src={article.coverImage}
+                alt={`${article.title} アイキャッチ画像`}
+                loading="eager"
+                className="w-full h-auto block"
+              />
             </div>
           )}
 

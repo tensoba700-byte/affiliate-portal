@@ -1,6 +1,8 @@
 import requests
 import os
 import json
+import random
+import subprocess
 import datetime
 import urllib.parse
 from dotenv import load_dotenv
@@ -27,6 +29,163 @@ OUTPUT_ARTICLE_TITLE = "【2026年春】テレワークが劇的に捗る！デ�
 CATEGORY = "ガジェット"
 # Fixed slug - always overwrites the canonical article file
 FIXED_SLUG = "20260411-telework-gadgets-f401"
+
+# ----- Category Theme Colors -----
+CATEGORY_COLORS = {
+    '美容・スキンケア': ('#FF4F7B', '#FF7A9C'),
+    'ガジェット':   ('#1A3C6E', '#2D5B9A'),
+    'インテリア':   ('#2D6A4F', '#40916C'),
+    '生活雑貨':   ('#D4620A', '#F77F00'),
+    '便利グッズ': ('#007BAD', '#00A8D6'),
+}
+
+
+def get_seasonal_catch_copy(category: str) -> str:
+    """Generate a seasonal, category-aware catch copy."""
+    month = datetime.datetime.now().month
+    year = datetime.datetime.now().year
+    if   3 <= month <= 5:  season = "春"
+    elif 6 <= month <= 8:  season = "夏"
+    elif 9 <= month <= 11: season = "秋"
+    else:                  season = "冬"
+
+    options = {
+        'ガジェット': [
+            f"{year}年{season}・テレワーカー必見の神アイテム",
+            f"仕事効率を劇的に上げる{season}のデスク設備",
+            f"{season}のデスク環境を本気で整える",
+            f"2026年最新版・プロの使う{season}のガジェット",
+        ],
+        '美容・スキンケア': [
+            f"{year}年{season}のベストコスメ山筋",
+            f"{season}のルーティンをアップグレード",
+            f"肀が剑的に変わる{season}のケアアイテム",
+        ],
+        'インテリア': [
+            f"{year}年{season}・おしゃれな空間づくり",
+            f"{season}のお部屋を素敵に模様替え",
+        ],
+        '生活雑貨': [
+            f"{year}年{season}・毎日が快適になるモノ選び",
+            f"{season}の新生活をもっと豊かに",
+        ],
+        '便利グッズ': [
+            f"{year}年{season}・知らないと損する便利アイテム",
+            f"暮らしをラクにする{season}のギア",
+        ],
+    }
+    choices = options.get(category, [f"{year}年{season}のベストバイイテム"])
+    return random.choice(choices)
+
+
+def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
+    """Generate an eyecatch HTML string and save it to public/eyecatch/[slug].html."""
+    color1, color2 = CATEGORY_COLORS.get(category, ('#1A3C6E', '#2D5B9A'))
+
+    # Show up to 5 product images
+    images_html = ""
+    for url in image_urls[:5]:
+        images_html += f'<div class="product-img-wrap"><img src="{url}" class="product-img" alt="" /></div>\n'
+
+    # Truncate title for display
+    display_title = title if len(title) <= 28 else title[:27] + '…'
+
+    html = f"""<!DOCTYPE html>
+<html lang="ja"><head>
+  <meta charset="UTF-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap');
+    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+    html, body {{ width: 390px; height: 260px; overflow: hidden; }}
+    body {{ font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif; }}
+    .container {{ width: 390px; height: 260px; display: flex; flex-direction: column; }}
+    .top {{
+      background: linear-gradient(135deg, {color1} 0%, {color2} 100%);
+      height: 162px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 18px 24px;
+      position: relative;
+      overflow: hidden;
+    }}
+    .top::after {{
+      content: '';
+      position: absolute; top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      pointer-events: none;
+    }}
+    .brand {{
+      font-size: 10px; font-weight: 900;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }}
+    .catch {{
+      font-size: 11px; font-weight: 900;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }}
+    .title {{
+      font-size: 16px; font-weight: 900; color: white;
+      line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }}
+    .bottom {{
+      background: white;
+      height: 98px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 8px 16px;
+    }}
+    .product-img-wrap {{
+      width: 72px; height: 72px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }}
+    .product-img {{
+      max-width: 70px; max-height: 70px;
+      object-fit: contain; mix-blend-mode: multiply;
+    }}
+  </style>
+</head><body>
+  <div class="container">
+    <div class="top">
+      <p class="brand">MIKKE!</p>
+      <p class="catch">{catch_copy}</p>
+      <h1 class="title">{display_title}</h1>
+    </div>
+    <div class="bottom">
+{images_html}    </div>
+  </div>
+</body></html>
+"""
+
+    html_path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
+    with open(html_path, 'w', encoding='utf-8') as f:
+        f.write(html)
+    print(f"  ✉️  Eyecatch HTML saved: {html_path}")
+    return html_path
+
+
+def take_eyecatch_screenshot(slug: str) -> bool:
+    """Call the Node.js Puppeteer script to screenshot the HTML."""
+    node_bin = "/Users/tsukika/.nvm/versions/node/v24.14.1/bin/node"
+    script = "/Users/tsukika/Desktop/affiliate-portal/scripts/generate-eyecatch.js"
+    try:
+        result = subprocess.run(
+            [node_bin, script, slug],
+            capture_output=True, text=True, timeout=60,
+            cwd="/Users/tsukika/Desktop/affiliate-portal"
+        )
+        print(result.stdout.strip())
+        if result.returncode != 0:
+            print(f"  ⚠️  Puppeteer error: {result.stderr[:200]}")
+            return False
+        return True
+    except Exception as e:
+        print(f"  ⚠️  Screenshot failed: {e}")
+        return False
 
 
 def get_notion_data():
@@ -266,6 +425,18 @@ category: "{CATEGORY}"
         f.write(markdown)
 
     print(f"\n✅ Published: {file_path}")
+
+    # ----- Eyecatch image generation -----
+    print("\n🎨 Generating eyecatch...")
+    image_urls = [p['image_url'] for p in products if p.get('image_url')]
+    catch_copy = get_seasonal_catch_copy(CATEGORY)
+    generate_eyecatch_html(FIXED_SLUG, OUTPUT_ARTICLE_TITLE, CATEGORY, image_urls, catch_copy)
+    ok = take_eyecatch_screenshot(FIXED_SLUG)
+    if ok:
+        print("📸 Eyecatch PNG generated successfully!")
+    else:
+        print("⚠️  Eyecatch PNG generation failed (article published without image).")
+
     return FIXED_SLUG
 
 

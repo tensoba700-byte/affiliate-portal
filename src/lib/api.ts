@@ -204,9 +204,14 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
 
-      // Use frontmatter coverImage, or extract the first IMAGE: tag from content as fallback
-      let coverImage: string | null = matterResult.data.coverImage || null;
-      if (!coverImage) {
+      // Priority: eyecatch PNG > frontmatter coverImage > first IMAGE: tag
+      let coverImage: string | null = null;
+      const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${slug}.png`);
+      if (fs.existsSync(eyecatchPngPath)) {
+        coverImage = `/eyecatch/${slug}.png`;
+      } else if (matterResult.data.coverImage) {
+        coverImage = matterResult.data.coverImage;
+      } else {
         const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
         if (firstImageMatch) coverImage = firstImageMatch[1];
       }
@@ -402,11 +407,23 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     }
   }
 
+  // Priority: eyecatch PNG > frontmatter coverImage > first IMAGE: tag
+  let coverImage: string | null = null;
+  const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${decodedSlug}.png`);
+  if (fs.existsSync(eyecatchPngPath)) {
+    coverImage = `/eyecatch/${decodedSlug}.png`;
+  } else if (matterResult.data.coverImage) {
+    coverImage = matterResult.data.coverImage;
+  } else {
+    const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+    if (firstImageMatch) coverImage = firstImageMatch[1];
+  }
+
   return {
     id: decodedSlug,
     slug: decodedSlug,
     title: matterResult.data.title || decodedSlug,
-    coverImage: matterResult.data.coverImage || null,
+    coverImage,
     excerpt: matterResult.data.excerpt || '',
     publishedAt: matterResult.data.publishDate || '',
     content: contentHtml,

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja"><head>
+  <meta charset="UTF-8" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 390px; height: 260px; overflow: hidden; }
+    body { font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif; }
+    .container { width: 390px; height: 260px; display: flex; flex-direction: column; }
+    .top {
+      background: linear-gradient(135deg, #1A3C6E 0%, #2D5B9A 100%);
+      height: 162px;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 18px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .top::after {
+      content: '';
+      position: absolute; top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .brand {
+      font-size: 10px; font-weight: 900;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 3px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .catch {
+      font-size: 11px; font-weight: 900;
+      color: rgba(255,255,255,0.88);
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .title {
+      font-size: 16px; font-weight: 900; color: white;
+      line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .bottom {
+      background: white;
+      height: 98px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; padding: 8px 16px;
+    }
+    .product-img-wrap {
+      width: 72px; height: 72px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .product-img {
+      max-width: 70px; max-height: 70px;
+      object-fit: contain; mix-blend-mode: multiply;
+    }
+  </style>
+</head><body>
+  <div class="container">
+    <div class="top">
+      <p class="brand">MIKKE!</p>
+      <p class="catch">2026年春・テレワーカー必見の神アイテム</p>
+      <h1 class="title">【2026年春】テレワークが劇的に捗る！デスク周りのお…</h1>
+    </div>
+    <div class="bottom">
+<div class="product-img-wrap"><img src="https://thumbnail.image.rakuten.co.jp/@0_mall/yamazenkaden/cabinet/main-img/013/main-78309.jpg?_ex=400x400" class="product-img" alt="" /></div>
+<div class="product-img-wrap"><img src="https://thumbnail.image.rakuten.co.jp/@0_mall/sokutei/cabinet/rank/4548736132566r1.jpg?_ex=400x400" class="product-img" alt="" /></div>
+<div class="product-img-wrap"><img src="https://thumbnail.image.rakuten.co.jp/@0_mall/onedayonestyle/cabinet/06666376/09283302/20220803174008.jpg?_ex=400x400" class="product-img" alt="" /></div>
+<div class="product-img-wrap"><img src="https://thumbnail.image.rakuten.co.jp/@0_mall/anker/cabinet/images/09779934/a2148_normal.jpg?_ex=400x400" class="product-img" alt="" /></div>
+<div class="product-img-wrap"><img src="https://thumbnail.image.rakuten.co.jp/@0_mall/pfudirect/cabinet/kb/hhkb/pfudirect_pd-kb800bs.jpg?_ex=400x400" class="product-img" alt="" /></div>
+    </div>
+  </div>
+</body></html>
