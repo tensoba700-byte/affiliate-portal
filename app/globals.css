@@ -305,3 +305,13 @@ body {
   box-shadow: 0 10px 15px -3px rgba(224, 106, 140, 0.4);
 }
 
+
+/* Product Image Styling */
+.product-image-container {
+  @apply w-full flex justify-center my-8 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-white;
+  max-height: 400px;
+}
+.product-image {
+  @apply object-contain w-full h-full;
+  max-height: 380px;
+}

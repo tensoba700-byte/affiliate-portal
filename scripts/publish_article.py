@@ -1,0 +1,181 @@
+import requests
+import os
+import json
+import datetime
+import uuid
+from dotenv import load_dotenv
+
+# Load env from local directory
+load_dotenv("/Users/tsukika/Desktop/affiliate-portal/.env.local")
+# Load env from scratch bot directory for Groq API Key
+load_dotenv("/Users/tsukika/.gemini/antigravity/scratch/discord-bot/.env")
+
+NOTION_API_KEY = os.getenv("NOTION_API_KEY")
+DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+headers = {
+    "Authorization": f"Bearer {NOTION_API_KEY}",
+    "Notion-Version": "2022-06-28",
+    "Content-Type": "application/json"
+}
+
+ARTICLE_TITLE = "【2024年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選"
+CATEGORY = "ガジェット"
+
+def get_notion_data():
+    url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
+    payload = {
+        "filter": {
+            "property": "記事タイトル",
+            "rich_text": {"equals": ARTICLE_TITLE}
+        }
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    if response.status_code == 200:
+        results = response.json().get("results", [])
+        products = []
+        for result in results:
+            props = result.get("properties", {})
+            p = {
+                "name": props.get("商品名", {}).get("title", [{}])[0].get("text", {}).get("content", ""),
+                "image_url": props.get("Image URL", {}).get("url", ""),
+                "amazon_url": props.get("Amazon Affiliate URL", {}).get("url", ""),
+                "rakuten_url": props.get("Rakuten Affiliate URL", {}).get("url", ""),
+                "yahoo_url": props.get("Yahoo Affiliate URL", {}).get("url", ""),
+                "amazon_price": props.get("Amazon Price", {}).get("number", 0),
+                "rakuten_price": props.get("Rakuten Price", {}).get("number", 0),
+                "yahoo_price": props.get("Yahoo Price", {}).get("number", 0),
+            }
+            products.append(p)
+        return products
+    return []
+
+def generate_content_with_llm(products_data):
+    """Cal Groq to generate the descriptions for each product"""
+    prompt = f"""
+あなたはプロの家電ライターです。以下のガジェット7選について、各商品の魅力を伝える紹介文（150文字程度）を作成してください。
+また、選び方のポイントとまとめも作成してください。
+
+【商品リスト】
+{json.dumps(products_data, ensure_ascii=False, indent=2)}
+
+【出力形式】
+以下の構造のJSONで出力してください。
+{{
+  "excerpt": "記事のリード文",
+  "intro": "導入文...",
+  "points": ["ポイント1", "ポイント2", "ポイント3"],
+  "products": [
+    {{
+      "name": "商品名",
+      "description": "紹介文...",
+      "score": 4.5,
+      "pros": ["メリット1"],
+      "cons": ["デメリット1"]
+    }}
+  ],
+  "summary": "まとめ文..."
+}}
+"""
+    
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": "You must respond strictly with valid JSON."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.7,
+        "response_format": {"type": "json_object"}
+    }
+    
+    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+    if res.status_code == 200:
+        return res.json()["choices"][0]["message"]["content"]
+    return None
+
+def publish():
+    print(f"Fetching Notion data for '{ARTICLE_TITLE}'...")
+    products = get_notion_data()
+    if not products:
+        print("No products found.")
+        return
+
+    print("Generating content with LLM...")
+    raw_content = generate_content_with_llm(products)
+    if not raw_content:
+        print("LLM generation failed.")
+        return
+    
+    data = json.loads(raw_content)
+    
+    # 5. Format Markdown
+    markdown = f"""---
+title: "{ARTICLE_TITLE}"
+coverImage: ""
+excerpt: "{data['excerpt']}"
+publishDate: "{datetime.datetime.now().isoformat()}"
+category: "{CATEGORY}"
+---
+
+{data['intro']}
+
+## 選び方のポイント
+<ul>
+{" ".join([f"<li>{p}</li>" for p in data['points']])}
+</ul>
+
+"""
+
+    print(f"Debug: LLM returned {len(data['products'])} products")
+    
+    for i, p_info in enumerate(data['products']):
+        rank = i + 1
+        # Robust matching: check if LLM name is in Notion names or vice versa
+        notion_p = next((x for x in products if x['name'] in p_info['name'] or p_info['name'] in x['name']), None)
+        
+        if not notion_p:
+            print(f"⚠️ Could not match product: {p_info['name']}")
+        
+        markdown += f"### 👑 第{rank}位: {p_info['name']}\n"
+        if notion_p and notion_p['image_url']:
+            print(f"DEBUG: Found IMAGE for {p_info['name']}: {notion_p['image_url']}")
+            markdown += f"IMAGE: {notion_p['image_url']}\n"
+        
+        markdown += f"[総合評価: {p_info['score']}]\n\n"
+        
+        if notion_p:
+            if notion_p['amazon_price']: markdown += f"AMAZON_PRICE: {int(notion_p['amazon_price'])}\n"
+            if notion_p['rakuten_price']: markdown += f"RAKUTEN_PRICE: {int(notion_p['rakuten_price'])}\n"
+            if notion_p['yahoo_price']: markdown += f"YAHOO_PRICE: {int(notion_p['yahoo_price'])}\n"
+            
+            # Use specific affiliate URLs if provided by Qclaw
+            if notion_p['amazon_url']: markdown += f"ASIN: {notion_p['amazon_url']}\n"
+            if notion_p['rakuten_url']: markdown += f"RAKUTEN: {notion_p['rakuten_url']}\n"
+            if notion_p['yahoo_url']: markdown += f"YAHOO: {notion_p['yahoo_url']}\n"
+
+        markdown += f"{p_info['description']}\n\n"
+        
+        markdown += ":::pro\n" + "\n".join([f"- {m}" for m in p_info['pros']]) + "\n:::\n"
+        markdown += ":::con\n" + "\n".join([f"- {c}" for c in p_info['cons']]) + "\n:::\n\n"
+        
+        markdown += "[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+
+    markdown += f"## まとめ\n{data['summary']}\n"
+
+    # Write to file
+    slug = f"20240411-telework-gadgets-{uuid.uuid4().hex[:4]}"
+    file_path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{slug}.md"
+    
+    with open(file_path, 'w', encoding='utf-8') as f:
+        f.write(markdown)
+    
+    print(f"✅ Published: {file_path}")
+    return slug
+
+if __name__ == "__main__":
+    publish()

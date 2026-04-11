@@ -65,22 +65,11 @@ export async function addProductToNotion(data: NotionProductData) {
             name: data.category || '未分類',
           },
         },
-        'Amazon参考URL': {
-          url: data.amazonUrl || null,
-        },
-        '楽天参考URL': {
-          url: data.rakutenUrl || null,
-        },
-        'Yahoo参考URL': {
-          url: data.yahooUrl || null,
-        },
-        /*
-        'ステータス': {
+        'ステータス 1': {
           select: {
-            name: data.status,
+            name: '未処理',
           },
         },
-        */
       },
     });
     return response;

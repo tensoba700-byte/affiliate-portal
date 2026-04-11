@@ -263,15 +263,17 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
 
   // Helper to build a set of affiliate buttons dynamically
-  const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string) => {
+  const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string, prices?: { amazon?: string; rakuten?: string; yahoo?: string }) => {
     const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(productName);
     const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(productName)}/`;
     const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(productName)}`;
 
+    const formatPrice = (p?: string) => (p && p !== '0' ? ` ${Number(p).toLocaleString()}円` : '');
+
     return `<div class="affiliate-buttons">
-      <a href="${amazonL}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る</a>
-      <a href="${rakutenL}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る</a>
-      <a href="${yahooL}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a>
+      <a href="${amazonL}" target="_blank" class="btn-amazon">${ICON('https://www.amazon.co.jp/favicon.ico', 'Amazon')} Amazonで見る${formatPrice(prices?.amazon)}</a>
+      <a href="${rakutenL}" target="_blank" class="btn-rakuten">${ICON('https://www.rakuten.co.jp/favicon.ico', '楽天')} 楽天市場で見る${formatPrice(prices?.rakuten)}</a>
+      <a href="${yahooL}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る${formatPrice(prices?.yahoo)}</a>
     </div>`;
   };
 
@@ -288,18 +290,38 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     const asinMatch = s.match(/ASIN:\s*([A-Z0-9]{10})/i);
     const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
     const yahooMatch = s.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
+    const imageMatch = s.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+    const amzPriceMatch = s.match(/AMAZON_PRICE:\s*(\d+)/i);
+    const rakPriceMatch = s.match(/RAKUTEN_PRICE:\s*(\d+)/i);
+    const yahPriceMatch = s.match(/YAHOO_PRICE:\s*(\d+)/i);
 
     const asin = asinMatch ? asinMatch[1] : undefined;
     const rakuten = rakutenMatch ? rakutenMatch[1] : undefined;
     const yahoo = yahooMatch ? yahooMatch[1] : undefined;
+    const imageUrl = imageMatch ? imageMatch[1] : undefined;
+    
+    const prices = {
+      amazon: amzPriceMatch ? amzPriceMatch[1] : undefined,
+      rakuten: rakPriceMatch ? rakPriceMatch[1] : undefined,
+      yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
+    };
 
-    // Remove the identifier lines from final HTML (handle multiple spaces and optional trailing newlines)
+    // Remove the identifier lines from final HTML
     s = s.replace(/ASIN:\s*[A-Z0-9]{10}[ \t]*\n?/gi, '');
     s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+    s = s.replace(/IMAGE:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+    s = s.replace(/AMAZON_PRICE:\s*\d+[ \t]*\n?/gi, '');
+    s = s.replace(/RAKUTEN_PRICE:\s*\d+[ \t]*\n?/gi, '');
+    s = s.replace(/YAHOO_PRICE:\s*\d+[ \t]*\n?/gi, '');
+
+    // Add Image Tag if present
+    if (imageUrl) {
+      s = s.replace(/(###\s*👑?\s*第\d+位:?[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
+    }
 
     // Replace placeholders with dynamic buttons for THIS section
-    const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo);
+    const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
     
     // Check if any placeholder exists (case-insensitive)
     const hasPlaceholder = /\[(AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/i.test(s);

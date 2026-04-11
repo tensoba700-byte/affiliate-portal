@@ -35,10 +35,10 @@ async function syncAllArticles() {
           articleTitle: data.title,
           name: product.name,
           category: category,
-          amazonUrl: product.amazon?.url || '',
-          rakutenUrl: product.rakuten?.url || '',
-          yahooUrl: product.yahoo?.url || '',
-          status: 'ASINなし',
+          amazonUrl: '',
+          rakutenUrl: '',
+          yahooUrl: '',
+          status: '未処理',
         });
         console.log(`✅ Synced: ${product.name}`);
       } catch (err) {
