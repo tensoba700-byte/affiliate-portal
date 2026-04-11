@@ -293,22 +293,22 @@ body {
   box-shadow: 0 12px 28px rgba(0,0,0,0.2);
 }
 .btn-amazon {
-  background: linear-gradient(135deg, #ff9900 0%, #ff7700 100%);
+  background: linear-gradient(135deg, #FFB400 0%, #FF9900 100%);
 }
 .btn-rakuten {
-  background: linear-gradient(135deg, #bf0000 0%, #890000 100%);
+  background: linear-gradient(135deg, #FF0000 0%, #BF0000 100%);
 }
 .btn-yahoo {
-  background: linear-gradient(135deg, #e06a8c 0%, #b84d6d 100%);
+  background: linear-gradient(135deg, #FF3366 0%, #FF0033 100%);
 }
 .btn-amazon:hover {
-  background: linear-gradient(135deg, #e68a00 0%, #cc6000 100%);
+  background: linear-gradient(135deg, #FFC033 0%, #FF9900 100%);
 }
 .btn-rakuten:hover {
-  background: linear-gradient(135deg, #a30000 0%, #720000 100%);
+  background: linear-gradient(135deg, #FF4D4D 0%, #FF0000 100%);
 }
 .btn-yahoo:hover {
-  background: linear-gradient(135deg, #c85878 0%, #a03a58 100%);
+  background: linear-gradient(135deg, #FF6699 0%, #FF3366 100%);
 }
 
 
