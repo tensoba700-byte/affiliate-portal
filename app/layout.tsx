@@ -31,6 +31,9 @@ const notoSerif = Noto_Serif_JP({
 export const metadata: Metadata = {
   title: "みっけ！ | あなたにぴったりの「好き」が見つかる",
   description: "徹底比較して、あなたにぴったりの商品を見つける。毎日の暮らしをもっと素敵に！",
+  verification: {
+    google: "J8-SEhb4C964waSqjAa8KanJdsKHx-KkRQgz58zrNvk",
+  },
 };
 
 export default function RootLayout({
@@ -83,4 +86,3 @@ export default function RootLayout({
     </html>
   );
 }
-<meta name=google-site-verification content=J8-SEhb4C964waSqjAa8KanJdsKHx-KkRQgz58zrNvk />
