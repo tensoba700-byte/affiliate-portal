@@ -107,7 +107,7 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
     const rankMatch = section.match(/第(\d+)位[：:]\s*(.+)/);
     if (!rankMatch) continue;
     const rank = parseInt(rankMatch[1], 10);
-    if (rank > 6) continue; // limit to top 6
+    if (rank > 7) continue; // allow up to 7
     const name = rankMatch[2].replace(/\*\*/g, '').trim();
     const ratingMatch = section.match(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)\]/);
     const score = ratingMatch ? parseFloat(ratingMatch[1]) : 4.0;
@@ -123,15 +123,32 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       rakuten: { price: '価格を見る', url: `https://search.rakuten.co.jp/search/mall/${q}/` },
     };
 
-    // Detect specific IDs in section
-    const asinMatch = section.match(/ASIN:\s*([A-Z0-9]{10})/i);
-    if (asinMatch) {
-      product.amazon = { price: '価格を見る', url: amazonUrl(asinMatch[1]) };
+    // Image URL from IMAGE: tag
+    const imageMatch = section.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+    if (imageMatch) product.imageUrl = imageMatch[1];
+
+    // Amazon affiliate URL: ASIN: can be a full URL or bare ASIN code
+    const amzMatch = section.match(/ASIN:\s*(https?:\/\/\S+|[A-Z0-9]{10})/i);
+    if (amzMatch) {
+      product.amazon = { price: '価格を見る', url: amazonUrl(amzMatch[1]) };
     }
+
+    // Rakuten affiliate URL
     const rakutenMatch = section.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
     if (rakutenMatch) {
-      product.rakuten = { price: '価格を見る', url: rakutenUrl(rakutenMatch[1]) };
+      // Decode any URL-encoded pc= parameter
+      const rawUrl = rakutenMatch[1];
+      const decoded = rawUrl.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (encoded) => decodeURIComponent(encoded));
+      product.rakuten = { price: '価格を見る', url: decoded };
     }
+
+    // Prices
+    const amzPrice = section.match(/AMAZON_PRICE:\s*(\d+)/i);
+    const rakPrice = section.match(/RAKUTEN_PRICE:\s*(\d+)/i);
+    const yahPrice = section.match(/YAHOO_PRICE:\s*(\d+)/i);
+    if (amzPrice && product.amazon) product.amazon.price = `${Number(amzPrice[1]).toLocaleString()}円`;
+    if (rakPrice && product.rakuten) product.rakuten.price = `${Number(rakPrice[1]).toLocaleString()}円`;
+    if (yahPrice && product.yahoo) product.yahoo.price = `${Number(yahPrice[1]).toLocaleString()}円`;
 
     products.push(product);
   }
@@ -287,7 +304,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     const productName = nameMatch ? nameMatch[1].trim() : decodedSlug;
 
     // Find identifiers SPECIFIC to this section
-    const asinMatch = s.match(/ASIN:\s*([A-Z0-9]{10})/i);
+    // ASIN: accepts both a full affiliate URL and a bare 10-char ASIN code
+    const asinMatch = s.match(/ASIN:\s*(https?:\/\/\S+|[A-Z0-9]{10})/i);
     const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
     const yahooMatch = s.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
     const imageMatch = s.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
@@ -296,7 +314,11 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     const yahPriceMatch = s.match(/YAHOO_PRICE:\s*(\d+)/i);
 
     const asin = asinMatch ? asinMatch[1] : undefined;
-    const rakuten = rakutenMatch ? rakutenMatch[1] : undefined;
+    // Decode url-encoded Rakuten URLs (pc=https%3A%2F%2F... → pc=https://...)
+    const rakutenRaw = rakutenMatch ? rakutenMatch[1] : undefined;
+    const rakuten = rakutenRaw
+      ? rakutenRaw.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (enc) => decodeURIComponent(enc))
+      : undefined;
     const yahoo = yahooMatch ? yahooMatch[1] : undefined;
     const imageUrl = imageMatch ? imageMatch[1] : undefined;
     
@@ -306,8 +328,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
     };
 
-    // Remove strictly the identifier lines from final HTML (so they don't show up in text)
-    s = s.replace(/ASIN:\s*[A-Z0-9]{10}[ \t]*\n?/gi, '');
+    // Remove all identifier/metadata lines from final HTML
+    s = s.replace(/ASIN:\s*(?:https?:\/\/\S+|[A-Z0-9]{10})[ \t]*\n?/gi, '');
     s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/IMAGE:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
@@ -335,9 +357,8 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
     }
 
-    // Finally, strip any raw URLs leaked in the description text (Point 4 & 7)
-    // We only strip URLs that are NOT inside href="..." or src="..."
-    s = s.replace(/(?<!href="|src=")https?:\/\/[^\s<)\]]+/gi, '');
+    // Strip any remaining raw URLs NOT inside an HTML attribute (href/src)
+    s = s.replace(/(?<!["'])https?:\/\/(?![^<>]*["'])[^\s<)\]]+/gi, '');
 
     return s;
   });

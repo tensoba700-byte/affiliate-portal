@@ -2,7 +2,7 @@ import requests
 import os
 import json
 import datetime
-import uuid
+import urllib.parse
 from dotenv import load_dotenv
 
 # Load env from local directory
@@ -25,6 +25,9 @@ ARTICLE_TITLE = "【2024年春】テレワークが劇的に捗る！デスク�
 # Output title (year corrected to 2026)
 OUTPUT_ARTICLE_TITLE = "【2026年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選"
 CATEGORY = "ガジェット"
+# Fixed slug - always overwrites the canonical article file
+FIXED_SLUG = "20260411-telework-gadgets-f401"
+
 
 def get_notion_data():
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
@@ -35,97 +38,125 @@ def get_notion_data():
         }
     }
     response = requests.post(url, headers=headers, json=payload)
-    if response.status_code == 200:
-        results = response.json().get("results", [])
-        products = []
-        for result in results:
-            props = result.get("properties", {})
+    if response.status_code != 200:
+        print(f"Notion API error: {response.status_code}")
+        return []
 
-            def get_rich_text(prop_name):
-                rt = props.get(prop_name, {}).get("rich_text", [])
-                return rt[0]["plain_text"] if rt else ""
+    results = response.json().get("results", [])
+    products = []
 
-            def get_url(prop_name):
-                # Support both url-type and rich_text-type properties
-                prop = props.get(prop_name, {})
-                if prop.get("type") == "url":
-                    return prop.get("url") or ""
-                return get_rich_text(prop_name)
+    for result in results:
+        props = result.get("properties", {})
 
-            # Prices are stored as rich_text like "¥12,990" - strip to numeric string
-            def get_price(prop_name):
-                raw = get_rich_text(prop_name)
-                # Remove ¥ and commas to get pure number string
-                return raw.replace("¥", "").replace(",", "").strip()
+        def get_rich_text(prop_name):
+            rt = props.get(prop_name, {}).get("rich_text", [])
+            return rt[0]["plain_text"] if rt else ""
 
-            p = {
-                "name": props.get("商品名", {}).get("title", [{}])[0].get("text", {}).get("content", ""),
-                "image_url": get_url("Image URL"),
-                "amazon_url": get_url("Amazon Affiliate URL"),
-                "rakuten_url": get_url("Rakuten Affiliate URL"),
-                "yahoo_url": get_url("Yahoo Affiliate URL"),
-                "amazon_price": get_price("Amazon Price"),
-                "rakuten_price": get_price("Rakuten Price"),
-                "yahoo_price": get_price("Yahoo Price"),
-            }
-            products.append(p)
-        return products
-    return []
+        def get_url_prop(prop_name):
+            prop = props.get(prop_name, {})
+            if prop.get("type") == "url":
+                return prop.get("url") or ""
+            return get_rich_text(prop_name)
+
+        def get_price(prop_name):
+            raw = get_rich_text(prop_name)
+            return raw.replace("¥", "").replace(",", "").strip()
+
+        def decode_rakuten_url(url: str) -> str:
+            """Ensure the pc= parameter in Rakuten affiliate URLs is NOT URL-encoded."""
+            if not url:
+                return url
+            # Decode all percent-encoded characters so pc=https%3A%2F%2F... becomes pc=https://...
+            return urllib.parse.unquote(url)
+
+        amazon_url = get_url_prop("Amazon Affiliate URL")
+        rakuten_url = decode_rakuten_url(get_url_prop("Rakuten Affiliate URL"))
+        yahoo_url = get_url_prop("Yahoo Affiliate URL")
+
+        p = {
+            "name": props.get("商品名", {}).get("title", [{}])[0].get("text", {}).get("content", ""),
+            "image_url": get_url_prop("Image URL"),
+            "amazon_url": amazon_url,
+            "rakuten_url": rakuten_url,
+            "yahoo_url": yahoo_url,
+            "amazon_price": get_price("Amazon Price"),
+            "rakuten_price": get_price("Rakuten Price"),
+            "yahoo_price": get_price("Yahoo Price"),
+        }
+        products.append(p)
+
+    return products
+
 
 def generate_content_with_llm(products_data):
-    """Call Groq to generate the descriptions for each product"""
+    """Call Groq to generate high-quality article content for each product."""
+    # Only pass product names to LLM - URLs and prices come from Notion
+    llm_products = [{"name": p["name"]} for p in products_data]
+
     prompt = f"""
-あなたはプロの家電・ライフスタイルライター（愛称：おこげ社長）です。
-以下の商品リストをもとに、読者の心に刺さる最高の比較・紹介記事を作成してください。
+あなたはプロの家電・ガジェットレビューライター（愛称：おこげ社長）です。
+以下の商品7点について、読者が「絶対欲しい！」と思うような最高の比較レビュー記事を日本語で作成してください。
 
 【執筆ルール】
 1. 年号は必ず「2026年」を使用してください。
-2. 商品紹介文は1つあたり150文字〜200文字程度で、具体的かつ詳細に書いてください。
-3. メリット・デメリットは「安い」「便利」といった当たり前のことではなく、
-   「〇〇なシーンで特に役立つ」「従来のモデルと比べて〇〇が改善されている」など、
-   実際に使った人しか分からないような深い洞察や、読者が「なるほど」と思う視点を含めてください。
-4. 説明文の中にURLや価格は絶対に含めないでください。
+2. 商品紹介文（description）は各商品200文字以上。以下を含めること：
+   - テレワーク・集中作業・長時間使用などの具体的シーン
+   - 競合製品と比べた優位点
+   - 実際に使ったときに「分かる」違い
+   スマホで読みやすいよう、2〜3文ごとに改行（\\nで表現）を入れてください。
+3. スコア（score）は実際の市場評価・口コミ実績を反映した現実的な数値：
+   - 4.9〜5.0: 業界最高峰（例: HHKB）
+   - 4.7〜4.8: 非常に高品質・プロ愛用（例: Sony WH-1000XM5）
+   - 4.4〜4.6: 高品質・多くのユーザーに支持
+   - 4.0〜4.3: 良品・特定用途に最適
+4. pros（メリット）は3つ、cons（デメリット）は2つ。
+   - 「高品質」「便利」「コスパが良い」などの抽象的表現は禁止
+   - 「長時間集中作業での首への負担を軽減する」など具体的な状況で書く
+   - 各項目は30文字以内でコンパクトに
+5. URLや価格は絶対に含めないこと。
 
 【商品リスト】
-{json.dumps(products_data, ensure_ascii=False, indent=2)}
+{json.dumps(llm_products, ensure_ascii=False, indent=2)}
 
-【出力形式】
-以下の構造のJSONで出力してください：
+【出力形式（JSON のみ出力）】
 {{
-  "excerpt": "記事のリード文（50文字程度）",
-  "intro": "導入文（読者の共感を得る内容）",
-  "points": ["選び方のポイント1", "選び方のポイント2", "選び方のポイント3"],
+  "excerpt": "記事のリード文（60文字程度）",
+  "intro": "導入文（テレワーカーの課題感から入る・100〜150文字、改行あり）",
+  "points": ["具体的な選び方ポイント1", "具体的な選び方ポイント2", "具体的な選び方ポイント3"],
   "products": [
     {{
-      "name": "商品名",
-      "description": "具体的で詳細な紹介文（150文字以上）",
-      "score": 4.5,
-      "pros": ["実用的なメリット1", "実用的なメリット2"],
-      "cons": ["許容できるデメリット1", "注意すべきデメリット1"]
+      "name": "商品名（入力と同じ表記）",
+      "description": "200文字以上の詳細紹介（改行\\nあり）",
+      "score": 4.7,
+      "pros": ["具体的メリット1（30文字以内）", "具体的メリット2", "具体的メリット3"],
+      "cons": ["具体的デメリット1（30文字以内）", "具体的デメリット2"]
     }}
   ],
-  "summary": "まとめ文（読者の背中を押す言葉）"
+  "summary": "まとめ文（購買意欲を後押しする・80文字程度）"
 }}
 """
-    
-    headers = {
+
+    llm_headers = {
         "Authorization": f"Bearer {GROQ_API_KEY}",
         "Content-Type": "application/json"
     }
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "あなたは最高のライターです。必ず日本語で、指定されたJSON形式のみを返してください。"},
+            {"role": "system", "content": "あなたは最高のガジェットレビューライターです。必ず日本語で、指定されたJSON形式のみを返してください。URLや価格は絶対に含めないでください。"},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.7,
+        "temperature": 0.65,
+        "max_tokens": 4000,
         "response_format": {"type": "json_object"}
     }
-    
-    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+
+    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=llm_headers, json=payload)
     if res.status_code == 200:
         return res.json()["choices"][0]["message"]["content"]
+    print(f"LLM error: {res.status_code} {res.text}")
     return None
+
 
 def publish():
     print(f"Fetching Notion data for '{ARTICLE_TITLE}'...")
@@ -134,15 +165,23 @@ def publish():
         print("No products found.")
         return
 
-    print("Generating content with LLM...")
+    print(f"Found {len(products)} products from Notion.")
+    for p in products:
+        amazon_preview = p['amazon_url'][:70] if p['amazon_url'] else 'NONE'
+        rakuten_preview = p['rakuten_url'][:70] if p['rakuten_url'] else 'NONE'
+        print(f"  - {p['name']}")
+        print(f"    amazon : {amazon_preview}")
+        print(f"    rakuten: {rakuten_preview}")
+
+    print("\nGenerating content with LLM...")
     raw_content = generate_content_with_llm(products)
     if not raw_content:
         print("LLM generation failed.")
         return
-    
+
     data = json.loads(raw_content)
-    
-    # 5. Format Markdown
+
+    # Build Markdown
     markdown = f"""---
 title: "{OUTPUT_ARTICLE_TITLE}"
 coverImage: ""
@@ -160,52 +199,71 @@ category: "{CATEGORY}"
 
 """
 
-    print(f"Debug: LLM returned {len(data['products'])} products")
-    
+    print(f"LLM returned {len(data['products'])} products")
+
     for i, p_info in enumerate(data['products']):
         rank = i + 1
-        # Robust matching: check if LLM name is in Notion names or vice versa
-        notion_p = next((x for x in products if x['name'] in p_info['name'] or p_info['name'] in x['name']), None)
-        
-        if not notion_p:
-            print(f"⚠️ Could not match product: {p_info['name']}")
-        
-        markdown += f"### 👑 第{rank}位: {p_info['name']}\n"
-        if notion_p and notion_p['image_url']:
-            print(f"DEBUG: Found IMAGE for {p_info['name']}: {notion_p['image_url']}")
-            markdown += f"IMAGE: {notion_p['image_url']}\n"
-        
-        markdown += f"[総合評価: {p_info['score']}]\n\n"
-        
-        if notion_p:
-            # Prices are already plain numeric strings e.g. "12990"
-            if notion_p['amazon_price']: markdown += f"AMAZON_PRICE: {notion_p['amazon_price']}\n"
-            if notion_p['rakuten_price']: markdown += f"RAKUTEN_PRICE: {notion_p['rakuten_price']}\n"
-            if notion_p['yahoo_price']: markdown += f"YAHOO_PRICE: {notion_p['yahoo_price']}\n"
-            
-            # Use specific affiliate URLs if provided by Qclaw
-            if notion_p['amazon_url']: markdown += f"ASIN: {notion_p['amazon_url']}\n"
-            if notion_p['rakuten_url']: markdown += f"RAKUTEN: {notion_p['rakuten_url']}\n"
-            if notion_p['yahoo_url']: markdown += f"YAHOO: {notion_p['yahoo_url']}\n"
+        # Match LLM product name to Notion product (case-insensitive substring match)
+        notion_p = next(
+            (x for x in products
+             if x['name'].lower() in p_info['name'].lower()
+             or p_info['name'].lower() in x['name'].lower()),
+            None
+        )
 
-        markdown += f"{p_info['description']}\n\n"
-        
-        markdown += ":::pro\n" + "\n".join([f"- {m}" for m in p_info['pros']]) + "\n:::\n"
-        markdown += ":::con\n" + "\n".join([f"- {c}" for c in p_info['cons']]) + "\n:::\n\n"
-        
+        if not notion_p:
+            print(f"  ⚠️ Could not match: '{p_info['name']}'")
+
+        markdown += f"### 👑 第{rank}位: {p_info['name']}\n"
+
+        if notion_p and notion_p['image_url']:
+            markdown += f"IMAGE: {notion_p['image_url']}\n"
+            print(f"  [{rank}] IMAGE OK: {notion_p['image_url'][:60]}")
+
+        markdown += f"[総合評価: {p_info['score']}]\n\n"
+
+        if notion_p:
+            # Prices (plain numeric strings)
+            if notion_p['amazon_price']:
+                markdown += f"AMAZON_PRICE: {notion_p['amazon_price']}\n"
+            if notion_p['rakuten_price']:
+                markdown += f"RAKUTEN_PRICE: {notion_p['rakuten_price']}\n"
+            if notion_p['yahoo_price']:
+                markdown += f"YAHOO_PRICE: {notion_p['yahoo_price']}\n"
+
+            # Affiliate URLs - written exactly as retrieved from Notion, NO modification
+            if notion_p['amazon_url']:
+                markdown += f"ASIN: {notion_p['amazon_url']}\n"
+                print(f"  [{rank}] AMAZON: {notion_p['amazon_url']}")
+            if notion_p['rakuten_url']:
+                markdown += f"RAKUTEN: {notion_p['rakuten_url']}\n"
+                print(f"  [{rank}] RAKUTEN: {notion_p['rakuten_url'][:80]}")
+            if notion_p['yahoo_url']:
+                markdown += f"YAHOO: {notion_p['yahoo_url']}\n"
+
+        # Description with mobile-friendly line breaks
+        description = p_info['description'].replace('\\n', '\n\n')
+        markdown += f"\n{description}\n\n"
+
+        # Pros/Cons - compact
+        pros = p_info.get('pros', [])[:3]
+        cons = p_info.get('cons', [])[:2]
+
+        markdown += ":::pro\n" + "\n".join([f"- {m}" for m in pros]) + "\n:::\n"
+        markdown += ":::con\n" + "\n".join([f"- {c}" for c in cons]) + "\n:::\n\n"
+
         markdown += "[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
 
     markdown += f"## まとめ\n{data['summary']}\n"
 
-    # Write to file
-    slug = f"20260411-telework-gadgets-{uuid.uuid4().hex[:4]}"
-    file_path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{slug}.md"
-    
+    # Write to fixed file path (overwrite the canonical article)
+    file_path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{FIXED_SLUG}.md"
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(markdown)
-    
-    print(f"✅ Published: {file_path}")
-    return slug
+
+    print(f"\n✅ Published: {file_path}")
+    return FIXED_SLUG
+
 
 if __name__ == "__main__":
     publish()
