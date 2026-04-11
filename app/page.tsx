@@ -53,26 +53,26 @@ export default async function Home() {
       {/* 🌟 Cute Category Cards */}
       <section className="w-full px-4 -mt-10 relative z-20">
         <div className="container mx-auto max-w-6xl">
-          {/* Scrollable container for mobile to prevent squishing, grid on larger screens */}
-          <div className="flex overflow-x-auto lg:grid lg:grid-cols-5 gap-4 md:gap-5 pb-8 lg:pb-0 hide-scrollbar snap-x snap-mandatory px-2">
+          {/* Responsive grid for all viewports */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 px-2">
             {categories.map((cat, i) => (
               <Link 
                 key={cat.id} 
                 href={`/search?category=${encodeURIComponent(cat.jp)}`} 
-                className="snap-start flex-shrink-0 w-40 md:w-56 lg:w-auto group relative h-48 md:h-64 lg:h-72 rounded-[2rem] overflow-hidden cute-shadow block transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-                style={{ animationDelay: `${i * 100}ms` }}
+                className="group relative h-40 md:h-64 lg:h-72 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cute-shadow block transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl animate-fade-in-up"
+                style={{ animationDelay: `${i * 80}ms` }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-black/20 to-transparent group-hover:from-primary/90 transition-colors z-10 duration-500 mix-blend-overlay"></div>
-                <div className="absolute inset-0 bg-black/10 z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10 duration-500"></div>
                 {/* Image */}
                 <img 
                   src={cat.image} 
-                  alt={cat.name} 
+                  alt={cat.jp} 
+                  loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 {/* Text Content */}
-                <div className="absolute inset-x-0 bottom-0 p-4 md:p-6 z-20 text-center">
-                  <h3 className="text-base md:text-lg lg:text-xl font-black text-white leading-tight drop-shadow-md whitespace-nowrap">
+                <div className="absolute inset-x-0 bottom-0 p-3 md:p-6 z-20 text-center">
+                  <h3 className="text-sm md:text-lg lg:text-xl font-black text-white leading-tight drop-shadow-md">
                     {cat.jp}
                   </h3>
                 </div>

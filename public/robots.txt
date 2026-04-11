@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://mikke-style.com
+
+# Sitemaps
+Sitemap: https://mikke-style.com/sitemap.xml

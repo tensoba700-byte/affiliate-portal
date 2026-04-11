@@ -58,32 +58,41 @@ export default function Header() {
 
       {/* Mobile Menu Overlay */}
       {open && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40" onClick={toggleMenu} />
+        <div className="fixed inset-0 bg-black/60 z-40" onClick={toggleMenu} />
       )}
-      <div className={`fixed inset-y-0 left-0 w-64 bg-white shadow-xl transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 z-50`}>
-        <div className="flex items-center justify-between p-4 border-b">
-          <span className="text-lg font-black text-primary">メニュー</span>
-          <button onClick={toggleMenu} aria-label="閉じる" className="text-primary">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <div className={`fixed inset-y-0 left-0 w-72 bg-white shadow-2xl transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 z-50`}>
+        <div className="flex items-center justify-between p-6 border-b border-primary/5">
+          <span className="text-xl font-black text-primary">メニュー 🌷</span>
+          <button onClick={toggleMenu} aria-label="閉じる" className="text-primary p-2 hover:bg-primary/5 rounded-full transition-colors">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
         </div>
-        <nav className="flex flex-col p-4 space-y-3">
-          <Link href="/" className="text-base font-medium text-primary hover:underline" onClick={toggleMenu}>ホーム</Link>
-          <Link href="/articles" className="text-base font-medium text-primary hover:underline" onClick={toggleMenu}>すべての記事</Link>
-          <hr className="my-2" />
-          {categories.map((cat) => (
-            <Link
-              key={cat.id}
-              href={`/search?q=${encodeURIComponent(cat.query)}`}
-              className="text-base font-medium text-primary hover:underline"
-              onClick={toggleMenu}
-            >
-              {cat.jp}
-            </Link>
-          ))}
+        <nav className="flex flex-col p-6 space-y-4">
+          <Link href="/" className="text-base font-black text-foreground hover:text-primary transition-colors flex items-center gap-2" onClick={toggleMenu}>
+            <span>🏠</span> ホーム
+          </Link>
+          <Link href="/articles" className="text-base font-black text-foreground hover:text-primary transition-colors flex items-center gap-2" onClick={toggleMenu}>
+            <span>📚</span> すべての記事
+          </Link>
+          <div className="pt-4 pb-2">
+            <p className="text-[10px] font-black text-muted tracking-widest uppercase mb-4">カテゴリー</p>
+            <div className="flex flex-col space-y-3">
+              {categories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  href={`/search?category=${encodeURIComponent(cat.jp)}`}
+                  className="text-sm font-bold text-muted hover:text-primary transition-colors flex items-center gap-3 pl-2"
+                  onClick={toggleMenu}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary/30"></span>
+                  {cat.jp}
+                </Link>
+              ))}
+            </div>
+          </div>
         </nav>
       </div>
     </header>

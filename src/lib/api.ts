@@ -239,6 +239,14 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
   return markdownArticles;
 }
 
+/** Get related articles by category (excluding current slug) */
+export async function getRelatedArticles(currentSlug: string, category: string, limit = 3): Promise<ArticleItem[]> {
+  const allArticles = await getAllArticles();
+  return allArticles
+    .filter(a => a.slug !== currentSlug && a.category === category)
+    .slice(0, limit);
+}
+
 /** Fetch a single article by slug, preferring Contentful and falling back to markdown. */
 export async function getArticleBySlug(slug: string): Promise<ArticleItem | null> {
   // 1️⃣ Try Contentful

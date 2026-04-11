@@ -29,10 +29,41 @@ const notoSerif = Noto_Serif_JP({
 });
 
 export const metadata: Metadata = {
-  title: "みっけ！ | あなたにぴったりの「好き」が見つかる",
-  description: "徹底比較して、あなたにぴったりの商品を見つける。毎日の暮らしをもっと素敵に！",
+  title: {
+    default: "みっけ！ | あなたにぴったりの「好き」が見つかる",
+    template: "%s | みっけ！"
+  },
+  description: "徹底比較して、あなたにぴったりの商品を見つける。毎日の暮らしをもっと素敵に！話題のアイテムから隠れた名品まで徹底レビュー。",
+  metadataBase: new URL('https://mikke-style.com'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'ja_JP',
+    url: 'https://mikke-style.com',
+    siteName: 'みっけ！',
+    images: [
+      {
+        url: '/og-image.png', // We should add this later or point to a default
+        width: 1200,
+        height: 630,
+        alt: 'みっけ！',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'みっけ！ | あなたにぴったりの「好き」が見つかる',
+    description: '徹底比較して、あなたにぴったりの商品を見つける。',
+  },
   verification: {
     google: "J8-SEhb4C964waSqjAa8KanJdsKHx-KkRQgz58zrNvk",
+  },
+  icons: {
+    icon: '/favicon.svg',
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
   },
 };
 
@@ -44,12 +75,27 @@ export default function RootLayout({
   return (
     <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} ${notoSerif.variable} h-full antialiased`} data-theme="peach" data-font="sans">
       <head>
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-6SXHM8M2BJ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-6SXHM8M2BJ');
+          `}
+        </Script>
+        
         <Script 
           async 
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5656025362252156" 
           crossOrigin="anonymous" 
           strategy="afterInteractive"
         />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-500">
         
