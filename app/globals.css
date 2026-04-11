@@ -247,25 +247,32 @@ body {
 
 /* Amazon / Rakuten / Yahoo Buttons */
 .affiliate-buttons {
-  @apply flex gap-3 mt-8 mb-12;
+  @apply flex gap-3 mt-8 mb-10;
   flex-wrap: wrap;
   justify-content: center;
 }
 .btn-amazon, .btn-rakuten, .btn-yahoo {
   flex: 1 1 0%;
-  min-width: 0;
-  @apply py-4 rounded-2xl font-black text-white transition-all shadow-md;
+  min-width: 140px;
+  max-width: 220px;
+  @apply font-black text-white transition-all;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   text-decoration: none;
   transform: translateY(0);
-  font-size: 13px;
+  font-size: 15px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 @media (max-width: 640px) {
   .btn-amazon, .btn-rakuten, .btn-yahoo {
     flex: 1 1 100%;
+    max-width: 100%;
+    font-size: 16px;
+    padding: 18px 24px;
   }
 }
 .btn-icon {
@@ -274,7 +281,7 @@ body {
   justify-content: center;
   background: white;
   border-radius: 9999px;
-  padding: 3px;
+  padding: 4px;
   flex-shrink: 0;
 }
 .btn-icon img {
@@ -283,27 +290,25 @@ body {
 }
 .btn-amazon:hover, .btn-rakuten:hover, .btn-yahoo:hover {
   transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.2);
 }
 .btn-amazon {
-  background-color: #ff9900;
+  background: linear-gradient(135deg, #ff9900 0%, #ff7700 100%);
 }
 .btn-rakuten {
-  background-color: #bf0000;
+  background: linear-gradient(135deg, #bf0000 0%, #890000 100%);
 }
 .btn-yahoo {
-  background-color: #e06a8c;
+  background: linear-gradient(135deg, #e06a8c 0%, #b84d6d 100%);
 }
 .btn-amazon:hover {
-  background-color: #e68a00;
-  box-shadow: 0 10px 15px -3px rgba(255, 153, 0, 0.4);
+  background: linear-gradient(135deg, #e68a00 0%, #cc6000 100%);
 }
 .btn-rakuten:hover {
-  background-color: #a30000;
-  box-shadow: 0 10px 15px -3px rgba(191, 0, 0, 0.4);
+  background: linear-gradient(135deg, #a30000 0%, #720000 100%);
 }
 .btn-yahoo:hover {
-  background-color: #c85878;
-  box-shadow: 0 10px 15px -3px rgba(224, 106, 140, 0.4);
+  background: linear-gradient(135deg, #c85878 0%, #a03a58 100%);
 }
 
 

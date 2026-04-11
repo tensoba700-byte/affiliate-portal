@@ -215,16 +215,16 @@ export default function RankingTable({ products, title }: Props) {
 
       {/* 商品行 */}
       <div className="divide-y" style={{ borderColor: C.border }}>
-        {displayed.map((p) => (
+        {displayed.map((p, idx) => (
           <div
             key={p.name}
             className="grid grid-cols-1 md:grid-cols-[2.5rem_4rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
             onMouseEnter={e => (e.currentTarget.style.background = C.rowHover)}
             onMouseLeave={e => (e.currentTarget.style.background = "#fff")}
           >
-            {/* バッジ（モバイル・PC共通） */}
+            {/* バッジ — ソート後の表示順を反映 */}
             <div className="flex items-center gap-3 md:block">
-              <RankBadge rank={p.rank} />
+              <RankBadge rank={idx + 1} />
               <div className="md:hidden flex-1">
                 {p.brand && <p className="text-[10px] font-bold" style={{ color: "#bbb" }}>{p.brand}</p>}
                 <p className="text-sm font-black" style={{ color: C.scoreColor }}>{p.name}</p>

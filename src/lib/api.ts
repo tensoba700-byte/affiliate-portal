@@ -203,16 +203,24 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
       const fullPath = path.join(articlesDirectory, fn);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
+
+      // Use frontmatter coverImage, or extract the first IMAGE: tag from content as fallback
+      let coverImage: string | null = matterResult.data.coverImage || null;
+      if (!coverImage) {
+        const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+        if (firstImageMatch) coverImage = firstImageMatch[1];
+      }
+
       return {
         id: slug,
         slug,
         title: matterResult.data.title || slug,
-        coverImage: matterResult.data.coverImage || null,
+        coverImage,
         excerpt: matterResult.data.excerpt || '',
         publishedAt: matterResult.data.publishDate || now.toISOString(),
         content: matterResult.content,
         rankings: [],
-        thumbnail: null,
+        thumbnail: coverImage,
         category: matterResult.data.category || '',
         body: undefined,
       } as ArticleItem;
