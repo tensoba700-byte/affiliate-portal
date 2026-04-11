@@ -122,7 +122,29 @@ type Props = {
 
 export default function RankingTable({ products, title }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("recommend");
-  const displayed = [...products].slice(0, 6);
+
+  // Sorting logic based on activeTab
+  const sortedProducts = [...products].sort((a, b) => {
+    if (activeTab === "recommend") {
+      return b.score - a.score;
+    }
+    if (activeTab === "cospa") {
+      // Logic: Lower (Price / Score) is better
+      const getPriceValue = (p: Product) => {
+        const priceStr = p.amazon?.price || p.rakuten?.price || p.yahoo?.price || "0";
+        return parseInt(priceStr.replace(/[^0-9]/g, ""), 10) || 1000000; // default high price if missing
+      };
+      const valA = getPriceValue(a) / (a.score || 1);
+      const valB = getPriceValue(b) / (b.score || 1);
+      return valA - valB;
+    }
+    if (activeTab === "popular") {
+      return a.rank - b.rank; // Original rank
+    }
+    return 0;
+  });
+
+  const displayed = sortedProducts.slice(0, 6);
 
   /* パステルピンク系トークン */
   const C = {
@@ -181,12 +203,12 @@ export default function RankingTable({ products, title }: Props) {
 
       {/* テーブルヘッダー（PCのみ） */}
       <div
-        className="hidden md:grid grid-cols-[2.5rem_1fr_3rem_5rem_auto] gap-3 items-center px-5 py-2.5 text-[11px] font-black"
+        className="hidden md:grid grid-cols-[2.5rem_4rem_1fr_5rem_auto] gap-3 items-center px-5 py-2.5 text-[11px] font-black"
         style={{ background: C.colHeaderBg, color: C.colHeaderText, borderBottom: `1px solid ${C.border}` }}
       >
         <span>順位</span>
-        <span>商品名</span>
         <span className="text-center">画像</span>
+        <span>商品名</span>
         <span className="text-center">スコア</span>
         <span className="text-center">購入ページへ</span>
       </div>
@@ -195,13 +217,13 @@ export default function RankingTable({ products, title }: Props) {
       <div className="divide-y" style={{ borderColor: C.border }}>
         {displayed.map((p) => (
           <div
-            key={p.rank}
-            className="grid grid-cols-1 md:grid-cols-[2.5rem_1fr_3rem_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
+            key={p.name}
+            className="grid grid-cols-1 md:grid-cols-[2.5rem_4rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
             onMouseEnter={e => (e.currentTarget.style.background = C.rowHover)}
             onMouseLeave={e => (e.currentTarget.style.background = "#fff")}
           >
-            {/* バッジ＋モバイル時の商品名 */}
-            <div className="flex md:block items-center gap-3">
+            {/* バッジ（モバイル・PC共通） */}
+            <div className="flex items-center gap-3 md:block">
               <RankBadge rank={p.rank} />
               <div className="md:hidden flex-1">
                 {p.brand && <p className="text-[10px] font-bold" style={{ color: "#bbb" }}>{p.brand}</p>}
@@ -209,10 +231,31 @@ export default function RankingTable({ products, title }: Props) {
               </div>
             </div>
 
-            {/* 商品名（PC） */}
+            {/* 画像（モバイル・PC共通） */}
+            <div className="flex items-center justify-center">
+              {p.imageUrl ? (
+                <img
+                  src={p.imageUrl}
+                  alt={p.name}
+                  width={64}
+                  height={64}
+                  className="object-contain rounded-lg w-12 h-12 md:w-16 md:h-16"
+                  style={{ border: `1px solid ${C.border}` }}
+                />
+              ) : (
+                <div
+                  className="w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center text-lg"
+                  style={{ background: C.headerBg }}
+                >
+                  🎀
+                </div>
+              )}
+            </div>
+
+            {/* 商品名（PCのみ - モバイルはバッジ横に表示） */}
             <div className="hidden md:block">
               {p.brand && <p className="text-[10px] font-bold mb-0.5" style={{ color: "#bbb" }}>{p.brand}</p>}
-              <p className="text-sm font-black leading-snug cursor-pointer underline underline-offset-2" style={{ color: C.scoreColor }}>
+              <p className="text-sm font-black leading-snug underline underline-offset-2" style={{ color: C.scoreColor }}>
                 {p.name}
               </p>
             </div>

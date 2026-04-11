@@ -58,7 +58,7 @@ export default async function Home() {
             {categories.map((cat, i) => (
               <Link 
                 key={cat.id} 
-                href="#" 
+                href={`/search?category=${encodeURIComponent(cat.jp)}`} 
                 className="snap-start flex-shrink-0 w-40 md:w-56 lg:w-auto group relative h-48 md:h-64 lg:h-72 rounded-[2rem] overflow-hidden cute-shadow block transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
                 style={{ animationDelay: `${i * 100}ms` }}
               >

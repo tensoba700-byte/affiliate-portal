@@ -306,7 +306,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
     };
 
-    // Remove the identifier lines from final HTML
+    // Remove strictly the identifier lines from final HTML (so they don't show up in text)
     s = s.replace(/ASIN:\s*[A-Z0-9]{10}[ \t]*\n?/gi, '');
     s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
@@ -314,8 +314,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     s = s.replace(/AMAZON_PRICE:\s*\d+[ \t]*\n?/gi, '');
     s = s.replace(/RAKUTEN_PRICE:\s*\d+[ \t]*\n?/gi, '');
     s = s.replace(/YAHOO_PRICE:\s*\d+[ \t]*\n?/gi, '');
+    s = s.replace(/AMAZON_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+    s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
-    // Add Image Tag if present
+    // Add Image Tag if present, right after the heading
     if (imageUrl) {
       s = s.replace(/(###\s*👑?\s*第\d+位:?[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
     }
@@ -333,15 +335,14 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
     }
 
+    // Finally, strip any raw URLs leaked in the description text (Point 4 & 7)
+    // We only strip URLs that are NOT inside href="..." or src="..."
+    s = s.replace(/(?<!href="|src=")https?:\/\/[^\s<)\]]+/gi, '');
+
     return s;
   });
 
   content = processedSections.join('\n\n');
-
-  // Convert any remaining raw affiliate URLs in text into buttons (Global cleanup)
-  content = content.replace(/(?<!href=")https:\/\/shopping\.yahoo\.co\.jp\/[^\s)\]]+/gi, (url) => {
-    return `<div class="affiliate-buttons"><a href="${url}" target="_blank" class="btn-yahoo">${ICON('https://shopping.yahoo.co.jp/favicon.ico', 'Yahoo')} Yahoo!で見る</a></div>`;
-  });
 
   const processed = await remark()
     .use(remarkGfm)

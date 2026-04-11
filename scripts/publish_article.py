@@ -73,30 +73,38 @@ def get_notion_data():
     return []
 
 def generate_content_with_llm(products_data):
-    """Cal Groq to generate the descriptions for each product"""
+    """Call Groq to generate the descriptions for each product"""
     prompt = f"""
-あなたはプロの家電ライターです。以下のガジェット7選について、各商品の魅力を伝える紹介文（150文字程度）を作成してください。
-また、選び方のポイントとまとめも作成してください。
+あなたはプロの家電・ライフスタイルライター（愛称：おこげ社長）です。
+以下の商品リストをもとに、読者の心に刺さる最高の比較・紹介記事を作成してください。
+
+【執筆ルール】
+1. 年号は必ず「2026年」を使用してください。
+2. 商品紹介文は1つあたり150文字〜200文字程度で、具体的かつ詳細に書いてください。
+3. メリット・デメリットは「安い」「便利」といった当たり前のことではなく、
+   「〇〇なシーンで特に役立つ」「従来のモデルと比べて〇〇が改善されている」など、
+   実際に使った人しか分からないような深い洞察や、読者が「なるほど」と思う視点を含めてください。
+4. 説明文の中にURLや価格は絶対に含めないでください。
 
 【商品リスト】
 {json.dumps(products_data, ensure_ascii=False, indent=2)}
 
 【出力形式】
-以下の構造のJSONで出力してください。
+以下の構造のJSONで出力してください：
 {{
-  "excerpt": "記事のリード文",
-  "intro": "導入文...",
-  "points": ["ポイント1", "ポイント2", "ポイント3"],
+  "excerpt": "記事のリード文（50文字程度）",
+  "intro": "導入文（読者の共感を得る内容）",
+  "points": ["選び方のポイント1", "選び方のポイント2", "選び方のポイント3"],
   "products": [
     {{
       "name": "商品名",
-      "description": "紹介文...",
+      "description": "具体的で詳細な紹介文（150文字以上）",
       "score": 4.5,
-      "pros": ["メリット1"],
-      "cons": ["デメリット1"]
+      "pros": ["実用的なメリット1", "実用的なメリット2"],
+      "cons": ["許容できるデメリット1", "注意すべきデメリット1"]
     }}
   ],
-  "summary": "まとめ文..."
+  "summary": "まとめ文（読者の背中を押す言葉）"
 }}
 """
     
@@ -107,7 +115,7 @@ def generate_content_with_llm(products_data):
     payload = {
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "You must respond strictly with valid JSON."},
+            {"role": "system", "content": "あなたは最高のライターです。必ず日本語で、指定されたJSON形式のみを返してください。"},
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.7,
