@@ -1,0 +1,2 @@
+# Ignore scripts folder from Vercel build
+scripts/
