@@ -46,19 +46,42 @@ const TABS: { key: Tab; label: string }[] = [
 
 /** ランクバッジ — 金・銀・銅 */
 function RankBadge({ rank }: { rank: number }) {
-  const configs: Record<number, { bg: string; text: string; border: string; label: string }> = {
-    1: { bg: 'linear-gradient(135deg, #FFD700, #FFA500)', text: '#5C3D00', border: '#FFA500', label: '1位' },
-    2: { bg: 'linear-gradient(135deg, #E8E8E8, #B8B8B8)', text: '#333',    border: '#B0B0B0', label: '2位' },
-    3: { bg: 'linear-gradient(135deg, #D4934A, #A96A2A)', text: '#FFF8F0', border: '#A96A2A', label: '3位' },
+  const top3: Record<number, { bg: string; label: string }> = {
+    1: { bg: 'linear-gradient(135deg, #FFD700, #FF8C00)', label: '1st' },
+    2: { bg: 'linear-gradient(135deg, #D8D8D8, #9A9A9A)', label: '2nd' },
+    3: { bg: 'linear-gradient(135deg, #CE7B3A, #8B4513)', label: '3rd' },
   };
-  const cfg = configs[rank] ?? { bg: '#FDF0F5', text: '#e06a8c', border: '#F8BBD0', label: `${rank}位` };
+
+  if (top3[rank]) {
+    return (
+      <div
+        className="flex items-center justify-center flex-shrink-0"
+        style={{
+          width: 44, height: 44, borderRadius: '50%',
+          background: top3[rank].bg,
+          color: '#FFFFFF',
+          fontWeight: 900, fontSize: 13,
+          boxShadow: '0 3px 10px rgba(0,0,0,0.25)',
+          letterSpacing: '0.5px',
+        }}
+      >
+        {top3[rank].label}
+      </div>
+    );
+  }
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-10 h-10 rounded-full flex-shrink-0"
-      style={{ background: cfg.bg, border: `2px solid ${cfg.border}`, color: cfg.text, boxShadow: '0 2px 6px rgba(0,0,0,0.15)' }}
+      className="flex items-center justify-center flex-shrink-0"
+      style={{
+        width: 40, height: 40, borderRadius: '50%',
+        background: '#444',
+        color: '#FFFFFF',
+        fontWeight: 900, fontSize: 11,
+        boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+      }}
     >
-      <span style={{ fontSize: '11px', fontWeight: 900, lineHeight: 1 }}>{cfg.label}</span>
+      {rank}位
     </div>
   );
 }
@@ -204,7 +227,7 @@ export default function RankingTable({ products, title }: Props) {
 
       {/* テーブルヘッダー（PCのみ） */}
       <div
-        className="hidden md:grid grid-cols-[2.5rem_4rem_1fr_5rem_auto] gap-3 items-center px-5 py-2.5 text-[11px] font-black"
+        className="hidden md:grid grid-cols-[2.5rem_6.5rem_1fr_5rem_auto] gap-3 items-center px-5 py-2.5 text-[11px] font-black"
         style={{ background: C.colHeaderBg, color: C.colHeaderText, borderBottom: `1px solid ${C.border}` }}
       >
         <span>順位</span>
@@ -219,7 +242,7 @@ export default function RankingTable({ products, title }: Props) {
         {displayed.map((p, idx) => (
           <div
             key={p.name}
-            className="grid grid-cols-1 md:grid-cols-[2.5rem_4rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
+            className="grid grid-cols-1 md:grid-cols-[2.5rem_6.5rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
             onMouseEnter={e => (e.currentTarget.style.background = C.rowHover)}
             onMouseLeave={e => (e.currentTarget.style.background = "#fff")}
           >
@@ -232,21 +255,24 @@ export default function RankingTable({ products, title }: Props) {
               </div>
             </div>
 
-            {/* 画像（モバイル・PC共通） */}
+            {/* 画像 */}
             <div className="flex items-center justify-center">
               {p.imageUrl ? (
-                <img
-                  src={p.imageUrl}
-                  alt={p.name}
-                  width={64}
-                  height={64}
-                  className="object-contain rounded-lg w-12 h-12 md:w-16 md:h-16"
-                  style={{ border: `1px solid ${C.border}` }}
-                />
+                <div
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px' }}
+                >
+                  <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    className="object-contain w-full h-full"
+                    style={{ borderRadius: '14px', mixBlendMode: 'multiply' }}
+                  />
+                </div>
               ) : (
                 <div
-                  className="w-12 h-12 md:w-16 md:h-16 rounded-lg flex items-center justify-center text-lg"
-                  style={{ background: C.headerBg }}
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px', background: C.headerBg }}
                 >
                   🎀
                 </div>
@@ -259,27 +285,6 @@ export default function RankingTable({ products, title }: Props) {
               <p className="text-sm font-black leading-snug underline underline-offset-2" style={{ color: C.scoreColor }}>
                 {p.name}
               </p>
-            </div>
-
-            {/* 画像（PC） */}
-            <div className="hidden md:flex items-center justify-center">
-              {p.imageUrl ? (
-                <img
-                  src={p.imageUrl}
-                  alt={p.name}
-                  width={42}
-                  height={42}
-                  className="object-contain rounded-lg"
-                  style={{ border: `1px solid ${C.border}` }}
-                />
-              ) : (
-                <div
-                  className="w-[42px] h-[42px] rounded-lg flex items-center justify-center text-lg"
-                  style={{ background: C.headerBg }}
-                >
-                  🎀
-                </div>
-              )}
             </div>
 
             {/* スコア */}

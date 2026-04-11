@@ -30,14 +30,34 @@ CATEGORY = "ガジェット"
 # Fixed slug - always overwrites the canonical article file
 FIXED_SLUG = "20260411-telework-gadgets-f401"
 
-# ----- Category Theme Colors -----
-CATEGORY_COLORS = {
-    '美容・スキンケア': ('#FF4F7B', '#FF7A9C'),
-    'ガジェット':   ('#1A3C6E', '#2D5B9A'),
-    'インテリア':   ('#2D6A4F', '#40916C'),
-    '生活雑貨':   ('#D4620A', '#F77F00'),
-    '便利グッズ': ('#007BAD', '#00A8D6'),
+# ----- Category Theme System -----
+CATEGORY_THEMES = {
+    '美容・スキンケア': {'bg1': '#3D0030', 'bg2': '#B84070', 'accent': '#FFD77A', 'pattern': 'stripes'},
+    'ガジェット':       {'bg1': '#080E1F', 'bg2': '#1A3A70', 'accent': '#FFE600', 'pattern': 'dots'},
+    'インテリア':       {'bg1': '#0D2B18', 'bg2': '#235C38', 'accent': '#FFFFFF', 'pattern': 'dots'},
+    '生活雑貨':         {'bg1': '#4A1800', 'bg2': '#BD5000', 'accent': '#FFFFFF', 'pattern': 'diagonal'},
+    '便利グッズ':       {'bg1': '#002030', 'bg2': '#005F85', 'accent': '#FFFFFF', 'pattern': 'dots'},
 }
+
+EYECATCH_PATTERNS = {
+    'dots':     ('radial-gradient(circle, rgba(255,255,255,0.13) 1.5px, transparent 1.5px)', '18px 18px'),
+    'stripes':  ('repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 2px, transparent 2px, transparent 16px)', 'auto'),
+    'diagonal': ('repeating-linear-gradient(-45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 3px, transparent 3px, transparent 22px)', 'auto'),
+}
+
+
+def extract_badge(title: str) -> str:
+    """Derive a short badge text from the article title."""
+    m = re.search(r'(\d+)選', title)
+    if m:
+        return f"人気{m.group(1)}選"
+    if '比較' in title:
+        return '徹底比較'
+    if 'ランキング' in title:
+        return '人気ランキング'
+    if 'おすすめ' in title:
+        return 'おすすめ特集'
+    return 'みっけ！厳選'
 
 
 def get_seasonal_catch_copy(category: str) -> str:
@@ -79,87 +99,56 @@ def get_seasonal_catch_copy(category: str) -> str:
 
 
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
-    """Generate an eyecatch HTML string and save it to public/eyecatch/[slug].html."""
-    color1, color2 = CATEGORY_COLORS.get(category, ('#1A3C6E', '#2D5B9A'))
+    """Generate a polished eyecatch with pattern overlay, text-stroke, and badge."""
+    theme = CATEGORY_THEMES.get(category, CATEGORY_THEMES['ガジェット'])
+    bg1, bg2, accent = theme['bg1'], theme['bg2'], theme['accent']
+    pattern_css, pattern_size = EYECATCH_PATTERNS[theme['pattern']]
+    badge = extract_badge(title)
+    display_title = title if len(title) <= 30 else title[:29] + '…'
+    accent_bar = accent if accent != '#FFFFFF' else 'rgba(255,255,255,0.35)'
 
-    # Show up to 5 product images
-    images_html = ""
+    imgs = ""
     for url in image_urls[:5]:
-        images_html += f'<div class="product-img-wrap"><img src="{url}" class="product-img" alt="" /></div>\n'
+        imgs += f'      <div class="pw"><img src="{url}" class="pi" alt="" /></div>\n'
 
-    # Truncate title for display
-    display_title = title if len(title) <= 28 else title[:27] + '…'
+    css = (
+        "@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap');"
+        "* { margin: 0; padding: 0; box-sizing: border-box; }"
+        "html, body { width: 390px; height: 260px; overflow: hidden; }"
+        "body { font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif; }"
+        ".c { width: 390px; height: 260px; display: flex; flex-direction: column; }"
+        f".t {{ background: linear-gradient(145deg, {bg1} 0%, {bg2} 100%); height: 170px; display:flex; flex-direction:column; justify-content:flex-end; padding:14px 22px 12px; position:relative; overflow:hidden; }}"
+        f".pat {{ position:absolute; inset:0; background-image:{pattern_css}; background-size:{pattern_size}; pointer-events:none; }}"
+        ".d1 { position:absolute; top:-45px; right:-35px; width:140px; height:140px; background:rgba(255,255,255,0.05); border-radius:50%; }"
+        ".d2 { position:absolute; bottom:-30px; left:-25px; width:90px; height:90px; background:rgba(255,255,255,0.04); border-radius:50%; }"
+        f".ab {{ position:absolute; top:0; left:0; right:0; height:5px; background:{accent_bar}; }}"
+        ".ct { position:relative; z-index:2; }"
+        ".br { display:flex; align-items:center; gap:8px; margin-bottom:5px; }"
+        ".bn { font-size:9px; font-weight:900; color:rgba(255,255,255,0.55); letter-spacing:3px; text-transform:uppercase; }"
+        ".bg { display:inline-block; background:#FFE600; color:#111; font-weight:900; font-size:10px; padding:2px 8px; border-radius:4px; letter-spacing:0.5px; }"
+        ".ca { font-size:10px; font-weight:700; color:rgba(255,255,255,0.80); margin-bottom:5px; letter-spacing:0.3px; }"
+        ".ti { font-size:15px; font-weight:900; color:#FFFFFF; line-height:1.42; -webkit-text-stroke:0.6px rgba(0,0,0,0.5); text-shadow:0 2px 10px rgba(0,0,0,0.75); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }"
+        f".b {{ background:#FFFFFF; flex:1; display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 18px; position:relative; }}"
+        f".b::before {{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,{bg2},{bg1}); }}"
+        ".pw { width:78px; height:78px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }"
+        ".pi { max-width:76px; max-height:76px; object-fit:contain; mix-blend-mode:multiply; }"
+    )
 
     html = f"""<!DOCTYPE html>
-<html lang="ja"><head>
-  <meta charset="UTF-8" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap');
-    * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-    html, body {{ width: 390px; height: 260px; overflow: hidden; }}
-    body {{ font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif; }}
-    .container {{ width: 390px; height: 260px; display: flex; flex-direction: column; }}
-    .top {{
-      background: linear-gradient(135deg, {color1} 0%, {color2} 100%);
-      height: 162px;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 18px 24px;
-      position: relative;
-      overflow: hidden;
-    }}
-    .top::after {{
-      content: '';
-      position: absolute; top: -30px; right: -30px;
-      width: 120px; height: 120px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 50%;
-      pointer-events: none;
-    }}
-    .brand {{
-      font-size: 10px; font-weight: 900;
-      color: rgba(255,255,255,0.65);
-      letter-spacing: 3px; text-transform: uppercase;
-      margin-bottom: 6px;
-    }}
-    .catch {{
-      font-size: 11px; font-weight: 900;
-      color: rgba(255,255,255,0.88);
-      margin-bottom: 10px;
-      letter-spacing: 0.5px;
-    }}
-    .title {{
-      font-size: 16px; font-weight: 900; color: white;
-      line-height: 1.45;
-      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-      overflow: hidden;
-    }}
-    .bottom {{
-      background: white;
-      height: 98px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 8px; padding: 8px 16px;
-    }}
-    .product-img-wrap {{
-      width: 72px; height: 72px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-    }}
-    .product-img {{
-      max-width: 70px; max-height: 70px;
-      object-fit: contain; mix-blend-mode: multiply;
-    }}
-  </style>
-</head><body>
-  <div class="container">
-    <div class="top">
-      <p class="brand">MIKKE!</p>
-      <p class="catch">{catch_copy}</p>
-      <h1 class="title">{display_title}</h1>
+<html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
+  <div class="c">
+    <div class="t">
+      <div class="pat"></div><div class="d1"></div><div class="d2"></div><div class="ab"></div>
+      <div class="ct">
+        <div class="br"><span class="bn">MIKKE!</span><span class="bg">{badge}</span></div>
+        <p class="ca">{catch_copy}</p>
+        <h1 class="ti">{display_title}</h1>
+      </div>
     </div>
-    <div class="bottom">
-{images_html}    </div>
+    <div class="b">
+{imgs}    </div>
   </div>
-</body></html>
-"""
+</body></html>"""
 
     html_path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
     with open(html_path, 'w', encoding='utf-8') as f:
@@ -289,13 +278,14 @@ def generate_content_with_llm(products_data):
   "products": [
     {{
       "name": "商品名（入力と同じ表記）",
-      "description": "200文字以上の詳細紹介（改行\\nあり）",
+      "description": "500文字以上の詳細紹介（改行\\nあり）",
       "score": 4.7,
       "pros": ["具体的メリット1（30文字以内）", "具体的メリット2", "具体的メリット3"],
-      "cons": ["具体的デメリット1（30文字以内）", "具体的デメリット2"]
+      "cons": ["具体的デメリット1（30文字以内）", "具体的デメリット2"],
+      "recommended_for": "こんな人におすすめ（30文字以内・例: テレワーク中心のビジネスパーソン）"
     }}
   ],
-  "summary": "まとめ文（購買意欲を後押しする・80文字程度）"
+  "summary": "まとめ文（1000文字以上・絵文字を積極使用・各商品に「こんな方に最適」1行・最後は1位がおすすめ！で締める）"
 }}
 """
 
@@ -310,7 +300,7 @@ def generate_content_with_llm(products_data):
             {"role": "user", "content": prompt}
         ],
         "temperature": 0.65,
-        "max_tokens": 4000,
+        "max_tokens": 8000,
         "response_format": {"type": "json_object"}
     }
 
@@ -355,7 +345,7 @@ category: "{CATEGORY}"
 
 {data['intro']}
 
-## 選び方のポイント
+## ✅ 選び方のポイント
 <ul>
 {" ".join([f"<li>{p}</li>" for p in data['points']])}
 </ul>
@@ -418,7 +408,12 @@ category: "{CATEGORY}"
         markdown += ":::pro\n" + "\n".join([f"- {m}" for m in pros]) + "\n:::\n"
         markdown += ":::con\n" + "\n".join([f"- {c}" for c in cons]) + "\n:::\n\n"
 
-    markdown += f"## まとめ\n{data['summary']}\n"
+        # おすすめ対象をボタンの下に追加
+        recommended_for_text = p_info.get('recommended_for', '')
+        if recommended_for_text:
+            markdown += f"\n\U0001f464 **こんな人におすすめ**: {recommended_for_text}\n\n"
+
+    markdown += f"## \U0001f4ac まとめ\n{data['summary']}\n"
 
     # Write to fixed file path (overwrite the canonical article)
     file_path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{FIXED_SLUG}.md"
