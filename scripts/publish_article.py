@@ -20,7 +20,10 @@ headers = {
     "Content-Type": "application/json"
 }
 
+# Notion query title (original)
 ARTICLE_TITLE = "【2024年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選"
+# Output title (year corrected to 2026)
+OUTPUT_ARTICLE_TITLE = "【2026年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選"
 CATEGORY = "ガジェット"
 
 def get_notion_data():
@@ -37,15 +40,33 @@ def get_notion_data():
         products = []
         for result in results:
             props = result.get("properties", {})
+
+            def get_rich_text(prop_name):
+                rt = props.get(prop_name, {}).get("rich_text", [])
+                return rt[0]["plain_text"] if rt else ""
+
+            def get_url(prop_name):
+                # Support both url-type and rich_text-type properties
+                prop = props.get(prop_name, {})
+                if prop.get("type") == "url":
+                    return prop.get("url") or ""
+                return get_rich_text(prop_name)
+
+            # Prices are stored as rich_text like "¥12,990" - strip to numeric string
+            def get_price(prop_name):
+                raw = get_rich_text(prop_name)
+                # Remove ¥ and commas to get pure number string
+                return raw.replace("¥", "").replace(",", "").strip()
+
             p = {
                 "name": props.get("商品名", {}).get("title", [{}])[0].get("text", {}).get("content", ""),
-                "image_url": props.get("Image URL", {}).get("url", ""),
-                "amazon_url": props.get("Amazon Affiliate URL", {}).get("url", ""),
-                "rakuten_url": props.get("Rakuten Affiliate URL", {}).get("url", ""),
-                "yahoo_url": props.get("Yahoo Affiliate URL", {}).get("url", ""),
-                "amazon_price": props.get("Amazon Price", {}).get("number", 0),
-                "rakuten_price": props.get("Rakuten Price", {}).get("number", 0),
-                "yahoo_price": props.get("Yahoo Price", {}).get("number", 0),
+                "image_url": get_url("Image URL"),
+                "amazon_url": get_url("Amazon Affiliate URL"),
+                "rakuten_url": get_url("Rakuten Affiliate URL"),
+                "yahoo_url": get_url("Yahoo Affiliate URL"),
+                "amazon_price": get_price("Amazon Price"),
+                "rakuten_price": get_price("Rakuten Price"),
+                "yahoo_price": get_price("Yahoo Price"),
             }
             products.append(p)
         return products
@@ -115,7 +136,7 @@ def publish():
     
     # 5. Format Markdown
     markdown = f"""---
-title: "{ARTICLE_TITLE}"
+title: "{OUTPUT_ARTICLE_TITLE}"
 coverImage: ""
 excerpt: "{data['excerpt']}"
 publishDate: "{datetime.datetime.now().isoformat()}"
@@ -149,9 +170,10 @@ category: "{CATEGORY}"
         markdown += f"[総合評価: {p_info['score']}]\n\n"
         
         if notion_p:
-            if notion_p['amazon_price']: markdown += f"AMAZON_PRICE: {int(notion_p['amazon_price'])}\n"
-            if notion_p['rakuten_price']: markdown += f"RAKUTEN_PRICE: {int(notion_p['rakuten_price'])}\n"
-            if notion_p['yahoo_price']: markdown += f"YAHOO_PRICE: {int(notion_p['yahoo_price'])}\n"
+            # Prices are already plain numeric strings e.g. "12990"
+            if notion_p['amazon_price']: markdown += f"AMAZON_PRICE: {notion_p['amazon_price']}\n"
+            if notion_p['rakuten_price']: markdown += f"RAKUTEN_PRICE: {notion_p['rakuten_price']}\n"
+            if notion_p['yahoo_price']: markdown += f"YAHOO_PRICE: {notion_p['yahoo_price']}\n"
             
             # Use specific affiliate URLs if provided by Qclaw
             if notion_p['amazon_url']: markdown += f"ASIN: {notion_p['amazon_url']}\n"
@@ -168,7 +190,7 @@ category: "{CATEGORY}"
     markdown += f"## まとめ\n{data['summary']}\n"
 
     # Write to file
-    slug = f"20240411-telework-gadgets-{uuid.uuid4().hex[:4]}"
+    slug = f"20260411-telework-gadgets-{uuid.uuid4().hex[:4]}"
     file_path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{slug}.md"
     
     with open(file_path, 'w', encoding='utf-8') as f:
