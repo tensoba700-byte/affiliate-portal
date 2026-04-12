@@ -1,0 +1,12 @@
+--- Running Auto Publish Batch ---
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+🔍 Checking for completed articles in Notion...
+📝 Found 2 articles ready to publish.
+🚀 Processing: 【2024年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選
+🎉 Successfully published: 【2024年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選
+🚀 Processing: 2026年最新美容おすすめ5選
+❌ Failed to publish: 2026年最新美容おすすめ5選
+--- Building Next.js Site ---
+/Users/tsukika/Desktop/affiliate-portal/scripts/deploy_updates.sh: line 14: npm: command not found
+--- Pushing to GitHub ---
