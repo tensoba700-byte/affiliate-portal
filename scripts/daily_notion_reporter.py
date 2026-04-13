@@ -20,7 +20,6 @@ NOTION_HEADERS = {
 }
 
 def get_today_articles():
-    today_str = datetime.datetime.now().strftime("%b %d") # e.g. "Apr 13"
     articles_dir = "/Users/tsukika/Desktop/affiliate-portal/src/content/articles/*.md"
     today_files = []
     
@@ -35,6 +34,49 @@ def get_today_articles():
                 today_files.append({"path": file_path, "title": title, "content": content})
                 
     return today_files
+
+def get_weekly_stats():
+    today = datetime.date.today()
+    last_week = today - datetime.timedelta(days=7)
+    articles_dir = "/Users/tsukika/Desktop/affiliate-portal/src/content/articles/*.md"
+    
+    counts = {
+        "美容": 0,
+        "ガジェット": 0,
+        "インテリア": 0,
+        "生活雑貨": 0,
+        "便利グッズ": 0
+    }
+    others = {}
+
+    for file_path in glob.glob(articles_dir):
+        mtime = datetime.date.fromtimestamp(os.path.getmtime(file_path))
+        if mtime >= last_week:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    m = re.search(r'category: "(.*?)"', content)
+                    if m:
+                        cat = m.group(1)
+                        # Normalize category name
+                        found = False
+                        for key in counts.keys():
+                            if key in cat:
+                                counts[key] += 1
+                                found = True
+                                break
+                        if not found:
+                            others[cat] = others.get(cat, 0) + 1
+            except Exception as e:
+                print(f"Error reading {file_path}: {e}")
+
+    stats_text = ""
+    for cat, count in counts.items():
+        stats_text += f"　- {cat}：{count}本\n"
+    for cat, count in others.items():
+        stats_text += f"　- {cat}：{count}本\n"
+    
+    return stats_text.strip()
 
 def analyze_with_llm(articles):
     if not articles:
@@ -58,12 +100,12 @@ def analyze_with_llm(articles):
 【記事の内容（一部）】
 {combined_content}
 
-【出力形式（JSONのみ）】
+【出力形式（厳守）】
 {{
-  "suggestions": "明日のおすすめネタ3つとその理由",
-  "best_phrase": "今日の記事で最も心に響いた、読者が買いたくなるフレーズ",
+  "suggestions": "明日のおすすめネタ3つとその理由（箇条書き）",
+  "best_phrase": "今日の記事で最も心に響いたフレーズ",
   "ai_like": "AIっぽくなってしまった機械的な表現",
-  "improvement": "それをどう人間らしく、おこげ編集長らしく改善するか"
+  "improvement": "改善案"
 }}
 """
 
@@ -73,10 +115,10 @@ def analyze_with_llm(articles):
     }, json={
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "あなたは編集長「おこげ」として、日本語のJSONのみで回答してください。"},
+            {"role": "system", "content": "あなたは編集長「おこげ」です。必ず指定された英語キーのJSONのみを出力してください。"},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.5,
+        "temperature": 0.4,
         "response_format": {"type": "json_object"}
     })
 
@@ -84,6 +126,23 @@ def analyze_with_llm(articles):
         raw_content = res.json()["choices"][0]["message"]["content"]
         print(f"DEBUG: Raw LLM Output: {raw_content}")
         data = json.loads(raw_content)
+        
+        # Mapping possible Japanese keys back to English if they occur
+        mapping = {
+            "おすすめネタ": "suggestions",
+            "心に響いたフレーズ": "best_phrase",
+            "AIっぽい表現": "ai_like",
+            "改善案": "improvement"
+        }
+        for jp, en in mapping.items():
+            if jp in data and en not in data:
+                data[en] = data[jp]
+        
+        # Ensure all keys exist
+        for key in ["suggestions", "best_phrase", "ai_like", "improvement"]:
+            if key not in data:
+                data[key] = "情報なし"
+                
         data["titles"] = article_titles
         return data
     else:
@@ -194,6 +253,20 @@ def append_report_to_page(page_id, report):
                     {"type": "text", "text": {"content": report["improvement"]}}
                 ]
             }
+        },
+        {
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [{"type": "text", "text": {"content": "■ 今週のカテゴリ別投稿数（偏りチェック）", "link": None}, "annotations": {"bold": True}}]
+            }
+        },
+        {
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [{"type": "text", "text": {"content": report["weekly_stats"]}}]
+            }
         }
     ]
     
@@ -209,6 +282,9 @@ def main():
     if not report:
         print("Analysis failed.")
         return
+
+    # Add weekly stats to report
+    report["weekly_stats"] = get_weekly_stats()
 
     page_id = find_or_create_daily_page()
     if not page_id:
