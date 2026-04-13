@@ -14,6 +14,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 TARGET_CHANNEL_ID = os.getenv("TARGET_CHANNEL_ID")
 AI_SHINBUN_PARENT_ID = "341ddb45-8772-80e2-8153-f4dec9e4e6b8"
+ARTICLE_MANAGE_DB_ID = "8511908442c74738b78dc62f6a7a49d9"
 
 NOTION_HEADERS = {
     "Authorization": f"Bearer {NOTION_API_KEY}",
@@ -83,11 +84,19 @@ def generate_suggestions_with_llm(history):
 【直近1週間のトレンド・改善案ログ】
 {history_text}
 
-【出力内容（日本語）】
-以下の項目をDiscord向けに分かりやすく3つ出力してください。
-1. 記事タイトル案
-2. 提案理由（トレンドや改善案の文脈から）
-3. ターゲット層
+【出力内容（JSON形式）】
+必ず以下の構造のJSONのみを出力してください。
+{{
+  "suggestions": [
+    {{
+      "title": "記事タイトル案",
+      "category": "美容/ガジェット/インテリア/生活雑貨/便利グッズから選択",
+      "reason": "提案理由",
+      "target": "ターゲット層"
+    }},
+    ... (合計3つ)
+  ]
+}}
 """
 
     res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={
@@ -96,16 +105,70 @@ def generate_suggestions_with_llm(history):
     }, json={
         "model": "llama-3.3-70b-versatile",
         "messages": [
-            {"role": "system", "content": "あなたは優秀な編集長として、簡潔かつ魅力的な提案を日本語で行ってください。"},
+            {"role": "system", "content": "あなたは優秀な編集長として、簡潔かつ魅力的な提案を日本語で行ってください。JSON以外のテキストは一切含めないでください。"},
             {"role": "user", "content": prompt}
         ],
-        "temperature": 0.5
+        "temperature": 0.4,
+        "response_format": {"type": "json_object"}
     })
     
     if res.status_code == 200:
-        return res.json()["choices"][0]["message"]["content"]
+        return json.loads(res.json()["choices"][0]["message"]["content"])
     else:
-        return f"LLM Error: {res.text}"
+        print(f"LLM Error: {res.text}")
+        return None
+
+def generate_products_for_topic(title, category):
+    prompt = f"""記事タイトル: 「{title}」
+カテゴリ: {category}
+
+この記事に掲載する、アフィリエイトで成約率の高そうな具体的かつ最新の人気商品を「5個から7個」リストアップしてください。
+
+【出力形式（JSONのみ）】
+{{
+  "products": ["商品名1", "商品名2", ...]
+}}
+"""
+    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }, json={
+        "model": "llama-3.3-70b-versatile",
+        "messages": [
+            {"role": "system", "content": "指定されたJSON形式のみで回答してください。"},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.5,
+        "response_format": {"type": "json_object"}
+    })
+    
+    if res.status_code == 200:
+        return json.loads(res.json()["choices"][0]["message"]["content"]).get("products", [])
+    else:
+        return []
+
+def register_to_notion(title, category, products):
+    # Mapping to known valid categories in Notion
+    valid_categories = ["美容", "ガジェット", "インテリア", "生活雑貨", "便利グッズ", "美容・スキンケア", "家電"]
+    final_category = category
+    for vc in valid_categories:
+        if vc in category:
+            final_category = vc
+            break
+
+    for p in products:
+        payload = {
+            "parent": { "database_id": ARTICLE_MANAGE_DB_ID },
+            "properties": {
+                "商品名": { "title": [{ "text": { "content": p } }] },
+                "記事タイトル": { "rich_text": [{ "text": { "content": title } }] },
+                "カテゴリ": { "select": { "name": final_category } },
+                "ステータス 1": { "select": { "name": "未処理" } }
+            }
+        }
+        res = requests.post("https://api.notion.com/v1/pages", headers=NOTION_HEADERS, json=payload)
+        if res.status_code != 200:
+            print(f"Error registering product {p}: {res.text}")
 
 def send_to_discord(message):
     url = f"https://discord.com/api/v10/channels/{TARGET_CHANNEL_ID}/messages"
@@ -130,12 +193,39 @@ def main():
     for p in pages:
         history.append(get_page_content(p["id"]))
         
-    suggestion = generate_suggestions_with_llm(history)
-    print("Generated suggestions. Sending to Discord...")
-    
-    success = send_to_discord(suggestion)
+    data = generate_suggestions_with_llm(history)
+    if not data or "suggestions" not in data:
+        print("Failed to generate suggestions.")
+        return
+        
+    suggestions = data["suggestions"]
+    print(f"Generated {len(suggestions)} suggestions.")
+
+    # Register the first 2 suggestions to Notion
+    registered_msg = ""
+    for i in range(min(2, len(suggestions))):
+        s = suggestions[i]
+        print(f"Registering to Notion: {s['title']}")
+        products = generate_products_for_topic(s['title'], s['category'])
+        if products:
+            register_to_notion(s['title'], s['category'], products)
+            registered_msg += f"✅ **Notion登録完了**: {s['title']}（{len(products)}商品）\n"
+
+    # Prepare Discord message
+    discord_body = ""
+    for i, s in enumerate(suggestions):
+        marker = "📌 自動登録済み" if i < 2 else ""
+        discord_body += f"\n**案{i+1}: {s['title']}** {marker}\n"
+        discord_body += f"- カテゴリ: {s['category']}\n"
+        discord_body += f"- 理由: {s['reason']}\n"
+        discord_body += f"- ターゲット: {s['target']}\n"
+        
+    if registered_msg:
+        discord_body += f"\n---\n{registered_msg}"
+
+    success = send_to_discord(discord_body)
     if success:
-        print("🎉 Successfully sent morning suggestions to Discord!")
+        print("🎉 Successfully sent morning suggestions and registered topics!")
     else:
         print("❌ Failed to send to Discord.")
 
