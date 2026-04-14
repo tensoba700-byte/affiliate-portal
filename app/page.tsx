@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
+import { AdBanner } from '@/src/components/AdBanner';
 
 export default async function Home() {
   let recentArticles: ArticleItem[] = [];
@@ -94,36 +94,43 @@ export default async function Home() {
 
           {recentArticles.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-              {recentArticles.map((article) => (
-                <Link 
-                  href={`/articles/${article.slug}`} 
-                  key={article.id}
-                  className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border"
-                >
-                  <div className="aspect-[16/9] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4">
-                    {article.coverImage ? (
-                      // @ts-ignore
-                      <img src={article.coverImage} alt={article.title} className="absolute inset-0 object-cover object-center w-full h-full transform transition-transform duration-700 group-hover:scale-110" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
-                        <span className="text-3xl">🎀</span>
+              {recentArticles.map((article, idx) => (
+                <React.Fragment key={article.id}>
+                  <Link 
+                    href={`/articles/${article.slug}`} 
+                    className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border"
+                  >
+                    <div className="aspect-[16/9] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4">
+                      {article.coverImage ? (
+                        // @ts-ignore
+                        <img src={article.coverImage} alt={article.title} className="absolute inset-0 object-cover object-center w-full h-full transform transition-transform duration-700 group-hover:scale-110" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
+                          <span className="text-3xl">🎀</span>
+                        </div>
+                      )}
+                      {/* Cute Badge */}
+                      <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-[10px] font-black text-primary shadow-sm border border-primary/10">
+                        NEW
                       </div>
-                    )}
-                    {/* Cute Badge */}
-                    <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-[10px] font-black text-primary shadow-sm border border-primary/10">
-                      NEW
                     </div>
-                  </div>
-                  
-                  <div className="flex flex-col flex-1 px-3 pb-2 text-center">
-                    <p className="text-[10px] font-bold text-primary mb-2">
-                       {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
-                     </p>
-                    <h3 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                      {article.title}
-                    </h3>
-                  </div>
-                </Link>
+                    
+                    <div className="flex flex-col flex-1 px-3 pb-2 text-center">
+                      <p className="text-[10px] font-bold text-primary mb-2">
+                        {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
+                      </p>
+                      <h3 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                        {article.title}
+                      </h3>
+                    </div>
+                  </Link>
+                  {/* 先頭カードの下に広告⑤〜⑦をランダム表示 */}
+                  {idx === 0 && (
+                    <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center w-full">
+                      <AdBanner type="large" />
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
             </div>
           ) : (

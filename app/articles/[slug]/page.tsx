@@ -5,6 +5,7 @@ import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import RankingTable from '@/src/components/RankingTable';
 import ShareButtons from '@/src/components/ShareButtons';
 import { EyecatchImage } from '@/src/components/EyecatchImage';
+import { AdBanner } from '@/src/components/AdBanner';
 
 export async function generateStaticParams() {
   try {
@@ -86,6 +87,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
           {/* アイキャッチ画像 — 記事最上部・フル幅 */}
           <EyecatchImage slug={slug} alt={article.title} />
 
+          {/* 広告①〜④をランダム表示 */}
+          <AdBanner type="small" />
+
           {/* Navigation (Breadcrumbs) */}
           <nav className="text-[10px] md:text-xs font-bold mb-6 flex items-center justify-center gap-2 text-muted" aria-label="パンくずリスト">
             <Link href="/" className="hover:text-primary transition-colors">ホーム</Link>
@@ -132,6 +136,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               <RankingTable
                 products={article.rankings}
                 title={`${article.title} ランキング`}
+                rankingAd={<AdBanner type="small" />}
               />
             )}
 
@@ -150,6 +155,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               isGadget={article.title.includes('ガジェット') || article.slug.includes('ガジェット')}
             />
           </div>
+
+          {/* まとめセクションの直後（記事本文の最後）に広告⑤〜⑦をランダム表示 */}
+          <AdBanner type="large" />
 
           {/* 🎀 Related Articles Section */}
           {relatedArticles.length > 0 && (
