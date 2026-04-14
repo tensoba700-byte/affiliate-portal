@@ -1,3 +1,4 @@
+import React from 'react';
 import Link from 'next/link';
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
 import { AdBanner } from '@/src/components/AdBanner';
