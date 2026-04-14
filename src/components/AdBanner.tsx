@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 type AdType = 'small' | 'large';
 
@@ -38,6 +38,13 @@ const LARGE_ADS = [
 <script type='text/javascript'>
   if (typeof brandsafe_js_async === 'function') {
     brandsafe_js_async('//ad-verification.a8.net/ad', '_site=4171&_article=2315&_link=10774&_image=11481&sad=s00000005350011', '260414268591', '4B1KXO+9RV82I+15A4+1TIJEP');
+  } else {
+    // If not loaded yet, wait slightly and try again
+    setTimeout(() => {
+      if (typeof brandsafe_js_async === 'function') {
+        brandsafe_js_async('//ad-verification.a8.net/ad', '_site=4171&_article=2315&_link=10774&_image=11481&sad=s00000005350011', '260414268591', '4B1KXO+9RV82I+15A4+1TIJEP');
+      }
+    }, 500);
   }
 </script>
 <img border="0" width="1" height="1" src="https://www16.a8.net/0.gif?a8mat=4B1KXO+9RV82I+15A4+1TIJEP" alt="">`
@@ -45,6 +52,7 @@ const LARGE_ADS = [
 
 export const AdBanner: React.FC<{ type: AdType }> = ({ type }) => {
   const [adHtml, setAdHtml] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ads = type === 'small' ? SMALL_ADS : LARGE_ADS;
@@ -52,15 +60,44 @@ export const AdBanner: React.FC<{ type: AdType }> = ({ type }) => {
     setAdHtml(ads[randomIndex]);
   }, [type]);
 
+  useEffect(() => {
+    if (adHtml && containerRef.current) {
+      // Clear existing content
+      containerRef.current.innerHTML = '';
+      
+      // Create a document fragment from the HTML
+      const range = document.createRange();
+      const fragment = range.createContextualFragment(adHtml);
+      
+      // Append fragment to container
+      // createContextualFragment handles script execution in some browsers, 
+      // but to be safe, we manually append scripts.
+      containerRef.current.appendChild(fragment);
+      
+      // Re-run any scripts manually
+      const scripts = containerRef.current.querySelectorAll('script');
+      scripts.forEach((oldScript) => {
+        const newScript = document.createElement('script');
+        Array.from(oldScript.attributes).forEach((attr) => {
+          newScript.setAttribute(attr.name, attr.value);
+        });
+        if (oldScript.innerHTML) {
+          newScript.innerHTML = oldScript.innerHTML;
+        }
+        oldScript.parentNode?.replaceChild(newScript, oldScript);
+      });
+    }
+  }, [adHtml]);
+
   if (!adHtml) return <div className="my-6 min-h-[60px]" />;
 
   return (
     <div className="w-full flex flex-col items-center justify-center my-6 animate-fade-in">
-      <div className="w-full max-w-[300px] flex flex-col items-center">
-        <span className="w-full text-left text-[10px] text-muted font-bold mb-1 ml-1">PR</span>
+      <div className="w-full max-w-[320px] flex flex-col items-center">
+        <span className="w-full text-left text-[10px] text-muted font-bold mb-1 ml-1 opacity-60">PR</span>
         <div 
-          className="flex justify-center items-center overflow-hidden rounded-xl"
-          dangerouslySetInnerHTML={{ __html: adHtml }} 
+          ref={containerRef}
+          className="flex justify-center items-center overflow-visible rounded-xl"
         />
       </div>
     </div>

@@ -142,10 +142,9 @@ function BuyButton({
 type Props = {
   products: Product[];
   title?: string;
-  rankingAd?: React.ReactNode;
 };
 
-export default function RankingTable({ products, title, rankingAd }: Props) {
+export default function RankingTable({ products, title }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("recommend");
 
   // Sorting logic based on activeTab
@@ -241,100 +240,93 @@ export default function RankingTable({ products, title, rankingAd }: Props) {
       {/* 商品行 */}
       <div className="divide-y" style={{ borderColor: C.border }}>
         {displayed.map((p, idx) => (
-          <React.Fragment key={p.name}>
-            <div
-              className="grid grid-cols-1 md:grid-cols-[2.5rem_6.5rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
-              onMouseEnter={e => (e.currentTarget.style.background = C.rowHover)}
-              onMouseLeave={e => (e.currentTarget.style.background = "#fff")}
-            >
-              {/* バッジ — ソート後の表示順を反映 */}
-              <div className="flex items-center gap-3 md:block">
-                <RankBadge rank={idx + 1} />
-                <div className="md:hidden flex-1">
-                  {p.brand && <p className="text-[10px] font-bold" style={{ color: "#bbb" }}>{p.brand}</p>}
-                  <p className="text-sm font-black" style={{ color: C.scoreColor }}>{p.name}</p>
-                </div>
-              </div>
-
-              {/* 画像 */}
-              <div className="flex items-center justify-center">
-                {p.imageUrl ? (
-                  <div
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
-                    style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px' }}
-                  >
-                    <img
-                      src={p.imageUrl}
-                      alt={p.name}
-                      className="object-contain w-full h-full"
-                      style={{ borderRadius: '14px', mixBlendMode: 'multiply' }}
-                    />
-                  </div>
-                ) : (
-                  <div
-                    className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
-                    style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px', background: C.headerBg }}
-                  >
-                    🎀
-                  </div>
-                )}
-              </div>
-
-              {/* 商品名（PCのみ - モバイルはバッジ横に表示） */}
-              <div className="hidden md:block">
-                {p.brand && <p className="text-[10px] font-bold mb-0.5" style={{ color: "#bbb" }}>{p.brand}</p>}
-                <p className="text-sm font-black leading-snug underline underline-offset-2" style={{ color: C.scoreColor }}>
-                  {p.name}
-                </p>
-              </div>
-
-              {/* スコア */}
-              <div className="flex md:flex-col items-center gap-1">
-                <span className="text-base font-black" style={{ color: C.scoreColor }}>{p.score.toFixed(2)}</span>
-                <Stars score={p.score} />
-              </div>
-
-              {/* 購入ボタン: Amazon → 楽天 → Yahoo の順 */}
-              <div className="flex flex-wrap gap-2">
-                {p.amazon && (
-                  <BuyButton
-                    label="Amazon"
-                    price={p.amazon.price}
-                    url={p.amazon.url}
-                    bg="#FF9900"
-                    textColor="#111111"
-                    iconUrl="https://www.amazon.co.jp/favicon.ico"
-                  />
-                )}
-                {p.rakuten && (
-                  <BuyButton
-                    label="楽天市場"
-                    price={p.rakuten.price}
-                    url={p.rakuten.url}
-                    bg="#BF0000"
-                    textColor="#FFFFFF"
-                    iconUrl="https://www.rakuten.co.jp/favicon.ico"
-                  />
-                )}
-                {p.yahoo && (
-                  <BuyButton
-                    label="Yahoo!"
-                    price={p.yahoo.price}
-                    url={p.yahoo.url}
-                    bg="#FF0033"
-                    textColor="#FFFFFF"
-                    iconUrl="https://shopping.yahoo.co.jp/favicon.ico"
-                  />
-                )}
+          <div
+            key={p.name}
+            className="grid grid-cols-1 md:grid-cols-[2.5rem_6.5rem_1fr_5rem_auto] gap-3 items-center px-4 py-4 bg-white transition-colors"
+            onMouseEnter={e => (e.currentTarget.style.background = C.rowHover)}
+            onMouseLeave={e => (e.currentTarget.style.background = "#fff")}
+          >
+            {/* バッジ — ソート後の表示順を反映 */}
+            <div className="flex items-center gap-3 md:block">
+              <RankBadge rank={idx + 1} />
+              <div className="md:hidden flex-1">
+                {p.brand && <p className="text-[10px] font-bold" style={{ color: "#bbb" }}>{p.brand}</p>}
+                <p className="text-sm font-black" style={{ color: C.scoreColor }}>{p.name}</p>
               </div>
             </div>
-            {/* 3位の後に広告を挿入 */}
-            {idx === 2 && rankingAd && (
-              <div className="px-4 py-2 border-t" style={{ borderColor: C.border }}>
-                {rankingAd}
-              </div>
-            )}
-          </React.Fragment>
+
+            {/* 画像 */}
+            <div className="flex items-center justify-center">
+              {p.imageUrl ? (
+                <div
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px' }}
+                >
+                  <img
+                    src={p.imageUrl}
+                    alt={p.name}
+                    className="object-contain w-full h-full"
+                    style={{ borderRadius: '14px', mixBlendMode: 'multiply' }}
+                  />
+                </div>
+              ) : (
+                <div
+                  className="w-20 h-20 md:w-24 md:h-24 rounded-[14px] overflow-hidden bg-white flex items-center justify-center flex-shrink-0"
+                  style={{ boxShadow: '0 4px 16px rgba(0,0,0,0.12)', borderRadius: '14px', background: C.headerBg }}
+                >
+                  🎀
+                </div>
+              )}
+            </div>
+
+            {/* 商品名（PCのみ - モバイルはバッジ横に表示） */}
+            <div className="hidden md:block">
+              {p.brand && <p className="text-[10px] font-bold mb-0.5" style={{ color: "#bbb" }}>{p.brand}</p>}
+              <p className="text-sm font-black leading-snug underline underline-offset-2" style={{ color: C.scoreColor }}>
+                {p.name}
+              </p>
+            </div>
+
+            {/* スコア */}
+            <div className="flex md:flex-col items-center gap-1">
+              <span className="text-base font-black" style={{ color: C.scoreColor }}>{p.score.toFixed(2)}</span>
+              <Stars score={p.score} />
+            </div>
+
+            {/* 購入ボタン: Amazon → 楽天 → Yahoo の順 */}
+            <div className="flex flex-wrap gap-2">
+              {p.amazon && (
+                <BuyButton
+                  label="Amazon"
+                  price={p.amazon.price}
+                  url={p.amazon.url}
+                  bg="#FF9900"
+                  textColor="#111111"
+                  iconUrl="https://www.amazon.co.jp/favicon.ico"
+                />
+              )}
+              {p.rakuten && (
+                <BuyButton
+                  label="楽天市場"
+                  price={p.rakuten.price}
+                  url={p.rakuten.url}
+                  bg="#BF0000"
+                  textColor="#FFFFFF"
+                  iconUrl="https://www.rakuten.co.jp/favicon.ico"
+                />
+              )}
+              {p.yahoo && (
+                <BuyButton
+                  label="Yahoo!"
+                  price={p.yahoo.price}
+                  url={p.yahoo.url}
+                  bg="#FF0033"
+                  textColor="#FFFFFF"
+                  iconUrl="https://shopping.yahoo.co.jp/favicon.ico"
+                />
+              )}
+            </div>
+          </div>
         ))}
       </div>
 

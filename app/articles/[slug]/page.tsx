@@ -136,13 +136,29 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               <RankingTable
                 products={article.rankings}
                 title={`${article.title} ランキング`}
-                rankingAd={<AdBanner type="small" />}
               />
             )}
 
-            {article.content ? (
-              <div className="rich-text-container cute-html-content" dangerouslySetInnerHTML={{ __html: article.content ?? '' }} />
-            ) : article.body ? (
+            {article.content ? (() => {
+              const content = article.content || "";
+              const splitPattern = /(<h2[^>]*>.*?選び方のポイント.*?<\/h2>)/i;
+              const parts = content.split(splitPattern);
+
+              if (parts.length >= 2) {
+                // parts[0] is content before heading
+                // parts[1] is the heading itself
+                // parts[2] is content after heading
+                return (
+                  <>
+                    <div className="rich-text-container cute-html-content" dangerouslySetInnerHTML={{ __html: parts[0] }} />
+                    <AdBanner type="small" />
+                    <div className="rich-text-container cute-html-content" dangerouslySetInnerHTML={{ __html: parts.slice(1).join('') }} />
+                  </>
+                );
+              }
+
+              return <div className="rich-text-container cute-html-content" dangerouslySetInnerHTML={{ __html: content }} />;
+            })() : article.body ? (
               <div className="rich-text-container cute-html-content">
                 {documentToReactComponents(article.body)}
               </div>
