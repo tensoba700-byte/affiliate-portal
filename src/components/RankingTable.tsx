@@ -22,6 +22,7 @@
  * <RankingTable products={products} title="スキンケアおすすめランキング" />
  */
 
+"use client";
 import React, { useState } from "react";
 
 export type Product = {
