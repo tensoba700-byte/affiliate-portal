@@ -335,9 +335,6 @@ export default function RankingTable({ products, title }: Props) {
             )}
           </React.Fragment>
         ))}
-            )}
-          </React.Fragment>
-        ))}
       </div>
 
       {/* フッター */}
