@@ -145,7 +145,7 @@ type Props = {
   rankingAd?: React.ReactNode;
 };
 
-export default function RankingTable({ products, title }: Props) {
+export default function RankingTable({ products, title, rankingAd }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("recommend");
 
   // Sorting logic based on activeTab
