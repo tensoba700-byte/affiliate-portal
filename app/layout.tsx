@@ -111,10 +111,10 @@ export default function RootLayout({
               とっておきのおすすめ情報を毎日お届けします。
             </p>
             <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-bold text-muted mb-12">
-              <Link href="#" className="hover:text-primary transition-colors">運営会社</Link>
-              <Link href="#" className="hover:text-primary transition-colors">利用規約</Link>
-              <Link href="#" className="hover:text-primary transition-colors">プライバシーポリシー</Link>
-              <Link href="#" className="hover:text-primary transition-colors">お問い合わせ</Link>
+              <Link href="/company" className="hover:text-primary transition-colors">運営会社</Link>
+              <Link href="/terms" className="hover:text-primary transition-colors">利用規約</Link>
+              <Link href="/privacy" className="hover:text-primary transition-colors">プライバシーポリシー</Link>
+              <Link href="/contact" className="hover:text-primary transition-colors">お問い合わせ</Link>
             </nav>
             <div className="text-[10px] text-muted/60 font-bold tracking-wider">
               &copy; {new Date().getFullYear()} MIKKE! ALL RIGHTS RESERVED.
