@@ -113,11 +113,15 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               Review
             </div>
             
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-6 text-foreground">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-2 text-foreground">
               {article.title}
             </h1>
             
-            <time dateTime={article.publishedAt} className="text-xs font-bold text-muted block mb-6">
+            <div className="flex items-center justify-center gap-2 mb-6 text-[10px] md:text-xs font-bold text-muted">
+              <span>✍️ 著者: みっけ！編集部</span>
+            </div>
+            
+            <time dateTime={article.publishedAt} className="text-[10px] md:text-xs font-bold text-muted block mb-6">
               🗓 {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
             </time>
             

@@ -1,29 +1,23 @@
 import type { Metadata } from "next";
-import { Zen_Maru_Gothic, Noto_Sans_JP, Noto_Serif_JP } from "next/font/google";
+import { Zen_Maru_Gothic, Noto_Sans_JP } from "next/font/google";
 import Link from "next/link";
 import ThemeSwitcher from "@/src/components/ThemeSwitcher";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
+import CookieConsent from "@/src/components/CookieConsent";
 import Script from "next/script";
 import "./globals.css";
 
 const zenMaru = Zen_Maru_Gothic({
-  weight: ['400', '500', '700', '900'],
+  weight: ['400', '700'],
   variable: "--font-zen-maru",
   subsets: ["latin"],
   display: "swap",
 });
 
 const notoSans = Noto_Sans_JP({
-  weight: ['400', '500', '700', '900'],
+  weight: ['400', '700'],
   variable: "--font-noto-sans",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const notoSerif = Noto_Serif_JP({
-  weight: ['400', '500', '700', '900'],
-  variable: "--font-noto-serif",
   subsets: ["latin"],
   display: "swap",
 });
@@ -128,6 +122,7 @@ export default function RootLayout({
           </div>
         </footer>
         <ThemeSwitcher />
+        <CookieConsent />
       </body>
     </html>
   );
