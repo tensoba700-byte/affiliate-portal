@@ -24,18 +24,19 @@ headers = {
 
 # ----- Category Theme System -----
 CATEGORY_THEMES = {
-    '美容・スキンケア': {'bg1': '#3D0030', 'bg2': '#B84070', 'accent': '#FFD77A', 'pattern': 'stripes'},
-    'ガジェット':       {'bg1': '#080E1F', 'bg2': '#1A3A70', 'accent': '#FFE600', 'pattern': 'dots'},
-    'ガジェット・家電': {'bg1': '#080E1F', 'bg2': '#1A3A70', 'accent': '#FFE600', 'pattern': 'dots'},
-    'インテリア':       {'bg1': '#0D2B18', 'bg2': '#235C38', 'accent': '#FFFFFF', 'pattern': 'dots'},
-    '生活雑貨':         {'bg1': '#4A1800', 'bg2': '#BD5000', 'accent': '#FFFFFF', 'pattern': 'diagonal'},
-    '便利グッズ':       {'bg1': '#002030', 'bg2': '#005F85', 'accent': '#FFFFFF', 'pattern': 'dots'},
+    '美容・スキンケア': {'bg1': '#FF9EDB', 'bg2': '#FF69B4', 'accent': '#FFFFFF', 'pattern': 'water'},
+    'ガジェット':       {'bg1': '#00F2FF', 'bg2': '#0066FF', 'accent': '#FFFFFF', 'pattern': 'digital'},
+    'ガジェット・家電': {'bg1': '#00F2FF', 'bg2': '#0066FF', 'accent': '#FFFFFF', 'pattern': 'digital'},
+    'インテリア':       {'bg1': '#98FF98', 'bg2': '#2E8B57', 'accent': '#FFFFFF', 'pattern': 'natural'},
+    '生活雑貨':         {'bg1': '#FFD700', 'bg2': '#FF8C00', 'accent': '#FFFFFF', 'pattern': 'diagonal'},
+    '便利グッズ':       {'bg1': '#FFA07A', 'bg2': '#FF4500', 'accent': '#FFFFFF', 'pattern': 'dots'},
 }
 
 EYECATCH_PATTERNS = {
-    'dots':     ('radial-gradient(circle, rgba(255,255,255,0.13) 1.5px, transparent 1.5px)', '18px 18px'),
-    'stripes':  ('repeating-linear-gradient(45deg, rgba(255,255,255,0.07) 0, rgba(255,255,255,0.07) 2px, transparent 2px, transparent 16px)', 'auto'),
-    'diagonal': ('repeating-linear-gradient(-45deg, rgba(255,255,255,0.06) 0, rgba(255,255,255,0.06) 3px, transparent 3px, transparent 22px)', 'auto'),
+    'dots':     ('radial-gradient(circle, rgba(255,255,255,0.2) 2px, transparent 2px)', '20px 20px'),
+    'water':    ('radial-gradient(circle at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 40%)', 'auto'),
+    'digital':  ('linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', '25px 25px'),
+    'natural':  ('radial-gradient(circle, rgba(255,255,255,0.15) 3px, transparent 3px)', '24px 24px'),
 }
 
 def slugify(text: str) -> str:
@@ -75,32 +76,32 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     pattern_css, pattern_size = EYECATCH_PATTERNS[theme['pattern']]
     badge = extract_badge(title)
     display_title = title if len(title) <= 30 else title[:29] + '…'
+    # Simple color highlighting for keywords like "最新", "人気", "神"
+    highlighted_title = re.sub(r'(最新|人気|神|おすすめ|劇的|必須|厳選)', r'<span class="hi">\1</span>', display_title)
+    
     accent_bar = accent if accent != '#FFFFFF' else 'rgba(255,255,255,0.35)'
-    imgs = "".join([f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n' for url in image_urls[:5]])
-    css = f"""@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700;900&display=swap');
+    imgs = "".join([f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n' for url in image_urls[:4]])
+    css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 html, body {{ width: 390px; height: 260px; overflow: hidden; }}
-body {{ font-family: 'Noto Sans JP', sans-serif; }}
-.c {{ width: 390px; height: 260px; display: flex; flex-direction: column; }}
-.t {{ background: linear-gradient(145deg, {bg1} 0%, {bg2} 100%); height: 170px; display:flex; flex-direction:column; justify-content:flex-end; padding:14px 22px 12px; position:relative; overflow:hidden; }}
+body {{ font-family: 'M PLUS Rounded 1c', sans-serif; }}
+.c {{ width: 390px; height: 260px; display: flex; flex-direction: column; background: #fff; }}
+.t {{ background: linear-gradient(135deg, {bg1} 0%, {bg2} 100%); height: 160px; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; position:relative; overflow:hidden; }}
 .pat {{ position:absolute; inset:0; background-image:{pattern_css}; background-size:{pattern_size}; pointer-events:none; }}
-.d1 {{ position:absolute; top:-45px; right:-35px; width:140px; height:140px; background:rgba(255,255,255,0.05); border-radius:50%; }}
-.d2 {{ position:absolute; bottom:-30px; left:-25px; width:90px; height:90px; background:rgba(255,255,255,0.04); border-radius:50%; }}
-.ab {{ position:absolute; top:0; left:0; right:0; height:5px; background:{accent_bar}; }}
-.ct {{ position:relative; z-index:2; }}
-.br {{ display:flex; align-items:center; gap:8px; margin-bottom:5px; }}
-.bn {{ font-size:9px; font-weight:900; color:rgba(255,255,255,0.55); letter-spacing:3px; text-transform:uppercase; }}
-.bg {{ display:inline-block; background:#FFE600; color:#111; font-weight:900; font-size:10px; padding:2px 8px; border-radius:4px; letter-spacing:0.5px; }}
-.ca {{ font-size:10px; font-weight:700; color:rgba(255,255,255,0.80); margin-bottom:5px; letter-spacing:0.3px; }}
-.ti {{ font-size:15px; font-weight:900; color:#FFFFFF; line-height:1.42; -webkit-text-stroke:0.6px rgba(0,0,0,0.5); text-shadow:0 2px 10px rgba(0,0,0,0.75); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }}
-.b {{ background:#FFFFFF; flex:1; display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 18px; position:relative; }}
-.b::before {{ content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,{bg2},{bg1}); }}
-.pw {{ width:78px; height:78px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }}
-.pi {{ max-width:76px; max-height:76px; object-fit:contain; mix-blend-mode:multiply; }}"""
+.ab {{ position:absolute; top:10px; left:10px; right:10px; bottom:10px; border: 3px solid rgba(255,255,255,0.4); border-radius: 15px; pointer-events:none; }}
+.ct {{ position:relative; z-index:2; text-align: center; }}
+.br {{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; }}
+.bn {{ font-size:10px; font-weight:900; color:#fff; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; }}
+.bg {{ display:inline-block; background:#fff; color:{bg2}; font-weight:900; font-size:11px; padding:3px 10px; border-radius:20px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }}
+.ti {{ font-size:18px; font-weight:900; color:#FFFFFF; line-height:1.3; text-shadow:3px 3px 0 rgba(0,0,0,0.2); padding: 0 10px; }}
+.hi {{ color: #FFE600; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); }}
+.b {{ background:#FFFFFF; height: 100px; display:flex; align-items:center; justify-content:center; gap:12px; padding:10px; position:relative; }}
+.pw {{ width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 2px solid #f0f0f0; border-radius: 12px; background: #fff; }}
+.pi {{ max-width:70px; max-height:70px; object-fit:contain; mix-blend-mode:multiply; }}"""
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
-<div class="c"><div class="t"><div class="pat"></div><div class="d1"></div><div class="d2"></div><div class="ab"></div>
-<div class="ct"><div class="br"><span class="bn">MIKKE!</span><span class="bg">{badge}</span></div><p class="ca">{catch_copy}</p><h1 class="ti">{display_title}</h1></div></div>
+<div class="c"><div class="t"><div class="pat"></div><div class="ab"></div>
+<div class="ct"><div class="br"><span class="bn">MIKKE!</span><span class="bg">{badge}</span></div><h1 class="ti">{highlighted_title}</h1></div></div>
 <div class="b">{imgs}</div></div></body></html>"""
     path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
@@ -147,10 +148,21 @@ def get_notion_data(article_title: str):
 
 def generate_content_with_llm(products_data, article_title):
     llm_products = [{"name": p["name"]} for p in products_data]
-    prompt = f"""あなたはプロの家電レビューライターです。2026年時点の設定で、以下の商品{len(llm_products)}点の比較レビュー記事をJSONで作成してください。
-商品紹介は各500文字以上。URLや価格は含めない。
-summaryは1000文字以上、絵文字多用。最後は1位がおすすめ！で締める。
+    prompt = f"""あなたはプロのレビューライター（ペンネーム：おこげ）です。
+ゆうこす（菅本裕子）やフワちゃんのような、エネルギッシュで読者に親しみやすく語りかける口語体で記事を書いてください。
+
+【執筆ルール】
+1. 常に読者に話しかける口調（「〜だよ！」「〜だよね！」「マジでヤバい！」など）
+2. 自身の体験談やエピソードを盛り込み、感情豊かに表現する
+3. 曖昧な表現を避け、良いものは良いと「断言」する
+4. 見出し（### 第1位...）には必ず内容に合った絵文字を1つ入れる
+5. 各商品の紹介（description）は、具体的な使用シーンを含めて必ず【1000文字以上】のボリュームで書く
+
+2026年時点の最新トレンドを踏まえ、以下の商品{len(llm_products)}点の比較レビュー記事をJSONで作成してください。
+URLや価格は含めないでください。
+
 {json.dumps(llm_products, ensure_ascii=False)}
+
 出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "score": 4.8, "pros": ["...", "...", "..."], "cons": ["...", "..."], "recommended_for": "..."}}], "summary": "..."}}"""
     res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}, json={
         "model": "llama-3.3-70b-versatile",
@@ -195,4 +207,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     return True
 
 if __name__ == "__main__":
-    run_publish("【2024年春】テレワークが劇的に捗る！デスク周りのおすすめガジェット7選", "ガジェット", "20260411-telework-gadgets-f401")
+    run_publish(
+        "GW前に旅行グッズ・アウトドア用品をチェック！人気アイテムとおすすめの使い方", 
+        "便利グッズ", 
+        "20260415-gw-travel-outdoor"
+    )
