@@ -67,7 +67,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} ${notoSerif.variable} h-full antialiased`} data-theme="peach" data-font="sans">
+    <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} h-full antialiased`} data-theme="peach" data-font="sans">
       <head>
         {/* Google Analytics 4 */}
         <Script
