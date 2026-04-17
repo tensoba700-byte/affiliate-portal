@@ -1,11 +1,4 @@
-import requests
-import os
-import json
-import random
-import subprocess
-import datetime
-import urllib.parse
-import re
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Load env from local directory
@@ -14,7 +7,10 @@ load_dotenv("/Users/tsukika/.gemini/antigravity/scratch/discord-bot/.env")
 
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
 
 headers = {
     "Authorization": f"Bearer {NOTION_API_KEY}",
@@ -71,38 +67,33 @@ def get_seasonal_catch_copy(category: str) -> str:
     return random.choice(choices)
 
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
-    theme = CATEGORY_THEMES.get(category, CATEGORY_THEMES['ガジェット'])
-    bg1, bg2, accent = theme['bg1'], theme['bg2'], theme['accent']
-    pattern_css, pattern_size = EYECATCH_PATTERNS[theme['pattern']]
-    badge = extract_badge(title)
     display_title = title if len(title) <= 30 else title[:29] + '…'
-    # Simple color highlighting for keywords like "最新", "人気", "神"
-    highlighted_title = re.sub(r'(最新|人気|神|おすすめ|劇的|必須|厳選)', r'<span class="hi">\1</span>', display_title)
     
-    accent_bar = accent if accent != '#FFFFFF' else 'rgba(255,255,255,0.35)'
-    imgs = "".join([f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n' for url in image_urls[:4]])
+    # 1200x630 simple white grid design
+    imgs_html = ""
+    target_count = min(6, len(image_urls))
+    for url in image_urls[:target_count]:
+        imgs_html += f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n'
+    
     css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-html, body {{ width: 390px; height: 260px; overflow: hidden; }}
-body {{ font-family: 'M PLUS Rounded 1c', sans-serif; }}
-.c {{ width: 390px; height: 260px; display: flex; flex-direction: column; background: #fff; }}
-.t {{ background: linear-gradient(135deg, {bg1} 0%, {bg2} 100%); height: 160px; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; position:relative; overflow:hidden; }}
-.pat {{ position:absolute; inset:0; background-image:{pattern_css}; background-size:{pattern_size}; pointer-events:none; }}
-.ab {{ position:absolute; top:10px; left:10px; right:10px; bottom:10px; border: 3px solid rgba(255,255,255,0.4); border-radius: 15px; pointer-events:none; }}
-.ct {{ position:relative; z-index:2; text-align: center; }}
-.br {{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; }}
-.bn {{ font-size:10px; font-weight:900; color:#fff; background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; }}
-.bg {{ display:inline-block; background:#fff; color:{bg2}; font-weight:900; font-size:11px; padding:3px 10px; border-radius:20px; box-shadow: 0 4px 0 rgba(0,0,0,0.1); }}
-.ti {{ font-size:18px; font-weight:900; color:#FFFFFF; line-height:1.3; text-shadow:3px 3px 0 rgba(0,0,0,0.2); padding: 0 10px; }}
-.hi {{ color: #FFE600; text-shadow: 2px 2px 0 rgba(0,0,0,0.5); }}
-.b {{ background:#FFFFFF; height: 100px; display:flex; align-items:center; justify-content:center; gap:12px; padding:10px; position:relative; }}
-.pw {{ width:80px; height:80px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 2px solid #f0f0f0; border-radius: 12px; background: #fff; }}
-.pi {{ max-width:70px; max-height:70px; object-fit:contain; mix-blend-mode:multiply; }}"""
+html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #fff; }}
+body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }}
+.g {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; width: 1000px; padding: 40px; }}
+.pw {{ width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }}
+.pi {{ max-width: 260px; max-height: 260px; object-fit: contain; mix-blend-mode: multiply; }}
+.to {{ position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }}
+.tb {{ background: rgba(255, 255, 255, 0.65); padding: 40px 80px; text-align: center; box-shadow: 0 0 0 78px rgba(255, 255, 255, 0.65); }}
+.ti {{ font-size: 64px; font-weight: 900; color: #000; line-height: 1.2; letter-spacing: -2px; }}
+"""
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
-<div class="c"><div class="t"><div class="pat"></div><div class="ab"></div>
-<div class="ct"><div class="br"><span class="bn">MIKKE!</span><span class="bg">{badge}</span></div><h1 class="ti">{highlighted_title}</h1></div></div>
-<div class="b">{imgs}</div></div></body></html>"""
+<div class="g">{imgs_html}</div>
+<div class="to"><div class="tb"><h1 class="ti">{display_title}</h1></div></div>
+</body></html>"""
+    path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
+    with open(path, 'w', encoding='utf-8') as f: f.write(html)
+    return path
     path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
     return path
@@ -164,12 +155,17 @@ URLや価格は含めないでください。
 {json.dumps(llm_products, ensure_ascii=False)}
 
 出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "score": 4.8, "pros": ["...", "...", "..."], "cons": ["...", "..."], "recommended_for": "..."}}], "summary": "..."}}"""
-    res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers={"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}, json={
-        "model": "llama-3.3-70b-versatile",
-        "messages": [{"role": "system", "content": "日本語のJSONのみ出力。"}, {"role": "user", "content": prompt}],
-        "temperature": 0.6, "max_tokens": 8000, "response_format": {"type": "json_object"}
-    })
-    return res.json()["choices"][0]["message"]["content"] if res.status_code == 200 else None
+    
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    res = model.generate_content(
+        prompt,
+        generation_config=genai.types.GenerationConfig(
+            temperature=0.6,
+            max_output_tokens=8192,
+            response_mime_type="application/json"
+        )
+    )
+    return res.text if res else None
 
 def run_publish(article_title: str, category: str = None, slug: str = None):
     print(f"🚀 Processing: {article_title}")

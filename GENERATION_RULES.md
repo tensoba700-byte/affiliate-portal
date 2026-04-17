@@ -52,15 +52,21 @@ Follow these steps when planning and creating new article entries in Notion:
   - **Headings**: Use emojis in all headings (e.g., 「🔦 キャンプの夜を変えたヘッドランプ」).
 
 ### 2. Eyecatch Design Rules
-- **Themes & Backgrounds**:
-  - **Beauty (美容)**: Water, ice, or flower-themed backgrounds.
-  - **Gadget (ガジェット)**: Digital or futuristic-themed backgrounds.
-  - **Interior (インテリア)**: Room or natural-themed backgrounds.
-- **Layout**: Arrange product images **horizontally** (using images from Notion's `Image URL`).
+- **Canvas Size**: 1200 x 630 px.
+- **Background**: Solid White.
+- **Layout**: 
+  - Arrange product images in a grid (e.g., 3 across, 2 down for 6 products).
+  - Distribute images evenly based on total count.
+  - Product images should be "clipped" (transparent background) or blended cleanly.
 - **Typography**:
   - Use "けいフォント" (Kei Font) for the title.
-  - Highlight key words in **Red** or **Blue**.
-- **Atmosphere**: Overall "Pop" and lively aesthetic.
+  - Text color: **Black (Bold)**.
+  - Large font size and centered over the images.
+- **Text Box Effect**:
+  - Background box behind the title.
+  - Background color: White, **65% Opacity**.
+  - Spread: **78**, Roundness: **0** (Sharp corners).
+- **Atmosphere**: Simple, professional, and centered on the products.
 
 ---
-*Updated on 2026-04-15*
+*Updated on 2026-04-18*
