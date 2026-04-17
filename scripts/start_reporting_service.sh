@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-TARGET_TIME="19:30"
+TARGET_TIME="20:30"
 PROJECT_DIR="/Users/tsukika/Desktop/affiliate-portal"
 PYTHON_BIN="/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/bin/python3"
 SCRIPT_PATH="$PROJECT_DIR/scripts/daily_notion_reporter.py"
