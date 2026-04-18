@@ -104,33 +104,30 @@ def get_seasonal_catch_copy(category: str) -> str:
     return random.choice(choices)
 
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
-    display_title = title if len(title) <= 30 else title[:29] + '…'
-    
-    # 1200x630 simple white grid design
+    # 1200x630 3x2 grid design
     imgs_html = ""
     target_count = min(6, len(image_urls))
     for url in image_urls[:target_count]:
         imgs_html += f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n'
+    # Fill remaining slots to maintain 3x2 grid
+    for _ in range(max(0, 6 - target_count)):
+        imgs_html += '<div class="pw"></div>\n'
     
     css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #fff; }}
-body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }}
-.g {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; width: 1000px; padding: 40px; }}
-.pw {{ width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }}
-.pi {{ max-width: 260px; max-height: 260px; object-fit: contain; mix-blend-mode: multiply; }}
-.to {{ position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; pointer-events: none; }}
-.tb {{ background: rgba(255, 255, 255, 0.65); padding: 40px 80px; text-align: center; box-shadow: 0 0 0 78px rgba(255, 255, 255, 0.65); }}
-.ti {{ font-size: 64px; font-weight: 900; color: #000; line-height: 1.2; letter-spacing: -2px; }}
+body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items: center; justify-content: center; position: relative; }}
+.g {{ display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); width: 1200px; height: 630px; padding: 20px; gap: 20px; }}
+.pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
+.pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
+.to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
+.ti {{ font-size: 110px; font-weight: 900; color: #000; line-height: 1.1; text-align: center; padding: 0 50px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; }}
 """
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
 <div class="g">{imgs_html}</div>
-<div class="to"><div class="tb"><h1 class="ti">{display_title}</h1></div></div>
+<div class="to"><h1 class="ti">{title}</h1></div>
 </body></html>"""
-    path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
-    with open(path, 'w', encoding='utf-8') as f: f.write(html)
-    return path
     path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
     return path

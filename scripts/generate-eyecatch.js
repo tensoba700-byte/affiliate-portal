@@ -36,8 +36,8 @@ async function main() {
 
   try {
     const page = await browser.newPage();
-    // Retina-quality output: 2x for crisp display (produces 780x520 actual pixels)
-    await page.setViewport({ width: 390, height: 260, deviceScaleFactor: 2 });
+    // 1200x630 direct output
+    await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
 
     const fileUrl = `file://${htmlPath}`;
     await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 20000 });
@@ -62,7 +62,7 @@ async function main() {
     await page.screenshot({
       path: outputPath,
       type: 'png',
-      clip: { x: 0, y: 0, width: 390, height: 260 },
+      clip: { x: 0, y: 0, width: 1200, height: 630 },
     });
 
     console.log(`✅ Eyecatch saved: ${outputPath}`);
