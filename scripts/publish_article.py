@@ -131,6 +131,8 @@ def get_notion_data(article_title: str):
             return p.get("url") or get_rt(name)
         def get_price(name):
             return get_rt(name).replace("¥", "").replace(",", "").strip()
+        cat_prop = props.get("カテゴリ", {})
+        cat_select = cat_prop.get("select") if cat_prop else None
         products.append({
             "id": r.get("id"),
             "name": props.get("商品名", {}).get("title", [{}])[0].get("text", {}).get("content", ""),
@@ -141,7 +143,7 @@ def get_notion_data(article_title: str):
             "amazon_price": get_price("Amazon Price"),
             "rakuten_price": get_price("Rakuten Price"),
             "yahoo_price": get_price("Yahoo Price"),
-            "category": props.get("カテゴリ", {}).get("select", {}).get("name", "ガジェット")
+            "category": cat_select.get("name", "ガジェット") if cat_select else "ガジェット"
         })
     return products
 
