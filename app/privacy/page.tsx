@@ -2,7 +2,7 @@ import React from 'react';
 
 export const metadata = {
   title: 'プライバシーポリシー',
-  description: 'みっけ！のプライバシーポリシー（個人情報保護方針）について記載しています。',
+  description: 'みっけ!のプライバシーポリシー（個人情報保護方針）について記載しています。',
 };
 
 export default function PrivacyPage() {
@@ -96,7 +96,7 @@ export default function PrivacyPage() {
 
         <div className="pt-8 border-t border-primary/10 text-right">
           <p className="text-xs font-bold text-muted">最終更新日：2026年4月18日</p>
-          <p className="text-xs font-bold text-muted">みっけ！編集部</p>
+          <p className="text-xs font-bold text-muted">みっけ!編集部</p>
         </div>
       </div>
     </div>
