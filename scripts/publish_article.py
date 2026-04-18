@@ -26,6 +26,35 @@ headers = {
     "Content-Type": "application/json"
 }
 
+ARTICLE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "excerpt": {"type": "string"},
+        "intro": {"type": "string"},
+        "points": {
+            "type": "array",
+            "items": {"type": "string"}
+        },
+        "products": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {"type": "string"},
+                    "description": {"type": "string"},
+                    "recommended_for": {
+                        "type": "array",
+                        "items": {"type": "string"}
+                    }
+                },
+                "required": ["name", "description", "recommended_for"]
+            }
+        },
+        "summary": {"type": "string"}
+    },
+    "required": ["excerpt", "intro", "points", "products", "summary"]
+}
+
 # ----- Category Theme System -----
 CATEGORY_THEMES = {
     '美容・スキンケア': {'bg1': '#FF9EDB', 'bg2': '#FF69B4', 'accent': '#FFFFFF', 'pattern': 'water'},
@@ -149,22 +178,23 @@ def get_notion_data(article_title: str):
 
 def generate_content_with_llm(products_data, article_title):
     llm_products = [{"name": p["name"]} for p in products_data]
-    prompt = f"""あなたはプロのレビューライター（ペンネーム：おこげ）です。
-ゆうこす（菅本裕子）やフワちゃんのような、エネルギッシュで読者に親しみやすく語りかける口語体で記事を書いてください。
+    prompt = f"""あなたはプロのWebライターとして、中立的かつ信頼性の高い商品紹介記事を執筆してください。
+読者に親しみやすさを感じさせつつも、過度な装飾やAI特有の極端な表現を避けた、誠実なトーンを維持してください。
 
-【執筆ルール】
-1. 常に読者に話しかける口調（「〜だよ！」「〜だよね！」「マジでヤバい！」など）
-2. 自身の体験談やエピソードを盛り込み、感情豊かに表現する
-3. 曖昧な表現を避け、良いものは良いと「断言」する
-4. 見出し（### 第1位...）には必ず内容に合った絵文字を1つ入れる
-5. 各商品の紹介（description）は、具体的な使用シーンを含めて必ず【1000文字以上】のボリュームで書く
+【厳守事項】
+1. **ランキング形式の禁止**: 全ての商品を「おすすめの選択肢」として並列に扱ってください。順位や「第○位」という表現は一切使わないでください。
+2. **NGワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの煽り文句や、過剰な強調表現は使用禁止です。
+3. **一人称の禁止**: 「おこげ」「私」といった一人称や個人の体験談を装った記述は全て削除してください。
+4. **商品説明の制限**: 各商品の紹介（description）は、**500文字以内**で簡潔にまとめてください。
+5. **絵文字の活用**: 各見出しおよび商品説明の各文章に、内容に沿った適切な絵文字を配置してください。
+6. **ターゲット層**: 各商品に対し、「こんな人におすすめ！」という項目で、具体的な推奨理由を**3つの箇条書き**で作成してください。
 
-2026年時点の最新トレンドを踏まえ、以下の商品{len(llm_products)}点の比較レビュー記事をJSONで作成してください。
+2026年時点の最新トレンドを踏まえ、以下の商品{len(llm_products)}点のおすすめ紹介記事をJSONで作成してください。
 URLや価格は含めないでください。
 
 {json.dumps(llm_products, ensure_ascii=False)}
 
-出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "score": 4.8, "pros": ["...", "...", "..."], "cons": ["...", "..."], "recommended_for": "..."}}], "summary": "..."}}"""
+出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "recommended_for": ["...", "...", "..."]}}], "summary": "..."}}"""
     
     model = genai.GenerativeModel('gemini-2.0-flash')
     res = model.generate_content(
@@ -172,7 +202,8 @@ URLや価格は含めないでください。
         generation_config=genai.types.GenerationConfig(
             temperature=0.6,
             max_output_tokens=8192,
-            response_mime_type="application/json"
+            response_mime_type="application/json",
+            response_schema=ARTICLE_SCHEMA
         )
     )
     return res.text if res else None
@@ -187,14 +218,13 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     raw = generate_content_with_llm(products, output_title)
     if not raw: return False
     data = json.loads(raw)
-    markdown = f"--- \ntitle: \"{output_title}\"\ncoverImage: \"\"\nexcerpt: \"{data['excerpt']}\"\npublishDate: \"{datetime.datetime.now().isoformat()}\"\ncategory: \"{category}\"\n---\n\n{data['intro']}\n\n## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
+    markdown = f"--- \ntitle: \"{output_title}\"\ncoverImage: \"\"\nexcerpt: \"{data['excerpt']}\"\npublishDate: \"{datetime.datetime.now().isoformat()}\"\ncategory: \"{category}\"\n---\n\n> [!NOTE]\n> 本記事はアフィリエイト広告を利用しています\n\n{data['intro']}\n\n## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
     for i, p in enumerate(data['products']):
-        rank = i + 1
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
-        clean_name = re.sub(r'^###\s+第\d+位[：:]\s*', '', p['name'])
-        markdown += f"### 👑 第{rank}位: {clean_name}\n"
+        # 順位バッジや「第○位」を削除し、絵文字付きの並列見出しに変更
+        markdown += f"### 🌸 {p['name']}\n"
         if notion_p and notion_p['image_url']: markdown += f"IMAGE: {notion_p['image_url']}\n"
-        markdown += f"[総合評価: {p['score']}]\n\n"
+        
         if notion_p:
             for platform in ['amazon', 'rakuten', 'yahoo']:
                 price = notion_p.get(f'{platform}_price')
@@ -202,9 +232,14 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
             for platform, key in [('amazon', 'asin'), ('rakuten', 'rakuten'), ('yahoo', 'yahoo')]:
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"
-        # Format description for markdown
+        
+        # 説明文のフォーマット（500文字以内）
         formatted_desc = p['description'].replace('\\n', '\n\n')
-        markdown += f"\n{formatted_desc}\n\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n:::pro\n" + "\n".join([f"- {m}" for m in p['pros']]) + "\n:::\n:::con\n" + "\n".join([f"- {c}" for c in p['cons']]) + "\n:::\n\n👤 **こんな人におすすめ**: " + p.get('recommended_for', '') + "\n\n"
+        markdown += f"\n{formatted_desc}\n\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+        
+        # 「こんな人におすすめ！」箇条書きの追加
+        markdown += f"👤 **こんな人におすすめ！**\n"
+        markdown += "\n".join([f"- {item}" for item in p['recommended_for']]) + "\n\n"
     markdown += f"## 💬 まとめ\n{data['summary']}\n"
     path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{slug}.md"
     with open(path, 'w', encoding='utf-8') as f: f.write(markdown)

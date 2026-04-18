@@ -12,10 +12,8 @@ This document outlines the rules for automated content generation and database m
 
 ## Article Planning & Creation Workflow
 
-Follow these steps when planning and creating new article entries in Notion:
-
 ### 1. Trend Analysis
-- Read the last 7 days of 「AI新聞」 (AI Newspaper) in Notion to identify current trends before deciding on a theme.
+- Identify current trends before deciding on a theme.
 
 ### 2. Determine Theme & Target
 - Decide on a specific theme and target audience.
@@ -23,50 +21,38 @@ Follow these steps when planning and creating new article entries in Notion:
 
 ### 3. Product Research & Verification
 - Research 5-7 products that fit the chosen theme.
-- **Genre Consistency**: All products must belong to the same genre.
 - **Accurate Naming**: Write the name precisely as `[Manufacturer] [Product Name] [Model Number]`.
-  - *Example*: 「パナソニック ヘアードライヤー ナノケア EH-NA0J」
-  - If the model number is unknown, use `[Manufacturer] [Product Name]`.
-- **Verification**: Always perform a web search to confirm the product exists and the name/model number is accurate before writing to Notion.
 
-### 4. Finalize Title & Register to Notion
-- Determine the article title **only after** the product list is finalized.
-- Register the following properties in the 「みっけ！記事管理」 database:
-  - **記事タイトル** (Article Title)
-  - **商品名** (Accurate Product Name)
-  - **カテゴリ** (Category)
-  - **ステータス 1** (Status): Set to **未処理** (Unprocessed).
-
-## Article Content & Style Rules
+## Article Content & Style Rules (Updated 2026-04-19)
 
 ### 1. Writing Style (Brand Voice)
-- **Persona**: Energetic, colloquial style inspired by "Yukosu" or "Fuwa-chan".
-- **Tone**: Experiential, talking directly to readers, and assertive.
-- **Phrasing Examples**:
-  - "これ、マジで使えます！" (This is seriously useful!)
-  - "正直に言うと〜" (To be honest...)
-  - "〇〇好きの私が選んだのはコレ！" (As a [Category] lover, this is my pick!)
-- **Structure**:
-  - **Character Count**: Each product description must be **1,000 characters or more**.
-  - **Content**: Include specific use cases, scenarios, and personal anecdotes.
-  - **Headings**: Use emojis in all headings (e.g., 「🔦 キャンプの夜を変えたヘッドランプ」).
+- **Format**: **Parallel Selection** (Parallel list). **DO NOT use rankings** or "1st Place", "2nd Place", etc.
+- **Tone**: Professional yet friendly. Neutral and reliable.
+- **Persona**: NO persona (remove "Okoge"). No first-person experience or anecdotes.
+- **Language Constraints**:
+    - **Forbidden Words**: 「マジで」, 「ヤバい」, 「神アイテム」, 「最高」, 「究極」, etc.
+    - **Emojification**: Add appropriate emojis to every heading and every sentence in the description.
+- **Product Descriptions**:
+    - **Length**: Max **500 characters** per product.
+    - **Recommended for**: Provide a 3-point bulleted list of why this product is recommended for specific users.
 
-### 2. Eyecatch Design Rules
+### 2. Layout & Formatting
+- **PR Disclosure**: Always include a PR disclosure (e.g., 本記事はアフィリエイト広告を利用しています) at the very top of the article.
+- **Headings**: Use `### 🌸 [Product Name]` format for product sections.
+- **Buttons**: Use the following button text:
+    - `Amazonで価格を見る`
+    - `楽天市場で価格を見る`
+    - `Yahoo!で価格を見る`
+- **Exclusions**:
+    - NO star ratings.
+    - NO comparison tables.
+    - NO pros/cons boxes.
+
+### 3. Eyecatch Design Rules
 - **Canvas Size**: 1200 x 630 px.
 - **Background**: Solid White.
-- **Layout**: 
-  - Arrange product images in a grid (e.g., 3 across, 2 down for 6 products).
-  - Distribute images evenly based on total count.
-  - Product images should be "clipped" (transparent background) or blended cleanly.
-- **Typography**:
-  - Use "けいフォント" (Kei Font) for the title.
-  - Text color: **Black (Bold)**.
-  - Large font size and centered over the images.
-- **Text Box Effect**:
-  - Background box behind the title.
-  - Background color: White, **65% Opacity**.
-  - Spread: **78**, Roundness: **0** (Sharp corners).
-- **Atmosphere**: Simple, professional, and centered on the products.
+- **Layout**: Grid-based arrangement of product images.
+- **Typography**: Large, centered title with 65% opacity white box.
 
 ---
-*Updated on 2026-04-18*
+*Updated on 2026-04-19*
