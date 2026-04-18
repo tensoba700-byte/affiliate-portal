@@ -103,6 +103,22 @@ def get_seasonal_catch_copy(category: str) -> str:
     choices = options.get(category, [f"{year}年{season}のベストバイアイテム"])
     return random.choice(choices)
 
+def format_eyecatch_title(title: str) -> str:
+    # Insert a <br /> tag at a natural break point if the title is long
+    if len(title) <= 11: return title
+    
+    # Preferred breaking points (particles and punctuation)
+    separators = ["の", "で", "に", "は", "が", "を", "！", "？", "：", "、", " ", "　"]
+    # Look for a separator near the middle of the string (±3 chars)
+    mid = len(title) // 2
+    for offset in [0, 1, -1, 2, -2, 3, -3]:
+        idx = mid + offset
+        if 0 < idx < len(title) - 1 and title[idx] in separators:
+            return title[:idx+1] + "<br />" + title[idx+1:]
+    
+    # Fallback: break at the midpoint
+    return title[:mid] + "<br />" + title[mid:]
+
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
     # 1200x630 3x2 grid design
     imgs_html = ""
@@ -113,6 +129,10 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     for _ in range(max(0, 6 - target_count)):
         imgs_html += '<div class="pw"></div>\n'
     
+    # Format title with line breaks and adjust size for long text
+    display_title = format_eyecatch_title(title)
+    font_size = "110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "75px"
+    
     css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #fff; }}
@@ -121,12 +141,12 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
 .pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
 .pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
 .to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
-.ti {{ font-size: 110px; font-weight: 900; color: #000; line-height: 1.1; text-align: center; padding: 0 50px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; }}
+.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.25; text-align: center; padding: 0 60px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; word-break: keep-all; }}
 """
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
 <div class="g">{imgs_html}</div>
-<div class="to"><h1 class="ti">{title}</h1></div>
+<div class="to"><h1 class="ti">{display_title}</h1></div>
 </body></html>"""
     path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
