@@ -10,8 +10,9 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 
 # Load env from local directory
-load_dotenv("/Users/tsukika/Desktop/affiliate-portal/.env.local")
-load_dotenv("/Users/tsukika/.gemini/antigravity/scratch/discord-bot/.env")
+load_dotenv(".env.local")
+# For local bot development (optional/ignored if not found)
+load_dotenv(os.path.expanduser("~/.gemini/antigravity/scratch/discord-bot/.env"))
 
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
@@ -148,15 +149,15 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
 <div class="g">{imgs_html}</div>
 <div class="to"><h1 class="ti">{display_title}</h1></div>
 </body></html>"""
-    path = f"/Users/tsukika/Desktop/affiliate-portal/public/eyecatch/{slug}.html"
+    path = f"public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
     return path
 
 def take_eyecatch_screenshot(slug: str) -> bool:
-    node_bin = "/Users/tsukika/.nvm/versions/node/v24.14.1/bin/node"
-    script = "/Users/tsukika/Desktop/affiliate-portal/scripts/generate-eyecatch.js"
+    node_bin = "node" # Use system node in CI/Local
+    script = "scripts/generate-eyecatch.js"
     try:
-        subprocess.run([node_bin, script, slug], capture_output=True, text=True, timeout=60, cwd="/Users/tsukika/Desktop/affiliate-portal")
+        subprocess.run([node_bin, script, slug], capture_output=True, text=True, timeout=60)
         return True
     except: return False
 
@@ -274,7 +275,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         markdown += f"👤 **こんな人におすすめ！**\n"
         markdown += "\n".join([f"- {item}" for item in p['recommended_for']]) + "\n\n"
     markdown += f"## 💬 まとめ\n{data['summary']}\n"
-    path = f"/Users/tsukika/Desktop/affiliate-portal/src/content/articles/{slug}.md"
+    path = f"src/content/articles/{slug}.md"
     with open(path, 'w', encoding='utf-8') as f: f.write(markdown)
     image_urls = [p['image_url'] for p in products if p.get('image_url')]
     generate_eyecatch_html(slug, output_title, category, image_urls, get_seasonal_catch_copy(category))

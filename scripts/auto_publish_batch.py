@@ -14,9 +14,9 @@ def main():
     parser.add_argument("--time", choices=["morning", "night"], required=True, help="Processing window (morning=7am, night=8pm)")
     args = parser.parse_args()
 
-    load_dotenv("/Users/tsukika/Desktop/affiliate-portal/.env.local")
+    load_dotenv(".env.local")
     NOTION_API_KEY = os.getenv("NOTION_API_KEY")
-    DATABASE_ID = "8511908442c74738b78dc62f6a7a49d9"
+    DATABASE_ID = os.getenv("NOTION_DATABASE_ID") or "8511908442c74738b78dc62f6a7a49d9"
 
     if not NOTION_API_KEY:
         print("Error: NOTION_API_KEY not found.")
