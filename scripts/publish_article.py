@@ -191,7 +191,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     for i, p in enumerate(data['products']):
         rank = i + 1
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
-        markdown += f"### 👑 第{rank}位: {p['name']}\n"
+        clean_name = re.sub(r'^###\s+第\d+位[：:]\s*', '', p['name'])
+        markdown += f"### 👑 第{rank}位: {clean_name}\n"
         if notion_p and notion_p['image_url']: markdown += f"IMAGE: {notion_p['image_url']}\n"
         markdown += f"[総合評価: {p['score']}]\n\n"
         if notion_p:
