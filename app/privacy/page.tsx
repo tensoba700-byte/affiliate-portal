@@ -15,7 +15,12 @@ export default function PrivacyPage() {
         <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">
           プライバシーポリシー
         </h1>
-        <p className="text-sm font-bold text-muted">個人情報の取り扱いと広告配信�        <section>
+        <p className="text-sm font-bold text-muted">個人情報の取り扱いと広告配信について</p>
+      </header>
+
+      <div className="bg-white rounded-[2rem] p-8 md:p-12 cute-shadow border border-card-border space-y-10">
+        
+        <section>
           <h2 className="text-xl font-black text-foreground mb-4 flex items-center gap-2">
             <span className="text-primary">👤</span> 1. 個人情報の取得について
           </h2>
@@ -91,32 +96,6 @@ export default function PrivacyPage() {
 
         <div className="pt-8 border-t border-primary/10 text-right">
           <p className="text-xs font-bold text-muted">最終更新日：2026年4月18日</p>
-          <p className="text-xs font-bold text-muted">みっけ！編集部</p>
-        </div>
-��認識したりする場合があります。
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-black text-foreground mb-4 flex items-center gap-2">
-            <span className="text-primary">📊</span> アクセス解析ツールについて
-          </h2>
-          <p className="text-sm md:text-base leading-relaxed text-foreground/80">
-            当サイトでは、Googleによるアクセス解析ツール「Googleアナリティクス」を利用しています。このGoogleアナリティクスはトラフィックデータの収集のためにCookieを使用しています。このトラフィックデータは匿名で収集されており、個人を特定するものではありません。この機能はCookieを無効にすることで収集を拒否することが出来ますので、お使いのブラウザの設定をご確認ください。
-          </p>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-black text-foreground mb-4 flex items-center gap-2">
-            <span className="text-primary">⚠️</span> 免責事項
-          </h2>
-          <p className="text-sm md:text-base leading-relaxed text-foreground/80">
-            当サイトからリンクやバナーなどによって他のサイトに移動された場合、移動先サイトで提供される情報、サービス等について一切の責任を負いません。当サイトのコンテンツ・情報につきまして、可能な限り正確な情報を掲載するよう努めておりますが、誤情報が入り込んだり、情報が古くなっていることもございます。当サイトに掲載された内容によって生じた損害等の一切の責任を負いかねますのでご了承ください。
-          </p>
-        </section>
-
-        <div className="pt-8 border-t border-primary/10 text-right">
-          <p className="text-xs font-bold text-muted">策定日：2026年4月16日</p>
           <p className="text-xs font-bold text-muted">みっけ！編集部</p>
         </div>
       </div>
