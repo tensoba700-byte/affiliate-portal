@@ -42,16 +42,24 @@ async function main() {
     const fileUrl = `file://${htmlPath}`;
     await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 20000 });
 
-    // Wait for all images to finish loading (with per-image 5s timeout)
-    await page.evaluate(() => {
-      return Promise.all(
-        Array.from(document.querySelectorAll('img')).map(img => {
-          if (img.complete) return Promise.resolve();
-          return new Promise(resolve => {
-            img.onload = resolve;
-            img.onerror = resolve;
-            setTimeout(resolve, 5000);
-          });
+    // Robust check: wait for all images to be fully loaded and decoded
+    await page.evaluate(async () => {
+      const images = Array.from(document.querySelectorAll('img'));
+      await Promise.all(
+        images.map(async (img) => {
+          if (img.complete) return;
+          try {
+            // Wait for load event
+            await new Promise((resolve, reject) => {
+              img.onload = resolve;
+              img.onerror = reject;
+              setTimeout(() => reject(new Error('Image timed out')), 10000);
+            });
+            // Ensure decode is successful if supported
+            if (img.decode) await img.decode().catch(() => {});
+          } catch (e) {
+            console.error(`Failed to load image: ${img.src}`, e);
+          }
         })
       );
     });
