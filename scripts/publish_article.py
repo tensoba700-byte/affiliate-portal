@@ -193,7 +193,7 @@ URLや価格は含めないでください。
 
 出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "recommended_for": ["...", "...", "..."]}}], "summary": "..."}}"""
     
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-3-flash-preview')
     res = model.generate_content(
         prompt,
         generation_config=genai.types.GenerationConfig(
@@ -205,6 +205,20 @@ URLや価格は含めないでください。
     )
     return res.text if res else None
 
+def truncate_product_name(name: str) -> str:
+    # Remove SEO keywords and long descriptions to keep the title concise
+    keywords = [" 美容液", " 保湿", " 乾燥", " うるおい", " キメ", " ツヤ", " 毛穴", " しみ", " そばかす", " ごわつき", " くすみ", " 日本製", " 30g", " 150ml", " 40ml", " 15ml"]
+    short_name = name
+    for kw in keywords:
+        if kw in name:
+            idx = name.find(kw)
+            if idx > 8:
+                short_name = name[:idx].strip()
+                break
+    if len(short_name) > 45:
+        short_name = short_name[:42] + "..."
+    return short_name
+
 def run_publish(article_title: str, category: str = None, slug: str = None):
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
@@ -215,17 +229,17 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     raw = generate_content_with_llm(products, output_title)
     if not raw: return False
     data = json.loads(raw)
-    markdown = f"--- \ntitle: \"{output_title}\"\ncoverImage: \"\"\nexcerpt: \"{data['excerpt']}\"\npublishDate: \"{datetime.datetime.now().isoformat()}\"\ncategory: \"{category}\"\n---\n\n> [!NOTE]\n> 本記事はアフィリエイト広告を利用しています\n\n{data['intro']}\n\n## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
+    markdown = f"--- \ntitle: \"{output_title}\"\ncoverImage: \"\"\nexcerpt: \"{data['excerpt']}\"\npublishDate: \"{datetime.datetime.now().isoformat()}\"\ncategory: \"{category}\"\n---\n\n{data['intro']}\n\n## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
     for i, p in enumerate(data['products']):
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
-        # 順位バッジや「第○位」を削除し、絵文字付きの並列見出しに変更
-        markdown += f"### 🌸 {p['name']}\n"
+        display_name = truncate_product_name(p['name'])
+        markdown += f"### 🌸 {display_name}\n"
         if notion_p and notion_p['image_url']: markdown += f"IMAGE: {notion_p['image_url']}\n"
         
         if notion_p:
             for platform in ['amazon', 'rakuten', 'yahoo']:
                 price = notion_p.get(f'{platform}_price')
-                if price: markdown += f"{platform.upper()}_PRICE: {price}\n"
+                if price and price != "なし": markdown += f"{platform.upper()}_PRICE: {price}\n"
             for platform, key in [('amazon', 'asin'), ('rakuten', 'rakuten'), ('yahoo', 'yahoo')]:
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"

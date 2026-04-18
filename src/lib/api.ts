@@ -321,13 +321,13 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
   // Build comparison table logic removed by request
   let comparisonTableHtml = '';
 
-  // Divide content into sections by rank headings to ensure buttons match the correct item
-  const sections = content.split(/(?=###\s*👑?\s*第\d+位)/);
+  // Divide content into sections by emoji or rank headings to ensure buttons match the correct item
+  const sections = content.split(/(?=###\s*(?:👑?\s*第\d+位|🌸))/);
   const processedSections = sections.map(section => {
     let s = section;
     
-    // Extract product name from heading (e.g. "### 👑 第1位: ダイソン 掃除機" -> "ダイソン 掃除機")
-    const nameMatch = s.match(/第\d+位:?\s*(.*?)(?:\n|$)/i);
+    // Extract product name from heading (e.g. "### 🌸 商品名" or "### 第1位: 商品名")
+    const nameMatch = s.match(/###\s*(?:👑?\s*第\d+位:?|🌸)\s*(.*?)(?:\n|$)/i);
     const productName = nameMatch ? nameMatch[1].trim() : decodedSlug;
 
     // Find identifiers SPECIFIC to this section
@@ -360,15 +360,15 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/IMAGE:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-    s = s.replace(/AMAZON_PRICE:\s*\d+[ \t]*\n?/gi, '');
-    s = s.replace(/RAKUTEN_PRICE:\s*\d+[ \t]*\n?/gi, '');
-    s = s.replace(/YAHOO_PRICE:\s*\d+[ \t]*\n?/gi, '');
+    s = s.replace(/AMAZON_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
+    s = s.replace(/RAKUTEN_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
+    s = s.replace(/YAHOO_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
     s = s.replace(/AMAZON_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
     s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
     // Add Image Tag if present, right after the heading
     if (imageUrl) {
-      s = s.replace(/(###\s*👑?\s*第\d+位:?[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
+      s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
     }
 
     // Replace placeholders with dynamic buttons for THIS section
