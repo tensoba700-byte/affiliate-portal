@@ -27,6 +27,7 @@ This document outlines the rules for automated content generation and database m
 
 ### 1. Writing Style (Brand Voice)
 - **Format**: **Parallel Selection** (Parallel list). **DO NOT use rankings** or "1st Place", "2nd Place", etc.
+- **Product Count**: **Exactly 6 items**. (商品数は必ず**6個**に固定してください。)
 - **Tone**: Professional yet friendly. Neutral and reliable.
 - **Persona**: NO persona (remove "Okoge"). No first-person experience or anecdotes.
 - **Language Constraints**:

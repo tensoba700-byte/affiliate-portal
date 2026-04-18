@@ -223,6 +223,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
     if not products: return False
+    # 固定で6個にする
+    products = products[:6]
     category = category or products[0].get("category", "ガジェット")
     output_title = article_title.replace("2024", "2026")
     slug = slug or slugify(article_title)
