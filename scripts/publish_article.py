@@ -1,3 +1,11 @@
+import requests
+import os
+import json
+import random
+import subprocess
+import datetime
+import urllib.parse
+import re
 import google.generativeai as genai
 from dotenv import load_dotenv
 

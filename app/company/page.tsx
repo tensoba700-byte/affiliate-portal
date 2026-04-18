@@ -36,12 +36,12 @@ export default function CompanyPage() {
 
           <div className="py-6 grid grid-cols-1 md:grid-cols-3 items-center">
             <span className="text-sm font-black text-muted mb-2 md:mb-0">運営者</span>
-            <span className="md:col-span-2 text-base font-bold text-foreground">みっけ！編集部（田中 太郎）</span>
+            <span className="md:col-span-2 text-base font-bold text-foreground">mikke編集部</span>
           </div>
 
           <div className="py-6 grid grid-cols-1 md:grid-cols-3 items-center">
             <span className="text-sm font-black text-muted mb-2 md:mb-0">お問い合わせ</span>
-            <span className="md:col-span-2 text-base font-bold text-foreground">contact@mikke-style.com</span>
+            <span className="md:col-span-2 text-base font-bold text-foreground">mikke1234@gmail.com</span>
           </div>
 
           <div className="py-6 grid grid-cols-1 md:grid-cols-3 items-start">
