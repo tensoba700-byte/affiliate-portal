@@ -282,9 +282,22 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     take_eyecatch_screenshot(slug)
     return True
 
+import argparse
+import sys
+
+# ... (previous code) ...
+
 if __name__ == "__main__":
-    run_publish(
-        "GW前に旅行グッズ・アウトドア用品をチェック！人気アイテムとおすすめの使い方", 
-        "便利グッズ", 
-        "20260415-gw-travel-outdoor"
-    )
+    parser = argparse.ArgumentParser(description="Generate and publish an article from Notion data.")
+    parser.add_argument("--title", help="Title of the article in Notion")
+    parser.add_argument("--category", help="Category of the article")
+    parser.add_argument("--slug", help="Slug/URL for the article")
+    
+    args = parser.parse_args()
+    
+    if args.title:
+        success = run_publish(args.title, args.category, args.slug)
+        if not success:
+            sys.exit(1)
+    else:
+        parser.print_help()
