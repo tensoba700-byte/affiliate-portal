@@ -240,7 +240,11 @@ def generate_products_for_topic(title, category):
     else:
         return []
 
-def register_to_notion(title, category, products):
+def register_to_notion(title, category, products, publish_time: str = "朝"):
+    """
+    Notionのアフィリエイト管理DBに商品を登録する。
+    publish_time: "朝" or "夜" — 公開時間を示すフィールドとして記録。
+    """
     # Mapping to known valid categories in Notion
     valid_categories = ["美容", "ガジェット", "インテリア", "生活雑貨", "便利グッズ", "美容・スキンケア", "家電"]
     final_category = category
@@ -256,7 +260,8 @@ def register_to_notion(title, category, products):
                 "商品名": { "title": [{ "text": { "content": p } }] },
                 "記事タイトル": { "rich_text": [{ "text": { "content": title } }] },
                 "カテゴリ": { "select": { "name": final_category } },
-                "ステータス 1": { "select": { "name": "未処理" } }
+                "ステータス 1": { "select": { "name": "未処理" } },
+                "公開時間": { "select": { "name": publish_time } }
             }
         }
         res = requests.post("https://api.notion.com/v1/pages", headers=NOTION_HEADERS, json=payload)
@@ -301,15 +306,17 @@ def main():
     suggestions = data["suggestions"]
     print(f"Generated {len(suggestions)} suggestions.")
 
-    # 最初の2件をNotionに登録
+    # 最初の2件をNotionに登録（1件目→朝、2件目→夜）
     registered_msg = ""
+    publish_times = ["朝", "夜"]
     for i in range(min(2, len(suggestions))):
         s = suggestions[i]
-        print(f"Registering to Notion: {s['title']}")
+        pt = publish_times[i]
+        print(f"Registering to Notion: {s['title']} (公開時間: {pt})")
         products = generate_products_for_topic(s['title'], s['category'])
         if products:
-            register_to_notion(s['title'], s['category'], products)
-            registered_msg += f"✅ **Notion登録完了**: {s['title']}（{len(products)}商品）\n"
+            register_to_notion(s['title'], s['category'], products, publish_time=pt)
+            registered_msg += f"✅ **Notion登録完了**: {s['title']}（{len(products)}商品 / 公開時間: {pt}）\n"
 
     # Discord メッセージ作成
     discord_body = ""

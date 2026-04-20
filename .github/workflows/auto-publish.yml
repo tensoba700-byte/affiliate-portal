@@ -2,24 +2,15 @@ name: Auto Publish Articles
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 07:00 JST
-    - cron: '0 11 * * *' # 20:00 JST
-  workflow_dispatch:
-    inputs:
-      time_window:
-        description: 'Time window to process'
-        required: true
-        default: 'morning'
-        type: choice
-        options:
-          - morning
-          - night
+    - cron: '0 22 * * *'  # 07:00 JST (UTC+9) — 毎朝1本だけ投稿
+  workflow_dispatch: {}    # 手動実行も可能
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,26 +20,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: Set up Node.js (for eyecatch screenshot)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Node dependencies
+        run: npm ci --prefer-offline || npm install
+
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests google-generativeai python-dotenv
-
-      - name: Determine time window
-        id: determine_time
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "window=${{ github.event.inputs.time_window }}" >> $GITHUB_OUTPUT
-          else
-            HOUR=$(date -u +%H)
-            if [ "$HOUR" = "22" ] || [ "$HOUR" = "21" ]; then
-              echo "window=morning" >> $GITHUB_OUTPUT
-            else
-              echo "window=night" >> $GITHUB_OUTPUT
-            fi
-          fi
 
       - name: Run auto-publish script
         env:
@@ -56,16 +41,15 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
         run: |
-          # Create a dummy .env.local for the script to load
           echo "NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}" > .env.local
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env.local
           echo "NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}" >> .env.local
-          python scripts/auto_publish_batch.py --time ${{ steps.determine_time.outputs.window }}
+          python scripts/auto_publish_batch.py
 
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add src/content/articles public/eyecatch
-          git commit -m "chore: auto-publish article [skip ci]" || echo "No changes to commit"
+          git diff --staged --quiet || git commit -m "chore: auto-publish article [skip ci]"
           git push origin main || echo "No changes to push"
