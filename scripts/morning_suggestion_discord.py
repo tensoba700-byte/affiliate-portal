@@ -22,67 +22,155 @@ NOTION_HEADERS = {
     "Content-Type": "application/json"
 }
 
-def get_recent_pages(limit=7):
+# ─────────────────────────────────────────
+# AI新聞 Notion DBからたて・クロードのデータを取得
+# ─────────────────────────────────────────
+
+def get_all_shinbun_pages():
+    """AI新聞ページ（子ページ一覧）をすべて取得する。"""
     url = f"https://api.notion.com/v1/blocks/{AI_SHINBUN_PARENT_ID}/children"
     res = requests.get(url, headers=NOTION_HEADERS)
     if res.status_code != 200:
-        print(f"Error fetching Notion pages: {res.text}")
+        print(f"Error fetching AI新聞 pages: {res.text}")
         return []
-        
     results = res.json().get("results", [])
     child_pages = [r for r in results if r["type"] == "child_page"]
-    # Sort and take the most recent ones (Notion results are usually chronologically ordered)
-    return child_pages[-limit:]
+    return child_pages
 
-def get_page_content(page_id):
+
+def parse_date_from_title(title: str) -> datetime.date | None:
+    """
+    ページタイトル「2026年4月20日」形式を datetime.date に変換する。
+    解析失敗時は None を返す。
+    """
+    m = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', title)
+    if m:
+        try:
+            return datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except ValueError:
+            pass
+    return None
+
+
+def get_recent_shinbun_pages(days: int = 3) -> list[dict]:
+    """
+    AI新聞から直近 days 日分のページを取得する。
+    タイトルが日付形式のページを対象にする。
+    """
+    all_pages = get_all_shinbun_pages()
+    today = datetime.date.today()
+    cutoff = today - datetime.timedelta(days=days)
+
+    dated_pages = []
+    for page in all_pages:
+        title = page.get("child_page", {}).get("title", "")
+        date = parse_date_from_title(title)
+        if date and date >= cutoff:
+            dated_pages.append({"id": page["id"], "title": title, "date": date})
+
+    # 日付降順にソート（最新が先頭）
+    dated_pages.sort(key=lambda x: x["date"], reverse=True)
+    print(f"📅 AI新聞から直近{days}日分のページが {len(dated_pages)} 件見つかりました: "
+          + ", ".join(p["title"] for p in dated_pages))
+    return dated_pages
+
+
+def get_page_content(page_id: str) -> dict:
+    """
+    指定ページのブロックを取得し、たて・クロード・おこげセクション別に分類して返す。
+    """
     url = f"https://api.notion.com/v1/blocks/{page_id}/children"
     res = requests.get(url, headers=NOTION_HEADERS)
-    if res.status_code != 200: return ""
-    
+    if res.status_code != 200:
+        return {"たて": [], "クロード": [], "おこげ": [], "その他": []}
+
     blocks = res.json().get("results", [])
     content_map = {"たて": [], "クロード": [], "おこげ": [], "その他": []}
     current_section = "その他"
-    
+
     for b in blocks:
         if b["type"] == "heading_2":
             title = "".join([t["plain_text"] for t in b["heading_2"]["rich_text"]])
-            if "たて" in title: current_section = "たて"
-            elif "クロード" in title: current_section = "クロード"
-            elif "おこげ" in title: current_section = "おこげ"
-            else: current_section = "その他"
+            if "たて" in title:
+                current_section = "たて"
+            elif "クロード" in title or "claude" in title.lower():
+                current_section = "クロード"
+            elif "おこげ" in title:
+                current_section = "おこげ"
+            else:
+                current_section = "その他"
         elif b["type"] == "paragraph":
             text = "".join([t["plain_text"] for t in b["paragraph"]["rich_text"]])
-            if text: content_map[current_section].append(text)
+            if text:
+                content_map[current_section].append(text)
         elif b["type"] == "bulleted_list_item":
             text = "".join([t["plain_text"] for t in b["bulleted_list_item"]["rich_text"]])
-            if text: content_map[current_section].append(f"* {text}")
-            
+            if text:
+                content_map[current_section].append(f"* {text}")
+
     return content_map
 
-def generate_suggestions_with_llm(history):
+
+def build_trend_context(days: int = 3) -> tuple[str, list[str]]:
+    """
+    直近 days 日分のAI新聞から「たて」「クロード」セクションの情報を集約し、
+    プロンプト用テキストと過去タイトルリストを返す。
+    """
+    pages = get_recent_shinbun_pages(days)
     history_text = ""
     past_titles = []
-    
-    for i, day in enumerate(history):
-        history_text += f"\n--- Day {i+1} ---\n"
-        history_text += "## Trends (Claude & Tate):\n" + "\n".join(day["たて"] + day["クロード"])
-        history_text += "\n## My Suggestions/Improvements (Okoge):\n" + "\n".join(day["おこげ"])
-        
-        # Extract past titles to avoid duplicates
-        for line in day["おこげ"]:
-            if "今日生成した記事タイトル" in line: continue
-            m = re.findall(r'- (【2026年最新】.*)', line)
-            if m: past_titles.extend(m)
+
+    for page in pages:
+        content = get_page_content(page["id"])
+        date_label = page["title"]
+
+        tate_lines = content.get("たて", [])
+        claude_lines = content.get("クロード", [])
+        okoge_lines = content.get("おこげ", [])
+
+        # たて・クロードの情報をまとめる
+        if tate_lines or claude_lines:
+            history_text += f"\n=== {date_label} のトレンド情報 ===\n"
+            if tate_lines:
+                history_text += "【たて】\n" + "\n".join(tate_lines[:20]) + "\n"
+            if claude_lines:
+                history_text += "【クロード】\n" + "\n".join(claude_lines[:20]) + "\n"
+
+        # おこげの過去提案タイトルを抽出（重複回避用）
+        for line in okoge_lines:
+            m = re.findall(r'[【「](2026年.*?)[】」]', line)
+            past_titles.extend(m)
+            m2 = re.findall(r'- (【2026年最新】.*)', line)
+            past_titles.extend(m2)
+
+    return history_text.strip(), list(set(past_titles))
+
+
+# ─────────────────────────────────────────
+# 企画提案 LLM
+# ─────────────────────────────────────────
+
+def generate_suggestions_with_llm(trend_context: str, past_titles: list[str]) -> dict | None:
+    """
+    たて・クロードのトレンド情報を元に、今日の記事企画3案をLLMに生成させる。
+    """
+    past_titles_text = "\n".join(f"- {t}" for t in past_titles) if past_titles else "なし"
 
     prompt = f"""あなたはトレンド分析のスペシャリスト兼コンテンツプランナーです。
-以下の直近1週間の「AI新聞」の内容（トレンド情報、過去の提案、生成済み記事）を分析し、
+以下の「AI新聞」から収集した直近3日分のトレンド情報（たて・クロード）を分析し、
 今日書くべき最高のおすすめ記事ネタを3つ提案してください。
 
-【過去の生成済み記事タイトル（重複厳禁！）】
-{chr(10).join(set(past_titles))}
+【直近3日間のトレンド情報（たて・クロード）】
+{trend_context if trend_context else "※情報が取得できませんでした。一般的なトレンドから判断してください。"}
 
-【直近1週間のトレンド・改善案ログ】
-{history_text}
+【過去の生成済み記事タイトル（重複厳禁！）】
+{past_titles_text}
+
+【企画選定の方針】
+- たて・クロードが注目している最新トレンドを優先的に反映すること
+- 季節性（現在は春）・イベント・話題性を考慮すること
+- カテゴリ（美容・ガジェット・インテリア・生活雑貨・便利グッズ）が偏らないようにすること
+- 過去タイトルと重複しないこと
 
 【出力内容（JSON形式）】
 必ず以下の構造のJSONのみを出力してください。
@@ -91,7 +179,7 @@ def generate_suggestions_with_llm(history):
     {{
       "title": "記事タイトル案",
       "category": "美容/ガジェット/インテリア/生活雑貨/便利グッズから選択",
-      "reason": "提案理由",
+      "reason": "提案理由（たて・クロードのどの情報を参考にしたか含める）",
       "target": "ターゲット層"
     }},
     ... (合計3つ)
@@ -111,12 +199,17 @@ def generate_suggestions_with_llm(history):
         "temperature": 0.4,
         "response_format": {"type": "json_object"}
     })
-    
+
     if res.status_code == 200:
         return json.loads(res.json()["choices"][0]["message"]["content"])
     else:
         print(f"LLM Error: {res.text}")
         return None
+
+
+# ─────────────────────────────────────────
+# 商品リスト生成・Notion登録・Discord送信
+# ─────────────────────────────────────────
 
 def generate_products_for_topic(title, category):
     prompt = f"""記事タイトル: 「{title}」
@@ -141,7 +234,7 @@ def generate_products_for_topic(title, category):
         "temperature": 0.5,
         "response_format": {"type": "json_object"}
     })
-    
+
     if res.status_code == 200:
         return json.loads(res.json()["choices"][0]["message"]["content"]).get("products", [])
     else:
@@ -182,26 +275,33 @@ def send_to_discord(message):
     res = requests.post(url, headers=headers, json=payload)
     return res.status_code == 200
 
+
+# ─────────────────────────────────────────
+# メイン
+# ─────────────────────────────────────────
+
 def main():
     print(f"--- Morning suggest service started for {datetime.date.today()} ---")
-    pages = get_recent_pages(7)
-    if not pages:
-        print("No historical data found in Notion.")
-        return
-        
-    history = []
-    for p in pages:
-        history.append(get_page_content(p["id"]))
-        
-    data = generate_suggestions_with_llm(history)
+
+    # AI新聞から直近3日分のたて・クロード情報を収集
+    print("📰 AI新聞から直近3日分のたて・クロードのトレンド情報を取得中...")
+    trend_context, past_titles = build_trend_context(days=3)
+
+    if trend_context:
+        print(f"✅ トレンド情報取得完了（{len(trend_context)}文字）")
+    else:
+        print("⚠️  トレンド情報が取得できませんでした。一般的なトレンドで提案します。")
+
+    # LLMで企画を生成
+    data = generate_suggestions_with_llm(trend_context, past_titles)
     if not data or "suggestions" not in data:
         print("Failed to generate suggestions.")
         return
-        
+
     suggestions = data["suggestions"]
     print(f"Generated {len(suggestions)} suggestions.")
 
-    # Register the first 2 suggestions to Notion
+    # 最初の2件をNotionに登録
     registered_msg = ""
     for i in range(min(2, len(suggestions))):
         s = suggestions[i]
@@ -211,7 +311,7 @@ def main():
             register_to_notion(s['title'], s['category'], products)
             registered_msg += f"✅ **Notion登録完了**: {s['title']}（{len(products)}商品）\n"
 
-    # Prepare Discord message
+    # Discord メッセージ作成
     discord_body = ""
     for i, s in enumerate(suggestions):
         marker = "📌 自動登録済み" if i < 2 else ""
@@ -219,9 +319,13 @@ def main():
         discord_body += f"- カテゴリ: {s['category']}\n"
         discord_body += f"- 理由: {s['reason']}\n"
         discord_body += f"- ターゲット: {s['target']}\n"
-        
+
     if registered_msg:
         discord_body += f"\n---\n{registered_msg}"
+
+    # トレンド情報ソースを付記
+    if trend_context:
+        discord_body += "\n\n📰 *企画はNotionのAI新聞（直近3日分のたて・クロード情報）をもとに選定しました。*"
 
     success = send_to_discord(discord_body)
     if success:

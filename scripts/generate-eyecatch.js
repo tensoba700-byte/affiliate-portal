@@ -40,32 +40,37 @@ async function main() {
     await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
 
     const fileUrl = `file://${htmlPath}`;
-    await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 20000 });
+    // ページ読み込み: networkidle0 で初期リクエストが完了するまで待機
+    await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 30000 });
 
-    // Robust check: wait for all images to be fully loaded and decoded
+    // 全商品画像の読み込み完了を確実に待機
     await page.evaluate(async () => {
       const images = Array.from(document.querySelectorAll('img'));
-      await Promise.all(
+      console.log(`Waiting for ${images.length} images to load...`);
+      await Promise.allSettled(
         images.map(async (img) => {
-          if (img.complete) return;
-          try {
-            // Wait for load event
-            await new Promise((resolve, reject) => {
-              img.onload = resolve;
-              img.onerror = reject;
-              setTimeout(() => reject(new Error('Image timed out')), 10000);
-            });
-            // Ensure decode is successful if supported
-            if (img.decode) await img.decode().catch(() => {});
-          } catch (e) {
-            console.error(`Failed to load image: ${img.src}`, e);
+          // すでに完了している場合はスキップ
+          if (img.complete && img.naturalWidth > 0) return;
+          // load / error イベントを待つ
+          await new Promise((resolve) => {
+            if (img.complete) { resolve(); return; }
+            const onDone = () => resolve();
+            img.addEventListener('load', onDone, { once: true });
+            img.addEventListener('error', onDone, { once: true });
+            // タイムアウト: 15秒
+            setTimeout(resolve, 15000);
+          });
+          // decode() でピクセルデータが確実に展開されるまで待つ
+          if (typeof img.decode === 'function') {
+            await img.decode().catch(() => {});
           }
         })
       );
+      console.log('All images settled.');
     });
 
-    // Extra settle time for fonts and blends
-    await new Promise(r => setTimeout(r, 500));
+    // フォント・mix-blend-mode のレンダリングが落ち着くまで追加待機
+    await new Promise(r => setTimeout(r, 800));
 
     await page.screenshot({
       path: outputPath,

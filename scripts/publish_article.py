@@ -73,6 +73,37 @@ EYECATCH_PATTERNS = {
     'natural':  ('radial-gradient(circle, rgba(255,255,255,0.15) 3px, transparent 3px)', '24px 24px'),
 }
 
+# --- 変数名パターン（記事から除去する） ---
+VARIABLE_NAME_PATTERNS = [
+    r'\b(YAHOO_PRICE|RAKUTEN_PRICE|AMAZON_PRICE)\b\s*[:：]?\s*\S*',
+    r'\b(YAHOO|RAKUTEN|AMAZON|ASIN)\s*[:：]\s*\S*',
+    r'\bYAHOO_PRICE\b',
+    r'\bRAKUTEN_PRICE\b',
+    r'\bAMAZON_PRICE\b',
+]
+
+
+def load_generation_rules() -> str:
+    """GENERATION_RULES.md を読み込んでプロンプト用テキストとして返す。"""
+    rules_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "src", "content", "articles", "GENERATION_RULES.md"
+    )
+    if os.path.exists(rules_path):
+        with open(rules_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    return ""
+
+
+def clean_variable_names(text: str) -> str:
+    """記事テキストから変数名（YAHOO_PRICE等）を除去する。"""
+    for pattern in VARIABLE_NAME_PATTERNS:
+        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+    # 余分な空行をまとめる
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text
+
+
 def slugify(text: str) -> str:
     """Generate a filename-friendly slug from title."""
     text = text.replace("2024", "2026")
@@ -121,11 +152,15 @@ def format_eyecatch_title(title: str) -> str:
     return title[:mid] + "<br />" + title[mid:]
 
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
-    # 1200x630 3x2 grid design
+    """
+    アイキャッチHTML生成。
+    generate-eyecatch.js 側でページロード後に全画像の完了を待ってからスクリーンショットを撮るため、
+    ここでは正確なHTMLを生成するのみ。
+    """
     imgs_html = ""
     target_count = min(6, len(image_urls))
     for url in image_urls[:target_count]:
-        imgs_html += f'<div class="pw"><img src="{url}" class="pi" alt="" /></div>\n'
+        imgs_html += f'<div class="pw"><img src="{url}" class="pi" alt="" loading="eager" /></div>\n'
     # Fill remaining slots to maintain 3x2 grid
     for _ in range(max(0, 6 - target_count)):
         imgs_html += '<div class="pw"></div>\n'
@@ -154,12 +189,26 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
     return path
 
 def take_eyecatch_screenshot(slug: str) -> bool:
-    node_bin = "node" # Use system node in CI/Local
+    """
+    generate-eyecatch.js を呼び出してスクリーンショットを撮る。
+    generate-eyecatch.js 内部で networkidle0 + 全img完了待機を行っているため
+    ここでは単純に呼び出すだけでよい。
+    """
+    node_bin = "node"  # Use system node in CI/Local
     script = "scripts/generate-eyecatch.js"
     try:
-        subprocess.run([node_bin, script, slug], capture_output=True, text=True, timeout=60)
-        return True
-    except: return False
+        result = subprocess.run(
+            [node_bin, script, slug],
+            capture_output=True, text=True, timeout=90
+        )
+        if result.returncode != 0:
+            print(f"⚠️  eyecatch stderr: {result.stderr[:500]}")
+        else:
+            print(f"✅ Eyecatch screenshot done for: {slug}")
+        return result.returncode == 0
+    except Exception as e:
+        print(f"❌ Eyecatch screenshot failed: {e}")
+        return False
 
 def get_notion_data(article_title: str):
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
@@ -195,9 +244,14 @@ def get_notion_data(article_title: str):
     return products
 
 def generate_content_with_llm(products_data, article_title):
+    # GENERATION_RULES.md を読み込む
+    rules_text = load_generation_rules()
+    rules_section = f"\n\n【記事生成ルール（必ず遵守）】\n{rules_text}" if rules_text else ""
+
     llm_products = [{"name": p["name"]} for p in products_data]
     prompt = f"""あなたはプロのWebライターとして、中立的かつ信頼性の高い商品紹介記事を執筆してください。
 読者に親しみやすさを感じさせつつも、過度な装飾やAI特有の極端な表現を避けた、誠実なトーンを維持してください。
+{rules_section}
 
 【厳守事項】
 1. **ランキング形式の禁止**: 全ての商品を「おすすめの選択肢」として並列に扱ってください。順位や「第○位」という表現は一切使わないでください。
@@ -206,6 +260,7 @@ def generate_content_with_llm(products_data, article_title):
 4. **商品説明の制限**: 各商品の紹介（description）は、**500文字以内**で簡潔にまとめてください。
 5. **絵文字の活用**: 各見出しおよび商品説明の各文章に、内容に沿った適切な絵文字を配置してください。
 6. **ターゲット層**: 各商品に対し、「こんな人におすすめ！」という項目で、具体的な推奨理由を**3つの箇条書き**で作成してください。
+7. **変数名禁止**: YAHOO_PRICE・RAKUTEN_PRICE・AMAZON_PRICE・YAHOOなどの変数名を文中に絶対に含めないでください。
 
 2026年時点の最新トレンドを踏まえ、以下の商品{len(llm_products)}点のおすすめ紹介記事をJSONで作成してください。
 URLや価格は含めないでください。
@@ -214,7 +269,7 @@ URLや価格は含めないでください。
 
 出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "recommended_for": ["...", "...", "..."]}}], "summary": "..."}}"""
     
-    model = genai.GenerativeModel('gemini-3-flash-preview')
+    model = genai.GenerativeModel('gemini-2.0-flash')
     res = model.generate_content(
         prompt,
         generation_config=genai.types.GenerationConfig(
@@ -240,6 +295,9 @@ def truncate_product_name(name: str) -> str:
         short_name = short_name[:42] + "..."
     return short_name
 
+# PR開示テキスト（記事の最上部に1回だけ表示）
+PR_DISCLOSURE = "※本記事はアフィリエイト広告を含みます。"
+
 def run_publish(article_title: str, category: str = None, slug: str = None):
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
@@ -252,7 +310,34 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     raw = generate_content_with_llm(products, output_title)
     if not raw: return False
     data = json.loads(raw)
-    markdown = f"--- \ntitle: \"{output_title}\"\ncoverImage: \"\"\nexcerpt: \"{data['excerpt']}\"\npublishDate: \"{datetime.datetime.now().isoformat()}\"\ncategory: \"{category}\"\n---\n\n{data['intro']}\n\n## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
+
+    # PR開示を先頭に1回だけ配置（frontmatter直後の本文の最初）
+    intro_text = data['intro']
+    # 念のため intro_text からPR開示の重複を除去
+    intro_text = intro_text.replace(PR_DISCLOSURE, "").strip()
+
+    # 変数名クリーニング（LLMが出力してしまった場合に備えて）
+    intro_text = clean_variable_names(intro_text)
+    for p in data['products']:
+        p['description'] = clean_variable_names(p['description'])
+    data['summary'] = clean_variable_names(data['summary'])
+
+    markdown = (
+        f'--- \n'
+        f'title: "{output_title}"\n'
+        f'coverImage: ""\n'
+        f'excerpt: "{data["excerpt"]}"\n'
+        f'publishDate: "{datetime.datetime.now().isoformat()}"\n'
+        f'category: "{category}"\n'
+        f'---\n\n'
+        # PR開示：記事本文の一番上に1回だけ
+        f'<p class="pr-disclosure">{PR_DISCLOSURE}</p>\n\n'
+        f'{intro_text}\n\n'
+        f'## ✅ 選び方のポイント\n<ul>'
+        + "".join([f"<li>{p}</li>" for p in data['points']])
+        + "</ul>\n\n"
+    )
+
     for i, p in enumerate(data['products']):
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
         display_name = truncate_product_name(p['name'])
@@ -274,18 +359,24 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         # 「こんな人におすすめ！」箇条書きの追加
         markdown += f"👤 **こんな人におすすめ！**\n"
         markdown += "\n".join([f"- {item}" for item in p['recommended_for']]) + "\n\n"
+    
     markdown += f"## 💬 まとめ\n{data['summary']}\n"
+
+    # Markdown全体からも変数名を除去（保険）
+    markdown = clean_variable_names(markdown)
+
     path = f"src/content/articles/{slug}.md"
     with open(path, 'w', encoding='utf-8') as f: f.write(markdown)
+    
+    # アイキャッチ生成
     image_urls = [p['image_url'] for p in products if p.get('image_url')]
     generate_eyecatch_html(slug, output_title, category, image_urls, get_seasonal_catch_copy(category))
+    # generate-eyecatch.js が内部で全画像読み込み完了を待ってからスクリーンショットを撮る
     take_eyecatch_screenshot(slug)
     return True
 
 import argparse
 import sys
-
-# ... (previous code) ...
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate and publish an article from Notion data.")
