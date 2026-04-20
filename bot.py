@@ -154,16 +154,33 @@ async def on_message(message):
             
             # 手動ツールループ
             current_content = message.content
-            while True:
+            final_text = ""
+            
+            for _ in range(10): # 無限ループ防止（最大10回連続ツール呼び出し）
                 response = chat.send_message(current_content, tools=gemini_tools if gemini_tools else None)
                 
-                # ツール呼び出し確認
-                if response.candidates[0].content.parts and response.candidates[0].content.parts[0].function_call:
-                    fc = response.candidates[0].content.parts[0].function_call
+                if not response.candidates:
+                    final_text = "エラー: 応答が得られませんでした。"
+                    break
+                
+                candidate = response.candidates[0]
+                
+                # 安全フィルタ等でブロックされた場合
+                if candidate.finish_reason not in [1, 2]: # 1: STOP, 2: MAX_TOKENS
+                    final_text = f"⚠️ 応答が中断されました (理由: {candidate.finish_reason})"
+                    if hasattr(candidate, 'safety_ratings'):
+                        final_text += "\nセーフティフィルタによりブロックされた可能性があります。"
+                    break
+
+                # ツール呼び出しの確認
+                parts = candidate.content.parts
+                fc = next((p.function_call for p in parts if p.function_call), None)
+                
+                if fc:
                     tool_name = fc.name
                     tool_args = dict(fc.args)
                     
-                    print(f"Geminiツール要求: {tool_name}")
+                    print(f"Geminiツール要求: {tool_name} with {tool_args}")
                     
                     try:
                         if tool_name == "run_command":
@@ -174,14 +191,24 @@ async def on_message(message):
                         else:
                             mcp_res = await mcp_client.call_tool(tool_name, tool_args)
                             result_text = "\n".join([c.get("text", "") for c in mcp_res.get("content", []) if c.get("type") == "text"])
+                            if not result_text:
+                                result_text = "(結果なし)"
                     except Exception as e:
                         result_text = f"Error: {e}"
                     
-                    tool_response_part = genai.types.PartDict(function_response=genai.types.FunctionResponse(name=tool_name, response={'result': result_text}))
-                    current_content = [tool_response_part]
+                    # ツール実行結果を次のメッセージとして送信
+                    current_content = genai.types.FunctionResponse(name=tool_name, response={'result': result_text})
                     continue
                 else:
-                    final_text = response.text
+                    # 通常のテキスト応答を安全に抽出
+                    extracted_texts = []
+                    for p in parts:
+                        try:
+                            if p.text:
+                                extracted_texts.append(p.text)
+                        except (AttributeError, ValueError):
+                            pass
+                    final_text = "".join(extracted_texts)
                     break
             
             chat_histories[channel_id] = chat.history
@@ -189,6 +216,8 @@ async def on_message(message):
                 await message.reply(final_text[:2000])
 
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         print(f"エラー: {e}")
         await message.reply(f"エラーが発生しました: {str(e)[:200]}")
 
