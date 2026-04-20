@@ -2,8 +2,10 @@ import os
 import datetime
 import json
 import random
-import requests
 import re
+import timequests
+import re
+import time
 from dotenv import load_dotenv
 
 # Load credentials
@@ -44,7 +46,7 @@ def get_all_shinbun_pages() -> list[dict]:
     return [r for r in results if r["type"] == "child_page"]
 
 
-def parse_date_from_title(title: str) -> datetime.date | None:
+def parse_date_from_title(title: str):
     """ページタイトル「2026年4月20日」形式を datetime.date に変換する。"""
     m = re.search(r'(\d{4})年(\d{1,2})月(\d{1,2})日', title)
     if m:
@@ -55,7 +57,7 @@ def parse_date_from_title(title: str) -> datetime.date | None:
     return None
 
 
-def get_recent_shinbun_pages(days: int = 3) -> list[dict]:
+def get_recent_shinbun_pages(days: int = 3):
     """AI新聞から直近 days 日分のページを取得する。"""
     all_pages = get_all_shinbun_pages()
     today  = datetime.date.today()
@@ -74,7 +76,7 @@ def get_recent_shinbun_pages(days: int = 3) -> list[dict]:
     return dated_pages
 
 
-def get_page_content(page_id: str) -> dict:
+def get_page_content(page_id: str):
     """指定ページのブロックを取得し、たて・クロード・おこげセクション別に分類して返す。"""
     url = f"https://api.notion.com/v1/blocks/{page_id}/children"
     res = requests.get(url, headers=NOTION_HEADERS)
@@ -108,7 +110,7 @@ def get_page_content(page_id: str) -> dict:
     return content_map
 
 
-def build_trend_context(days: int = 3) -> tuple[str, list[str], list[str]]:
+def build_trend_context(days: int = 3):
     """
     直近 days 日分のAI新聞から「たて」「クロード」セクションの情報を集約し、
     (プロンプト用テキスト, 過去タイトルリスト, トレンドキーワードリスト) を返す。
@@ -189,30 +191,37 @@ RAKUTEN_GENRE_MAP = {
 }
 
 
-def search_rakuten_products(keyword: str, genre_id: str = "", count: int = 10) -> list[dict]:
+def search_rakuten_products(keyword: str, genre_id: str = "", count: int = 10):
     """
     楽天商品検索APIでキーワード検索し、レビュー数順で上位 count 件を返す。
-    返す各要素: {"name": str, "review_count": int}
     """
+    # RAKUTEN_ACCESS_KEY を環境変数から取得
+    RAKUTEN_ACCESS_KEY = os.getenv("RAKUTEN_ACCESS_KEY")
+
     params = {
         "applicationId": RAKUTEN_APP_ID,
+        "accessKey":     RAKUTEN_ACCESS_KEY,  # accessKey を追加
         "keyword":        keyword,
-        "hits":           30,           # 多めに取得してレビュー数で絞る
+        "hits":           30,
         "sort":           "-reviewCount",
-        "availability":   1,            # 在庫あり
+        "availability":   1,
         "formatVersion":  2,
     }
     if genre_id:
         params["genreId"] = genre_id
 
+    headers = {
+        "Referer": "https://www.mikke-style.com/",
+        "Origin": "https://www.mikke-style.com/"
+    }
+
     try:
-        res = requests.get(
-            "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601",
-            params=params,
-            timeout=10
-        )
+        # 新しいエンドポイントに変更
+        url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
+        time.sleep(1.5)
+        res = requests.get(url, params=params, headers=headers, timeout=10)
         if res.status_code != 200:
-            print(f"  楽天API エラー ({keyword}): {res.status_code}")
+            print(f"  楽天API エラー ({keyword}): {res.status_code} {res.text[:100]}")
             return []
 
         items = res.json().get("Items", [])
@@ -223,7 +232,6 @@ def search_rakuten_products(keyword: str, genre_id: str = "", count: int = 10) -
             if name:
                 results.append({"name": name, "review_count": review_count})
 
-        # レビュー数降順・上位 count 件
         results.sort(key=lambda x: x["review_count"], reverse=True)
         return results[:count]
 
@@ -303,7 +311,7 @@ def fetch_products_via_rakuten(title: str, category: str, keywords: list[str]) -
 # 企画提案 LLM
 # ─────────────────────────────────────────
 
-def generate_suggestions_with_llm(trend_context: str, past_titles: list[str]) -> dict | None:
+def generate_suggestions_with_llm(trend_context: str, past_titles: list):
     """たて・クロードのトレンド情報を元に、今日の記事企画3案をLLMに生成させる。"""
     past_titles_text = "\n".join(f"- {t}" for t in past_titles) if past_titles else "なし"
 
@@ -399,7 +407,7 @@ def register_to_notion(title: str, category: str, products: list[str], publish_t
     print(f"  ✅ Notion登録: {registered}/{len(products)} 件")
 
 
-def send_to_discord(message: str) -> bool:
+def send_to_discord(message: str):
     url     = f"https://discord.com/api/v10/channels/{TARGET_CHANNEL_ID}/messages"
     payload = {
         "content": f"☀️ **おこげ編集長からの朝の提案（{datetime.date.today()}）**\n\n{message}"

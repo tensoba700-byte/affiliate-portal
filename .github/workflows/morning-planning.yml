@@ -33,6 +33,7 @@ jobs:
           TARGET_CHANNEL_ID: ${{ secrets.TARGET_CHANNEL_ID }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           RAKUTEN_APP_ID: ${{ secrets.RAKUTEN_APP_ID }}
+          RAKUTEN_ACCESS_KEY: ${{ secrets.RAKUTEN_ACCESS_KEY }}
         run: |
           # CI環境用の .env.local を生成
           echo "NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}" > .env.local
@@ -41,4 +42,5 @@ jobs:
           echo "TARGET_CHANNEL_ID=${{ secrets.TARGET_CHANNEL_ID }}" >> .env.local
           echo "NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}" >> .env.local
           echo "RAKUTEN_APP_ID=${{ secrets.RAKUTEN_APP_ID }}" >> .env.local
+          echo "RAKUTEN_ACCESS_KEY=${{ secrets.RAKUTEN_ACCESS_KEY }}" >> .env.local
           python scripts/morning_suggestion_discord.py
