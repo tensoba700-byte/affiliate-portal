@@ -147,7 +147,7 @@ async def on_message(message):
     try:
         async with message.channel.typing():
             model = genai.GenerativeModel(
-                model_name='gemini-2.0-flash',
+                model_name='gemini-3-flash-preview',
                 system_instruction=f"You are 'Okoge President' at Mikkestyle. Operate via MCP tools. Python: {PYTHON_PATH}. Dir: {ALLOWED_DIR}."
             )
             chat = model.start_chat(history=[h for h in history[:-1]])

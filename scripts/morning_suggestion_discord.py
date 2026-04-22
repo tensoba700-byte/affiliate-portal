@@ -2,9 +2,14 @@ import os
 import datetime
 import json
 import re
+import sys
 import requests
 import xml.etree.ElementTree as ET
 from dotenv import load_dotenv
+
+# 標準出力を UTF-8 に設定（latin-1 エラー対策）
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 
 # Load credentials
 load_dotenv("/Users/tsukika/Desktop/affiliate-portal/.env.local")

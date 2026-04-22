@@ -269,7 +269,7 @@ URLや価格は含めないでください。
 
 出力形式: {{"excerpt": "...", "intro": "...", "points": ["...", "...", "..."], "products": [{{"name": "...", "description": "...", "recommended_for": ["...", "...", "..."]}}], "summary": "..."}}"""
     
-    model = genai.GenerativeModel('gemini-2.0-flash')
+    model = genai.GenerativeModel('gemini-3-flash-preview')
     res = model.generate_content(
         prompt,
         generation_config=genai.types.GenerationConfig(
