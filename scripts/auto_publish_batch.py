@@ -87,21 +87,39 @@ def main():
 
     if success:
         print(f"✅ Article generated successfully: {slug}")
-        # Notionのステータスを「投稿済み」に更新
-        update_payload = {
-            "properties": {
-                "ステータス 1": {"select": {"name": "投稿済み"}}
+        
+        # この記事タイトルに紐づく全商品を取得してステータスを更新
+        query_payload = {
+            "filter": {
+                "property": "記事タイトル",
+                "rich_text": {"equals": article_title}
             }
         }
-        u_res = requests.patch(
-            f"https://api.notion.com/v1/pages/{page_id}",
+        q_res = requests.post(
+            f"https://api.notion.com/v1/databases/{DATABASE_ID}/query",
             headers=headers,
-            json=update_payload
+            json=query_payload
         )
-        if u_res.status_code == 200:
-            print("📝 Notion status updated to '投稿済み'.")
+        
+        if q_res.status_code == 200:
+            related_items = q_res.json().get("results", [])
+            print(f"📝 Updating status to '投稿済み' for {len(related_items)} related items...")
+            
+            for item in related_items:
+                item_id = item["id"]
+                update_payload = {
+                    "properties": {
+                        "ステータス 1": {"select": {"name": "投稿済み"}}
+                    }
+                }
+                requests.patch(
+                    f"https://api.notion.com/v1/pages/{item_id}",
+                    headers=headers,
+                    json=update_payload
+                )
+            print("✅ All related items updated to '投稿済み'.")
         else:
-            print(f"⚠️  Failed to update Notion status: {u_res.status_code} {u_res.text}")
+            print(f"⚠️ Failed to update related items: {q_res.status_code} {q_res.text}")
     else:
         print("❌ Article generation failed.")
         sys.exit(1)
