@@ -12,7 +12,8 @@ from publish_article import run_publish
 
 def slugify_title(title: str) -> str:
     """Generate a date-prefixed slug from an article title."""
-    date_str = datetime.datetime.now().strftime("%Y%m%d")
+    jst = datetime.timezone(datetime.timedelta(hours=9))
+    date_str = datetime.datetime.now(jst).strftime("%Y%m%d")
     slug_base = re.sub(r'[^\w\s-]', '', title).strip().lower()
     slug_base = re.sub(r'[-\s]+', '-', slug_base)[:25]
     return f"{date_str}-{slug_base}"

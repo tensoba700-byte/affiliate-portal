@@ -2,7 +2,8 @@ name: Auto Publish Articles
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 07:00 JST (UTC+9) — 毎朝1本だけ投稿
+    - cron: '0 22 * * *'  # 07:00 JST (UTC+9) — 朝の投稿
+    - cron: '0 12 * * *'  # 21:00 JST (UTC+9) — 夜の投稿
   workflow_dispatch: {}    # 手動実行も可能
 
 jobs:

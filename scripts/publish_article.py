@@ -109,7 +109,8 @@ def slugify(text: str) -> str:
     text = text.replace("2024", "2026")
     text = re.sub(r'[^\w\s-]', '', text).strip().lower()
     text = re.sub(r'[-\s]+', '-', text)
-    date_prefix = datetime.datetime.now().strftime("%Y%m%d")
+    jst = datetime.timezone(datetime.timedelta(hours=9))
+    date_prefix = datetime.datetime.now(jst).strftime("%Y%m%d")
     return f"{date_prefix}-{text[:30]}"
 
 def extract_badge(title: str) -> str:
@@ -327,7 +328,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         f'title: "{output_title}"\n'
         f'coverImage: ""\n'
         f'excerpt: "{data["excerpt"]}"\n'
-        f'publishDate: "{datetime.datetime.now().isoformat()}"\n'
+        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()}"\n'
         f'category: "{category}"\n'
         f'---\n\n'
         # PR開示：記事本文の一番上に1回だけ
