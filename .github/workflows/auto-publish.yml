@@ -4,8 +4,12 @@ on:
   schedule:
     # 07:00 JST (UTC+9) — 朝の投稿
     - cron: '0 22 * * *'
+    # 08:00 JST (UTC+9) — 朝のリトライ
+    - cron: '0 23 * * *'
     # 21:00 JST (UTC+9) — 夜の投稿
     - cron: '0 12 * * *'
+    # 22:00 JST (UTC+9) — 夜のリトライ
+    - cron: '0 13 * * *'
   workflow_dispatch: {}    # 手動実行も可能
 
 jobs:
