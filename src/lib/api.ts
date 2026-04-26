@@ -157,13 +157,61 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
 
 /** Fetch all articles, preferring Contentful and falling back to local markdown files. */
 export async function getAllArticles(): Promise<ArticleItem[]> {
-  // 1️⃣ Try Contentful first
+  // 1️⃣ Fetch local markdown files first
+  let markdownArticles: ArticleItem[] = [];
+  if (fs.existsSync(articlesDirectory)) {
+    const fileNames = fs.readdirSync(articlesDirectory);
+    const now = new Date();
+    markdownArticles = fileNames
+      .filter((fn) => fn.endsWith('.md') && fn !== 'GENERATION_RULES.md')
+      .map((fn) => {
+        const slug = fn.replace(/\.md$/, '');
+        const fullPath = path.join(articlesDirectory, fn);
+        const fileContents = fs.readFileSync(fullPath, 'utf8');
+        const matterResult = matter(fileContents);
+
+        // Priority: eyecatch PNG > frontmatter coverImage > first IMAGE: tag
+        let coverImage: string | null = null;
+        const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${slug}.png`);
+        if (fs.existsSync(eyecatchPngPath)) {
+          coverImage = `/eyecatch/${slug}.png`;
+        } else if (matterResult.data.coverImage) {
+          coverImage = matterResult.data.coverImage;
+        } else {
+          const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+          if (firstImageMatch) coverImage = firstImageMatch[1];
+        }
+
+        return {
+          id: slug,
+          slug,
+          title: matterResult.data.title || slug,
+          coverImage,
+          excerpt: matterResult.data.excerpt || '',
+          publishedAt: matterResult.data.publishDate || now.toISOString(),
+          content: matterResult.content,
+          rankings: [],
+          thumbnail: coverImage,
+          category: matterResult.data.category || '',
+          body: undefined,
+        } as ArticleItem;
+      })
+      .sort((a, b) => {
+        if (a.publishedAt && b.publishedAt) {
+          return a.publishedAt < b.publishedAt ? 1 : -1;
+        }
+        return 0;
+      });
+  }
+
+  // 2️⃣ Try Contentful as fallback/addition
+  let cfArticles: ArticleItem[] = [];
   try {
     const entries = await contentfulClient.getEntries({
       content_type: 'Article',
       limit: 1000,
     });
-    const cfArticles: ArticleItem[] = entries.items.map((item: any) => {
+    cfArticles = entries.items.map((item: any) => {
       const f = item.fields as any;
       return {
         id: item.sys.id,
@@ -178,70 +226,24 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
         rankings: [],
       } as ArticleItem;
     });
-    if (cfArticles.length > 0) {
-      console.log(`Fetched ${cfArticles.length} articles from Contentful`);
-      return cfArticles;
-    }
   } catch (err) {
     console.error('Contentful fetch error (all):', err);
   }
 
-  // 2️⃣ Fallback to local markdown files
-  console.log('Fetching articles from local markdown fallback...');
-  if (!fs.existsSync(articlesDirectory)) {
-    console.warn(`Articles directory not found: ${articlesDirectory}`);
-    return [];
+  // Combine both, prioritizing Markdown
+  const allArticles = [...markdownArticles];
+  for (const cf of cfArticles) {
+    if (!allArticles.some(a => a.slug === cf.slug)) {
+      allArticles.push(cf);
+    }
   }
-  const fileNames = fs.readdirSync(articlesDirectory);
-  const now = new Date();
-  const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
 
-  const markdownArticles = fileNames
-    .filter((fn) => fn.endsWith('.md') && fn !== 'GENERATION_RULES.md')
-    .map((fn) => {
-      const slug = fn.replace(/\.md$/, '');
-      const fullPath = path.join(articlesDirectory, fn);
-      const fileContents = fs.readFileSync(fullPath, 'utf8');
-      const matterResult = matter(fileContents);
-
-      // Priority: eyecatch PNG > frontmatter coverImage > first IMAGE: tag
-      let coverImage: string | null = null;
-      const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${slug}.png`);
-      if (fs.existsSync(eyecatchPngPath)) {
-        coverImage = `/eyecatch/${slug}.png`;
-      } else if (matterResult.data.coverImage) {
-        coverImage = matterResult.data.coverImage;
-      } else {
-        const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
-        if (firstImageMatch) coverImage = firstImageMatch[1];
-      }
-
-      return {
-        id: slug,
-        slug,
-        title: matterResult.data.title || slug,
-        coverImage,
-        excerpt: matterResult.data.excerpt || '',
-        publishedAt: matterResult.data.publishDate || now.toISOString(),
-        content: matterResult.content,
-        rankings: [],
-        thumbnail: coverImage,
-        category: matterResult.data.category || '',
-        body: undefined,
-      } as ArticleItem;
-    })
-    .filter((a) => {
-      // Remove restrictive 2-week filter to ensure articles are visible
-      return true;
-    })
-    .sort((a, b) => {
-      if (a.publishedAt && b.publishedAt) {
-        return a.publishedAt < b.publishedAt ? 1 : -1;
-      }
-      return 0;
-    });
-
-  return markdownArticles;
+  return allArticles.sort((a, b) => {
+    if (a.publishedAt && b.publishedAt) {
+      return a.publishedAt < b.publishedAt ? 1 : -1;
+    }
+    return 0;
+  });
 }
 
 /** Get related articles by category (excluding current slug) */
@@ -254,7 +256,127 @@ export async function getRelatedArticles(currentSlug: string, category: string, 
 
 /** Fetch a single article by slug, preferring Contentful and falling back to markdown. */
 export async function getArticleBySlug(slug: string): Promise<ArticleItem | null> {
-  // 1️⃣ Try Contentful
+  const decodedSlug = decodeURIComponent(slug);
+  const fullPath = path.join(articlesDirectory, `${decodedSlug}.md`);
+  
+  // 1️⃣ Try Markdown first
+  if (fs.existsSync(fullPath)) {
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const matterResult = matter(fileContents);
+    let content = matterResult.content;
+
+    // Custom markdown transformations (pro/con boxes, rating, affiliate buttons)
+    content = content.replace(/:::pro\n([\s\S]*?)\n:::/g,
+      '<div class="pro-box"><div class="pro-title">✅ メリット</div>$1</div>');
+    content = content.replace(/:::con\n([\s\S]*?)\n:::/g,
+      '<div class="con-box"><div class="pro-title">⚠️ デメリット</div>$1</div>');
+
+    const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
+
+    const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string, prices?: { amazon?: string; rakuten?: string; yahoo?: string }) => {
+      const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(productName);
+      const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(productName)}/`;
+      const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(productName)}`;
+
+      const btn = (cls: string, url: string, iconSrc: string, label: string, price?: string) =>
+        `<a href="${url}" target="_blank" class="${cls}">${ICON(iconSrc, label)}<span class="btn-text-stack"><span class="btn-label">${label}で価格を見る</span></span></a>`;
+
+      return `<div class="affiliate-buttons">
+        ${btn('btn-amazon',  amazonL,  'https://www.amazon.co.jp/favicon.ico',       'Amazon',   prices?.amazon)}
+        ${btn('btn-rakuten', rakutenL, 'https://www.rakuten.co.jp/favicon.ico',      '楽天市場', prices?.rakuten)}
+        ${btn('btn-yahoo',   yahooL,   'https://shopping.yahoo.co.jp/favicon.ico',   'Yahoo!',   prices?.yahoo)}
+      </div>`;
+    };
+
+    let comparisonTableHtml = '';
+    const sections = content.split(/(?=###\s*(?:👑?\s*第\d+位|🌸))/);
+    const processedSections = sections.map(section => {
+      let s = section;
+      const nameMatch = s.match(/###\s*(?:👑?\s*第\d+位:?|🌸)\s*(.*?)(?:\n|$)/i);
+      const productName = nameMatch ? nameMatch[1].trim() : decodedSlug;
+
+      const asinMatch = s.match(/ASIN:\s*(https?:\/\/\S+|[A-Z0-9]{10})/i);
+      const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
+      const yahooMatch = s.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
+      const imageMatch = s.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+      const amzPriceMatch = s.match(/AMAZON_PRICE:\s*(\d+)/i);
+      const rakPriceMatch = s.match(/RAKUTEN_PRICE:\s*(\d+)/i);
+      const yahPriceMatch = s.match(/YAHOO_PRICE:\s*(\d+)/i);
+
+      const asin = asinMatch ? asinMatch[1] : undefined;
+      const rakutenRaw = rakutenMatch ? rakutenMatch[1] : undefined;
+      const rakuten = rakutenRaw ? rakutenRaw.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (enc) => decodeURIComponent(enc)) : undefined;
+      const yahoo = yahooMatch ? yahooMatch[1] : undefined;
+      const imageUrl = imageMatch ? imageMatch[1] : undefined;
+      
+      const prices = {
+        amazon: amzPriceMatch ? amzPriceMatch[1] : undefined,
+        rakuten: rakPriceMatch ? rakPriceMatch[1] : undefined,
+        yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
+      };
+
+      s = s.replace(/ASIN:\s*(?:https?:\/\/\S+|[A-Z0-9]{10})[ \t]*\n?/gi, '');
+      s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+      s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+      s = s.replace(/IMAGE:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+      s = s.replace(/AMAZON_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
+      s = s.replace(/RAKUTEN_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
+      s = s.replace(/YAHOO_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
+      s = s.replace(/AMAZON_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+      s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
+
+      if (imageUrl) {
+        s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
+      }
+
+      const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
+      const hasPlaceholder = /\[(AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/i.test(s);
+      if (hasPlaceholder) {
+        s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\](?:\s*\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\])*/i, DYNAMIC_BUTTONS);
+        s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
+      }
+      s = s.replace(/(?<!["'])https?:\/\/(?![^<>]*["'])[^\s<)\]]+/gi, '');
+      return s;
+    });
+
+    content = processedSections.join('\n\n');
+    if (comparisonTableHtml) content = comparisonTableHtml + content;
+
+    const processed = await remark()
+      .use(remarkGfm)
+      .use(html, { sanitize: false })
+      .process(content);
+    const contentHtml = processed.toString();
+
+    const rankings = parseRankingsFromMarkdown(matterResult.content);
+
+    let coverImage: string | null = null;
+    const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${decodedSlug}.png`);
+    if (fs.existsSync(eyecatchPngPath)) {
+      coverImage = `/eyecatch/${decodedSlug}.png`;
+    } else if (matterResult.data.coverImage) {
+      coverImage = matterResult.data.coverImage;
+    } else {
+      const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
+      if (firstImageMatch) coverImage = firstImageMatch[1];
+    }
+
+    return {
+      id: decodedSlug,
+      slug: decodedSlug,
+      title: matterResult.data.title || decodedSlug,
+      coverImage,
+      excerpt: matterResult.data.excerpt || '',
+      publishedAt: matterResult.data.publishDate || '',
+      content: contentHtml,
+      rankings: rankings,
+      category: matterResult.data.category || '',
+      thumbnail: null,
+      body: undefined,
+    } as ArticleItem;
+  }
+
+  // 2️⃣ Try Contentful as fallback
   try {
     const entries = await contentfulClient.getEntries({
       content_type: 'Article',
@@ -280,164 +402,5 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     console.error('Contentful fetch error (single):', err);
   }
 
-  // 2️⃣ Fallback to markdown
-  const decodedSlug = decodeURIComponent(slug);
-  const fullPath = path.join(articlesDirectory, `${decodedSlug}.md`);
-  if (!fs.existsSync(fullPath)) return null;
-  const fileContents = fs.readFileSync(fullPath, 'utf8');
-  const matterResult = matter(fileContents);
-  let content = matterResult.content;
-
-  // Custom markdown transformations (pro/con boxes, rating, affiliate buttons)
-  content = content.replace(/:::pro\n([\s\S]*?)\n:::/g,
-    '<div class="pro-box"><div class="pro-title">✅ メリット</div>$1</div>');
-  content = content.replace(/:::con\n([\s\S]*?)\n:::/g,
-    '<div class="con-box"><div class="pro-title">⚠️ デメリット</div>$1</div>');
-  // content = content.replace(/\[(?:RATING|総合評価):\s*([0-9.]+)\]/g, (m, p1) => {
-  //   const score = parseFloat(p1);
-  //   return `<div class="rating-container"><span>総合評価:</span> <span class="stars">${'★'.repeat(Math.floor(score))}${'☆'.repeat(5 - Math.floor(score))}</span> <span class="score">${score}</span></div>`;
-  // });
-
-  const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
-
-  // Helper to build a set of affiliate buttons with stacked price layout
-  const buildButtons = (productName: string, asin?: string, rakuten?: string, yahoo?: string, prices?: { amazon?: string; rakuten?: string; yahoo?: string }) => {
-    const amazonL = asin ? amazonUrl(asin) : amazonSearchUrl(productName);
-    const rakutenL = rakuten ? rakutenUrl(rakuten) : `https://search.rakuten.co.jp/search/mall/${encodeURIComponent(productName)}/`;
-    const yahooL = yahoo ? yahoo : `https://shopping.yahoo.co.jp/search?p=${encodeURIComponent(productName)}`;
-
-    const fmtPrice = (p?: string) => (p && p !== '0') ? `<span class="btn-price">${Number(p).toLocaleString()}円</span>` : '';
-
-    const btn = (cls: string, url: string, iconSrc: string, label: string, price?: string) =>
-      `<a href="${url}" target="_blank" class="${cls}">${ICON(iconSrc, label)}<span class="btn-text-stack"><span class="btn-label">${label}で価格を見る</span></span></a>`;
-
-    return `<div class="affiliate-buttons">
-      ${btn('btn-amazon',  amazonL,  'https://www.amazon.co.jp/favicon.ico',       'Amazon',   prices?.amazon)}
-      ${btn('btn-rakuten', rakutenL, 'https://www.rakuten.co.jp/favicon.ico',      '楽天市場', prices?.rakuten)}
-      ${btn('btn-yahoo',   yahooL,   'https://shopping.yahoo.co.jp/favicon.ico',   'Yahoo!',   prices?.yahoo)}
-    </div>`;
-  };
-
-  // Build comparison table logic removed by request
-  let comparisonTableHtml = '';
-
-  // Divide content into sections by emoji or rank headings to ensure buttons match the correct item
-  const sections = content.split(/(?=###\s*(?:👑?\s*第\d+位|🌸))/);
-  const processedSections = sections.map(section => {
-    let s = section;
-    
-    // Extract product name from heading (e.g. "### 🌸 商品名" or "### 第1位: 商品名")
-    const nameMatch = s.match(/###\s*(?:👑?\s*第\d+位:?|🌸)\s*(.*?)(?:\n|$)/i);
-    const productName = nameMatch ? nameMatch[1].trim() : decodedSlug;
-
-    // Find identifiers SPECIFIC to this section
-    // ASIN: accepts both a full affiliate URL and a bare 10-char ASIN code
-    const asinMatch = s.match(/ASIN:\s*(https?:\/\/\S+|[A-Z0-9]{10})/i);
-    const rakutenMatch = s.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
-    const yahooMatch = s.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
-    const imageMatch = s.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
-    const amzPriceMatch = s.match(/AMAZON_PRICE:\s*(\d+)/i);
-    const rakPriceMatch = s.match(/RAKUTEN_PRICE:\s*(\d+)/i);
-    const yahPriceMatch = s.match(/YAHOO_PRICE:\s*(\d+)/i);
-
-    const asin = asinMatch ? asinMatch[1] : undefined;
-    // Decode url-encoded Rakuten URLs (pc=https%3A%2F%2F... → pc=https://...)
-    const rakutenRaw = rakutenMatch ? rakutenMatch[1] : undefined;
-    const rakuten = rakutenRaw
-      ? rakutenRaw.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (enc) => decodeURIComponent(enc))
-      : undefined;
-    const yahoo = yahooMatch ? yahooMatch[1] : undefined;
-    const imageUrl = imageMatch ? imageMatch[1] : undefined;
-    
-    const prices = {
-      amazon: amzPriceMatch ? amzPriceMatch[1] : undefined,
-      rakuten: rakPriceMatch ? rakPriceMatch[1] : undefined,
-      yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
-    };
-
-    // Remove all identifier/metadata lines from final HTML
-    s = s.replace(/ASIN:\s*(?:https?:\/\/\S+|[A-Z0-9]{10})[ \t]*\n?/gi, '');
-    s = s.replace(/RAKUTEN:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-    s = s.replace(/YAHOO:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-    s = s.replace(/IMAGE:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-    s = s.replace(/AMAZON_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
-    s = s.replace(/RAKUTEN_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
-    s = s.replace(/YAHOO_PRICE:\s*(?:\d+|なし)[ \t]*\n?/gi, '');
-    s = s.replace(/AMAZON_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-    s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
-
-    // Add Image Tag if present, right after the heading
-    if (imageUrl) {
-      s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
-    }
-
-    // Replace placeholders with dynamic buttons for THIS section
-    const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
-    
-    // Check if any placeholder exists (case-insensitive)
-    const hasPlaceholder = /\[(AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/i.test(s);
-    
-    if (hasPlaceholder) {
-      // 1. Replace the first cluster of placeholders with the full button set
-      s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\](?:\s*\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\])*/i, DYNAMIC_BUTTONS);
-      // 2. Clean up any remaining single placeholders in the same section to prevent duplicates
-      s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
-    }
-
-    // Strip any remaining raw URLs NOT inside an HTML attribute (href/src)
-    s = s.replace(/(?<!["'])https?:\/\/(?![^<>]*["'])[^\s<)\]]+/gi, '');
-
-    return s;
-  });
-
-  content = processedSections.join('\n\n');
-  // Prepend comparison table before full content
-  if (comparisonTableHtml) content = comparisonTableHtml + content;
-
-  const processed = await remark()
-    .use(remarkGfm)
-    .use(html, { sanitize: false })
-    .process(content);
-  const contentHtml = processed.toString();
-
-  const rankings = parseRankingsFromMarkdown(matterResult.content);
-  // Enrich rankings with Yahoo API data and Unsplash images
-  for (const product of rankings) {
-    const [yahooData, imageUrl] = await Promise.all([
-      fetchYahooProduct(product.name),
-      fetchUnsplashImage(product.name),
-    ]);
-    if (yahooData) {
-      product.yahoo = { price: yahooData.price, url: yahooData.url };
-    }
-    if (imageUrl) {
-      product.imageUrl = imageUrl;
-    }
-  }
-
-  // Priority: eyecatch PNG > frontmatter coverImage > first IMAGE: tag
-  let coverImage: string | null = null;
-  const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${decodedSlug}.png`);
-  if (fs.existsSync(eyecatchPngPath)) {
-    coverImage = `/eyecatch/${decodedSlug}.png`;
-  } else if (matterResult.data.coverImage) {
-    coverImage = matterResult.data.coverImage;
-  } else {
-    const firstImageMatch = matterResult.content.match(/IMAGE:\s*(https?:\/\/[^\s]+)/i);
-    if (firstImageMatch) coverImage = firstImageMatch[1];
-  }
-
-  return {
-    id: decodedSlug,
-    slug: decodedSlug,
-    title: matterResult.data.title || decodedSlug,
-    coverImage,
-    excerpt: matterResult.data.excerpt || '',
-    publishedAt: matterResult.data.publishDate || '',
-    content: contentHtml,
-    rankings: rankings,
-    category: matterResult.data.category || '',
-    thumbnail: null,
-    body: undefined,
-  } as ArticleItem;
+  return null;
 }
