@@ -55,5 +55,13 @@ This document outlines the rules for automated content generation and database m
 - **Layout**: Grid-based arrangement of product images.
 - **Typography**: Large, centered title with 65% opacity white box.
 
+### 4. Affiliate Links
+- 記事生成時にAmazon・楽天・YahooのURLは必ずNotionから読み取った値をそのまま使って。
+- 絶対に自分でURLを生成・変更しない。
+- Notionの値：
+    - Amazon Affiliate URL → そのままAmazonボタンのリンクに使う
+    - Rakuten Affiliate URL → そのまま楽天ボタンのリンクに使う
+    - Yahoo Affiliate URL → そのままYahooボタンのリンクに使う
+
 ---
-*Updated on 2026-04-19*
+*Updated on 2026-04-30*
