@@ -87,7 +87,7 @@ def load_generation_rules() -> str:
     """GENERATION_RULES.md を読み込んでプロンプト用テキストとして返す。"""
     rules_path = os.path.join(
         os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "src", "content", "articles", "GENERATION_RULES.md"
+        "GENERATION_RULES.md"
     )
     if os.path.exists(rules_path):
         with open(rules_path, 'r', encoding='utf-8') as f:
