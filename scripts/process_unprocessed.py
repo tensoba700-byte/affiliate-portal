@@ -360,24 +360,17 @@ def update_notion(page_id: str, data: dict, existing_props: dict):
 
 
 def get_unprocessed_items():
+    # Notion APIはfilterのネストが2階層まで。
+    # 「未処理」または「URLが空」のいずれかに該当するページを取得する。
     res = requests.post(
         f"https://api.notion.com/v1/databases/{DATABASE_ID}/query",
         headers=NOTION_H,
         json={
             "filter": {
                 "or": [
-                    {"property": "ステータス 1", "select": {"equals": "未処理"}},
-                    {
-                        "and": [
-                            {"property": "ステータス 1", "select": {"equals": "完了"}},
-                            {
-                                "or": [
-                                    {"property": "Rakuten Affiliate URL", "url": {"is_empty": True}},
-                                    {"property": "Yahoo Affiliate URL",   "url": {"is_empty": True}}
-                                ]
-                            }
-                        ]
-                    }
+                    {"property": "ステータス 1",       "select": {"equals": "未処理"}},
+                    {"property": "Rakuten Affiliate URL", "url": {"is_empty": True}},
+                    {"property": "Yahoo Affiliate URL",   "url": {"is_empty": True}},
                 ]
             },
             "page_size": 100
