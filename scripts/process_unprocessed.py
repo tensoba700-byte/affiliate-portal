@@ -314,8 +314,9 @@ def search_yahoo(product_name: str, query: str):
     return None
 
 
-# ── Notion更新（④既存データも含めて完了判定）──────────
-def update_notion(page_id: str, data: dict, existing_props: dict):
+# ── Notion更新 ───────────────────────────────────────
+def save_urls(page_id: str, data: dict) -> bool:
+    """取得したURLやデータをNotionに保存する（ステータスは変更しない）"""
     props = {}
 
     if data.get("amazon_ref_url"):
@@ -340,15 +341,6 @@ def update_notion(page_id: str, data: dict, existing_props: dict):
     if data.get("rakuten_price"):
         props["Rakuten Price"] = {"rich_text": [{"text": {"content": data["rakuten_price"]}}]}
 
-    # ④ 既存Notionデータ＋今回取得分を合算して完了判定
-    amazon_ok  = data.get("amazon_ref_url")  or get_url(existing_props.get("Amazon参考URL"))
-    rakuten_ok = data.get("rakuten_ref_url") or get_url(existing_props.get("楽天参考URL"))
-    yahoo_ok   = data.get("yahoo_ref_url")   or get_url(existing_props.get("Yahoo参考URL"))
-    image_ok   = data.get("image_url")       or get_text(existing_props.get("Image URL"))  # ⑥ rich_text対応
-
-    if amazon_ok and rakuten_ok and yahoo_ok and image_ok:
-        props["ステータス 1"] = {"select": {"name": "完了"}}
-
     if not props:
         return False
 
@@ -357,6 +349,25 @@ def update_notion(page_id: str, data: dict, existing_props: dict):
         headers=NOTION_H, json={"properties": props}
     )
     return res.status_code == 200
+
+
+def mark_complete(page_id: str) -> bool:
+    """ステータスを「完了」に更新する"""
+    res = requests.patch(
+        f"https://api.notion.com/v1/pages/{page_id}",
+        headers=NOTION_H,
+        json={"properties": {"ステータス 1": {"select": {"name": "完了"}}}}
+    )
+    return res.status_code == 200
+
+
+def is_fully_fetched(data: dict, existing_props: dict) -> bool:
+    """Amazon・楽天・Yahoo参考URL・Image URLが全て揃っているか確認（新規取得＋既存Notion両方を考慮）"""
+    amazon_ok  = data.get("amazon_ref_url")  or get_url(existing_props.get("Amazon参考URL"))
+    rakuten_ok = data.get("rakuten_ref_url") or get_url(existing_props.get("楽天参考URL"))
+    yahoo_ok   = data.get("yahoo_ref_url")   or get_url(existing_props.get("Yahoo参考URL"))
+    image_ok   = data.get("image_url")       or get_text(existing_props.get("Image URL"))
+    return bool(amazon_ok and rakuten_ok and yahoo_ok and image_ok)
 
 
 def get_unprocessed_items():
@@ -383,11 +394,20 @@ def main():
     items = get_unprocessed_items()
     print(f"対象件数: {len(items)}件\n")
 
+    # ── Step 1: 全商品のURL取得・保存（ステータス変更なし）──
+    # page_id -> (新規取得データ, 元のprops)
+    item_results: dict[str, tuple[dict, dict]] = {}
+
     for i, page in enumerate(items):
         props = page["properties"]
         page_id = page["id"]
         product_name = get_text(props.get("商品名"))
-        search_name = get_text(props.get("検索商品名")) or product_name
+        search_name  = get_text(props.get("検索商品名")) or product_name
+
+        if not product_name:
+            item_results[page_id] = ({}, props)
+            continue
+
         has_amazon  = bool(get_url(props.get("Amazon Affiliate URL")))
         has_rakuten = bool(get_url(props.get("Rakuten Affiliate URL")))
         has_yahoo   = bool(get_url(props.get("Yahoo Affiliate URL")))
@@ -397,20 +417,18 @@ def main():
 
         result = {}
 
-        # 楽天（未取得のみ）
         if not has_rakuten:
             rakuten = search_rakuten(product_name, search_name)
             if rakuten:
-                result["rakuten_ref_url"]     = rakuten["ref_url"]
+                result["rakuten_ref_url"]       = rakuten["ref_url"]
                 result["rakuten_affiliate_url"] = rakuten["affiliate_url"]
-                result["image_url"]           = rakuten["image"]
-                result["rakuten_price"]       = rakuten["price"]
+                result["image_url"]             = rakuten["image"]
+                result["rakuten_price"]         = rakuten["price"]
                 print(f"  楽天参考URL: {rakuten['ref_url']}")
                 print(f"  楽天価格: ¥{rakuten['price']}")
         else:
             print("  楽天: 取得済みスキップ")
 
-        # Amazon（未取得のみ）
         if not has_amazon:
             amazon = search_amazon(product_name, search_name)
             if amazon:
@@ -418,42 +436,58 @@ def main():
                 result["amazon_asin"]    = amazon["asin"]
                 result["amazon_score"]   = amazon["score"]
                 print(f"  Amazon参考URL: {amazon['url']}")
-                # ③ 楽天で画像が取れなかった場合Amazonの画像で代替
                 if not result.get("image_url") and amazon.get("image"):
                     result["image_url"] = amazon["image"]
                     print(f"  Image URL（Amazon代替）: {amazon['image'][:60]}...")
         else:
             print("  Amazon: 取得済みスキップ")
 
-        # Yahoo（未取得のみ）
         if not has_yahoo:
             yahoo = search_yahoo(product_name, search_name)
             if yahoo:
-                result["yahoo_ref_url"]      = yahoo["url"]
+                result["yahoo_ref_url"]       = yahoo["url"]
                 result["yahoo_affiliate_url"] = yahoo["affiliate_url"]
                 print(f"  Yahoo参考URL: {yahoo['url']}")
         else:
             print("  Yahoo: 取得済みスキップ")
 
+        # データ保存（ステータスは変更しない）
         if result:
-            ok = update_notion(page_id, result, props)  # ④ existing_props を渡す
-            if ok:
-                # ④ 判定はupdate_notion側で行うので、ここはログ用に再計算
-                amazon_ok  = result.get("amazon_ref_url")  or get_url(props.get("Amazon参考URL"))
-                rakuten_ok = result.get("rakuten_ref_url") or get_url(props.get("楽天参考URL"))
-                yahoo_ok   = result.get("yahoo_ref_url")   or get_url(props.get("Yahoo参考URL"))
-                image_ok   = result.get("image_url")       or get_text(props.get("Image URL"))  # ⑥
-                all_complete = amazon_ok and rakuten_ok and yahoo_ok and image_ok
-                status = "→ ステータス「完了」に更新" if all_complete else "→ 取得済みデータを保存（未処理のまま）"
-                print(f"  {status}\n")
-            else:
-                print("  → Notion更新失敗\n")
+            save_urls(page_id, result)
+            print(f"  → データ保存（ステータス未変更）\n")
         else:
-            print("  取得データなし・スキップ\n")
+            print(f"  取得データなし・スキップ\n")
 
+        item_results[page_id] = (result, props)
         time.sleep(1)
 
-    print("全件処理完了")
+    # ── Step 2: 記事タイトルでグループ化 ──
+    groups: dict[str, list[tuple[str, dict, dict]]] = {}
+    for page in items:
+        page_id = page["id"]
+        props   = page["properties"]
+        title   = get_text(props.get("記事タイトル"))
+        result, _ = item_results.get(page_id, ({}, {}))
+        groups.setdefault(title, []).append((page_id, result, props))
+
+    # ── Step 3: グループごとに完了判定・一括ステータス更新 ──
+    print("=" * 50)
+    print("記事ごとの完了判定")
+    print("=" * 50)
+
+    for title, group in groups.items():
+        label = f"「{title[:40]}」" if title else "（タイトルなし）"
+        all_ok = all(is_fully_fetched(r, p) for _, r, p in group)
+
+        if all_ok:
+            print(f"✅ {label} 全{len(group)}件 → 完了に一括更新")
+            for page_id, _, _ in group:
+                mark_complete(page_id)
+        else:
+            missing = sum(1 for _, r, p in group if not is_fully_fetched(r, p))
+            print(f"⏳ {label} {missing}/{len(group)}件 未取得 → 全件未処理のまま")
+
+    print("\n全件処理完了")
 
 
 if __name__ == "__main__":
