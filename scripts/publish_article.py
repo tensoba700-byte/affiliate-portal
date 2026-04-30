@@ -363,8 +363,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     
     markdown += f"## 💬 まとめ\n{data['summary']}\n"
 
-    # Markdown全体からも変数名を除去（保険）
-    markdown = clean_variable_names(markdown)
+    # Markdown全体からの変数名除去は手動で挿入したアフィリエイトURL（ASIN: 等）を消してしまうため行わない
+    # markdown = clean_variable_names(markdown)
 
     path = f"src/content/articles/{slug}.md"
     with open(path, 'w', encoding='utf-8') as f: f.write(markdown)
