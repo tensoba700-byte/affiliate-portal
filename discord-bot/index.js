@@ -12,47 +12,130 @@ const client = new Client({
   ],
 });
 
-// Gemini APIの設定（最新モデルを使用）
+// Gemini APIの初期化
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-// Botが起動した時のイベント
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
+// GitHub設定
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const REPO_OWNER = 'tensoba700-byte';
+const REPO_NAME = 'affiliate-portal';
+const BRANCH = 'main';
 
-// メッセージを受け取った時のイベント
-client.on('messageCreate', async (message) => {
-  // Bot自身のメッセージは無視
-  if (message.author.bot) return;
-  // 「!seo」で始まるメッセージだけ反応
-  if (!message.content.startsWith('!seo')) return;
+// スタイルガイドのURL
+const STYLE_GUIDE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/STYLE_GUIDE.md`;
 
-  // 指示を取り出す（「!seo」の後ろを取得）
-  const prompt = message.content.slice(4).trim();
-  if (!prompt) return message.reply('なにを修正すればいい？');
-
+// スタイルガイドを取得する関数
+async function fetchStyleGuide() {
   try {
-    // Geminiに質問を送信
-    const result = await model.generateContent(prompt);
-    const reply = result.response.text();
-    // 結果を返信
-    message.reply(reply);
-  } catch (err) {
-    console.error(err);
-    // エラーの詳細を表示
-    message.reply('エラーが発生したよ...: ' + (err.message || err));
+    const res = await fetch(STYLE_GUIDE_URL);
+    return res.ok ? await res.text() : null;
+  } catch {
+    return null;
+  }
+}
+
+// GitHubのファイルを読み込む関数
+async function readGitHubFile(path) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+  const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+  if (!res.ok) throw new Error(`ファイル読み込み失敗: ${res.status}`);
+  const data = await res.json();
+  return {
+    content: Buffer.from(data.content, 'base64').toString('utf-8'),
+    sha: data.sha,
+  };
+}
+
+// GitHubのファイルを更新する関数
+async function updateGitHubFile(path, newContent, sha) {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const body = {
+    message: `🤖 Bot: ${path} を更新`,
+    content: Buffer.from(newContent, 'utf-8').toString('base64'),
+    branch: BRANCH,
+    sha: sha,
+  };
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      Authorization: `token ${GITHUB_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(`GitHub APIエラー: ${res.status}`);
+  return await res.json();
+}
+
+// モデル初期化
+let model;
+(async () => {
+  const styleGuide = await fetchStyleGuide();
+  model = genAI.getGenerativeModel({
+    model: 'gemini-2.5-flash',
+    systemInstruction: styleGuide
+      ? `あなたは美容メディア「みっけ！」のSEO編集者です。以下の執筆ルールに厳密に従ってください:\n\n${styleGuide}`
+      : 'あなたは美容メディア「みっけ！」のSEO編集者です。',
+  });
+  console.log('✅ モデル準備完了');
+})();
+
+// Discordイベント
+client.once('ready', () => console.log(`Logged in as ${client.user.tag}!`));
+
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+
+  // ===== !seo コマンド =====
+  if (message.content.startsWith('!seo')) {
+    const prompt = message.content.slice(4).trim();
+    if (!prompt) return message.reply('なにを修正すればいい？');
+    if (!model) return message.reply('まだ準備中やねん…ちょっと待ってな〜');
+
+    try {
+      const result = await model.generateContent(prompt);
+      const reply = result.response.text();
+      message.reply(reply);
+    } catch (err) {
+      message.reply('エラーが発生したよ…: ' + (err.message || err));
+    }
+  }
+
+  // ===== !update-code コマンド =====
+  else if (message.content.startsWith('!update-code')) {
+    if (!GITHUB_TOKEN) return message.reply('GITHUB_TOKENが未設定やで。');
+
+    const args = message.content.slice('!update-code'.length).trim().split(' ');
+    const filePath = args[0];
+    const instruction = args.slice(1).join(' ');
+
+    if (!filePath || !instruction) {
+      return message.reply('使い方: `!update-code ファイル名 修正内容`\n例: `!update-code STYLE_GUIDE.md このルールを追加して: 見出しは必ずh2から始める`');
+    }
+
+    try {
+      const { content: currentCode, sha } = await readGitHubFile(filePath);
+      const prompt = `以下のファイルを、与えられた指示に従って修正し、修正後の全文のみを返してください。説明は不要です。\n\n【指示】\n${instruction}\n\n【現在のファイル内容】\n${currentCode}`;
+      const result = await model.generateContent(prompt);
+      const newCode = result.response.text().trim();
+
+      if (!newCode || newCode === currentCode) {
+        return message.reply('修正内容が同じか、生成に失敗したみたいや…');
+      }
+
+      await updateGitHubFile(filePath, newCode, sha);
+      message.reply(`✅ \`${filePath}\` を更新したで！`);
+    } catch (err) {
+      message.reply('エラーや…: ' + (err.message || err));
+    }
   }
 });
 
-// RenderのWeb Serviceで動かすための簡易HTTPサーバー
-const server = http.createServer((req, res) => {
+// HTTPサーバー
+http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Bot is running!');
-});
-server.listen(process.env.PORT || 3000, () => {
-  console.log('HTTP server is listening');
-});
+}).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 
-// Discordへログイン
+// Discordログイン
 client.login(process.env.DISCORD_TOKEN);
