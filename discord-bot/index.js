@@ -12,10 +12,9 @@ const client = new Client({
   ],
 });
 
-// Gemini APIの設定
+// Gemini APIの設定（最新モデルを使用）
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-// ✅ 修正：無料枠で使える正しいモデル名を指定
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 // Botが起動した時のイベント
 client.once('ready', () => {
@@ -41,12 +40,12 @@ client.on('messageCreate', async (message) => {
     message.reply(reply);
   } catch (err) {
     console.error(err);
-    // ✅ 修正：エラーの詳細を表示（問題の特定がラクになる）
+    // エラーの詳細を表示
     message.reply('エラーが発生したよ...: ' + (err.message || err));
   }
 });
 
-// Renderの無料プラン（Web Service）で動かすための簡易HTTPサーバー
+// RenderのWeb Serviceで動かすための簡易HTTPサーバー
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
   res.end('Bot is running!');
