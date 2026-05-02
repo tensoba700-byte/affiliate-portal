@@ -21,13 +21,13 @@ const REPO_OWNER = 'tensoba700-byte';
 const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
 
-// スタイルガイドのURL
-const STYLE_GUIDE_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/STYLE_GUIDE.md`;
+// 記事執筆ルールのURL（GENERATION_RULES.md）
+const RULES_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/GENERATION_RULES.md`;
 
-// スタイルガイドを取得する関数
-async function fetchStyleGuide() {
+// ルールを取得する関数
+async function fetchRules() {
   try {
-    const res = await fetch(STYLE_GUIDE_URL);
+    const res = await fetch(RULES_URL);
     return res.ok ? await res.text() : null;
   } catch {
     return null;
@@ -70,14 +70,14 @@ async function updateGitHubFile(path, newContent, sha) {
 // モデル初期化
 let model;
 (async () => {
-  const styleGuide = await fetchStyleGuide();
+  const rules = await fetchRules();
   model = genAI.getGenerativeModel({
     model: 'gemini-2.5-flash',
-    systemInstruction: styleGuide
-      ? `あなたは美容メディア「みっけ！」のSEO編集者です。以下の執筆ルールに厳密に従ってください:\n\n${styleGuide}`
+    systemInstruction: rules
+      ? `あなたは美容メディア「みっけ！」のSEO編集者です。以下の執筆ルールに厳密に従ってください:\n\n${rules}`
       : 'あなたは美容メディア「みっけ！」のSEO編集者です。',
   });
-  console.log('✅ モデル準備完了');
+  console.log('✅ ルール読み込み完了');
 })();
 
 // Discordイベント
@@ -110,7 +110,7 @@ client.on('messageCreate', async (message) => {
     const instruction = args.slice(1).join(' ');
 
     if (!filePath || !instruction) {
-      return message.reply('使い方: `!update-code ファイル名 修正内容`\n例: `!update-code STYLE_GUIDE.md このルールを追加して: 見出しは必ずh2から始める`');
+      return message.reply('使い方: `!update-code ファイル名 修正内容`');
     }
 
     try {
