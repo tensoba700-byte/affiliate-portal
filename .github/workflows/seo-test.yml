@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: GeminiにSEOアドバイスをもらう
         env:
-          GEMINI_API_KEY: ${{ AIzaSyDu1H_LNWXl739_azEU8qiuw-uIBhfgxdw }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           npm install -g @google/gemini-cli
           
