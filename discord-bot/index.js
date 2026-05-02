@@ -21,6 +21,9 @@ const REPO_OWNER = 'tensoba700-byte';
 const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
 
+// ✅ 特定チャンネル（このチャンネルでは !seo なしで反応）
+const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
+
 // 記事執筆ルールのURL（GENERATION_RULES.md）
 const RULES_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/GENERATION_RULES.md`;
 
@@ -86,7 +89,25 @@ client.once('ready', () => console.log(`Logged in as ${client.user.tag}!`));
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
-  // ===== !seo コマンド =====
+  const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
+
+  // ===== 特定チャンネルでは !seo なしでも反応 =====
+  if (isAllowedChannel && !message.content.startsWith('!update-code')) {
+    const prompt = message.content.trim();
+    if (!prompt) return;
+    if (!model) return message.reply('まだ準備中やねん…ちょっと待ってな〜');
+
+    try {
+      const result = await model.generateContent(prompt);
+      const reply = result.response.text();
+      message.reply(reply);
+    } catch (err) {
+      message.reply('エラーが発生したよ…: ' + (err.message || err));
+    }
+    return;
+  }
+
+  // ===== !seo コマンド（他のチャンネル用） =====
   if (message.content.startsWith('!seo')) {
     const prompt = message.content.slice(4).trim();
     if (!prompt) return message.reply('なにを修正すればいい？');
