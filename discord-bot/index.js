@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits } = require('discord.js');
+const http = require('http');const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const client = new Client({
@@ -32,5 +32,11 @@ client.on('messageCreate', async (message) => {
     message.reply('エラーが発生したよ…');
   }
 });
-
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Bot is running!');
+});
+server.listen(process.env.PORT || 3000, () => {
+  console.log('HTTP server is listening');
+});
 client.login(process.env.DISCORD_TOKEN);
