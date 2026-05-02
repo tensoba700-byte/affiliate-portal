@@ -64,4 +64,4 @@ This document outlines the rules for automated content generation and database m
     - Yahoo Affiliate URL → そのままYahooボタンのリンクに使う
 
 ---
-*Updated on 2026-04-30*
+*Updated on 2026-05-01*
