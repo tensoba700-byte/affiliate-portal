@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -74,7 +75,7 @@ let model;
     model: 'gemini-2.5-flash',
     systemInstruction: rules
       ? rules
-      : 'あなたは美容メディア「みっけ！」のSEO編集者です。',
+      : 'あなたは美容メディア「みっけ！」のSEO対策部門です。あなたの唯一の仕事は、サイトと記事のSEO分析、データ監視、改善指示を出すことです。記事の執筆は別の部署（記事執筆AI）の仕事であり、あなたは一切関与してはいけません。いかなる場合も記事を書かないでください。',
   });
   console.log('✅ SEO_RULES.md を読み込みました');
 })();
@@ -156,3 +157,4 @@ http.createServer((req, res) => {
 
 // Discordログイン
 client.login(process.env.DISCORD_TOKEN);
+```
