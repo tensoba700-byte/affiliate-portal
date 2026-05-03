@@ -9,6 +9,9 @@ on:
 jobs:
   check-new-rules:
     runs-on: ubuntu-latest
+    # ✅ 書き込み権限を追加（これが無いとGitHubにpushできない）
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
