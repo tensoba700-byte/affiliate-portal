@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -18,7 +19,7 @@ const REPO_OWNER = 'tensoba700-byte';
 const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
 const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
-const RULES_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/GENERATION_RULES.md`;
+const RULES_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/SEO_RULES.md`;
 
 async function fetchRules() {
   try {
@@ -153,3 +154,4 @@ http.createServer((req, res) => {
 }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 
 client.login(process.env.DISCORD_TOKEN);
+```
