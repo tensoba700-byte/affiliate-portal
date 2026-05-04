@@ -1,4 +1,4 @@
-// discord-bot/index.js（.cache/last_check.json 差分読み込み型）
+// discord-bot/index.js（.cache/last_check.json 差分読み込み型 + !overwrite + !audit-articles 追加済み）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -199,7 +199,13 @@ client.on('messageCreate', async (message) => {
   }
 
   // 特定チャンネルではコマンドなしで反応
-  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload')) {
+  // すでに定義されているコマンドは除外する
+  if (isAllowedChannel && 
+      !message.content.startsWith('!update-code') && 
+      !message.content.startsWith('!check') && 
+      !message.content.startsWith('!reload') &&
+      !message.content.startsWith('!overwrite') &&
+      !message.content.startsWith('!audit-articles')) {
     const prompt = message.content.trim();
     if (!prompt) return;
     if (!model) return message.reply('まだ準備中やねん…ちょっと待ってな〜');
@@ -258,8 +264,8 @@ client.on('messageCreate', async (message) => {
       message.reply('エラーや…: ' + (err.message || err));
     }
   }
-});
-  // ===== !overwrite コマンド（ファイル全体を上書き） =====
+
+  // !overwrite コマンド（ファイル全体を上書き）
   else if (message.content.startsWith('!overwrite')) {
     const lines = message.content.split('\n');
     const filePath = lines[0].slice(10).trim();
@@ -309,7 +315,33 @@ client.on('messageCreate', async (message) => {
 以下の記事を読み、GENERATION_RULES.md と SEO_RULES.md に厳密に従って、以下の3つを出力してください。
 
 【出力1】問題点の指摘（箇条書き）。特に以下を重点的にチェック：
-- 画像（![]()）が各商品に適
+- 画像（![]()）が各商品に適切に貼られているか？alt属性はあるか？
+- アフィリエイトリンク（Amazon・楽天・Yahoo）が各商品に3つずつあるか？
+- 画像URLが有効か？（404になってないか）
+- 商品名と画像のaltテキストが一致しているか？
+
+【出力2】修正後の記事全文（Markdown形式）
+- 不足している画像は、商品名から推測される適切な画像URLを補完する
+- 不足しているアフィリエイトリンクは、商品名から推測される適切なURLを補完する
+
+【出力3】不足している画像・リンクの一覧（箇条書き）
+
+現在の記事:
+${content}
+`;
+        const result = await model.generateContent(fixPrompt);
+        const fullResponse = result.response.text();
+
+        message.reply(`📋 **${file.name} の徹底分析結果**\n\n${fullResponse}`);
+        message.reply(`💡 **編集実行くんに渡すコマンド:**\n\`!replace ${filePath} [上記の修正後全文をコピペ]\``);
+      }
+
+      message.reply('✅ 指定された記事の画像・リンクチェックが完了したで！');
+    } catch (err) {
+      message.reply('エラーが発生したよ…: ' + (err.message || err));
+    }
+  }
+});
 
 // HTTPサーバー
 http.createServer((req, res) => {
