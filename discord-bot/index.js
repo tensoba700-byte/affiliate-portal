@@ -4,7 +4,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // 複数 API キーを読み込み
-const API_KEYS = (process.env.GEMINI_API_KEYS || '').split(',').map(k => k.trim()).filter(Boolean);
+const API_KEYS = (process.env.GEMINI_API_KEY || '').split(',').map(k => k.trim()).filter(Boolean);
 if (API_KEYS.length === 0) throw new Error('GEMINI_API_KEYS に有効なキーがありません');
 
 let currentKeyIndex = 0;
