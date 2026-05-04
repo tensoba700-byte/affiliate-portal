@@ -284,13 +284,12 @@ client.on('messageCreate', async (message) => {
   }
 
  
-  // ===== !audit-articles コマンド（記事を自動巡回して画像・リンクチェック） =====
+// ===== !audit-articles コマンド（分割リクエスト対応） =====
   else if (message.content.startsWith('!audit-articles')) {
     const args = message.content.slice(15).trim().split(' ');
     const targetDir = args[0] || 'src/content/articles';
     const maxArticles = parseInt(args[1]) || 1;
-
-    message.reply(`🔍 \`${targetDir}\` 内の最新記事を${maxArticles}件、画像・リンクも含めて徹底チェック中やで…`);
+    message.reply(`🔍 \`${targetDir}\` 内の最新記事を${maxArticles}件、分割分析で徹底チェック中やで…`);
 
     try {
       const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetDir}?ref=${BRANCH}`;
@@ -301,18 +300,39 @@ client.on('messageCreate', async (message) => {
       const mdFiles = files
         .filter(f => f.type === 'file' && f.name.endsWith('.md'))
         .sort((a, b) => new Date(b.last_committed || 0) - new Date(a.last_committed || 0));
-
       if (mdFiles.length === 0) return message.reply('📭 記事ファイルが見つからへんで。');
-
       const targets = mdFiles.slice(0, maxArticles);
       
       for (const file of targets) {
         const filePath = `${targetDir}/${file.name}`;
         const { content } = await readGitHubFile(filePath);
-        
-        message.reply(`📝 **${file.name}** を画像・リンクも含めて徹底分析中…`);
+        message.reply(`📝 **${file.name}** を分割分析中…`);
 
-        const fixPrompt = `
+        // 1. まずタイトルを分析
+        const titleMatch = content.match(/^# .+/m);
+        const title = titleMatch ? titleMatch[0] : 'タイトル不明';
+        const titleAnalysis = await model.generateContent(`以下の記事タイトルを分析し、SEOの観点から問題点を簡潔に指摘してください。\n\n${title}`);
+        message.reply(`📋 **【タイトル分析】**\n${titleAnalysis.response.text().substring(0, 1800)}`);
+
+        // 2. メタディスクリプションを分析
+        const descMatch = content.match(/excerpt:\s*(.+)/);
+        if (descMatch) {
+          const desc = descMatch[1];
+          const descAnalysis = await model.generateContent(`以下のメタディスクリプションを分析し、SEOの観点から問題点を簡潔に指摘してください。\n\n${desc}`);
+          message.reply(`📋 **【メタディスクリプション分析】**\n${descAnalysis.response.text().substring(0, 1800)}`);
+        }
+
+        // 3. 画像とリンクのチェック
+        const imageMatches = content.match(/!\[.*?\]\(.*?\)/g) || [];
+        const linkMatches = content.match(/https?:\/\/[^\s)]+/g) || [];
+        const checkResult = await model.generateContent(`以下の記事内の画像とリンクをチェックし、問題点を簡潔に指摘してください。\n\n画像: ${imageMatches.join(', ')}\nリンク: ${linkMatches.join(', ')}`);
+        message.reply(`📋 **【画像・リンクチェック】**\n${checkResult.response.text().substring(0, 1800)}`);
+      }
+      message.reply('✅ 指定された記事の分割チェックが完了したで！');
+    } catch (err) {
+      message.reply('エラーが発生したよ…: ' + (err.message || err));
+    }
+  } 
 あなたは美容メディア「みっけ！」のSEO編集者です。
 以下の記事を読み、GENERATION_RULES.md と SEO_RULES.md に厳密に従って、以下の3つを出力してください。
 
