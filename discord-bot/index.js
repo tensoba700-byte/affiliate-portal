@@ -259,6 +259,57 @@ client.on('messageCreate', async (message) => {
     }
   }
 });
+  // ===== !overwrite コマンド（ファイル全体を上書き） =====
+  else if (message.content.startsWith('!overwrite')) {
+    const lines = message.content.split('\n');
+    const filePath = lines[0].slice(10).trim();
+    const newCode = lines.slice(1).join('\n');
+    if (!filePath || !newCode) {
+      return message.reply('使い方: `!overwrite ファイルパス` の後に、新しいコード全体を貼り付けてください。');
+    }
+    try {
+      const { sha } = await readGitHubFile(filePath);
+      await updateGitHubFile(filePath, newCode, sha);
+      message.reply(`✅ \`${filePath}\` を上書き更新したで！`);
+    } catch (err) {
+      message.reply('エラーや…: ' + (err.message || err));
+    }
+  }
+
+  // ===== !audit-articles コマンド（記事を自動巡回して画像・リンクチェック） =====
+  else if (message.content.startsWith('!audit-articles')) {
+    const args = message.content.slice(15).trim().split(' ');
+    const targetDir = args[0] || 'src/content/articles';
+    const maxArticles = parseInt(args[1]) || 1;
+
+    message.reply(`🔍 \`${targetDir}\` 内の最新記事を${maxArticles}件、画像・リンクも含めて徹底チェック中やで…`);
+
+    try {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetDir}?ref=${BRANCH}`;
+      const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+      if (!res.ok) throw new Error(`フォルダ読み込み失敗: ${res.status}`);
+      const files = await res.json();
+
+      const mdFiles = files
+        .filter(f => f.type === 'file' && f.name.endsWith('.md'))
+        .sort((a, b) => new Date(b.last_committed || 0) - new Date(a.last_committed || 0));
+
+      if (mdFiles.length === 0) return message.reply('📭 記事ファイルが見つからへんで。');
+
+      const targets = mdFiles.slice(0, maxArticles);
+      
+      for (const file of targets) {
+        const filePath = `${targetDir}/${file.name}`;
+        const { content } = await readGitHubFile(filePath);
+        
+        message.reply(`📝 **${file.name}** を画像・リンクも含めて徹底分析中…`);
+
+        const fixPrompt = `
+あなたは美容メディア「みっけ！」のSEO編集者です。
+以下の記事を読み、GENERATION_RULES.md と SEO_RULES.md に厳密に従って、以下の3つを出力してください。
+
+【出力1】問題点の指摘（箇条書き）。特に以下を重点的にチェック：
+- 画像（![]()）が各商品に適
 
 // HTTPサーバー
 http.createServer((req, res) => {
