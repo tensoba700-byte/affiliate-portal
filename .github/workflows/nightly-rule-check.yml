@@ -9,7 +9,6 @@ on:
 jobs:
   check-new-rules:
     runs-on: ubuntu-latest
-    # ✅ 書き込み権限を追加（これが無いとGitHubにpushできない）
     permissions:
       contents: write
     steps:
@@ -35,12 +34,11 @@ jobs:
             echo "New/modified .md files:"
             echo "$NEW_FILES"
 
-            # Discordに通知
-            curl -X POST "$DISCORD_WEBHOOK_URL" \
+            # Discordに安全に通知（jqでJSONを生成）
+            MESSAGE="📋 **新着/更新ルールファイルのお知らせ**\n\n以下の .md ファイルが更新されました：\n\n\`\`\`\n${NEW_FILES}\n\`\`\`\n\n分析Botに \`!reload\` を送って学習させてください！"
+            jq -n --arg content "$MESSAGE" '{content: $content}' | curl -X POST "$DISCORD_WEBHOOK_URL" \
               -H "Content-Type: application/json" \
-              -d "{
-                \"content\": \"📋 **新着/更新ルールファイルのお知らせ**\\n\\n以下の .md ファイルが更新されました：\\n\\n\`\`\`\\n${NEW_FILES}\\n\`\`\`\\n\\n分析Botに \`!reload\` を送って学習させてください！\"
-              }"
+              -d @-
           fi
 
           # 最終チェック日時を更新
