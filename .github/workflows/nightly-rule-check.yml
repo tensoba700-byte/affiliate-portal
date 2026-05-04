@@ -2,9 +2,8 @@ name: Nightly Rule Check
 
 on:
   schedule:
-    # 日本時間 毎朝5時（UTC 20時）に実行
     - cron: '0 20 * * *'
-  workflow_dispatch:  # 手動実行も可能
+  workflow_dispatch:
 
 jobs:
   check-new-rules:
@@ -21,11 +20,9 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          # 前回のチェック日時を読み込む
           LAST_CHECK=$(cat .cache/last_check.json 2>/dev/null | jq -r '.last_check' || echo "2020-01-01T00:00:00Z")
           echo "Last check: $LAST_CHECK"
 
-          # 前回チェック以降に更新された .md ファイルを探す
           NEW_FILES=$(git log --since="$LAST_CHECK" --diff-filter=AM --name-only --pretty=format: -- '*.md' | grep -v 'node_modules' | sort -u)
 
           if [ -z "$NEW_FILES" ]; then
@@ -34,14 +31,24 @@ jobs:
             echo "New/modified .md files:"
             echo "$NEW_FILES"
 
-            # Discordに安全に通知（jqでJSONを生成）
-            MESSAGE="📋 **新着/更新ルールファイルのお知らせ**\n\n以下の .md ファイルが更新されました：\n\n\`\`\`\n${NEW_FILES}\n\`\`\`\n\n分析Botに \`!reload\` を送って学習させてください！"
-            jq -n --arg content "$MESSAGE" '{content: $content}' | curl -X POST "$DISCORD_WEBHOOK_URL" \
+            # Discordに通知（日本語ファイル名があっても安全な方法）
+            echo "📋 **新着/更新ルールファイルのお知らせ**" > /tmp/message.txt
+            echo "" >> /tmp/message.txt
+            echo "以下の .md ファイルが更新されました：" >> /tmp/message.txt
+            echo "\`\`\`" >> /tmp/message.txt
+            echo "$NEW_FILES" >> /tmp/message.txt
+            echo "\`\`\`" >> /tmp/message.txt
+            echo "" >> /tmp/message.txt
+            echo "分析Botに \`!reload\` を送って学習させてください！" >> /tmp/message.txt
+
+            # jqを使って安全にJSONを生成して送信
+            jq -Rs '{content: .}' /tmp/message.txt | curl -s -o /dev/null -w "%{http_code}" -X POST "$DISCORD_WEBHOOK_URL" \
               -H "Content-Type: application/json" \
               -d @-
+            echo ""
+            echo "Discord通知を送信しました"
           fi
 
-          # 最終チェック日時を更新
           echo "{\"last_check\": \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\"}" > .cache/last_check.json
           git config user.name "SEO Bot"
           git config user.email "seobot@example.com"
