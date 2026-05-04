@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js（.cache/last_check.json 差分読み込み型 + !overwrite + !audit-articles 追加済み）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -211,7 +212,7 @@ client.on('messageCreate', async (message) => {
     if (!model) return message.reply('まだ準備中やねん…ちょっと待ってな〜');
     try {
       const result = await model.generateContent(prompt);
-      message.reply(result.response.text());
+      const replyText = result.response.text(); if (replyText && replyText.length > 0) { message.reply(replyText.substring(0, 1800)); } else { message.reply('内容をうまく生成できなかったみたいや…'); }
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
@@ -225,7 +226,7 @@ client.on('messageCreate', async (message) => {
     if (!model) return message.reply('まだ準備中やねん…ちょっと待ってな〜');
     try {
       const result = await model.generateContent(prompt);
-      message.reply(result.response.text());
+      const replyText = result.response.text(); if (replyText && replyText.length > 0) { message.reply(replyText.substring(0, 1800)); } else { message.reply('内容をうまく生成できなかったみたいや…'); }
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
@@ -312,63 +313,6 @@ client.on('messageCreate', async (message) => {
         message.reply(`📝 **${file.name}** を画像・リンクも含めて徹底分析中…`);
 
         const fixPrompt = `
-あなたは美容メディア「みっけ！」のSEO編集者です。以下の記事を読み、ルールに従ってチェックしてください。
-
-【出力1】問題点の指摘（箇条書き）。特に以下を重点的にチェック：
-- 画像（![]()）が各商品に適切に貼られているか？alt属性はあるか？
-- アフィリエイトリンク（Amazon・楽天・Yahoo）が各商品に3つずつあるか？
-- 画像URLが有効そうか？
-- 商品名と画像のaltテキストが一致しているか？
-
-【出力2】修正後の記事全文（Markdown形式）
-- 不足している画像は、商品名から推測される適切な画像URLを補完（※注: URLは推測で構いません）
-- 不足しているアフィリエイトリンクは、商品名から推測される適切なURLを補完（※注: URLは推測で構いません）
-
-【出力3】不足している画像・リンクの一覧（箇条書き）
-
-現在の記事:
-${content}
-`;
-        const result = await model.generateContent(fixPrompt);
-        const fullResponse = result.response.text();
-
-        message.reply(`📋 **${file.name} の徹底分析結果**\n\n${fullResponse}`);
-        message.reply(`💡 **編集実行くんに渡すコマンド:**\n\`!replace ${filePath} [上記の修正後全文をコピペ]\``);
-      }
-
-      message.reply('✅ 指定された記事の画像・リンクチェックが完了したで！');
-    } catch (err) {
-      message.reply('エラーが発生したよ…: ' + (err.message || err));
-    }
-  } // ===== !audit-articles コマンド（記事を自動巡回して画像・リンクチェック） =====
-  else if (message.content.startsWith('!audit-articles')) {
-    const args = message.content.slice(15).trim().split(' ');
-    const targetDir = args[0] || 'src/content/articles';
-    const maxArticles = parseInt(args[1]) || 1;
-
-    message.reply(`🔍 \`${targetDir}\` 内の最新記事を${maxArticles}件、画像・リンクも含めて徹底チェック中やで…`);
-
-    try {
-      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetDir}?ref=${BRANCH}`;
-      const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
-      if (!res.ok) throw new Error(`フォルダ読み込み失敗: ${res.status}`);
-      const files = await res.json();
-
-      const mdFiles = files
-        .filter(f => f.type === 'file' && f.name.endsWith('.md'))
-        .sort((a, b) => new Date(b.last_committed || 0) - new Date(a.last_committed || 0));
-
-      if (mdFiles.length === 0) return message.reply('📭 記事ファイルが見つからへんで。');
-
-      const targets = mdFiles.slice(0, maxArticles);
-      
-      for (const file of targets) {
-        const filePath = `${targetDir}/${file.name}`;
-        const { content } = await readGitHubFile(filePath);
-        
-        message.reply(`📝 **${file.name}** を画像・リンクも含めて徹底分析中…`);
-
-        const fixPrompt = `
 あなたは美容メディア「みっけ！」のSEO編集者です。
 以下の記事を読み、GENERATION_RULES.md と SEO_RULES.md に厳密に従って、以下の3つを出力してください。
 
@@ -408,3 +352,4 @@ http.createServer((req, res) => {
 }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 
 client.login(process.env.DISCORD_TOKEN);
+```
