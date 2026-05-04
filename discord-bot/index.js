@@ -1,5 +1,4 @@
-```javascript
-// discord-bot/index.js（.cache/last_check.json 差分読み込み型 + !overwrite + !audit-articles 追加済み）
+// discord-bot/index.js（.cache/last_check.json 差分読み込み型 + !overwrite + !audit-articles 分割版 完全版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -199,8 +198,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // 特定チャンネルではコマンドなしで反応
-  // すでに定義されているコマンドは除外する
+  // 特定チャンネルではコマンドなしで反応（コマンドを除外）
   if (isAllowedChannel && 
       !message.content.startsWith('!update-code') && 
       !message.content.startsWith('!check') && 
@@ -283,7 +281,6 @@ client.on('messageCreate', async (message) => {
     }
   }
 
- 
 // ===== !audit-articles コマンド（分割リクエスト対応） =====
   else if (message.content.startsWith('!audit-articles')) {
     const args = message.content.slice(15).trim().split(' ');
@@ -332,36 +329,6 @@ client.on('messageCreate', async (message) => {
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
-  } 
-あなたは美容メディア「みっけ！」のSEO編集者です。
-以下の記事を読み、GENERATION_RULES.md と SEO_RULES.md に厳密に従って、以下の3つを出力してください。
-
-【出力1】問題点の指摘（箇条書き）。特に以下を重点的にチェック：
-- 画像（![]()）が各商品に適切に貼られているか？alt属性はあるか？
-- アフィリエイトリンク（Amazon・楽天・Yahoo）が各商品に3つずつあるか？
-- 画像URLが有効か？（404になってないか）
-- 商品名と画像のaltテキストが一致しているか？
-
-【出力2】修正後の記事全文（Markdown形式）
-- 不足している画像は、商品名から推測される適切な画像URLを補完する
-- 不足しているアフィリエイトリンクは、商品名から推測される適切なURLを補完する
-
-【出力3】不足している画像・リンクの一覧（箇条書き）
-
-現在の記事:
-${content}
-`;
-        const result = await model.generateContent(fixPrompt);
-        const fullResponse = result.response.text();
-
-        message.reply(`📋 **${file.name} の徹底分析結果**\n\n${fullResponse}`);
-        message.reply(`💡 **編集実行くんに渡すコマンド:**\n\`!replace ${filePath} [上記の修正後全文をコピペ]\``);
-      }
-
-      message.reply('✅ 指定された記事の画像・リンクチェックが完了したで！');
-    } catch (err) {
-      message.reply('エラーが発生したよ…: ' + (err.message || err));
-    }
   }
 });
 
@@ -372,4 +339,3 @@ http.createServer((req, res) => {
 }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 
 client.login(process.env.DISCORD_TOKEN);
-```
