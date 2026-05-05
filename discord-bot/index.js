@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js（完全自動化最終版：!deploy + !check-all-articles 確実版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -291,18 +292,14 @@ client.on('messageCreate', async (message) => {
   if (message.content.startsWith('!check-all-articles')) {
     message.reply('🔍 全記事を自動巡回中やで…');
     try {
-      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/articles?ref=${BRANCH}`;
-      const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
-      if (!res.ok) return message.reply(`記事フォルダの読み込みに失敗したわ。(status: ${res.status})`);
-      const files = await res.json();
-      const mdFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.md'));
-      if (mdFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
-      message.reply(`${mdFiles.length}件の記事をチェックするで！`);
-      for (const file of mdFiles) {
-        const filePath = `src/content/articles/${file.name}`;
+      const allFiles = await getAllMarkdownFiles();
+      const articleFiles = allFiles.filter(f => f.startsWith('src/content/articles/') && f.endsWith('.md'));
+      if (articleFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
+      message.reply(`${articleFiles.length}件の記事をチェックするで！`);
+      for (const filePath of articleFiles) {
         const { content } = await readGitHubFile(filePath);
         const titleMatch = content.match(/^title: (.+)/m);
-        const title = titleMatch ? titleMatch[1] : file.name;
+        const title = titleMatch ? titleMatch[1] : filePath;
         const hasPlaceholder = content.includes('[AMAZON_LINK_HERE]') || content.includes('[RAKUTEN_LINK_HERE]') || content.includes('[YAHOO_LINK_HERE]');
         const hasPR = content.includes('本記事はアフィリエイト広告');
         const imageCount = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
@@ -358,3 +355,4 @@ client.on('messageCreate', async (message) => {
 
 http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
+```
