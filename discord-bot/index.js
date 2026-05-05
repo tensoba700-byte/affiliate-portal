@@ -96,9 +96,52 @@ client.on('messageCreate', async (message) => {
   // !overwrite コマンド
   else if (message.content.startsWith('!overwrite')) { /* 既存コードを保持 */ }
 
-  // !audit-articles コマンド
-  else if (message.content.startsWith('!audit-articles')) { /* 既存コードを保持 */ }
+// ===== !audit-articles コマンド（完全自動化版：分析→自動修正指示） =====
+  else if (message.content.startsWith('!audit-articles')) {
+    const args = message.content.slice(15).trim().split(' ');
+    const targetDir = args[0] || 'src/content/articles';
+    const maxArticles = parseInt(args[1]) || 1;
+    message.reply(`🔍 \`${targetDir}\` 内の最新記事を${maxArticles}件、完全自動分析＆修正中やで…`);
 
+    try {
+      const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${targetDir}?ref=${BRANCH}`;
+      const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+      if (!res.ok) throw new Error(`フォルダ読み込み失敗: ${res.status}`);
+      const files = await res.json();
+
+      const mdFiles = files
+        .filter(f => f.type === 'file' && f.name.endsWith('.md'))
+        .sort((a, b) => new Date(b.last_committed || 0) - new Date(a.last_committed || 0));
+      if (mdFiles.length === 0) return message.reply('📭 記事ファイルが見つからへんで。');
+      const targets = mdFiles.slice(0, maxArticles);
+      
+      for (const file of targets) {
+        const filePath = `${targetDir}/${file.name}`;
+        const { content } = await readGitHubFile(filePath);
+        message.reply(`📝 **${file.name}** を分析＆自動修正中…`);
+
+        // 分析プロンプト（タイトル、メタディスクリプション、画像・リンクを含む）
+        const fixPrompt = `
+あなたは美容メディア「みっけ！」のSEO編集者です。以下の記事を分析し、問題点を指摘した上で、修正後の全文をMarkdown形式で出力してください。
+現在の記事:
+${content}
+`;
+        const result = await model.generateContent(fixPrompt);
+        const fullResponse = result.response.text();
+
+        // 修正後の全文を抽出（簡易的な方法：最後の大きなテキストブロックを取得）
+        const correctedContent = fullResponse; // 必要に応じてパース処理を追加
+
+        // ✅ 編集実行くんに自動で修正指示を送信
+        const editCommand = `@編集実行くん !replace ${filePath} ${correctedContent.substring(0, 1800)}`;
+        message.channel.send(editCommand);
+      }
+
+      message.reply('✅ 指定された記事の分析と自動修正指示を完了したで！');
+    } catch (err) {
+      message.reply('エラーが発生したよ…: ' + (err.message || err));
+    }
+  } 
   // ===== !fix-from-notion コマンド（Notion APIで不足情報を補完し記事を自動更新） =====
   else if (message.content.startsWith('!fix-from-notion')) {
     const filePath = message.content.slice(16).trim();
