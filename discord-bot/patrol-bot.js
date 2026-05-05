@@ -1,4 +1,4 @@
-// discord-bot/patrol-bot.js（巡回じみにー）
+// discord-bot/patrol-bot.js
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -30,7 +30,7 @@ async function getAllMarkdownFiles() {
     .map(item => item.path);
 }
 
-client.once('ready', () => console.log(`✅ ${client.user.tag} 起動完了`));
+client.once('ready', () => console.log('✅ ' + client.user.tag + ' 起動完了'));
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
@@ -41,7 +41,7 @@ client.on('messageCreate', async (message) => {
       const allFiles = await getAllMarkdownFiles();
       const articleFiles = allFiles.filter(f => f.startsWith('src/content/articles/') && f.endsWith('.md'));
       if (articleFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
-      message.reply(`${articleFiles.length}件の記事をチェックするで！');
+      message.reply(articleFiles.length + '件の記事をチェックするで！');
 
       const problemFiles = [];
       for (const filePath of articleFiles) {
@@ -52,7 +52,7 @@ client.on('messageCreate', async (message) => {
         const hasPR = content.includes('本記事はアフィリエイト広告');
         const imageCount = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
 
-        let report = `📄 **${title}**\n`;
+        let report = '📄 **' + title + '**\n';
         if (hasPlaceholder) report += '⚠️ リンクプレースホルダーが残ってるで！\n';
         if (!hasPR) report += '⚠️ PR表記がないで！\n';
         if (imageCount < 1) report += '⚠️ 画像が1枚もないで！\n';
@@ -63,14 +63,14 @@ client.on('messageCreate', async (message) => {
       }
 
       if (problemFiles.length > 0) {
-        let summary = `🚨 **巡回じみにーからの報告やで！**\n以下の${problemFiles.length}件の記事に問題があるみたいや…\n\n`;
+        let summary = '🚨 **巡回じみにーからの報告やで！**\n以下の' + problemFiles.length + '件の記事に問題があるみたいや…\n\n';
         for (const pf of problemFiles) {
-          summary += `📄 **${pf.title}** → \`${pf.filePath}\`\n`;
+          summary += '📄 **' + pf.title + '** → `' + pf.filePath + '`\n';
           if (pf.hasPlaceholder) summary += '　⚠️ リンクプレースホルダー残存\n';
           if (!pf.hasPR) summary += '　⚠️ PR表記なし\n';
           if (pf.imageCount < 1) summary += '　⚠️ 画像なし\n';
         }
-        message.channel.send(`@編集実行くん ${summary}`);
+        message.channel.send('@編集実行くん ' + summary);
       }
 
       message.reply('✅ 全記事の巡回が完了したで！');
