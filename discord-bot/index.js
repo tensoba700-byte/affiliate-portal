@@ -163,7 +163,7 @@ client.on('messageCreate', async (message) => {
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
   // フリーテキスト反応（コマンドを除外）
-  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy')) {
+  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy') && !message.content.startsWith('!check-all-articles')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
@@ -305,6 +305,34 @@ ${content}
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
+  }
+
+  // !check-all-articles コマンド（全記事を自動巡回して問題をレポート）
+  else if (message.content.startsWith('!check-all-articles')) {
+    message.reply('🔍 全記事を自動巡回中やで…');
+    const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/src/content/articles?ref=${BRANCH}`;
+    const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+    if (!res.ok) return message.reply('記事フォルダの読み込みに失敗したわ。');
+    const files = await res.json();
+    const mdFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.md'));
+    if (mdFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
+    message.reply(`${mdFiles.length}件の記事をチェックするで！`);
+    for (const file of mdFiles) {
+      const filePath = `src/content/articles/${file.name}`;
+      const { content } = await readGitHubFile(filePath);
+      const titleMatch = content.match(/^title: (.+)/m);
+      const title = titleMatch ? titleMatch[1] : file.name;
+      const hasPlaceholder = content.includes('[AMAZON_LINK_HERE]') || content.includes('[RAKUTEN_LINK_HERE]') || content.includes('[YAHOO_LINK_HERE]');
+      const hasPR = content.includes('本記事はアフィリエイト広告');
+      const imageCount = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
+      let report = `📄 **${title}**\n`;
+      if (hasPlaceholder) report += '⚠️ リンクプレースホルダーが残ってるで！\n';
+      if (!hasPR) report += '⚠️ PR表記がないで！\n';
+      if (imageCount < 1) report += '⚠️ 画像が1枚もないで！\n';
+      if (!hasPlaceholder && hasPR && imageCount >= 1) report += '✅ 問題なさそうや！\n';
+      message.reply(report);
+    }
+    message.reply('✅ 全記事の巡回が完了したで！');
   }
 
   // ===== !fix-from-notion コマンド（Notion APIで不足情報を補完し記事を自動更新） =====
