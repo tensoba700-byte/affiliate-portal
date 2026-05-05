@@ -1,4 +1,4 @@
-// discord-bot/index.js（完全版：Notion APIで不足情報を自動補完）
+// discord-bot/index.js（完全自動化最終版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -14,13 +14,103 @@ const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
 const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
 const LAST_CHECK_FILE = '.cache/last_check.json';
-
-// Notion API設定
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-// --- 既存の関数群（getLastCheckTime, updateLastCheckTime, getRecentlyModifiedFiles, loadSpecificFiles, fetchAndLearnRules, getAllMarkdownFiles）は前回と全く同じなので、ここではスペースの都合で割愛 ---
-// ※GitHubの現在のindex.jsに書いてあるものをそのまま残してください。
+// 前回チェック日時を読み込む
+async function getLastCheckTime() {
+  try {
+    const { content } = await readGitHubFile(LAST_CHECK_FILE);
+    const data = JSON.parse(content);
+    return new Date(data.last_check);
+  } catch {
+    return new Date('2020-01-01T00:00:00Z');
+  }
+}
+
+// 前回チェック日時を更新する
+async function updateLastCheckTime(date = new Date()) {
+  const json = { last_check: date.toISOString() };
+  const { sha } = await readGitHubFile(LAST_CHECK_FILE);
+  await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${LAST_CHECK_FILE}`, {
+    method: 'PUT',
+    headers: { Authorization: `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      message: '🤖 Bot: 最終チェック日時を更新',
+      content: Buffer.from(JSON.stringify(json, null, 2), 'utf-8').toString('base64'),
+      branch: BRANCH, sha,
+    }),
+  });
+}
+
+// GitHubのコミット履歴から、指定日時以降に更新された.mdファイルを取得
+async function getRecentlyModifiedFiles(sinceDate) {
+  const files = new Set();
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?since=${sinceDate.toISOString()}&per_page=100`;
+  const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+  if (!res.ok) return [];
+  const commits = await res.json();
+  for (const commit of commits) {
+    const detailRes = await fetch(commit.url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+    if (!detailRes.ok) continue;
+    const detail = await detailRes.json();
+    const changedFiles = (detail.files || []).map(f => f.filename).filter(f => f.endsWith('.md'));
+    changedFiles.forEach(f => files.add(f));
+  }
+  return [...files];
+}
+
+// 指定された.mdファイルだけを読み込んで結合
+async function loadSpecificFiles(fileList) {
+  const results = [];
+  for (const file of fileList) {
+    try {
+      const fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${file}`;
+      const res = await fetch(fileUrl);
+      if (res.ok) {
+        const text = await res.text();
+        results.push(`# ${file}\n${text}`);
+      }
+    } catch (e) { console.warn(`⚠️ ${file} の取得に失敗`); }
+  }
+  return results.join('\n\n---\n\n');
+}
+
+// 初回起動時は全ファイル、それ以降は差分だけ読み込む
+let initialLoadDone = false;
+let allRuleFiles = [];
+async function fetchAndLearnRules() {
+  const lastCheck = await getLastCheckTime();
+  if (!initialLoadDone) {
+    allRuleFiles = await getAllMarkdownFiles();
+    const rules = await loadSpecificFiles(allRuleFiles);
+    initialLoadDone = true;
+    console.log(`✅ 初回：${allRuleFiles.length} 件の .md ファイルを読み込みました`);
+    return rules;
+  } else {
+    const modifiedFiles = await getRecentlyModifiedFiles(lastCheck);
+    if (modifiedFiles.length === 0) {
+      console.log('📭 新着ファイルなし');
+      return null;
+    }
+    const newFiles = modifiedFiles.filter(f => !allRuleFiles.includes(f));
+    allRuleFiles = [...new Set([...allRuleFiles, ...modifiedFiles])];
+    const newRules = await loadSpecificFiles(modifiedFiles);
+    console.log(`🆕 ${modifiedFiles.length} 件の新着/更新ファイルを追加学習`);
+    return newRules;
+  }
+}
+
+// リポジトリ全体の.mdファイル一覧を取得（初回用）
+async function getAllMarkdownFiles() {
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`;
+  const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.tree || [])
+    .filter(item => item.type === 'blob' && item.path.endsWith('.md') && !item.path.startsWith('node_modules') && !item.path.startsWith('.git') && item.size <= 200 * 1024)
+    .map(item => item.path);
+}
 
 // GitHubファイル読み込み/更新
 async function readGitHubFile(path) {
@@ -34,7 +124,7 @@ async function readGitHubFile(path) {
 async function updateGitHubFile(path, newContent, sha) {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
   const body = {
-    message: `🤖 Bot: ${path} をNotionデータで更新`,
+    message: `🤖 Bot: ${path} を更新`,
     content: Buffer.from(newContent, 'utf-8').toString('base64'),
     branch: BRANCH, sha,
   };
@@ -49,7 +139,6 @@ async function updateGitHubFile(path, newContent, sha) {
 // モデル初期化
 let model;
 async function initializeModel(newRules = null) {
-  const { GoogleGenerativeAI } = require('@google/generative-ai');
   if (!model || newRules) {
     const allRules = await fetchAndLearnRules();
     model = genAI.getGenerativeModel({
@@ -62,6 +151,7 @@ async function initializeModel(newRules = null) {
     await model.generateContent(prompt);
     await updateLastCheckTime();
   }
+  console.log('✅ モデル準備完了');
 }
 initializeModel();
 
@@ -71,7 +161,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
-  // フリーテキスト反応
+  // フリーテキスト反応（コマンドを除外）
   if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
@@ -91,12 +181,37 @@ client.on('messageCreate', async (message) => {
   }
 
   // !update-code コマンド
-  else if (message.content.startsWith('!update-code')) { /* 既存コードを保持 */ }
+  else if (message.content.startsWith('!update-code')) {
+    if (!GITHUB_TOKEN) return message.reply('GITHUB_TOKENが未設定やで。');
+    const args = message.content.slice('!update-code'.length).trim().split(' ');
+    const filePath = args[0];
+    const instruction = args.slice(1).join(' ');
+    if (!filePath || !instruction) return message.reply('使い方: `!update-code ファイル名 修正内容`');
+    try {
+      const { content: currentCode, sha } = await readGitHubFile(filePath);
+      const prompt = `以下のファイルを、与えられた指示に従って修正し、修正後の全文のみを返してください。説明は不要です。\n\n【指示】\n${instruction}\n\n【現在のファイル内容】\n${currentCode}`;
+      const result = await model.generateContent(prompt);
+      const newCode = result.response.text().trim();
+      if (!newCode || newCode === currentCode) return message.reply('修正内容が同じか、生成に失敗したみたいや…');
+      await updateGitHubFile(filePath, newCode, sha);
+      message.reply(`✅ \`${filePath}\` を更新したで！`);
+    } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
+  }
 
   // !overwrite コマンド
-  else if (message.content.startsWith('!overwrite')) { /* 既存コードを保持 */ }
+  else if (message.content.startsWith('!overwrite')) {
+    const lines = message.content.split('\n');
+    const filePath = lines[0].slice(10).trim();
+    const newCode = lines.slice(1).join('\n');
+    if (!filePath || !newCode) return message.reply('使い方: `!overwrite ファイルパス` の後に、新しいコード全体を貼り付けてください。');
+    try {
+      const { sha } = await readGitHubFile(filePath);
+      await updateGitHubFile(filePath, newCode, sha);
+      message.reply(`✅ \`${filePath}\` を上書き更新したで！`);
+    } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
+  }
 
-// ===== !audit-articles コマンド（完全自動化版：分析→自動修正指示） =====
+  // ===== !audit-articles コマンド（完全自動化版：分析→Notion補完→編集実行くんへ自動修正指示） =====
   else if (message.content.startsWith('!audit-articles')) {
     const args = message.content.slice(15).trim().split(' ');
     const targetDir = args[0] || 'src/content/articles';
@@ -120,7 +235,7 @@ client.on('messageCreate', async (message) => {
         const { content } = await readGitHubFile(filePath);
         message.reply(`📝 **${file.name}** を分析＆自動修正中…`);
 
-        // 分析プロンプト（タイトル、メタディスクリプション、画像・リンクを含む）
+        // 分析プロンプト（修正後全文を生成）
         const fixPrompt = `
 あなたは美容メディア「みっけ！」のSEO編集者です。以下の記事を分析し、問題点を指摘した上で、修正後の全文をMarkdown形式で出力してください。
 現在の記事:
@@ -129,39 +244,66 @@ ${content}
         const result = await model.generateContent(fixPrompt);
         const fullResponse = result.response.text();
 
-        // 修正後の全文を抽出（簡易的な方法：最後の大きなテキストブロックを取得）
-        const correctedContent = fullResponse; // 必要に応じてパース処理を追加
+        // Notionのデータで不足情報を補完（自動実行）
+        if (NOTION_API_KEY && NOTION_DATABASE_ID) {
+          const titleMatch = content.match(/^# (.+)/m);
+          if (titleMatch) {
+            const articleTitle = titleMatch[1].trim();
+            const notionRes = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${NOTION_API_KEY}`,
+                'Notion-Version': '2022-06-28',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                filter: { property: '記事タイトル', title: { equals: articleTitle } }
+              })
+            });
+            const notionData = await notionRes.json();
+            if (notionData.results.length > 0) {
+              const props = notionData.results[0].properties;
+              const imageUrl = props['画像']?.url || null;
+              const amazonLink = props['Amazonリンク']?.url || null;
+              const rakutenLink = props['楽天リンク']?.url || null;
+              const yahooLink = props['Yahooリンク']?.url || null;
 
-        // ✅ 編集実行くんに自動で修正指示を送信
-        const editCommand = `@編集実行くん !replace ${filePath} ${correctedContent.substring(0, 1800)}`;
-        message.channel.send(editCommand);
+              let updatedContent = fullResponse;
+              updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
+              updatedContent = updatedContent.replace(/\[RAKUTEN_LINK_HERE\]/g, rakutenLink || '[楽天リンク未登録]');
+              updatedContent = updatedContent.replace(/\[YAHOO_LINK_HERE\]/g, yahooLink || '[Yahooリンク未登録]');
+              if (imageUrl && !updatedContent.includes('![')) {
+                updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
+              }
+
+              // ✅ 編集実行くんに自動で修正指示をメンション送信
+              const editCommand = `@編集実行くん !replace ${filePath} ${updatedContent.substring(0, 1800)}`;
+              message.channel.send(editCommand);
+            } else {
+              message.reply(`⚠️ Notionに「${articleTitle}」が見つからへんかったから、分析結果だけ返すで。`);
+            }
+          }
+        } else {
+          message.reply(`📋 **${file.name} の分析結果**\n\n${fullResponse}`);
+        }
       }
-
       message.reply('✅ 指定された記事の分析と自動修正指示を完了したで！');
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
-  } 
+  }
+
   // ===== !fix-from-notion コマンド（Notion APIで不足情報を補完し記事を自動更新） =====
   else if (message.content.startsWith('!fix-from-notion')) {
     const filePath = message.content.slice(16).trim();
     if (!filePath) return message.reply('使い方: `!fix-from-notion ファイルパス`');
-    if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
-      return message.reply('Notion APIキーかデータベースIDが未設定やで。環境変数を確認してな。');
-    }
-
+    if (!NOTION_API_KEY || !NOTION_DATABASE_ID) return message.reply('Notion APIキーかデータベースIDが未設定やで。環境変数を確認してな。');
     message.reply(`🔍 Notionから「${filePath}」の不足情報を補完し、記事を自動更新中やで…`);
-
     try {
-      // 1. 記事ファイルを読み込む
       const { content, sha } = await readGitHubFile(filePath);
-      
-      // 2. 記事タイトルを抽出
       const titleMatch = content.match(/^# (.+)/m);
       if (!titleMatch) return message.reply('記事タイトルが見つからへん。');
       const articleTitle = titleMatch[1].trim();
-
-      // 3. Notion APIで記事を検索
       const notionRes = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
         method: 'POST',
         headers: {
@@ -169,49 +311,25 @@ ${content}
           'Notion-Version': '2022-06-28',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          filter: { property: '記事タイトル', rich_text: { equals: articleTitle } }
-        })
+        body: JSON.stringify({ filter: { property: '記事タイトル', title: { equals: articleTitle } } })
       });
       const notionData = await notionRes.json();
-
-      if (notionData.results.length === 0) {
-        return message.reply(`Notionに「${articleTitle}」が見つからへんかった。タイトルが完全一致してるか確認してな。`);
-      }
-
+      if (notionData.results.length === 0) return message.reply(`Notionに「${articleTitle}」が見つからへんかった。タイトルが完全一致してるか確認してな。`);
       const page = notionData.results[0];
       const props = page.properties;
-
-      // 4. Notionのプロパティから画像URL、アフィリエイトリンクを取得
       const imageUrl = props['画像']?.url || null;
       const amazonLink = props['Amazonリンク']?.url || null;
       const rakutenLink = props['楽天リンク']?.url || null;
       const yahooLink = props['Yahooリンク']?.url || null;
-
-      // 5. 記事本文を修正（プレースホルダーや不足URLを置換）
       let updatedContent = content;
-
-      // [AMAZON_LINK_HERE] を置換
       updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
-      // [RAKUTEN_LINK_HERE] を置換
       updatedContent = updatedContent.replace(/\[RAKUTEN_LINK_HERE\]/g, rakutenLink || '[楽天リンク未登録]');
-      // [YAHOO_LINK_HERE] を置換
       updatedContent = updatedContent.replace(/\[YAHOO_LINK_HERE\]/g, yahooLink || '[Yahooリンク未登録]');
-
-      // もし記事に画像がなく、Notionに画像URLがあれば挿入（簡易版）
       if (imageUrl && !content.includes('![')) {
         updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
       }
-
-      // 6. 更新をGitHubに反映
       await updateGitHubFile(filePath, updatedContent, sha);
-
-      message.reply(`✅ Notionのデータで「${articleTitle}」の不足情報を補完して、記事を更新したで！\n` +
-        `画像: ${imageUrl ? '✅ 反映' : '❌ 未登録'}\n` +
-        `Amazon: ${amazonLink ? '✅ 反映' : '❌ 未登録'}\n` +
-        `楽天: ${rakutenLink ? '✅ 反映' : '❌ 未登録'}\n` +
-        `Yahoo: ${yahooLink ? '✅ 反映' : '❌ 未登録'}`);
-        
+      message.reply(`✅ Notionのデータで「${articleTitle}」の不足情報を補完して、記事を更新したで！\n画像: ${imageUrl ? '✅ 反映' : '❌ 未登録'}\nAmazon: ${amazonLink ? '✅ 反映' : '❌ 未登録'}\n楽天: ${rakutenLink ? '✅ 反映' : '❌ 未登録'}\nYahoo: ${yahooLink ? '✅ 反映' : '❌ 未登録'}`);
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
