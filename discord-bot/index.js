@@ -1,5 +1,4 @@
-```javascript
-// discord-bot/index.js（完全自動化最終版：!deploy + !check-all-articles 確実版）
+// discord-bot/index.js（完全自動化最終版 修正済み）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -162,7 +161,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
-  // フリーテキスト反応（コマンドを除外）
+  // フリーテキスト反応
   if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy') && !message.content.startsWith('!check-all-articles')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
@@ -202,7 +201,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !deploy コマンド（Renderのデプロイを実行）
+  // !deploy コマンド
   if (message.content.startsWith('!deploy')) {
     const deployHook = process.env.RENDER_DEPLOY_HOOK;
     if (!deployHook) return message.reply('RENDER_DEPLOY_HOOKが未設定やで。');
@@ -210,9 +209,7 @@ client.on('messageCreate', async (message) => {
     try {
       await fetch(deployHook, { method: 'POST' });
       message.reply('✅ デプロイが完了したはずや！確認してみてな。');
-    } catch (err) {
-      message.reply('エラーや…: ' + (err.message || err));
-    }
+    } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
   }
 
@@ -282,9 +279,7 @@ client.on('messageCreate', async (message) => {
         }
       }
       message.reply('✅ 指定された記事の分析と自動修正指示を完了したで！');
-    } catch (err) {
-      message.reply('エラーが発生したよ…: ' + (err.message || err));
-    }
+    } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
     return;
   }
 
@@ -311,9 +306,7 @@ client.on('messageCreate', async (message) => {
         message.reply(report);
       }
       message.reply('✅ 全記事の巡回が完了したで！');
-    } catch (err) {
-      message.reply('エラーが発生したよ…: ' + (err.message || err));
-    }
+    } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
     return;
   }
 
@@ -346,13 +339,10 @@ client.on('messageCreate', async (message) => {
       if (imageUrl && !content.includes('![')) updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
       await updateGitHubFile(filePath, updatedContent, sha);
       message.reply(`✅ Notionのデータで「${articleTitle}」の不足情報を補完して、記事を更新したで！`);
-    } catch (err) {
-      message.reply('エラーが発生したよ…: ' + (err.message || err));
-    }
+    } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
     return;
   }
 });
 
 http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
-```
