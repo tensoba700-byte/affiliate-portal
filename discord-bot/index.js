@@ -1,5 +1,4 @@
-```javascript
-// discord-bot/index.js（完全自動化最終版）
+// discord-bot/index.js（完全自動化最終版：!deploy + !check-all-articles 追加済み）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -249,7 +248,6 @@ client.on('messageCreate', async (message) => {
         const { content } = await readGitHubFile(filePath);
         message.reply(`📝 **${file.name}** を分析＆自動修正中…`);
 
-        // 分析プロンプト（修正後全文を生成）
         const fixPrompt = `
 あなたは美容メディア「みっけ！」のSEO編集者です。以下の記事を分析し、問題点を指摘した上で、修正後の全文をMarkdown形式で出力してください。
 現在の記事:
@@ -258,7 +256,6 @@ ${content}
         const result = await model.generateContent(fixPrompt);
         const fullResponse = result.response.text();
 
-        // Notionのデータで不足情報を補完（自動実行）
         if (NOTION_API_KEY && NOTION_DATABASE_ID) {
           const titleMatch = content.match(/^# (.+)/m);
           if (titleMatch) {
@@ -277,10 +274,10 @@ ${content}
             const notionData = await notionRes.json();
             if (notionData.results.length > 0) {
               const props = notionData.results[0].properties;
-              const imageUrl = props['画像']?.url || null;
-              const amazonLink = props['Amazonリンク']?.url || null;
-              const rakutenLink = props['楽天リンク']?.url || null;
-              const yahooLink = props['Yahooリンク']?.url || null;
+              const imageUrl = props['Image URL']?.url || null;
+              const amazonLink = props['Amazon Affiliate URL']?.url || null;
+              const rakutenLink = props['Rakuten Affiliate URL']?.url || null;
+              const yahooLink = props['Yahoo Affiliate URL']?.url || null;
 
               let updatedContent = fullResponse;
               updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
@@ -290,7 +287,6 @@ ${content}
                 updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
               }
 
-              // ✅ 編集実行くんに自動で修正指示をメンション送信
               const editCommand = `@編集実行くん !replace ${filePath} ${updatedContent.substring(0, 1800)}`;
               message.channel.send(editCommand);
             } else {
@@ -359,10 +355,10 @@ ${content}
       if (notionData.results.length === 0) return message.reply(`Notionに「${articleTitle}」が見つからへんかった。タイトルが完全一致してるか確認してな。`);
       const page = notionData.results[0];
       const props = page.properties;
-      const imageUrl = props['画像']?.url || null;
-      const amazonLink = props['Amazonリンク']?.url || null;
-      const rakutenLink = props['楽天リンク']?.url || null;
-      const yahooLink = props['Yahooリンク']?.url || null;
+      const imageUrl = props['Image URL']?.url || null;
+      const amazonLink = props['Amazon Affiliate URL']?.url || null;
+      const rakutenLink = props['Rakuten Affiliate URL']?.url || null;
+      const yahooLink = props['Yahoo Affiliate URL']?.url || null;
       let updatedContent = content;
       updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
       updatedContent = updatedContent.replace(/\[RAKUTEN_LINK_HERE\]/g, rakutenLink || '[楽天リンク未登録]');
@@ -380,4 +376,3 @@ ${content}
 
 http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
-```
