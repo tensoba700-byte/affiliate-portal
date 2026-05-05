@@ -1,4 +1,4 @@
-// discord-bot/index.js（完全自動化最終版 修正済み）
+// discord-bot/index.js（日本語パス対応完全版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -17,7 +17,6 @@ const LAST_CHECK_FILE = '.cache/last_check.json';
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-// 前回チェック日時を読み込む
 async function getLastCheckTime() {
   try {
     const { content } = await readGitHubFile(LAST_CHECK_FILE);
@@ -28,7 +27,6 @@ async function getLastCheckTime() {
   }
 }
 
-// 前回チェック日時を更新する
 async function updateLastCheckTime(date = new Date()) {
   const json = { last_check: date.toISOString() };
   const { sha } = await readGitHubFile(LAST_CHECK_FILE);
@@ -43,7 +41,6 @@ async function updateLastCheckTime(date = new Date()) {
   });
 }
 
-// GitHubのコミット履歴から、指定日時以降に更新された.mdファイルを取得
 async function getRecentlyModifiedFiles(sinceDate) {
   const files = new Set();
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/commits?since=${sinceDate.toISOString()}&per_page=100`;
@@ -60,12 +57,11 @@ async function getRecentlyModifiedFiles(sinceDate) {
   return [...files];
 }
 
-// 指定された.mdファイルだけを読み込んで結合
 async function loadSpecificFiles(fileList) {
   const results = [];
   for (const file of fileList) {
     try {
-      const fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${file}`;
+      const fileUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}/${file.split('/').map(encodeURIComponent).join('/')}`;
       const res = await fetch(fileUrl);
       if (res.ok) {
         const text = await res.text();
@@ -76,7 +72,6 @@ async function loadSpecificFiles(fileList) {
   return results.join('\n\n---\n\n');
 }
 
-// 初回起動時は全ファイル、それ以降は差分だけ読み込む
 let initialLoadDone = false;
 let allRuleFiles = [];
 async function fetchAndLearnRules() {
@@ -101,7 +96,6 @@ async function fetchAndLearnRules() {
   }
 }
 
-// リポジトリ全体の.mdファイル一覧を取得（初回用）
 async function getAllMarkdownFiles() {
   const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees/${BRANCH}?recursive=1`;
   const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
@@ -112,9 +106,9 @@ async function getAllMarkdownFiles() {
     .map(item => item.path);
 }
 
-// GitHubファイル読み込み/更新
 async function readGitHubFile(path) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}?ref=${BRANCH}`;
   const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
   if (!res.ok) throw new Error(`ファイル読み込み失敗: ${res.status}`);
   const data = await res.json();
@@ -122,7 +116,8 @@ async function readGitHubFile(path) {
 }
 
 async function updateGitHubFile(path, newContent, sha) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`;
   const body = {
     message: `🤖 Bot: ${path} を更新`,
     content: Buffer.from(newContent, 'utf-8').toString('base64'),
@@ -136,7 +131,6 @@ async function updateGitHubFile(path, newContent, sha) {
   return await res.json();
 }
 
-// モデル初期化
 let model;
 async function initializeModel(newRules = null) {
   if (!model || newRules) {
@@ -161,28 +155,24 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
-  // フリーテキスト反応
   if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy') && !message.content.startsWith('!check-all-articles')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
   }
 
-  // !seo コマンド
   if (message.content.startsWith('!seo')) {
     const prompt = message.content.slice(4).trim(); if (!prompt) return message.reply('なにを修正すればいい？'); if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); message.reply(result.response.text().substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
   }
 
-  // !check コマンド
   if (message.content.startsWith('!check')) {
     const args = message.content.slice(6).trim().split(' '); const filePath = args[0]; if (!filePath) return message.reply('使い方: `!check ファイルパス`');
     try { const { content } = await readGitHubFile(filePath); const result = await model.generateContent(`以下の記事ファイルを分析し問題点を指摘してください。\n\n${content}`); message.reply(`📋 **${filePath} のチェック結果**\n\n${result.response.text().substring(0, 1800)}`); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
   }
 
-  // !update-code コマンド
   if (message.content.startsWith('!update-code')) {
     if (!GITHUB_TOKEN) return message.reply('GITHUB_TOKENが未設定やで。');
     const args = message.content.slice('!update-code'.length).trim().split(' ');
@@ -201,7 +191,6 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !deploy コマンド
   if (message.content.startsWith('!deploy')) {
     const deployHook = process.env.RENDER_DEPLOY_HOOK;
     if (!deployHook) return message.reply('RENDER_DEPLOY_HOOKが未設定やで。');
@@ -213,7 +202,6 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !overwrite コマンド
   if (message.content.startsWith('!overwrite')) {
     const lines = message.content.split('\n');
     const filePath = lines[0].slice(10).trim();
@@ -227,7 +215,6 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !audit-articles コマンド
   if (message.content.startsWith('!audit-articles')) {
     const args = message.content.slice(15).trim().split(' ');
     const targetDir = args[0] || 'src/content/articles';
@@ -283,7 +270,6 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !check-all-articles コマンド（全記事を自動巡回して問題をレポート）
   if (message.content.startsWith('!check-all-articles')) {
     message.reply('🔍 全記事を自動巡回中やで…');
     try {
@@ -310,7 +296,6 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // !fix-from-notion コマンド
   if (message.content.startsWith('!fix-from-notion')) {
     const filePath = message.content.slice(16).trim();
     if (!filePath) return message.reply('使い方: `!fix-from-notion ファイルパス`');
