@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js（完全自動化最終版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -162,7 +163,7 @@ client.on('messageCreate', async (message) => {
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
   // フリーテキスト反応（コマンドを除外）
-  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion')) {
+  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
@@ -196,6 +197,19 @@ client.on('messageCreate', async (message) => {
       await updateGitHubFile(filePath, newCode, sha);
       message.reply(`✅ \`${filePath}\` を更新したで！`);
     } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
+  }
+
+  // !deploy コマンド（Renderのデプロイを実行）
+  else if (message.content.startsWith('!deploy')) {
+    const deployHook = process.env.RENDER_DEPLOY_HOOK;
+    if (!deployHook) return message.reply('RENDER_DEPLOY_HOOKが未設定やで。');
+    message.reply('🚀 Renderにデプロイ開始のリクエストを送ったで！');
+    try {
+      await fetch(deployHook, { method: 'POST' });
+      message.reply('✅ デプロイが完了したはずや！確認してみてな。');
+    } catch (err) {
+      message.reply('エラーや…: ' + (err.message || err));
+    }
   }
 
   // !overwrite コマンド
@@ -338,3 +352,4 @@ ${content}
 
 http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
+```
