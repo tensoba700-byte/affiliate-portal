@@ -1,3 +1,4 @@
+```javascript
 // discord-bot/index.js（日本語パス対応完全版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
@@ -275,6 +276,7 @@ client.on('messageCreate', async (message) => {
     try {
       const allFiles = await getAllMarkdownFiles();
       const articleFiles = allFiles.filter(f => f.startsWith('src/content/articles/') && f.endsWith('.md'));
+      message.reply(`🔍 デバッグモード：最初のファイルパス「${articleFiles[0]}」`);
       if (articleFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
       message.reply(`${articleFiles.length}件の記事をチェックするで！`);
       for (const filePath of articleFiles) {
@@ -331,3 +333,4 @@ client.on('messageCreate', async (message) => {
 
 http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
+```
