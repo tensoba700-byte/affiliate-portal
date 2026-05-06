@@ -1,4 +1,4 @@
-// discord-bot/edit-bot.js（デバッグログ強化版）
+// discord-bot/edit-bot.js（メンション自動反応版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -41,18 +41,28 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
-  console.log(`📨 メッセージ受信: ${message.content}`);
-
+  // Bot自身のメッセージは無視
   if (message.author.bot) return;
 
-  if (message.content.startsWith('!replace')) {
-    console.log('✅ !replace コマンド検知');
-    const args = message.content.slice(8).trim().split(' ');
+  // 自分へのメンションがあるかチェック
+  const isMentioned = message.mentions.has(client.user);
+
+  // !replace コマンド
+  if (message.content.startsWith('!replace') || isMentioned) {
+    let args;
+    if (message.content.startsWith('!replace')) {
+      args = message.content.slice(8).trim().split(' ');
+    } else {
+      // メンションされた場合、メンション部分を除去して解析
+      const cleanContent = message.content.replace(/<@!?\d+>/, '').trim();
+      args = cleanContent.split(' ');
+    }
+
     const filePath = args[0];
     const newContent = args.slice(1).join(' ');
 
     if (!filePath || !newContent) {
-      return message.reply('使い方: `!replace ファイルパス 新しい内容`');
+      return message.reply('使い方: `@編集実行くん ファイルパス 新しい内容` または `!replace ファイルパス 新しい内容`');
     }
 
     try {
