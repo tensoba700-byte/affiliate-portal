@@ -1,85 +1,69 @@
-// discord-bot/edit-bot.js
+// discord-bot/edit-bot.js（デバッグログ強化版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const client = new Client({
   intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = 'tensoba700-byte';
 const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
-const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
 async function readGitHubFile(path) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}?ref=${BRANCH}`;
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}?ref=${BRANCH}`;
   const res = await fetch(url, { headers: { Authorization: `token ${GITHUB_TOKEN}` } });
-  if (!res.ok) throw new Error(`ファイル読み込みエラー: ${res.status}`);
+  if (!res.ok) throw new Error(`読み込み失敗: ${res.status}`);
   const data = await res.json();
-  return {
-    content: Buffer.from(data.content, 'base64').toString('utf-8'),
-    sha: data.sha,
-  };
+  return { content: Buffer.from(data.content, 'base64').toString('utf-8'), sha: data.sha };
 }
 
-async function updateGitHubFile(path, newContent, sha) {
-  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`;
+async function replaceGitHubFile(path, newContent, sha) {
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${encodedPath}`;
   const body = {
-    message: `🤖 編集実行くん: ${path} を修正`,
+    message: `🤖 編集実行くん: ${path} を更新`,
     content: Buffer.from(newContent, 'utf-8').toString('base64'),
-    branch: BRANCH,
-    sha: sha,
+    branch: BRANCH, sha,
   };
   const res = await fetch(url, {
-    method: 'PUT',
-    headers: {
-      Authorization: `token ${GITHUB_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
+    method: 'PUT', headers: { Authorization: `token ${GITHUB_TOKEN}`, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   if (!res.ok) throw new Error(`GitHub APIエラー: ${res.status}`);
   return await res.json();
 }
 
-client.once('ready', () => console.log(`✅ ${client.user.tag} 起動完了`));
+client.once('ready', () => {
+  console.log(`✅ ${client.user.tag} 起動完了`);
+});
 
 client.on('messageCreate', async (message) => {
+  console.log(`📨 メッセージ受信: ${message.content}`);
+
   if (message.author.bot) return;
 
-  if (message.content.startsWith('!fix')) {
-    const args = message.content.slice(4).trim().split(' ');
+  if (message.content.startsWith('!replace')) {
+    console.log('✅ !replace コマンド検知');
+    const args = message.content.slice(8).trim().split(' ');
     const filePath = args[0];
-    const instruction = args.slice(1).join(' ');
+    const newContent = args.slice(1).join(' ');
 
-    if (!filePath || !instruction) {
-      return message.reply('使い方: `!fix src/content/articles/記事名.md 修正内容`');
+    if (!filePath || !newContent) {
+      return message.reply('使い方: `!replace ファイルパス 新しい内容`');
     }
 
     try {
-      const { content: current, sha } = await readGitHubFile(filePath);
-      const prompt = `以下の記事ファイルを、与えられた指示に従って修正し、修正後の全文のみを返してください。説明は不要です。\n\n【指示】\n${instruction}\n\n【現在の記事内容】\n${current}`;
-      const result = await model.generateContent(prompt);
-      const newContent = result.response.text().trim();
-
-      if (!newContent || newContent === current) {
-        return message.reply('修正内容が同じか、生成に失敗したみたいや…');
-      }
-
-      await updateGitHubFile(filePath, newContent, sha);
-      message.reply(`✅ \`${filePath}\` を修正したで！`);
+      const { sha } = await readGitHubFile(filePath);
+      await replaceGitHubFile(filePath, newContent, sha);
+      message.reply(`✅ \`${filePath}\` を更新したで！`);
     } catch (err) {
       message.reply('エラーや…: ' + (err.message || err));
     }
   }
 });
 
-http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('編集実行くん稼働中');
-}).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
-
+http.createServer((req, res) => { res.writeHead(200, { 'Content-Type': 'text/plain' }); res.end('Bot is running!'); }).listen(process.env.PORT || 3000, () => console.log('HTTP server is listening'));
 client.login(process.env.DISCORD_TOKEN);
