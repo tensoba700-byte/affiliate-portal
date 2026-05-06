@@ -1,4 +1,4 @@
-// discord-bot/index.js（完全復旧版）
+// discord-bot/index.js（分析特化最終版：!check-all-articles 完全削除済み）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -168,7 +168,7 @@ client.on('messageCreate', async (message) => {
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
   // フリーテキスト反応
-  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy') && !message.content.startsWith('!check-all-articles')) {
+  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
@@ -285,33 +285,6 @@ client.on('messageCreate', async (message) => {
         }
       }
       message.reply('✅ 指定された記事の分析と自動修正指示を完了したで！');
-    } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
-    return;
-  }
-
-  // !check-all-articles コマンド（全記事巡回チェック）
-  if (message.content.startsWith('!check-all-articles')) {
-    message.reply('🔍 全記事を自動巡回中やで…');
-    try {
-      const allFiles = await getAllMarkdownFiles();
-      const articleFiles = allFiles.filter(f => f.startsWith('src/content/articles/') && f.endsWith('.md'));
-      if (articleFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
-      message.reply(`${articleFiles.length}件の記事をチェックするで！`);
-      for (const filePath of articleFiles) {
-        const { content } = await readGitHubFile(filePath);
-        const titleMatch = content.match(/^title: (.+)/m);
-        const title = titleMatch ? titleMatch[1] : filePath;
-        const hasPlaceholder = content.includes('[AMAZON_LINK_HERE]') || content.includes('[RAKUTEN_LINK_HERE]') || content.includes('[YAHOO_LINK_HERE]');
-        const hasPR = content.includes('本記事はアフィリエイト広告');
-        const imageCount = (content.match(/!\[.*?\]\(.*?\)/g) || []).length;
-        let report = `📄 **${title}**\n`;
-        if (hasPlaceholder) report += '⚠️ リンクプレースホルダーが残ってるで！\n';
-        if (!hasPR) report += '⚠️ PR表記がないで！\n';
-        if (imageCount < 1) report += '⚠️ 画像が1枚もないで！\n';
-        if (!hasPlaceholder && hasPR && imageCount >= 1) report += '✅ 問題なさそうや！\n';
-        message.reply(report);
-      }
-      message.reply('✅ 全記事の巡回が完了したで！');
     } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
     return;
   }
