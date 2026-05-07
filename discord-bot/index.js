@@ -1,4 +1,4 @@
-// discord-bot/index.js（記事直接修正版：分析後、修正案ファイルを作成せず直接上書き）
+// discord-bot/index.js（ファイル名の日付ソート対応 & 直接修正版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -59,15 +59,12 @@ client.on('messageCreate', async function(message) {
       const files = await res.json();
       const mdFiles = files.filter(f => f.type === 'file' && f.name.endsWith('.md'));
 
-      // 2. FrontmatterのpublishDateでソート
+      // 2. ファイル名の日付（YYYYMMDD）でソートする
       for (const f of mdFiles) {
-        try {
-          const { content } = await readGitHubFile(ARTICLES_DIR + '/' + f.name);
-          const dateMatch = content.match(/publishDate:\s*(.+)/);
-          f.publishDate = dateMatch ? new Date(dateMatch[1]) : new Date(0);
-        } catch(e) { f.publishDate = new Date(0); }
+        const dateMatch = f.name.match(/^(\d{8})-/);
+        f.fileDate = dateMatch ? dateMatch[1] : '00000000';
       }
-      mdFiles.sort((a, b) => b.publishDate - a.publishDate);
+      mdFiles.sort((a, b) => b.fileDate.localeCompare(a.fileDate));
 
       // 3. 最新の記事を直接修正
       const file = mdFiles[0];
