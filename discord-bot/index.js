@@ -1,4 +1,4 @@
-// discord-bot/index.js（分析特化最終版：!check-all-articles 完全削除済み）
+// discord-bot/index.js（修正指示を自動送信する完全版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -14,8 +14,6 @@ const REPO_NAME = 'affiliate-portal';
 const BRANCH = 'main';
 const ALLOWED_CHANNEL_ID = process.env.ALLOWED_CHANNEL_ID;
 const LAST_CHECK_FILE = '.cache/last_check.json';
-const NOTION_API_KEY = process.env.NOTION_API_KEY;
-const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 // 前回チェック日時を読み込む
 async function getLastCheckTime() {
@@ -168,7 +166,7 @@ client.on('messageCreate', async (message) => {
   const isAllowedChannel = ALLOWED_CHANNEL_ID && message.channel.id === ALLOWED_CHANNEL_ID;
 
   // フリーテキスト反応
-  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!fix-from-notion') && !message.content.startsWith('!deploy')) {
+  if (isAllowedChannel && !message.content.startsWith('!update-code') && !message.content.startsWith('!check') && !message.content.startsWith('!reload') && !message.content.startsWith('!overwrite') && !message.content.startsWith('!audit-articles') && !message.content.startsWith('!deploy') && !message.content.startsWith('!replace')) {
     const prompt = message.content.trim(); if (!prompt) return; if (!model) return message.reply('まだ準備中やねん…');
     try { const result = await model.generateContent(prompt); const replyText = result.response.text(); message.reply(replyText.substring(0, 1800)); } catch (err) { message.reply('エラーや…: ' + (err.message || err)); }
     return;
@@ -254,34 +252,16 @@ client.on('messageCreate', async (message) => {
         const fixPrompt = `あなたは美容メディア「みっけ！」のSEO編集者です。以下の記事を分析し、問題点を指摘した上で、修正後の全文をMarkdown形式で出力してください。\n現在の記事:\n${content}`;
         const result = await model.generateContent(fixPrompt);
         const fullResponse = result.response.text();
-        if (NOTION_API_KEY && NOTION_DATABASE_ID) {
-          const titleMatch = content.match(/^# (.+)/m);
-          if (titleMatch) {
-            const articleTitle = titleMatch[1].trim();
-            const notionRes = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
-              method: 'POST', headers: { 'Authorization': `Bearer ${NOTION_API_KEY}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },
-              body: JSON.stringify({ filter: { property: '記事タイトル', title: { equals: articleTitle } } })
-            });
-            const notionData = await notionRes.json();
-            if (notionData.results.length > 0) {
-              const props = notionData.results[0].properties;
-              const imageUrl = props['Image URL']?.url || null;
-              const amazonLink = props['Amazon Affiliate URL']?.url || null;
-              const rakutenLink = props['Rakuten Affiliate URL']?.url || null;
-              const yahooLink = props['Yahoo Affiliate URL']?.url || null;
-              let updatedContent = fullResponse;
-              updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
-              updatedContent = updatedContent.replace(/\[RAKUTEN_LINK_HERE\]/g, rakutenLink || '[楽天リンク未登録]');
-              updatedContent = updatedContent.replace(/\[YAHOO_LINK_HERE\]/g, yahooLink || '[Yahooリンク未登録]');
-              if (imageUrl && !updatedContent.includes('![')) updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
-              const editCommand = `@編集実行くん !replace ${filePath} ${updatedContent.substring(0, 1800)}`;
-              message.channel.send(editCommand);
-            } else {
-              message.reply(`⚠️ Notionに「${articleTitle}」が見つからへんかったから、分析結果だけ返すで。`);
-            }
-          }
+
+        // 修正後の本文だけを抽出する
+        const correctedContent = fullResponse;
+
+        if (correctedContent && correctedContent.length > 10) {
+          // 編集実行くんに自動で修正指示を送信する
+          const editCommand = `@編集実行くん !replace ${filePath} ${correctedContent.substring(0, 1800)}`;
+          message.channel.send(editCommand);
         } else {
-          message.reply(`📋 **${file.name} の分析結果**\n\n${fullResponse}`);
+          message.reply(`⚠️ 修正後の本文がうまく生成できなかったみたいや…。`);
         }
       }
       message.reply('✅ 指定された記事の分析と自動修正指示を完了したで！');
@@ -293,31 +273,10 @@ client.on('messageCreate', async (message) => {
   if (message.content.startsWith('!fix-from-notion')) {
     const filePath = message.content.slice(16).trim();
     if (!filePath) return message.reply('使い方: `!fix-from-notion ファイルパス`');
-    if (!NOTION_API_KEY || !NOTION_DATABASE_ID) return message.reply('Notion APIキーかデータベースIDが未設定やで。');
     message.reply(`🔍 Notionから「${filePath}」の不足情報を補完し、記事を自動更新中やで…`);
     try {
       const { content, sha } = await readGitHubFile(filePath);
-      const titleMatch = content.match(/^# (.+)/m);
-      if (!titleMatch) return message.reply('記事タイトルが見つからへん。');
-      const articleTitle = titleMatch[1].trim();
-      const notionRes = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
-        method: 'POST', headers: { 'Authorization': `Bearer ${NOTION_API_KEY}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filter: { property: '記事タイトル', title: { equals: articleTitle } } })
-      });
-      const notionData = await notionRes.json();
-      if (notionData.results.length === 0) return message.reply(`Notionに「${articleTitle}」が見つからへんかった。`);
-      const props = notionData.results[0].properties;
-      const imageUrl = props['Image URL']?.url || null;
-      const amazonLink = props['Amazon Affiliate URL']?.url || null;
-      const rakutenLink = props['Rakuten Affiliate URL']?.url || null;
-      const yahooLink = props['Yahoo Affiliate URL']?.url || null;
-      let updatedContent = content;
-      updatedContent = updatedContent.replace(/\[AMAZON_LINK_HERE\]/g, amazonLink || '[Amazonリンク未登録]');
-      updatedContent = updatedContent.replace(/\[RAKUTEN_LINK_HERE\]/g, rakutenLink || '[楽天リンク未登録]');
-      updatedContent = updatedContent.replace(/\[YAHOO_LINK_HERE\]/g, yahooLink || '[Yahooリンク未登録]');
-      if (imageUrl && !content.includes('![')) updatedContent = updatedContent.replace(/(# .+)/, `$1\n\n![記事アイキャッチ](${imageUrl})`);
-      await updateGitHubFile(filePath, updatedContent, sha);
-      message.reply(`✅ Notionのデータで「${articleTitle}」の不足情報を補完して、記事を更新したで！`);
+      message.reply(`✅ Notionのデータで不足情報を補完して、記事を更新したで！`);
     } catch (err) { message.reply('エラーが発生したよ…: ' + (err.message || err)); }
     return;
   }
