@@ -1,4 +1,4 @@
-// discord-bot/patrol-bot.js（カテゴリ別関連記事更新機能付き）
+// discord-bot/patrol-bot.js（巡回じみにーが直接GitHubを更新する完全版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 
@@ -18,6 +18,23 @@ async function readGitHubFile(path) {
   if (!res.ok) throw new Error('ファイル読み込み失敗: ' + res.status);
   const data = await res.json();
   return { content: Buffer.from(data.content, 'base64').toString('utf-8'), sha: data.sha };
+}
+
+// GitHubのファイルを更新する関数（巡回じみにーに追加！）
+async function updateGitHubFile(path, newContent, sha) {
+  const encodedPath = path.split('/').map(encodeURIComponent).join('/');
+  const url = 'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/contents/' + encodedPath;
+  const body = {
+    message: '🤖 巡回じみにー: 関連記事を最新化 - ' + path,
+    content: Buffer.from(newContent, 'utf-8').toString('base64'),
+    branch: BRANCH, sha,
+  };
+  const res = await fetch(url, {
+    method: 'PUT', headers: { Authorization: 'token ' + GITHUB_TOKEN, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error('GitHub APIエラー: ' + res.status);
+  return await res.json();
 }
 
 async function getAllMarkdownFiles() {
@@ -41,23 +58,23 @@ function extractCategory(content) {
   return match ? match[1].trim().replace(/['"]/g, '') : '未分類';
 }
 
-client.once('ready', function() { console.log('✅ ' + client.user.tag + ' 起動完了（関連記事更新機能付き）'); });
+client.once('ready', function() { console.log('✅ ' + client.user.tag + ' 起動完了（巡回じみにー直接更新版）'); });
 
 client.on('messageCreate', async function(message) {
   if (message.author.bot) return;
 
   if (message.content.startsWith('!check-all-articles')) {
-    message.reply('🔍 全記事を巡回し、古い記事の「合わせて見たい記事」を最新化中やで…');
+    message.reply('🔍 全記事を巡回し、古い記事の「合わせて見たい記事」を自動更新中やで…');
     try {
       const allFiles = await getAllMarkdownFiles();
       const articleFiles = allFiles.filter(f => f.startsWith('src/content/articles/') && f.endsWith('.md'));
       if (articleFiles.length === 0) return message.reply('記事ファイルが見つからへんで。');
       
       message.reply(articleFiles.length + '件の記事をチェックするで！');
-      const oldFiles = [];
+      let updatedCount = 0;
 
       for (const filePath of articleFiles) {
-        const { content } = await readGitHubFile(filePath);
+        const { content, sha } = await readGitHubFile(filePath);
         const titleMatch = content.match(/^title: (.+)/m);
         const title = titleMatch ? titleMatch[1] : filePath;
         const category = extractCategory(content);
@@ -78,26 +95,37 @@ client.on('messageCreate', async function(message) {
               const otherTitleMatch = otherContent.match(/^title: (.+)/m);
               const otherTitle = otherTitleMatch ? otherTitleMatch[1] : otherFile;
               if (otherCategory === category) {
-                relatedArticles.push({ title: otherTitle, date: otherPublishDate, path: otherFile });
+                relatedArticles.push({ title: otherTitle, date: otherPublishDate, link: otherFile.replace('src/content/articles/', '/articles/').replace('.md', '') });
               }
             } catch(e) {}
           }
           relatedArticles.sort((a, b) => b.date - a.date);
           const topRelated = relatedArticles.slice(0, 3);
+          
           if (topRelated.length > 0) {
-            // 編集実行くんに「合わせて見たい記事」セクションを更新するよう指示
-            let instruction = '記事の末尾にある「合わせて見たい記事」の部分を以下の最新の関連記事に入れ替えて。\n\n';
+            // 新しい「合わせて見たい記事」の候補リンクを作成
+            let newRelatedLinks = '\n## あわせて見たい記事\n';
             for (const ra of topRelated) {
-              instruction += '- [' + ra.title + '](' + ra.path + ')\n';
+              newRelatedLinks += '- [' + ra.title + '](' + ra.link + ')\n';
             }
-            const editCommand = '@編集実行くん !update-section ' + filePath + ' 合わせて見たい記事 ' + instruction;
-            message.channel.send(editCommand);
-            message.reply('📄 **' + title + '**（' + daysSinceUpdate + '日経過）の関連記事を最新化したで！');
+            
+            // 記事内の「あわせて見たい記事」セクションを置き換え
+            let updatedContent = content;
+            // すでに「あわせて見たい記事」があれば置き換え、なければ末尾に追加
+            if (content.includes('あわせて見たい記事')) {
+              updatedContent = content.replace(/## あわせて見たい記事[\s\S]*?(?=\n##|\n*$)/, newRelatedLinks.trim());
+            } else {
+              updatedContent = content.trimEnd() + '\n\n' + newRelatedLinks.trim();
+            }
+            
+            await updateGitHubFile(filePath, updatedContent, sha);
+            message.reply('✅ **' + title + '**（' + daysSinceUpdate + '日経過）の関連記事を最新化したで！');
+            updatedCount++;
           }
-          oldFiles.push({ filePath, title, daysSinceUpdate });
         }
       }
-      message.reply('✅ 全記事の巡回と関連記事の最新化が完了したで！');
+      message.reply('🎉 ' + updatedCount + '件の記事の「合わせて見たい記事」を最新化したで！');
+
     } catch (err) {
       message.reply('エラーが発生したよ…: ' + (err.message || err));
     }
