@@ -1,4 +1,4 @@
-// discord-bot/product-bot.js（GitHubルール完全準拠版）
+// discord-bot/product-bot.js（Claude完全同一プロンプト版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -11,12 +11,19 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
-// GitHubの生URLから最新ルールを読み込む
+// GitHubから最新ルールを読み込むURL
 const RULES_URL = 'https://raw.githubusercontent.com/tensoba700-byte/affiliate-portal/main/scripts/product_selection_prompt.txt';
+
+// Notionの実際のカテゴリ選択肢（完全一致）
+const VALID_CATEGORIES = [
+  'ガジェット', '家電', '日用品', '食品・飲料', '美容・健康', '美容・スキンケア',
+  '本・学習', 'その他', 'ガジェット・家電', '美容', '健康食品', '生活雑貨',
+  'インテリア', '便利グッズ', 'ライフスタイル雑貨', 'キッチンツール', 'モバイルアクセサリー', 'ヘルスケアガジェット'
+];
 
 let model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-// ルールを動的に取得する関数
+// GitHubからルールを取得
 async function fetchRules() {
   try {
     const res = await fetch(RULES_URL);
@@ -29,7 +36,7 @@ async function fetchRules() {
   }
 }
 
-// Notion登録関数
+// Notion登録
 async function addToNotion(product) {
   const props = {};
   if (product.name) props['商品名'] = { title: [{ text: { content: product.name } }] };
@@ -37,7 +44,11 @@ async function addToNotion(product) {
   if (product.articleTitle) props['記事タイトル'] = { rich_text: [{ text: { content: product.articleTitle } }] };
   if (product.searchName) props['検索商品名'] = { rich_text: [{ text: { content: product.searchName || product.name } }] };
   if (product.reason) props['選定理由'] = { rich_text: [{ text: { content: product.reason } }] };
-  if (product.category) props['カテゴリ'] = { select: { name: product.category } };
+  if (product.category && VALID_CATEGORIES.includes(product.category)) {
+    props['カテゴリ'] = { select: { name: product.category } };
+  } else {
+    props['カテゴリ'] = { select: { name: 'その他' } };
+  }
   if (product.publishTime) props['公開時間'] = { select: { name: product.publishTime } };
   props['ステータス 1'] = { select: { name: '未処理' } };
 
@@ -49,19 +60,21 @@ async function addToNotion(product) {
   return res.ok;
 }
 
-client.once('ready', () => console.log('✅ 商品選定じみにー 起動完了（GitHubルール完全準拠版）'));
+client.once('ready', () => console.log('✅ 商品選定じみにー 起動完了（Claude完全同一プロンプト版）'));
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
 
   if (message.content.startsWith('!select-products')) {
-    message.reply('📋 GitHubから最新ルールを読み込み、商品を選定中やで…');
+    message.reply('📋 GitHubの最新ルールで商品を選定中やで…');
 
     try {
       const rules = await fetchRules();
-      if (!rules) return message.reply('ルールの取得に失敗したわ…GitHubのファイルを確認してくれ。');
+      if (!rules) return message.reply('ルールの取得に失敗したわ…');
 
-      const prompt = rules + '\n\n上記のルールに厳密に従い、6つの商品をJSON形式で出力してください。';
+      // Claudeと全く同じプロンプトでGeminiに指示
+      const prompt = rules + '\n\n上記のルールに従って、6商品を以下のJSON形式で出力してください。\n[\n  {\n    "name": "商品名",\n    "model": "型番",\n    "articleTitle": "記事タイトル",\n    "searchName": "検索商品名",\n    "reason": "選定理由",\n    "category": "カテゴリ",\n    "publishTime": "朝 or 夜"\n  }\n]';
+      
       const result = await model.generateContent(prompt);
       const responseText = result.response.text();
       
