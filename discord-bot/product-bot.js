@@ -1,4 +1,4 @@
-// discord-bot/product-bot.js（会話できる版）
+// discord-bot/product-bot.js（会話で学習する版）
 const http = require('http');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
@@ -12,6 +12,9 @@ const NOTION_API_KEY = process.env.NOTION_API_KEY;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID;
 
 const RULES_URL = 'https://raw.githubusercontent.com/tensoba700-byte/affiliate-portal/main/scripts/product_selection_prompt.txt';
+
+// 会話で変更できる「動的なルール」を保存する場所
+let customInstructions = '';
 
 async function fetchRules() {
   try {
@@ -47,7 +50,7 @@ async function addToNotion(products) {
 
 let model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-client.once('ready', () => console.log('✅ 商品選定じみにー 起動完了（会話モード）'));
+client.once('ready', () => console.log('✅ 商品選定じみにー 起動完了（会話学習モード）'));
 
 client.on('messageCreate', async (message) => {
   if (message.author.bot) return;
@@ -55,14 +58,35 @@ client.on('messageCreate', async (message) => {
   const prompt = message.content.trim();
   if (!prompt) return;
 
-  // 商品選定の依頼なら自動実行
-  if (prompt.includes('商品選定') || prompt.includes('商品を選んで') || prompt.includes('選定して')) {
+  // 「これからは〇〇の時は△△して」でカスタム指示を覚える
+  if (prompt.includes('これからは') || prompt.includes('今後は')) {
+    customInstructions = prompt;
+    message.reply('✅ 覚えたで！次からその通りに動くわ。\n' + '覚えた内容: ' + customInstructions);
+    return;
+  }
+
+  // 「今のルールを教えて」で覚えた内容を確認
+  if (prompt.includes('今のルール') || prompt.includes('覚えてること')) {
+    if (customInstructions) {
+      message.reply('今の追加ルールはこれやで: ' + customInstructions);
+    } else {
+      message.reply('まだ特別なルールは覚えてへんで！');
+    }
+    return;
+  }
+
+  // 商品選定の明確な依頼かどうかを、AIに判断させる
+  const checkPrompt = '以下のメッセージは、商品選定の依頼ですか？「はい」か「いいえ」だけで答えてください。\n\n' + prompt;
+  const checkResult = await model.generateContent(checkPrompt);
+  const isSelectionRequest = checkResult.response.text().includes('はい');
+
+  if (isSelectionRequest) {
     message.reply('📋 GitHubの最新ルールで商品を選定中やで…');
     try {
       const rules = await fetchRules();
       if (!rules) return message.reply('ルールの取得に失敗したわ…');
 
-      const fullPrompt = rules + '\n\n上記のルールに従って、6商品を以下のJSON形式で出力してください。\n[\n  {\n    "name": "商品名",\n    "model": "型番",\n    "articleTitle": "記事タイトル",\n    "searchName": "検索商品名",\n    "reason": "選定理由",\n    "category": "カテゴリ",\n    "publishTime": "朝 or 夜"\n  }\n]';
+      const fullPrompt = rules + '\n\n' + (customInstructions ? '【追加指示】\n' + customInstructions + '\n\n' : '') + '上記のルールに従って、6商品を以下のJSON形式で出力してください。\n[\n  {\n    "name": "商品名",\n    "model": "型番",\n    "articleTitle": "記事タイトル",\n    "searchName": "検索商品名",\n    "reason": "選定理由",\n    "category": "カテゴリ",\n    "publishTime": "朝 or 夜"\n  }\n]';
       
       const result = await model.generateContent(fullPrompt);
       const jsonMatch = result.response.text().match(/\[[\s\S]*\]/);
@@ -77,9 +101,10 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // それ以外は普通に会話
+  // それ以外は普通に会話（カスタム指示があればそれも踏まえて返事）
   try {
-    const result = await model.generateContent(prompt);
+    const contextPrompt = (customInstructions ? '【現在の追加指示】\n' + customInstructions + '\n\n' : '') + '【ユーザーからのメッセージ】\n' + prompt;
+    const result = await model.generateContent(contextPrompt);
     message.reply(result.response.text().substring(0, 1800));
   } catch (err) {
     message.reply('エラーや…: ' + (err.message || err));
