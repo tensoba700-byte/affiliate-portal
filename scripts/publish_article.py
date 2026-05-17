@@ -236,7 +236,7 @@ def get_notion_data(article_title: str):
             "image_url": get_url("Image URL"),
             "amazon_url": get_url("Amazon Affiliate URL"),
             "rakuten_url": urllib.parse.unquote(get_url("Rakuten Affiliate URL") or ""),
-            "yahoo_url": get_url("Yahoo Affiliate URL"),
+            "yahoo_url": (lambda u: u.split("vc_url=")[0] + "vc_url=" + urllib.parse.quote(u.split("vc_url=")[1]) if u and "vc_url=" in u else u)(get_url("Yahoo Affiliate URL")),
             "amazon_price": get_price("Amazon Price"),
             "rakuten_price": get_price("Rakuten Price"),
             "yahoo_price": get_price("Yahoo Price"),
@@ -258,10 +258,11 @@ def generate_content_with_llm(products_data, article_title):
 1. **ランキング形式の禁止**: 全ての商品を「おすすめの選択肢」として並列に扱ってください。順位や「第○位」という表現は一切使わないでください。
 2. **NGワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの煽り文句や、過剰な強調表現は使用禁止です。
 3. **一人称の禁止**: 「おこげ」「私」といった一人称や個人の体験談を装った記述は全て削除してください。
-4. **商品説明の制限**: 各商品の紹介（description）は、**500文字以内**で簡潔にまとめてください。
-5. **絵文字の活用**: 各見出しおよび商品説明の各文章に、内容に沿った適切な絵文字を配置してください。
+4. **商品説明の制限**: 各商品の紹介（description）は、**1000文字以上**で、特徴・使用感・効果を具体的に詳しく説明してください。
+5. **絵文字の活用**: 各見出しおよび商品説明において、絵文字は**1商品につき1〜2個まで**に制限してください。
 6. **ターゲット層**: 各商品に対し、「こんな人におすすめ！」という項目で、具体的な推奨理由を**3つの箇条書き**で作成してください。
 7. **変数名禁止**: YAHOO_PRICE・RAKUTEN_PRICE・AMAZON_PRICE・YAHOOなどの変数名を文中に絶対に含めないでください。
+8. **段落分け**: 2〜3文ごとに段落を分け、段落間は空行1行（\n\n）を入れてスマホで読みやすくしてください。
 
 2026年時点の最新トレンドを踏まえ、以下の商品{len(llm_products)}点のおすすめ紹介記事をJSONで作成してください。
 URLや価格は含めないでください。
@@ -331,8 +332,6 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()}"\n'
         f'category: "{category}"\n'
         f'---\n\n'
-        # PR開示：記事本文の一番上に1回だけ
-        f'<p class="pr-disclosure">{PR_DISCLOSURE}</p>\n\n'
         f'{intro_text}\n\n'
         f'## ✅ 選び方のポイント\n<ul>'
         + "".join([f"<li>{p}</li>" for p in data['points']])
@@ -353,7 +352,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"
         
-        # 説明文のフォーマット（500文字以内）
+        # 説明文のフォーマット（1000文字以上）
         formatted_desc = p['description'].replace('\\n', '\n\n')
         markdown += f"\n{formatted_desc}\n\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
         
@@ -361,7 +360,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         markdown += f"👤 **こんな人におすすめ！**\n"
         markdown += "\n".join([f"- {item}" for item in p['recommended_for']]) + "\n\n"
     
-    markdown += f"## 💬 まとめ\n{data['summary']}\n"
+    markdown += f"## 💬 まとめ\n{data['summary']}\n\n"
+    markdown += f'<p class="pr-disclosure">{PR_DISCLOSURE}</p>\n'
 
     # Markdown全体からの変数名除去は手動で挿入したアフィリエイトURL（ASIN: 等）を消してしまうため行わない
     # markdown = clean_variable_names(markdown)

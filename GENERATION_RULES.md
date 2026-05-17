@@ -23,7 +23,7 @@ This document outlines the rules for automated content generation and database m
 - Research 5-7 products that fit the chosen theme.
 - **Accurate Naming**: Write the name precisely as `[Manufacturer] [Product Name] [Model Number]`.
 
-## Article Content & Style Rules (Updated 2026-04-19)
+## Article Content & Style Rules (Updated 2026-05-17)
 
 ### 1. Writing Style (Brand Voice)
 - **Format**: **Parallel Selection** (Parallel list). **DO NOT use rankings** or "1st Place", "2nd Place", etc.
@@ -32,13 +32,14 @@ This document outlines the rules for automated content generation and database m
 - **Persona**: NO persona (remove "Okoge"). No first-person experience or anecdotes.
 - **Language Constraints**:
     - **Forbidden Words**: 「マジで」, 「ヤバい」, 「神アイテム」, 「最高」, 「究極」, etc.
-    - **Emojification**: Add appropriate emojis to every heading and every sentence in the description.
+    - **Emojification**: Limit emoji usage to **1-2 emojis per product** across headings and description. Do not over-decorate.
 - **Product Descriptions**:
-    - **Length**: Max **500 characters** per product.
+    - **Length**: **1000+ characters** per product. Describe features, usability, and benefits in detail.
+    - **Paragraph Breaks**: Divide the description into paragraphs of **2-3 sentences each**, inserting a blank line (`\n\n`) between them for mobile readability.
     - **Recommended for**: Provide a 3-point bulleted list of why this product is recommended for specific users.
 
 ### 2. Layout & Formatting
-- **PR Disclosure**: Always include a PR disclosure (e.g., 本記事はアフィリエイト広告を利用しています) at the very top of the article.
+- **PR Disclosure**: Include a PR disclosure (`<p class="pr-disclosure">※本記事はアフィリエイト広告を含みます。</p>`) at the **very bottom of the summary section** (## 💬 まとめ), NOT at the top.
 - **Headings**: Use `### 🌸 [Product Name]` format for product sections.
 - **Buttons**: Use the following button text:
     - `Amazonで価格を見る`
