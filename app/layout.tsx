@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     description: '徹底比較して、あなたにぴったりの商品を見つける。',
   },
   verification: {
-    google: "J8-SEhb4C964waSqjAa8KanJdsKHx-KkRQgz58zrNvk",
+    google: "QGldIiSvQoKHBytG-q_y3XXNEfwTTicYY0kuoSPD-iA",
   },
   icons: {
     icon: '/favicon.svg',
