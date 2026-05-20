@@ -97,7 +97,8 @@ def take_eyecatch_screenshot(slug: str) -> bool:
 # 高精度な商品検索APIクエリ
 def fetch_product_details(query: str):
     """
-    Rakuten & Yahoo Shopping APIを使って正確な画像、価格、およびアフィリエイトURLを取得する。
+    Rakuten OpenAPI & Yahoo Shopping API & Amazon Scrapingを使って
+    正確な画像、価格、および個別の商品アフィリエイトURLを取得する。
     不要なメーカー名やディストリビューター名を削除して、検索のノイズを低減させた上で検索を行います。
     """
     details = {
@@ -106,7 +107,8 @@ def fetch_product_details(query: str):
         "rakuten_price": "価格を見る",
         "yahoo_price": "価格を見る",
         "rakuten_url": "",
-        "yahoo_url": ""
+        "yahoo_url": "",
+        "amazon_url": ""
     }
     
     # 検索精度向上のためにクエリをクレンジング
@@ -151,16 +153,28 @@ def fetch_product_details(query: str):
             except Exception as e:
                 print(f"   ⚠️ Yahoo API エラー (query: {q}): {e}")
             
-    # 2. Rakuten Item Search API
+    # 2. Rakuten Enterprise API
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
+    rakuten_access_key = os.getenv("RAKUTEN_ACCESS_KEY")
     rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
-    if rakuten_app_id:
+    
+    if rakuten_app_id and rakuten_access_key:
+        rakuten_h = {
+            "Referer": "https://www.mikke-style.com",
+            "Origin": "https://www.mikke-style.com"
+        }
         for q in [clean_query, fallback_query]:
             try:
-                url = f"https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={rakuten_app_id}&keyword={urllib.parse.quote(q)}&hits=1"
-                if rakuten_affiliate_id:
-                    url += f"&affiliateId={rakuten_affiliate_id}"
-                res = requests.get(url, timeout=10)
+                url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
+                params = {
+                    "format": "json",
+                    "keyword": q,
+                    "applicationId": rakuten_app_id,
+                    "accessKey": rakuten_access_key,
+                    "affiliateId": rakuten_affiliate_id,
+                    "hits": 1
+                }
+                res = requests.get(url, params=params, headers=rakuten_h, timeout=10)
                 if res.status_code == 200:
                     data = res.json()
                     items = data.get("Items", [])
@@ -171,7 +185,7 @@ def fetch_product_details(query: str):
                             details["rakuten_price"] = str(price_val)
                         details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
                         
-                        # 画像取得（大解像度を優先的に取得し、パラメータを変更して最大サイズに高画質化）
+                        # 画像取得
                         med_imgs = item.get("mediumImageUrls", [])
                         large_imgs = item.get("largeImageUrls", [])
                         img_url = ""
@@ -181,10 +195,8 @@ def fetch_product_details(query: str):
                             img_url = med_imgs[0].get("imageUrl") or ""
                         
                         if img_url:
-                            # 楽天画像サイズ制限パラメータを640x640の高解像度に拡張
                             img_url = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
                             
-                        # すでにYahoo側で画像が取れていない場合、またはYahoo側がプレースホルダーだった場合に上書き
                         if not details["image_url"] or "unsplash.com" in details["image_url"]:
                             details["image_url"] = img_url
                             
@@ -192,6 +204,29 @@ def fetch_product_details(query: str):
                         break
             except Exception as e:
                 print(f"   ⚠️ Rakuten API エラー (query: {q}): {e}")
+
+    # 3. Amazon ASIN Scraping
+    browser_h = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+        "Accept-Language": "ja,en;q=0.9"
+    }
+    amazon_tag = os.getenv("AMAZON_ASSOCIATE_TAG", "mikkestyle-22")
+    for q in [clean_query, fallback_query]:
+        try:
+            search_url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}&l=ja_JP"
+            res = requests.get(search_url, headers=browser_h, timeout=15)
+            asins = list(dict.fromkeys(re.findall(r'/dp/([A-Z0-9]{10})', res.text)))
+            if asins:
+                asin = asins[0]
+                details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag={amazon_tag}"
+                print(f"   [Amazon Scraper] ASIN取得成功 (query: {q}) -> ASIN: {asin}")
+                break
+        except Exception as e:
+            print(f"   ⚠️ Amazon ASIN取得エラー (query: {q}): {e}")
+
+    if not details["amazon_url"]:
+        escaped_name = urllib.parse.quote(clean_query)
+        details["amazon_url"] = f"https://www.amazon.co.jp/s?k={escaped_name}&tag={amazon_tag}"
 
     # 画像取得失敗時の高品質なUnsplashプレースホルダー
     if not details["image_url"]:
@@ -422,7 +457,7 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
         image_urls.append(api_data["image_url"])
         
         escaped_name = urllib.parse.quote(p_name)
-        amazon_url = f"https://www.amazon.co.jp/s?k={escaped_name}&tag=mikkestyle-22"
+        amazon_url = api_data["amazon_url"]
         rakuten_url = api_data["rakuten_url"] or f"https://hb.afl.rakuten.co.jp/hgc/g00rkpmm.xpsekcd1.g00rkpmm.xpsel146/?pc=https://search.rakuten.co.jp/search/mall/{escaped_name}/"
         yahoo_url = api_data["yahoo_url"] or f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fsearch%3Fp%3D{escaped_name}"
         
