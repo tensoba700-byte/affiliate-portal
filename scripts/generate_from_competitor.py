@@ -1,4 +1,5 @@
 import os
+import time
 import re
 import sys
 import json
@@ -97,6 +98,7 @@ def take_eyecatch_screenshot(slug: str) -> bool:
 def fetch_product_details(query: str):
     """
     Rakuten & Yahoo Shopping APIを使って正確な画像、価格、およびアフィリエイトURLを取得する。
+    不要なメーカー名やディストリビューター名を削除して、検索のノイズを低減させた上で検索を行います。
     """
     details = {
         "image_url": "",
@@ -107,51 +109,89 @@ def fetch_product_details(query: str):
         "yahoo_url": ""
     }
     
+    # 検索精度向上のためにクエリをクレンジング
+    clean_query = query
+    noise_words = [
+        "P&Gジャパン", "P&Gプレステージ", "P&G", "資生堂", "カネボウ化粧品", "カネボウ", "KANEBO",
+        "ロート製薬", "再春館製薬所", "再春館製薬", "花王", "コーセー", "KOSE", "ポーラ", "POLA"
+    ]
+    for nw in noise_words:
+        clean_query = re.sub(rf'^{nw}\s*', '', clean_query, flags=re.IGNORECASE)
+    clean_query = clean_query.strip()
+    
+    # 元のクエリで失敗した場合のフォールバッククエリ（最初の3単語）
+    words = clean_query.split()
+    fallback_query = " ".join(words[:3]) if len(words) > 3 else clean_query
+
     # 1. Yahoo Shopping API V3
     yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
     if yahoo_app_id:
-        try:
-            url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={urllib.parse.quote(query)}&results=1"
-            res = requests.get(url, timeout=10)
-            if res.status_code == 200:
-                data = res.json()
-                hits = data.get("hits", [])
-                if hits:
-                    hit = hits[0]
-                    price_val = hit.get("price")
-                    if price_val:
-                        details["yahoo_price"] = str(price_val)
-                    details["yahoo_url"] = hit.get("url", "")
-                    details["image_url"] = hit.get("image", {}).get("medium") or hit.get("image", {}).get("small") or ""
-                    print(f"   [Yahoo API] 取得成功: {query} -> 価格: {details['yahoo_price']}")
-        except Exception as e:
-            print(f"   ⚠️ Yahoo API エラー: {e}")
+        for q in [clean_query, fallback_query]:
+            try:
+                url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={urllib.parse.quote(q)}&results=1"
+                res = requests.get(url, timeout=10)
+                if res.status_code == 200:
+                    data = res.json()
+                    hits = data.get("hits", [])
+                    if hits:
+                        hit = hits[0]
+                        price_val = hit.get("price")
+                        if price_val:
+                            details["yahoo_price"] = str(price_val)
+                        details["yahoo_url"] = hit.get("url", "")
+                        
+                        # 画像取得（高画質URLへの変換対応）
+                        img_url = hit.get("image", {}).get("medium") or hit.get("image", {}).get("small") or ""
+                        if img_url and "/i/g/" in img_url:
+                            img_url = img_url.replace("/i/g/", "/i/l/")  # /i/l/ は高画質な大画像！
+                        details["image_url"] = img_url
+                        
+                        print(f"   [Yahoo API] 取得成功 (query: {q}) -> 価格: {details['yahoo_price']}")
+                        break
+            except Exception as e:
+                print(f"   ⚠️ Yahoo API エラー (query: {q}): {e}")
             
     # 2. Rakuten Item Search API
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
     rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
     if rakuten_app_id:
-        try:
-            url = f"https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={rakuten_app_id}&keyword={urllib.parse.quote(query)}&hits=1"
-            if rakuten_affiliate_id:
-                url += f"&affiliateId={rakuten_affiliate_id}"
-            res = requests.get(url, timeout=10)
-            if res.status_code == 200:
-                data = res.json()
-                items = data.get("Items", [])
-                if items:
-                    item = items[0].get("Item", {})
-                    price_val = item.get("itemPrice")
-                    if price_val:
-                        details["rakuten_price"] = str(price_val)
-                    details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
-                    if not details["image_url"]:
+        for q in [clean_query, fallback_query]:
+            try:
+                url = f"https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601?applicationId={rakuten_app_id}&keyword={urllib.parse.quote(q)}&hits=1"
+                if rakuten_affiliate_id:
+                    url += f"&affiliateId={rakuten_affiliate_id}"
+                res = requests.get(url, timeout=10)
+                if res.status_code == 200:
+                    data = res.json()
+                    items = data.get("Items", [])
+                    if items:
+                        item = items[0].get("Item", {})
+                        price_val = item.get("itemPrice")
+                        if price_val:
+                            details["rakuten_price"] = str(price_val)
+                        details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
+                        
+                        # 画像取得（大解像度を優先的に取得し、パラメータを変更して最大サイズに高画質化）
                         med_imgs = item.get("mediumImageUrls", [])
-                        if med_imgs:
-                            details["image_url"] = med_imgs[0].get("imageUrl") or ""
-                    print(f"   [Rakuten API] 取得成功: {query} -> 価格: {details['rakuten_price']}")
-        except Exception as e:
-            print(f"   ⚠️ Rakuten API エラー: {e}")
+                        large_imgs = item.get("largeImageUrls", [])
+                        img_url = ""
+                        if large_imgs:
+                            img_url = large_imgs[0].get("imageUrl") or ""
+                        elif med_imgs:
+                            img_url = med_imgs[0].get("imageUrl") or ""
+                        
+                        if img_url:
+                            # 楽天画像サイズ制限パラメータを640x640の高解像度に拡張
+                            img_url = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
+                            
+                        # すでにYahoo側で画像が取れていない場合、またはYahoo側がプレースホルダーだった場合に上書き
+                        if not details["image_url"] or "unsplash.com" in details["image_url"]:
+                            details["image_url"] = img_url
+                            
+                        print(f"   [Rakuten API] 取得成功 (query: {q}) -> 価格: {details['rakuten_price']}")
+                        break
+            except Exception as e:
+                print(f"   ⚠️ Rakuten API エラー (query: {q}): {e}")
 
     # 画像取得失敗時の高品質なUnsplashプレースホルダー
     if not details["image_url"]:
@@ -221,6 +261,22 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
         f.write(html)
     return path
 
+def generate_with_retry(model, prompt, generation_config=None, max_retries=5, initial_delay=15):
+    delay = initial_delay
+    for attempt in range(max_retries):
+        try:
+            if generation_config:
+                return model.generate_content(prompt, generation_config=generation_config)
+            else:
+                return model.generate_content(prompt)
+        except Exception as e:
+            print(f"   ⚠️ Gemini APIエラー (試行 {attempt+1}/{max_retries}): {e}")
+            if attempt == max_retries - 1:
+                raise e
+            print(f"   ⏳ {delay}秒後に再試行します...")
+            time.sleep(delay)
+            delay *= 1.5
+
 # 競合サイトの分析とアフィリエイト記事生成
 def generate_from_competitor(competitor_url: str, default_category: str = "ガジェット"):
     print(f"🔍 競合サイトを解析中: {competitor_url}")
@@ -270,8 +326,9 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
 }}
 """
 
-    model = genai.GenerativeModel('models/gemini-2.5-flash')
-    res = model.generate_content(
+    model = genai.GenerativeModel('models/gemini-flash-latest')
+    res = generate_with_retry(
+        model,
         meta_prompt,
         generation_config=genai.types.GenerationConfig(
             temperature=0.4,
@@ -318,13 +375,23 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
     print("🧠 [第2ステージ] 各商品の超詳細説明文（1000文字以上）をループ生成中...")
     
     for i, p in enumerate(data.get("products", [])):
+        if i > 0:
+            print("⏳ 429回避のため、12秒間スリープします...")
+            time.sleep(12)
         p_name = p.get("name", "")
         display_name = truncate_product_name(p_name)
         
         print(f"🛍️  [{i+1}/6] {p_name} の詳細説明文（1000文字以上）を生成中...")
         
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
-商品『{p_name}』について、中立的で信頼性が高く、読者の購買意欲をそそる素晴らしい紹介文を執筆してください。
+このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
+したがって、以下の【禁止事項】を厳格に守り、純粋な商品解説文のみを執筆してください。
+
+【禁止事項（極めて重要）】
+- **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。
+- **記事全体の導入文やまとめ文のような構成は禁止**です。最初から『{p_name}』の具体的な製品特徴や解説に直接入ってください。
+- **個別の締めくくりの挨拶や行動喚起は絶対に禁止**です。「ぜひ一度試してみてください」「〜をみっけてみませんか？✨」などの終わりの言葉や、まとめ段落は一切書かないでください。
+- 商品紹介の終わりは、製品の特徴や魅力についての解説の途中で自然に終えてください（結論めいたまとめや行動喚起は記事の最後にまとめて行うため、このセクションには不要です）。
 
 【執筆ルール】
 - 紹介文は必ず**1000文字以上**の圧倒的なボリュームで執筆してください。
@@ -339,7 +406,8 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
 そのまま記事に挿入できるプレーンテキストとして出力してください（JSONやマークダウンのコードブロックで囲わないでください）。
 """
 
-        desc_res = model.generate_content(
+        desc_res = generate_with_retry(
+            model,
             desc_prompt,
             generation_config=genai.types.GenerationConfig(temperature=0.6)
         )
