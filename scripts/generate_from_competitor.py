@@ -95,11 +95,11 @@ def take_eyecatch_screenshot(slug: str) -> bool:
         return False
 
 # 高精度な商品検索APIクエリ
-def fetch_product_details(query: str):
+def fetch_product_details(query: str, jan_code: str = ""):
     """
     Rakuten OpenAPI & Yahoo Shopping API & Amazon Scrapingを使って
     正確な画像、価格、および個別の商品アフィリエイトURLを取得する。
-    不要なメーカー名やディストリビューター名を削除して、検索のノイズを低減させた上で検索を行います。
+    JANコードがある場合は最優先で検索し、無い場合はクレンジングされたクエリで行います。
     """
     details = {
         "image_url": "",
@@ -113,22 +113,40 @@ def fetch_product_details(query: str):
     
     # 検索精度向上のためにクエリをクレンジング
     clean_query = query
+    
+    # 1. カッコ書き（丸括弧、角括弧など）を除去
+    clean_query = re.sub(r'[\(（\[［].*?[\)）\]］]', ' ', clean_query)
+    
+    # 2. ブランド名や社名のノイズワードリスト（大幅強化）
     noise_words = [
         "P&Gジャパン", "P&Gプレステージ", "P&G", "資生堂", "カネボウ化粧品", "カネボウ", "KANEBO",
-        "ロート製薬", "再春館製薬所", "再春館製薬", "花王", "コーセー", "KOSE", "ポーラ", "POLA"
+        "ロート製薬", "再春館製薬所", "再春館製薬", "花王", "コーセー", "KOSE", "ポーラ", "POLA",
+        "日本ロレアル", "ロレアル", "L'Oreal", "ラロッシュポゼ", "LA ROCHE POSAY", "ラ ロッシュ ポゼ",
+        "アルビオン", "ALBION", "ヤーマン", "YA-MAN", "アネッサ", "ANESSA", "イハダ", "IHADA",
+        "クレ・ド・ポー ボーテ", "クレ・ド・ポー", "クレドポーボーテ", "クレドポー", "Cle de Peau Beaute",
+        "クラシエ", "Kracie", "ちふれ", "CHIFURE", "オルビス", "ORBIS", "ファンケル", "FANCL"
     ]
+    
     for nw in noise_words:
-        clean_query = re.sub(rf'^{nw}\s*', '', clean_query, flags=re.IGNORECASE)
-    clean_query = clean_query.strip()
+        clean_query = re.sub(rf'\b{nw}\b', '', clean_query, flags=re.IGNORECASE)
+        clean_query = clean_query.replace(nw, "")
+        
+    clean_query = re.sub(r'\s+', ' ', clean_query).strip()
     
     # 元のクエリで失敗した場合のフォールバッククエリ（最初の3単語）
     words = clean_query.split()
     fallback_query = " ".join(words[:3]) if len(words) > 3 else clean_query
 
+    # 検索優先度クエリリストの構築
+    search_queries = []
+    if jan_code and jan_code.strip():
+        search_queries.append(jan_code.strip())
+    search_queries.extend([clean_query, fallback_query])
+
     # 1. Yahoo Shopping API V3
     yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
     if yahoo_app_id:
-        for q in [clean_query, fallback_query]:
+        for q in search_queries:
             try:
                 url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={urllib.parse.quote(q)}&results=1"
                 res = requests.get(url, timeout=10)
@@ -163,7 +181,7 @@ def fetch_product_details(query: str):
             "Referer": "https://www.mikke-style.com",
             "Origin": "https://www.mikke-style.com"
         }
-        for q in [clean_query, fallback_query]:
+        for q in search_queries:
             try:
                 url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
                 params = {
@@ -211,7 +229,7 @@ def fetch_product_details(query: str):
         "Accept-Language": "ja,en;q=0.9"
     }
     amazon_tag = os.getenv("AMAZON_ASSOCIATE_TAG", "mikkestyle-22")
-    for q in [clean_query, fallback_query]:
+    for q in search_queries:
         try:
             search_url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}&l=ja_JP"
             res = requests.get(search_url, headers=browser_h, timeout=15)
@@ -298,14 +316,40 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
 
 def generate_with_retry(model, prompt, generation_config=None, max_retries=5, initial_delay=15):
     delay = initial_delay
+    current_model = model
+    
+    # 予備のフォールバックモデル一覧 (無料枠が独立しているモデル)
+    fallback_candidates = [
+        "models/gemini-3.1-flash-lite",
+        "models/gemini-2.0-flash-lite",
+        "models/gemini-2.5-flash-lite",
+        "models/gemini-pro-latest",
+        "models/gemini-flash-latest"
+    ]
+    fallback_index = 0
+    
     for attempt in range(max_retries):
         try:
             if generation_config:
-                return model.generate_content(prompt, generation_config=generation_config)
+                return current_model.generate_content(prompt, generation_config=generation_config)
             else:
-                return model.generate_content(prompt)
+                return current_model.generate_content(prompt)
         except Exception as e:
-            print(f"   ⚠️ Gemini APIエラー (試行 {attempt+1}/{max_retries}): {e}")
+            err_msg = str(e)
+            print(f"   ⚠️ Gemini APIエラー (試行 {attempt+1}/{max_retries}): {err_msg}")
+            
+            # クォータ制限（特に1日あたりの20回制限など）に達した場合、自動フォールバックを実行
+            if "Quota exceeded" in err_msg and fallback_index < len(fallback_candidates):
+                next_model_name = fallback_candidates[fallback_index]
+                fallback_index += 1
+                print(f"   🔄 クォータ制限を検知。モデルを {next_model_name} に変更して再試行します...")
+                try:
+                    current_model = genai.GenerativeModel(next_model_name)
+                    # 待機せずに即座にループ継続
+                    continue
+                except Exception as fe:
+                    print(f"   ⚠️ モデル変更失敗: {fe}")
+            
             if attempt == max_retries - 1:
                 raise e
             print(f"   ⏳ {delay}秒後に再試行します...")
@@ -330,6 +374,13 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
 また、記事全体のタイトル、カテゴリ、要約、導入文、選び方のポイント、まとめ文を作成してください。
 商品の詳細説明文はこのステージでは記述せず、商品名と推奨ターゲットのみを返してください。
 
+【抽出・生成にあたっての厳格な指示】
+1. **商品名とターゲットの完全一致**: 各商品の特徴や紹介文を競合テキストから精査し、その商品に固有の「こんな人におすすめ」を正確に設定してください。他の商品の特徴（例：別の商品の冷感成分や別の商品の超高UVカットなど）が混ざったり、シャッフルされたりすることは絶対に避けてください。
+2. **JANコードの抽出と補完**: 
+   - 提供された競合テキスト内にJANコード（13桁または8桁の数字、多くは49や45から始まるバーコード番号）が記載されている場合は、それを完璧に抽出して `jan_code` に格納してください。
+   - テキスト内にJANコードが直接書かれていない場合でも、あなたの事前知識から該当する商品の正確なJANコード（13桁）がわかる場合は、必ずそれを調べて補完してください。JANコードによるアフィリエイト検索が最優先されるため、JANコードの精度が極めて重要です。
+   - JANコードがどうしても不明な場合のみ、空文字 `""` にしてください。
+
 提供された競合テキスト:
 ---
 {competitor_text}
@@ -350,10 +401,11 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
   "products": [
     {{
       "name": "特定した商品名（メーカー名＋正確な商品名。余分なSEOキーワードは除外）",
+      "jan_code": "JANコード（バーコード番号、13桁または8桁の数字。テキストから抽出するか、事前知識から正確に補完したもの）。見つからない場合は空文字",
       "recommended_for": [
-        "こんな人におすすめ1",
-        "こんな人におすすめ2",
-        "こんな人におすすめ3"
+        "この商品に完全に一致する、こんな人におすすめ1",
+        "この商品に完全に一致する、こんな人におすすめ2",
+        "この商品に完全に一致する、こんな人におすすめ3"
       ]
     }}
   ],
@@ -361,7 +413,7 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
 }}
 """
 
-    model = genai.GenerativeModel('models/gemini-flash-latest')
+    model = genai.GenerativeModel('models/gemini-3.1-flash-lite')
     res = generate_with_retry(
         model,
         meta_prompt,
@@ -376,7 +428,28 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
         return False
         
     try:
-        data = json.loads(res.text)
+        text_to_parse = res.text.strip()
+        # ```json や ``` で囲まれている場合は中身を抽出
+        if text_to_parse.startswith("```json"):
+            text_to_parse = text_to_parse[7:]
+        if text_to_parse.endswith("```"):
+            text_to_parse = text_to_parse[:-3]
+        text_to_parse = text_to_parse.strip()
+        
+        # 最も外側にある { } を探して、それ以外の部分を削る
+        match = re.search(r'(\{.*\}).*', text_to_parse, re.DOTALL)
+        if match:
+            text_to_parse = match.group(1)
+            
+        try:
+            data = json.loads(text_to_parse)
+        except json.JSONDecodeError as jde:
+            # もし Extra data エラー（余分なテキストや括弧がある）なら、パースできた位置までの文字列で切り詰める
+            if "Extra data" in str(jde):
+                pos = jde.pos
+                data = json.loads(text_to_parse[:pos].strip())
+            else:
+                raise jde
     except Exception as e:
         print(f"❌ JSONデコードエラー: {e}\n生データ:\n{res.text}")
         return False
@@ -414,9 +487,10 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
             print("⏳ 429回避のため、12秒間スリープします...")
             time.sleep(12)
         p_name = p.get("name", "")
+        jan_code = p.get("jan_code", "")
         display_name = truncate_product_name(p_name)
         
-        print(f"🛍️  [{i+1}/6] {p_name} の詳細説明文（1000文字以上）を生成中...")
+        print(f"🛍️  [{i+1}/6] {p_name} (JAN: {jan_code}) の詳細説明文（1000文字以上）を生成中...")
         
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
 このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
@@ -450,9 +524,9 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
         desc_text = desc_res.text.strip() if desc_res else "詳細な製品紹介を準備中です。"
         desc = clean_variable_names(desc_text)
         
-        print(f"🔍 APIで画像と価格を検索中: {p_name} ...")
+        print(f"🔍 APIで画像と価格を検索中: {p_name} (JAN: {jan_code}) ...")
         # Rakuten & Yahoo APIを使って正確なデータ（画像・価格・URL）を検索！
-        api_data = fetch_product_details(p_name)
+        api_data = fetch_product_details(p_name, jan_code)
         
         image_urls.append(api_data["image_url"])
         
