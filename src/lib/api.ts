@@ -346,7 +346,17 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       .use(remarkGfm)
       .use(html, { sanitize: false })
       .process(content);
-    const contentHtml = processed.toString();
+    let contentHtml = processed.toString();
+
+    // Improve readability by adding <br /> after Japanese sentence endings (。！？) within paragraphs (<p>)
+    // keeping any trailing emojis next to the sentence ending before the line break.
+    contentHtml = contentHtml.replace(/<p>([\s\S]*?)<\/p>/g, (match, pContent) => {
+      const formatted = pContent.replace(
+        /([。！？])([^\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fafA-Za-z0-9\s<]*)(?=[\s\S]*[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9fafA-Za-z0-9])/g,
+        "$1$2<br />"
+      );
+      return `<p>${formatted}</p>`;
+    });
 
     const rankings = parseRankingsFromMarkdown(matterResult.content);
 

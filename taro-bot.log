@@ -1,0 +1,142 @@
+./start-taro-bot.sh: line 7: /Users/tsukika/Desktop/affiliate-portal/taro-bot-venv/bin/python3: No such file or directory
+./start-taro-bot.sh: line 7: exec: /Users/tsukika/Desktop/affiliate-portal/taro-bot-venv/bin/python3: cannot execute: No such file or directory
+Traceback (most recent call last):
+  File "/Users/tsukika/Desktop/affiliate-portal/taro-discord-bot.py", line 5, in <module>
+    import schedule
+ModuleNotFoundError: No module named 'schedule'
+Traceback (most recent call last):
+  File "/Users/tsukika/Desktop/affiliate-portal/taro-discord-bot.py", line 31, in <module>
+    _loop: asyncio.AbstractEventLoop | None = None
+TypeError: unsupported operand type(s) for |: 'type' and 'NoneType'
+[2026-05-22 23:52:34] [INFO    ] discord.client: logging in using static token
+[2026-05-22 23:52:35] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 0bbf4735a8d31919277b6a4a9d6a439d).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 に商品選定を自動実行します。
+[2026-05-22 23:59:46] [INFO    ] discord.client: logging in using static token
+[2026-05-22 23:59:47] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 1f986c0b8ecb51b2fa305f99c4a1a03a).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 に商品選定を自動実行します。
+[2026-05-23 00:03:24] [INFO    ] discord.client: logging in using static token
+[2026-05-23 00:03:27] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: bb155b938d18e34e1956a5f8e09e4f81).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 に商品選定を自動実行します。
+[2026-05-23 00:06:08] [INFO    ] discord.client: logging in using static token
+[2026-05-23 00:06:09] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 23c67afa4ac20071505d3ccc33185e02).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 に商品選定を自動実行します。
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/api_core/_python_version_support.py:234: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/taro-discord-bot.py:9: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[2026-05-23 00:13:45] [INFO    ] discord.client: logging in using static token
+[2026-05-23 00:13:47] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 2cf848f465ea63e07c907da6c5cf5feb).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 にNotionの処理と自動記事作成を自動実行します。
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/api_core/_python_version_support.py:234: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/taro-discord-bot.py:9: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[2026-05-23 00:18:38] [INFO    ] discord.client: logging in using static token
+[2026-05-23 00:18:39] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 31fcf353a99dd08eee3e84dd31342539).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 にNotionの処理と自動記事作成を自動実行します。
+[Bot] 記事生成プロセス出力:
+🔍 競合サイトを解析中: https://my-best.com/175
+🧠 [第1ステージ] Geminiで紹介商品を特定中...
+📝 記事メタ取得完了: 【2026年最新】絶対に焼けたくない人のための日焼け止めおすすめ6選！徹底比較で最強の1本を見つける (Slug: 20260523-2026年最新絶対に焼けたくない人のための日焼け止めおすすめ)
+🧠 [第2ステージ] 各商品の超詳細説明文（1000文字以上）をループ生成中...
+🛍️  [1/6] 日本ロレアル LA ROCHE POSAY（ラ ロッシュ ポゼ） UVイデア XL の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: 日本ロレアル LA ROCHE POSAY（ラ ロッシュ ポゼ） UVイデア XL ...
+   [Yahoo API] 取得成功 (query: 日本ロレアル LA ROCHE POSAY（ラ ロッシュ ポゼ） UVイデア XL) -> 価格: 3960
+   [Rakuten API] 取得成功 (query: 日本ロレアル LA ROCHE) -> 価格: 5390
+   [Amazon Scraper] ASIN取得成功 (query: 日本ロレアル LA ROCHE POSAY（ラ ロッシュ ポゼ） UVイデア XL) -> ASIN: B00LU9Q0YU
+⏳ 429回避のため、12秒間スリープします...
+🛍️  [2/6] 資生堂 クレ・ド・ポー ボーテ クレームUV n の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: 資生堂 クレ・ド・ポー ボーテ クレームUV n ...
+   [Yahoo API] 取得成功 (query: クレ・ド・ポー ボーテ クレームUV n) -> 価格: 9990
+   [Rakuten API] 取得成功 (query: クレ・ド・ポー ボーテ クレームUV) -> 価格: 10250
+   [Amazon Scraper] ASIN取得成功 (query: クレ・ド・ポー ボーテ クレームUV n) -> ASIN: B0GXZZ56DB
+⏳ 429回避のため、12秒間スリープします...
+🛍️  [3/6] 資生堂 ANESSA（アネッサ） パーフェクトUVスキンケアジェル NA の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: 資生堂 ANESSA（アネッサ） パーフェクトUVスキンケアジェル NA ...
+   [Yahoo API] 取得成功 (query: ANESSA（アネッサ） パーフェクトUVスキンケアジェル NA) -> 価格: 2280
+   [Rakuten API] 取得成功 (query: ANESSA（アネッサ） パーフェクトUVスキンケアジェル NA) -> 価格: 5386
+   [Amazon Scraper] ASIN取得成功 (query: ANESSA（アネッサ） パーフェクトUVスキンケアジェル NA) -> ASIN: B0F12VMVKV
+⏳ 429回避のため、12秒間スリープします...
+🛍️  [4/6] ヤーマン プロ・業務用 UVクリーム の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: ヤーマン プロ・業務用 UVクリーム ...
+   [Yahoo API] 取得成功 (query: ヤーマン プロ・業務用 UVクリーム) -> 価格: 1320
+   [Rakuten API] 取得成功 (query: ヤーマン プロ・業務用 UVクリーム) -> 価格: 1320
+   [Amazon Scraper] ASIN取得成功 (query: ヤーマン プロ・業務用 UVクリーム) -> ASIN: B09WTQ3BPW
+⏳ 429回避のため、12秒間スリープします...
+🛍️  [5/6] アルビオン スーパー UV カット インテンスコンセントレート デイクリーム の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: アルビオン スーパー UV カット インテンスコンセントレート デイクリーム ...
+   [Yahoo API] 取得成功 (query: アルビオン スーパー UV カット インテンスコンセントレート デイクリーム) -> 価格: 10350
+   [Rakuten API] 取得成功 (query: アルビオン スーパー UV カット インテンスコンセントレート デイクリーム) -> 価格: 11300
+   [Amazon Scraper] ASIN取得成功 (query: アルビオン スーパー UV カット インテンスコンセントレート デイクリーム) -> ASIN: B0CSSLB75G
+⏳ 429回避のため、12秒間スリープします...
+🛍️  [6/6] 資生堂 IHADA（イハダ） 薬用フェイスプロテクトUV ミルク の詳細説明文（1000文字以上）を生成中...
+🔍 APIで画像と価格を検索中: 資生堂 IHADA（イハダ） 薬用フェイスプロテクトUV ミルク ...
+   [Yahoo API] 取得成功 (query: IHADA（イハダ） 薬用フェイスプロテクトUV ミルク) -> 価格: 1575
+   [Rakuten API] 取得成功 (query: IHADA（イハダ） 薬用フェイスプロテクトUV ミルク) -> 価格: 1980
+   [Amazon Scraper] ASIN取得成功 (query: IHADA（イハダ） 薬用フェイスプロテクトUV ミルク) -> ASIN: B0CSSSWY6N
+✅ 記事ファイルを生成しました: src/content/articles/20260523-2026年最新絶対に焼けたくない人のための日焼け止めおすすめ.md
+⚠️  eyecatch stderr: I0523 00:39:22.683288 3564914 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(11, generation: 1)
+❌ Eyecatch generation failed: Could not find Chrome (ver. 146.0.7680.153). This can occur if either
+ 1. you did not perform an installation before running the script (e.g. `npx puppeteer browsers install chrome`) or
+ 2. your cache path is incorrectly configured (which is: /Users/tsukika/.cache/puppeteer).
+For (2), check out our guide on configuring puppeteer at https://pptr.dev/guide
+🚀 すべての工程が完了しました！
+
+🎉 成功！新しい記事が作成されました：
+/articles/20260523-2026年最新絶対に焼けたくない人のための日焼け止めおすすめ
+[Bot] 記事生成プロセスエラー:
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/api_core/_python_version_support.py:234: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/scripts/generate_from_competitor.py:10: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai

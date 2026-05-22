@@ -35,7 +35,7 @@ This document outlines the rules for automated content generation and database m
     - **Emojification**: Limit emoji usage to **1-2 emojis per product** across headings and description. Do not over-decorate.
 - **Product Descriptions**:
     - **Length**: **1000+ characters** per product. Describe features, usability, and benefits in detail.
-    - **Paragraph Breaks**: Divide the description into paragraphs of **2-3 sentences each**, inserting a blank line (`\n\n`) between them for mobile readability.
+    - **Paragraph Breaks**: Divide the description into paragraphs of **1-2 sentences each**, keeping them extremely short and inserting a blank line (`\n\n`) between them for maximum mobile readability.
     - **Recommended for**: Provide a 3-point bulleted list of why this product is recommended for specific users.
 
 ### 2. Layout & Formatting
