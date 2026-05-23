@@ -132,7 +132,10 @@ export default async function SearchPage({
                 </div>
                 <div className="flex flex-col flex-1 px-3 pb-2 text-center">
                   <p className="text-[10px] font-bold text-primary mb-2">
-                    {new Date(article.publishedAt || '').toLocaleDateString('ja-JP')}
+                    {(() => {
+                      const d = new Date(article.publishedAt || "");
+                      return isNaN(d.getTime()) ? '' : d.toLocaleDateString('ja-JP');
+                    })()}
                   </p>
                   <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
                     {article.title}

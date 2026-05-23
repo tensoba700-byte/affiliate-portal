@@ -125,7 +125,10 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             </div>
             
             <time dateTime={article.publishedAt} className="text-[10px] md:text-xs font-bold text-muted block mb-6">
-              🗓 {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
+              🗓 {(() => {
+                const d = new Date(article.publishedAt || "");
+                return isNaN(d.getTime()) ? '' : d.toLocaleDateString('ja-JP');
+              })()}
             </time>
             
             {article.excerpt && (
