@@ -17,7 +17,20 @@ export function middleware(request: NextRequest) {
   const oldSlugEncoded = encodeURIComponent('20260420-新製品レビュー：最新の防晒クリーム');
   const oldSlugDecoded = '20260420-新製品レビュー：最新の防晒クリーム';
   
-  if (pathname.includes(oldSlugEncoded) || pathname.includes(encodeURIComponent(oldSlugDecoded)) || pathname.includes('20260420-%E6%96%B0%E8%A3%BD%E5%93%81%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%EF%BC%9A%E6%9C%80%E6%96%B0%E3%81%AE%E9%98%B2%E6%99%92%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0')) {
+  let decodedPathname = '';
+  try {
+    decodedPathname = decodeURIComponent(pathname);
+  } catch (e) {
+    // Safe fallback if URI is malformed
+  }
+  
+  if (
+    pathname.includes(oldSlugEncoded) || 
+    pathname.includes(oldSlugDecoded) ||
+    pathname.includes(encodeURIComponent(oldSlugDecoded)) || 
+    pathname.includes('20260420-%E6%96%B0%E8%A3%BD%E5%93%81%E3%83%AC%E3%83%93%E3%83%A5%E3%83%BC%EF%BC%9A%E6%9C%80%E6%96%B0%E3%81%AE%E9%98%B2%E6%99%92%E3%82%AF%E3%83%AA%E3%83%BC%E3%83%A0') ||
+    (decodedPathname && decodedPathname.includes(oldSlugDecoded))
+  ) {
     const newSlugEncoded = encodeURIComponent('20260420-新製品レビュー：最新の日焼け止めクリーム');
     return NextResponse.redirect(
       new URL(`/articles/${newSlugEncoded}`, 'https://www.mikke-style.com'),
