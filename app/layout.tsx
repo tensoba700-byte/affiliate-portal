@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     template: "%s | みっけ！"
   },
   description: "徹底比較して、あなたにぴったりの商品を見つける。毎日の暮らしをもっと素敵に！話題のアイテムから隠れた名品まで徹底レビュー。",
-  metadataBase: new URL('https://mikke-style.com'),
+  metadataBase: new URL('https://www.mikke-style.com'),
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://mikke-style.com',
+    url: 'https://www.mikke-style.com',
     siteName: 'みっけ！',
     images: [
       {

@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     openGraph: {
       title: article.title,
       description: article.excerpt,
-      url: `https://mikke-style.com/articles/${slug}`,
+      url: `https://www.mikke-style.com/articles/${slug}`,
       type: 'article',
       images: [{ url: ogImage }],
     },
@@ -173,7 +173,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             
             {/* Share Section */}
             <ShareButtons
-              url={`https://mikke-style.com/articles/${article.slug}`}
+              url={`https://www.mikke-style.com/articles/${article.slug}`}
               title={article.title}
               isGadget={article.title.includes('ガジェット') || article.slug.includes('ガジェット')}
             />
