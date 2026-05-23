@@ -3,6 +3,9 @@ import React from 'react';
 export const metadata = {
   title: '運営者情報',
   description: 'みっけ！を運営している編集部の情報について記載しています。',
+  alternates: {
+    canonical: '/company',
+  },
 };
 
 export default function CompanyPage() {

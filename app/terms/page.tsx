@@ -3,6 +3,9 @@ import React from 'react';
 export const metadata = {
   title: '利用規約',
   description: 'みっけ！の利用規約について記載しています。',
+  alternates: {
+    canonical: '/terms',
+  },
 };
 
 export default function TermsPage() {

@@ -3,6 +3,9 @@ import React from 'react';
 export const metadata = {
   title: 'プライバシーポリシー',
   description: 'みっけ!のプライバシーポリシー（個人情報保護方針）について記載しています。',
+  alternates: {
+    canonical: '/privacy',
+  },
 };
 
 export default function PrivacyPage() {

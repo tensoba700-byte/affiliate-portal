@@ -28,6 +28,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: article.title,
     description: article.excerpt || `徹底比較！ ${article.title} のおすすめ情報`,
+    alternates: {
+      canonical: `/articles/${slug}`,
+    },
     openGraph: {
       title: article.title,
       description: article.excerpt,
@@ -113,7 +116,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               Review
             </div>
             
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-2 text-foreground">
+            <h1 className="article-title text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-2 text-foreground">
               {article.title}
             </h1>
             

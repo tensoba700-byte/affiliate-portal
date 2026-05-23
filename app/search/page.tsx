@@ -4,6 +4,9 @@ import { getAllArticles } from '@/src/lib/api';
 export const metadata = {
   title: 'カテゴリー・検索 | みっけ！',
   description: 'カテゴリー別・キーワード検索の記事一覧です。',
+  alternates: {
+    canonical: '/search',
+  },
 };
 
 export default async function SearchPage({
@@ -131,7 +134,7 @@ export default async function SearchPage({
                   <p className="text-[10px] font-bold text-primary mb-2">
                     {new Date(article.publishedAt || '').toLocaleDateString('ja-JP')}
                   </p>
-                  <h2 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                  <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
                     {article.title}
                   </h2>
                   <p className="text-muted text-xs line-clamp-2 mt-auto leading-relaxed font-bold">

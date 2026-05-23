@@ -379,3 +379,12 @@ body {
   @apply object-contain w-full h-full;
   max-height: 380px;
 }
+
+/* =========================================
+   👑 ARTICLE TITLE AUTO-PHRASE WRAPPING
+   ========================================= */
+.article-title {
+  word-break: auto-phrase;
+  text-wrap: balance;
+  line-height: 1.4;
+}

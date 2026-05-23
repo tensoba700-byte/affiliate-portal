@@ -121,7 +121,7 @@ export default async function Home() {
                       <p className="text-[10px] font-bold text-primary mb-2">
                         {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
                       </p>
-                      <h3 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
                         {article.title}
                       </h3>
                     </div>

@@ -3,6 +3,9 @@ import React from 'react';
 export const metadata = {
   title: 'お問い合わせ',
   description: 'みっけ！へのお問い合わせはこちらから。記事へのご意見、ご感想、お仕事の依頼などお待ちしております。',
+  alternates: {
+    canonical: '/contact',
+  },
 };
 
 export default function ContactPage() {

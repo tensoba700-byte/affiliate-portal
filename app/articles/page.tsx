@@ -4,6 +4,9 @@ import { getAllArticles, ArticleItem } from '@/src/lib/api';
 export const metadata = {
   title: 'すべての記事 | みっけ！',
   description: '最新の商品比較・おすすめ記事の一覧です。',
+  alternates: {
+    canonical: '/articles',
+  },
 };
 
 export default async function ArticlesPage() {
@@ -56,7 +59,7 @@ export default async function ArticlesPage() {
                   <p className="text-[10px] font-bold text-primary mb-2">
                     {new Date(article.publishedAt || "").toLocaleDateString('ja-JP')}
                   </p>
-                  <h2 className="text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                  <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
                     {article.title}
                   </h2>
                   <p className="text-muted text-xs line-clamp-2 mt-auto leading-relaxed font-bold">
