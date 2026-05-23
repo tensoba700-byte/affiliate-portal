@@ -29,9 +29,6 @@ export const metadata: Metadata = {
   },
   description: "徹底比較して、あなたにぴったりの商品を見つける。毎日の暮らしをもっと素敵に！話題のアイテムから隠れた名品まで徹底レビュー。",
   metadataBase: new URL('https://mikke-style.com'),
-  alternates: {
-    canonical: '/',
-  },
   openGraph: {
     type: 'website',
     locale: 'ja_JP',

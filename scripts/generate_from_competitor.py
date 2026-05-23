@@ -103,9 +103,9 @@ def fetch_product_details(query: str, jan_code: str = ""):
     """
     details = {
         "image_url": "",
-        "amazon_price": "価格を見る",
-        "rakuten_price": "価格を見る",
-        "yahoo_price": "価格を見る",
+        "amazon_price": "なし",
+        "rakuten_price": "なし",
+        "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
         "amazon_url": ""
