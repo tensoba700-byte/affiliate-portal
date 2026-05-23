@@ -257,11 +257,32 @@ export async function getRelatedArticles(currentSlug: string, category: string, 
 /** Fetch a single article by slug, preferring Contentful and falling back to markdown. */
 export async function getArticleBySlug(slug: string): Promise<ArticleItem | null> {
   const decodedSlug = decodeURIComponent(slug);
-  const fullPath = path.join(articlesDirectory, `${decodedSlug}.md`);
   
-  // 1️⃣ Try Markdown first
-  if (fs.existsSync(fullPath)) {
-    const fileContents = fs.readFileSync(fullPath, 'utf8');
+  // 1️⃣ Try Markdown first with NFC/NFD normalization compatibility fallback
+  let foundFileName = '';
+  if (fs.existsSync(articlesDirectory)) {
+    const files = fs.readdirSync(articlesDirectory);
+    const targetNFC = decodedSlug.normalize('NFC');
+    const targetNFD = decodedSlug.normalize('NFD');
+    
+    const matchingFile = files.find(f => {
+      if (!f.endsWith('.md')) return false;
+      const base = f.replace(/\.md$/, '');
+      return base.normalize('NFC') === targetNFC || 
+             base.normalize('NFD') === targetNFD || 
+             base === decodedSlug;
+    });
+    if (matchingFile) {
+      foundFileName = matchingFile;
+    }
+  }
+
+  const finalPath = foundFileName 
+    ? path.join(articlesDirectory, foundFileName) 
+    : path.join(articlesDirectory, `${decodedSlug}.md`);
+  
+  if (fs.existsSync(finalPath)) {
+    const fileContents = fs.readFileSync(finalPath, 'utf8');
     const matterResult = matter(fileContents);
     let content = matterResult.content;
 
@@ -360,10 +381,11 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
     const rankings = parseRankingsFromMarkdown(matterResult.content);
 
+    const actualSlug = foundFileName ? foundFileName.replace(/\.md$/, '') : decodedSlug;
     let coverImage: string | null = null;
-    const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${decodedSlug}.png`);
+    const eyecatchPngPath = path.join(process.cwd(), 'public', 'eyecatch', `${actualSlug}.png`);
     if (fs.existsSync(eyecatchPngPath)) {
-      coverImage = `/eyecatch/${decodedSlug}.png`;
+      coverImage = `/eyecatch/${actualSlug}.png`;
     } else if (matterResult.data.coverImage) {
       coverImage = matterResult.data.coverImage;
     } else {
