@@ -329,7 +329,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         f'title: "{output_title}"\n'
         f'coverImage: ""\n'
         f'excerpt: "{data["excerpt"]}"\n'
-        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()}"\n'
+        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y-%m-%d")}"\n'
         f'category: "{category}"\n'
         f'---\n\n'
         f'{intro_text}\n\n'

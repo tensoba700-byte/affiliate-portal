@@ -468,7 +468,7 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ã‚¬ã‚
         f'title: "{title}"\n'
         f'coverImage: ""\n'
         f'excerpt: "{data.get("excerpt", "")}"\n'
-        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).isoformat()}"\n'
+        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y-%m-%d")}"\n'
         f'category: "{category}"\n'
         f'---\n\n'
         f'{intro_text}\n\n'
