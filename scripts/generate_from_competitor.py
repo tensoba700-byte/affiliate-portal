@@ -249,11 +249,33 @@ def fetch_product_details(query: str, jan_code: str = ""):
         try:
             search_url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}&l=ja_JP"
             res = requests.get(search_url, headers=browser_h, timeout=15)
-            asins = list(dict.fromkeys(re.findall(r'/dp/([A-Z0-9]{10})', res.text)))
-            if asins:
-                asin = asins[0]
-                details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag={amazon_tag}"
-                print(f"   [Amazon Scraper] ASIN取得成功 (query: {q}) -> ASIN: {asin}")
+            
+            # data-asin の位置をすべて特定し、スポンサー広告をフィルタリング
+            found_organic = False
+            for m in re.finditer(r'data-asin="([A-Z0-9]{10})"', res.text):
+                asin = m.group(1)
+                if not asin:
+                    continue
+                # このASINから後の3000文字を商品ブロックとしてスライス
+                start_idx = m.start()
+                block = res.text[start_idx:start_idx + 3000]
+                
+                # スポンサー広告のマーカーが含まれているか確認
+                is_sponsored = (
+                    "s-sponsored-label-info-badge" in block or 
+                    "sponsored" in block.lower() or 
+                    "スポンサー" in block
+                )
+                
+                if not is_sponsored:
+                    details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag={amazon_tag}"
+                    print(f"   [Amazon Scraper] オーガニックASIN取得成功 (query: {q}) -> ASIN: {asin}")
+                    found_organic = True
+                    break
+                else:
+                    print(f"   [Amazon Scraper] スポンサー広告のためスキップ -> ASIN: {asin}")
+                    
+            if found_organic:
                 break
         except Exception as e:
             print(f"   ⚠️ Amazon ASIN取得エラー (query: {q}): {e}")
@@ -381,6 +403,7 @@ def search_competitor_url(keyword: str) -> str:
     """
     指定されたキーワードでGoogle検索を行い、最も情報量が豊富で
     信頼性の高いおすすめ・比較記事（my-best.comなど）のURLを1つ見つけて返します。
+    ハルシネーションによる「無関係なURL」の選出を防ぐため、二重の検証ステップを挟みます。
     """
     if not client:
         print("❌ GEMINI_API_KEY が設定されていないため、検索を実行できません。")
@@ -388,9 +411,12 @@ def search_competitor_url(keyword: str) -> str:
 
     print(f"🔍 キーワード 「{keyword}」 に関連する競合比較サイトをGoogle検索中...")
     prompt = (
-        f"「{keyword} おすすめ 比較」でGoogle検索を行い、最も紹介されている商品数が多くて情報が充実している、"
-        f"信頼できる比較記事・レビューサイト（my-best.comや専門紹介メディアなど）のURLを1つ見つけてください。\n"
-        f"出力は余計な説明や装飾を一切含めず、純粋なURL文字列（例: https://my-best.com/xxx）のみを1行で出力してください。"
+        f"「{keyword} おすすめ 比較」でGoogle検索を行い、その結果から最も情報量が豊富で"
+        f"信頼できる比較記事・レビューサイト（my-best.comや専門紹介メディアなど）の【実際のURL】と【その記事のタイトル】を上位から最大3つ教えてください。\n"
+        f"存在しない嘘のURL（ハルシネーション）をでっち上げないよう、実際に検索結果に存在する本物のURLのみを出力してください。\n"
+        f"出力形式は必ず以下のように、各候補を1つずつ記述してください（余計な説明は省く）：\n"
+        f"TITLE: [記事のタイトル]\n"
+        f"URL: [本物のURL]\n"
     )
 
     try:
@@ -403,16 +429,58 @@ def search_competitor_url(keyword: str) -> str:
             )
         )
         text = response.text.strip()
-        urls = re.findall(r'https?://[^\s]+', text)
-        if urls:
-            selected_url = urls[0]
-            print(f"✨ 自動選定された競合URL: {selected_url}")
-            return selected_url
+        print(f"🔍 検索 Grounding の生応答:\n{text}\n")
+        
+        candidates = []
+        matches = re.findall(r'TITLE:\s*(.*?)\nURL:\s*(https?://[^\s`"\'<>\(\)\[\]]+)', text, re.IGNORECASE)
+        if not matches:
+            urls = re.findall(r'https?://[^\s`"\'<>\(\)\[\]]+', text)
+            for u in urls:
+                if "my-best.com" in u or "kakaku.com" in u or "360life.jp" in u:
+                    candidates.append({"title": keyword, "url": u})
         else:
-            print("⚠️ 検索結果からURLを抽出できませんでした。")
+            for m in matches:
+                candidates.append({"title": m[0].strip(), "url": m[1].strip()})
+        
+        if not candidates:
+            print("⚠️ 検索結果から候補URLを抽出できませんでした。")
             return ""
+            
+        for cand in candidates:
+            cand_title = cand["title"]
+            cand_url = cand["url"]
+            
+            print(f"🧐 候補の検証中: 「{cand_title}」 ({cand_url})")
+            
+            verification_prompt = (
+                f"あなたはアフィリエイト記事の編集長です。以下の選定された競合URLとタイトルが、"
+                f"指定されたキーワード「{keyword}」に関するおすすめ・比較・レビュー記事であるかどうかを厳密に判定してください。\n"
+                f"タイトル: {cand_title}\n"
+                f"URL: {cand_url}\n"
+                f"キーワード: {keyword}\n\n"
+                f"もし、テーマが完全に一致し、そのキーワードのおすすめ記事である場合は「YES」、"
+                f"全く関係のない別の商品（例: スマートウォッチとマグカップなど）や無関係なURLである場合は「NO」と答えてください。\n"
+                f"余計な理由は一切含めず、「YES」または「NO」のいずれか1文字のみを出力してください。"
+            )
+            
+            ver_res = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=verification_prompt,
+                config=types.GenerateContentConfig(temperature=0.0)
+            )
+            
+            decision = ver_res.text.strip().upper()
+            print(f"👉 判定結果: {decision}")
+            if "YES" in decision:
+                print(f"✨ 厳密検証をクリアした競合URL: {cand_url}")
+                return cand_url
+            else:
+                print(f"⚠️ テーマ不一致またはハルシネーションのため棄却しました: {cand_url}")
+                
+        print("⚠️ すべての候補URLが検証をクリアできませんでした。")
+        return ""
     except Exception as e:
-        print(f"❌ Google Search Grounding 実行エラー: {e}")
+        print(f"❌ Google Search Grounding または検証中にエラーが発生しました: {e}")
         return ""
 
 def fetch_knowledge_by_search(keyword: str) -> str:
@@ -496,7 +564,8 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
    - 提供された競合テキスト内にJANコード（13桁または8桁の数字）が記載されている場合は、それを完璧に抽出して `jan_code` に格納してください。
    - 事前知識から該当する商品の正確なJANコードがわかる場合は、必ずそれを調べて補完してください。
    - JANコードがどうしても不明な場合のみ、空文字 `""` にしてください。
-3. **おこげペルソナ・一人称の排除**: 信頼性の高い中立的かつ優しいブランドボイスで、親しみやすくも知的なトーンで記述してください。「おこげ」や「私」などの一人称は使用しないでください。
+3. **根拠なき検証アピールの禁止 (薬機法・景表法対策)**: 導入文（intro）やまとめ文（summary）において、「〇〇商品を徹底検証」「専門機器でのデータ検証」「皮膚科医による共同開発」など、客観的根拠のない嘘の検証アピールは絶対に書かないでください。「編集部が厳選した」「読者に寄り添うおすすめの選択肢」といった、誠実で法律的にも安全なトーンで執筆してください。
+4. **おこげペルソナ・一人称の排除**: 信頼性の高い中立的かつ優しいブランドボイスで、親しみやすくも知的なトーンで記述してください。「おこげ」や「私」などの一人称は使用しないでください。
 
 提供された競合テキスト:
 ---
@@ -605,27 +674,30 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         jan_code = p.get("jan_code", "")
         display_name = truncate_product_name(p_name)
         
-        print(f"🛍️  [{i+1}/6] {p_name} (JAN: {jan_code}) の詳細説明文（1000文字以上）を生成中...")
+        print(f"🛍️  [{i+1}/6] {p_name} (JAN: {jan_code}) の詳細説明文とメリット・デメリットを生成中...")
         
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
 このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
-したがって、以下の【禁止事項】を厳格に守り、純粋な商品解説文のみを執筆してください。
+以下のルールに厳格に従い、高品質で読者に信頼される製品紹介文を執筆してください。
 
-【禁止事項（極めて重要）】
-- **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。「おこげ」「私」といった一人称や個人の体験談を装った記述もすべて禁止です。
-- **記事全体の導入文やまとめ文のような構成は禁止**です。最初から『{p_name}』の具体的な製品特徴や解説に直接入ってください。
-- **個別商品紹介の締めくくりの挨拶や行動喚起は絶対に禁止**です。「ぜひ一度試してみてください」「〜をみっけてみませんか？✨」などの終わりの言葉や、まとめ段落は一切書かないでください。
-- 商品紹介の終わりは、製品の特徴や魅力についての解説の途中で自然に終えてください。
-
-【執筆ルール】
-- 紹介文は必ず**1000文字以上**の圧倒的なボリュームで執筆してください。
-- 特徴、メリット、実際の使用感、類似品との違いなどを多角的に解説してください。
-- 各段落は**1〜2文程度**とし、段落間には空行（\n\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
-- 絵文字は**1商品につき1〜2個まで**に制限してください。過剰な装飾は避けてください。
-- トーンは優しく親しみやすくも、客観的でプロフェッショナルなものにしてください。
-
-【生成用の禁止ワード】
-「マジで」「ヤバい」「神アイテム」「最高」「究極」などの誇張・下品な表現は厳禁です。
+【厳格ルール】
+1. **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。「おこげ」「私」といった一人称や個人の体験談を装った記述もすべて禁止です。
+2. **商品説明の圧縮**: 説明文は**5〜8段落（合計500〜700文字程度）**に凝縮し、余計なコピペ感のあるお決まりの美辞麗句（「肌にのせた瞬間に〜」「未来の肌への投資」など）を完全に排除してください。
+3. **段落分け**: 各段落は**1〜2文程度**とし、段落間には空行（\n\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
+4. **絵文字の制限**: 絵文字は**1商品につき1〜2個まで**に厳しく制限してください。過剰な装飾は避けてください。
+5. **禁止ワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの誇張・下品な表現は厳禁です。
+6. **総合評価スコア**: この商品の総合評価点数として、4.0〜4.9の範囲で客観的な数値を決定し、必ず行頭に `[総合評価: 4.x]` と出力してください。
+7. **メリット・デメリットの追加**: 
+   製品説明の後に、必ずメリットとデメリットのセクションを以下の形式で出力してください。
+   読者から信頼されるために、デメリット（con）は必ず具体的かつ誠実に書いてください。
+   :::pro
+   メリット1つめ（1行で簡潔に）
+   メリット2つめ（1行で簡潔に）
+   :::
+   :::con
+   デメリット1つめ（1行で簡潔に）
+   デメリット2つめ（1行で簡潔に）
+   :::
 
 そのまま記事に挿入できるプレーンテキストとして出力してください（JSONやマークダウンのコードブロックで囲わないでください）。
 """
@@ -637,7 +709,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             config=types.GenerateContentConfig(temperature=0.6)
         )
         
-        desc_text = desc_res.text.strip() if desc_res else "詳細な製品紹介を準備中です。"
+        desc_text = desc_res.text.strip() if desc_res else "[総合評価: 4.2]\n\n詳細な製品紹介を準備中です。"
         desc = clean_variable_names(desc_text)
         
         print(f"🔍 APIで画像と価格を検索中: {p_name} (JAN: {jan_code}) ...")
@@ -650,8 +722,8 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         rakuten_url = api_data["rakuten_url"] or f"https://hb.afl.rakuten.co.jp/hgc/g00rkpmm.xpsekcd1.g00rkpmm.xpsel146/?pc=https://search.rakuten.co.jp/search/mall/{escaped_name}/"
         yahoo_url = api_data["yahoo_url"] or f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fsearch%3Fp%3D{escaped_name}"
         
-        # プレースホルダー残存バグを防ぐため、API取得に失敗した際の価格の初期化は "なし" で統一
-        markdown += f"### 🌸 {display_name}\n"
+        # 👑 第1位: 商品名 の順位ヘッダーを付与
+        markdown += f"### 👑 第{i+1}位: {display_name}\n"
         markdown += f"IMAGE: {api_data['image_url']}\n"
         markdown += f"AMAZON_PRICE: {api_data['amazon_price']}\n"
         markdown += f"RAKUTEN_PRICE: {api_data['rakuten_price']}\n"
@@ -660,7 +732,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         markdown += f"RAKUTEN: {rakuten_url}\n"
         markdown += f"YAHOO: {yahoo_url}\n\n"
         
-        # 説明文
+        # 総合評価スコア、説明文、メリット・デメリットの結合
         formatted_desc = desc.replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
         

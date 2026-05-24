@@ -336,13 +336,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
         yahoo: yahPriceMatch ? yahPriceMatch[1] : undefined,
       };
 
-      s = s.replace(/ASIN:\s*(?:https?:\/\/\S+|[A-Z0-9]{10}|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/RAKUTEN:\s*(?:https?:\/\/[^\s]+|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/YAHOO:\s*(?:https?:\/\/[^\s]+|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/IMAGE:\s*(?:https?:\/\/[^\s]+|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/AMAZON_PRICE:\s*(?:\d+|なし|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/RAKUTEN_PRICE:\s*(?:\d+|なし|価格を見る)[ \t]*\n?/gi, '');
-      s = s.replace(/YAHOO_PRICE:\s*(?:\d+|なし|価格を見る)[ \t]*\n?/gi, '');
+      s = s.replace(/^(?:ASIN|RAKUTEN|YAHOO|IMAGE|AMAZON_PRICE|RAKUTEN_PRICE|YAHOO_PRICE)\s*:.*$/gim, '');
       s = s.replace(/AMAZON_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
       s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 

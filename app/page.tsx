@@ -2,6 +2,13 @@ import React from 'react';
 import Link from 'next/link';
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
 import { AdBanner } from '@/src/components/AdBanner';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+};
 
 export default async function Home() {
   let recentArticles: ArticleItem[] = [];
