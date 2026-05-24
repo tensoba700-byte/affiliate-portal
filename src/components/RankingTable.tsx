@@ -153,10 +153,18 @@ export default function RankingTable({ products, title }: Props) {
       return b.score - a.score;
     }
     if (activeTab === "cospa") {
-      // Logic: Lower (Price / Score) is better
+      // Logic: Lower (Price / Score) is better, skipping non-numeric strings like "なし"
       const getPriceValue = (p: Product) => {
-        const priceStr = p.amazon?.price || p.rakuten?.price || p.yahoo?.price || "0";
-        return parseInt(priceStr.replace(/[^0-9]/g, ""), 10) || 1000000; // default high price if missing
+        const prices = [p.amazon?.price, p.rakuten?.price, p.yahoo?.price];
+        for (const price of prices) {
+          if (!price) continue;
+          const cleaned = price.replace(/[^0-9]/g, "");
+          if (cleaned.length > 0) {
+            const num = parseInt(cleaned, 10);
+            if (num > 0) return num;
+          }
+        }
+        return 1000000; // default high price if no valid numeric price is found
       };
       const valA = getPriceValue(a) / (a.score || 1);
       const valB = getPriceValue(b) / (b.score || 1);
