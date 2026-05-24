@@ -377,17 +377,105 @@ def generate_with_retry(client, model_name, prompt, config=None, max_retries=5, 
             time.sleep(delay)
             delay *= 1.5
 
+def search_competitor_url(keyword: str) -> str:
+    """
+    指定されたキーワードでGoogle検索を行い、最も情報量が豊富で
+    信頼性の高いおすすめ・比較記事（my-best.comなど）のURLを1つ見つけて返します。
+    """
+    if not client:
+        print("❌ GEMINI_API_KEY が設定されていないため、検索を実行できません。")
+        return ""
+
+    print(f"🔍 キーワード 「{keyword}」 に関連する競合比較サイトをGoogle検索中...")
+    prompt = (
+        f"「{keyword} おすすめ 比較」でGoogle検索を行い、最も紹介されている商品数が多くて情報が充実している、"
+        f"信頼できる比較記事・レビューサイト（my-best.comや専門紹介メディアなど）のURLを1つ見つけてください。\n"
+        f"出力は余計な説明や装飾を一切含めず、純粋なURL文字列（例: https://my-best.com/xxx）のみを1行で出力してください。"
+    )
+
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearch())],
+                temperature=0.0
+            )
+        )
+        text = response.text.strip()
+        urls = re.findall(r'https?://[^\s]+', text)
+        if urls:
+            selected_url = urls[0]
+            print(f"✨ 自動選定された競合URL: {selected_url}")
+            return selected_url
+        else:
+            print("⚠️ 検索結果からURLを抽出できませんでした。")
+            return ""
+    except Exception as e:
+        print(f"❌ Google Search Grounding 実行エラー: {e}")
+        return ""
+
+def fetch_knowledge_by_search(keyword: str) -> str:
+    """
+    スクレイピングが失敗した場合に、Google Search Grounding を使って
+    そのキーワードに対する代表的なおすすめ商品6選の情報をGeminiに調査させ、
+    競合サイトの代わりとなるテキストを生成します。
+    """
+    if not client:
+        return ""
+    print(f"💡 スクレイピングの代わりに Google Search Grounding で「{keyword}」のおすすめ商品を直接調査中...")
+    prompt = (
+        f"「{keyword} おすすめ」でGoogle検索を行い、現在日本国内で非常に人気が高く、"
+        f"おすすめされる代表的な商品を6つ特定してください。\n"
+        f"それぞれの商品の名称、メーカー名、主な特徴、および詳細な説明、そして「どんな人におすすめか」の情報を詳細にまとめ、"
+        f"1つのテキストとして出力してください。このテキストは後続の商品特定・記事執筆プロセスで競合サイトのデータとして使用されます。"
+    )
+    try:
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                tools=[types.Tool(google_search=types.GoogleSearch())],
+                temperature=0.2
+            )
+        )
+        return response.text.strip()
+    except Exception as e:
+        print(f"❌ フォールバック調査中にエラーが発生しました: {e}")
+        return ""
+
 # 競合サイトの分析とアフィリエイト記事生成
-def generate_from_competitor(competitor_url: str, default_category: str = "ガジェット"):
+def generate_from_competitor(input_target: str, default_category: str = "ガジェット"):
     if not client:
         print("❌ GEMINI_API_KEY が設定されていません。")
         return False
 
-    print(f"🔍 競合サイトを解析中: {competitor_url}")
-    competitor_text = fetch_url_text(competitor_url)
+    # URLかキーワードかを判別
+    is_input_url = input_target.startswith("http://") or input_target.startswith("https://")
     
+    competitor_url = ""
+    keyword = ""
+    competitor_text = ""
+    
+    if is_input_url:
+        competitor_url = input_target
+        print(f"🔍 競合サイトを直接解析中: {competitor_url}")
+        competitor_text = fetch_url_text(competitor_url)
+    else:
+        keyword = input_target
+        print(f"🔑 検索キーワードを受信: 「{keyword}」")
+        # Google検索で競合URLを探索
+        competitor_url = search_competitor_url(keyword)
+        
+        if competitor_url:
+            competitor_text = fetch_url_text(competitor_url)
+            
+        if not competitor_text:
+            print("⚠️  選定した競合URLからのスクレイピングに失敗しました。フォールバック調査を実行します。")
+            competitor_text = fetch_knowledge_by_search(keyword)
+
     if not competitor_text:
-        print("❌ 競合サイトからテキスト情報を抽出できませんでした。サンプルデータを使用します。")
+        print("❌ 競合サイトの解析および検索調査のすべてに失敗しました。サンプルデータを使用します。")
         competitor_text = "【デスクツアー】在宅ワークが劇的に快適になる！おすすめの便利ガジェット6選をご紹介します。1. エルゴトロン LX モニターアーム（ディスプレイを浮かせてデスク広々） 2. BenQ ScreenBar Halo（目に優しいモニターライト） 3. HHKB Professional HYBRID Type-S（最高の打鍵感のキーボード） 4. Logicool MX Master 3S（多機能・静音マウス） 5. 山善 電動昇降デスク（姿勢改善・健康） 6. Anker 737 Charger（超急速充電）"
 
     rules_text = load_generation_rules()
@@ -604,11 +692,11 @@ def generate_from_competitor(competitor_url: str, default_category: str = "ガ�
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("使用法: python3 scripts/generate_from_competitor.py [競合サイトのURL]")
+        print("使用法: python3 scripts/generate_from_competitor.py [競合サイトのURL または 検索キーワード]")
         sys.exit(1)
         
-    url = sys.argv[1]
-    slug = generate_from_competitor(url)
+    target = sys.argv[1]
+    slug = generate_from_competitor(target)
     if slug:
         print(f"\n🎉 成功！新しい記事が作成されました：\n/articles/{slug}")
     else:
