@@ -257,11 +257,19 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     return path
 
 def generate_with_retry(client, model_name, prompt, config=None, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            return client.models.generate_content(model=model_name, contents=prompt, config=config)
-        except Exception:
-            time.sleep(15)
+    models_to_try = [model_name]
+    if model_name == 'gemini-2.5-flash':
+        models_to_try.append('gemini-2.5-flash-lite')
+        
+    for current_model in models_to_try:
+        for attempt in range(max_retries):
+            try:
+                res = client.models.generate_content(model=current_model, contents=prompt, config=config)
+                if res and res.text:
+                    return res
+            except Exception as e:
+                print(f"   ⚠️ Gemini API Error with {current_model} (attempt {attempt+1}/{max_retries}): {e}")
+                time.sleep(15)
     return None
 
 def search_competitor_url(keyword: str) -> str:
@@ -285,14 +293,18 @@ def search_competitor_url(keyword: str) -> str:
     )
 
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
+        response = generate_with_retry(
+            client,
+            'gemini-2.5-flash',
+            prompt,
             config=types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())],
                 temperature=0.0
             )
         )
+        if not response or not response.text:
+            print("⚠️ 検索結果から候補URLを抽出できませんでした。")
+            return ""
         text = response.text.strip()
         print(f"🔍 検索 Grounding の生応答:\n{text}\n")
         
@@ -328,9 +340,10 @@ def search_competitor_url(keyword: str) -> str:
                 f"余計な理由は一切含めず、「YES」または「NO」のいずれか1文字のみを出力してください。"
             )
             
-            ver_res = client.models.generate_content(
-                model='gemini-2.5-flash',
-                contents=verification_prompt,
+            ver_res = generate_with_retry(
+                client,
+                'gemini-2.5-flash',
+                verification_prompt,
                 config=types.GenerateContentConfig(temperature=0.0)
             )
             
@@ -364,15 +377,16 @@ def fetch_knowledge_by_search(keyword: str) -> str:
         f"1つのテキストとして出力してください。このテキスト is 後続の商品特定・記事執筆プロセスで競合サイトのデータとして使用されます。"
     )
     try:
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            contents=prompt,
+        response = generate_with_retry(
+            client,
+            'gemini-2.5-flash',
+            prompt,
             config=types.GenerateContentConfig(
                 tools=[types.Tool(google_search=types.GoogleSearch())],
                 temperature=0.2
             )
         )
-        return response.text.strip()
+        return response.text.strip() if response else ""
     except Exception as e:
         print(f"❌ フォールバック調査中にエラーが発生しました: {e}")
         return ""
