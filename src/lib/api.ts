@@ -165,7 +165,7 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
     markdownArticles = fileNames
       .filter((fn) => fn.endsWith('.md') && fn !== 'GENERATION_RULES.md')
       .map((fn) => {
-        const slug = fn.replace(/\.md$/, '');
+        const slug = fn.replace(/\.md$/, '').normalize('NFC');
         const fullPath = path.join(articlesDirectory, fn);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const matterResult = matter(fileContents);
