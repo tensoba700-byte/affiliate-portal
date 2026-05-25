@@ -231,6 +231,49 @@ def fetch_product_details(query: str, jan_code: str = ""):
                         break
             except Exception: continue
 
+    # 2.5 Rakuten & Yahoo Scraping Fallbacks (if API results are missing or fail)
+    browser_h = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
+    
+    if not details["rakuten_url"]:
+        for q in search_queries:
+            try:
+                search_url = f"https://search.rakuten.co.jp/search/mall/{urllib.parse.quote(q)}/"
+                res = requests.get(search_url, headers=browser_h, timeout=10)
+                if res.status_code == 200:
+                    match = re.search(r'https?://item\.rakuten\.co\.jp/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+', res.text)
+                    if match:
+                        direct_url = match.group(0)
+                        if rakuten_affiliate_id:
+                            details["rakuten_url"] = f"https://hb.afl.rakuten.co.jp/hgc/{rakuten_affiliate_id}/?pc={urllib.parse.quote(direct_url)}"
+                        else:
+                            details["rakuten_url"] = direct_url
+                        details["rakuten_price"] = "価格を見る"
+                        
+                        # Extract image url if possible from Rakuten search page
+                        img_match = re.search(r'https?://thumbnail\.image\.rakuten\.co\.jp/[^"\'\s>]+', res.text)
+                        if img_match and not details["image_url"]:
+                            details["image_url"] = img_match.group(0)
+                        break
+            except Exception: continue
+
+    if not details["yahoo_url"]:
+        for q in search_queries:
+            try:
+                search_url = f"https://shopping.yahoo.co.jp/search?p={urllib.parse.quote(q)}"
+                res = requests.get(search_url, headers=browser_h, timeout=10)
+                if res.status_code == 200:
+                    match = re.search(r'https?://store\.shopping\.yahoo\.co\.jp/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+\.html', res.text)
+                    if match:
+                        details["yahoo_url"] = match.group(0)
+                        details["yahoo_price"] = "価格を見る"
+                        
+                        # Extract image url if possible from Yahoo search page
+                        img_match = re.search(r'https?://item-shopping\.c\.yimg\.jp/i/l/[^"\'\s>]+', res.text)
+                        if img_match and not details["image_url"]:
+                            details["image_url"] = img_match.group(0)
+                        break
+            except Exception: continue
+
     # 3. Amazon ASIN Scraping
     browser_h = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
     amazon_tag = os.getenv("AMAZON_ASSOCIATE_TAG", "mikkestyle-22")
@@ -619,14 +662,29 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         # 順位に応じたスコアの決定 (1位は4.8〜4.9、最下位は4.3〜4.4のように綺麗に分散させる)
         assigned_score = round(4.95 - (valid_products_count * 0.1), 2)
         
+        # 競合テキストから該当商品に関連する部分を抽出
+        relevant_context = ""
+        normalized_p_name = p_name.lower().replace(" ", "").replace("｜", "")
+        # シンプルに商品名の一部がマッチする部分を探すか、見つからない場合は前半を使用
+        for line in competitor_text.split("\n"):
+            clean_line = line.lower().replace(" ", "").replace("｜", "")
+            if any(part in clean_line for part in normalized_p_name.split() if len(part) > 2):
+                relevant_context += line + "\n"
+        if len(relevant_context) < 300:
+            relevant_context = competitor_text[:12000]
+            
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
 このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
-以下のルールに厳格に従い、高品質で読者に信頼される製品紹介文を執筆してください。
+提供された【商品背景情報】およびGoogle検索によるリアルタイム情報に基づき、製品の正確な機能や仕様（例：ベビーカーであれば、折りたたみやすさ、重さ、対象月齢、走行性など）を記述し、高品質で読者に信頼される製品紹介文を執筆してください。
+絶対に別の種類の商品（例：自動調理器やハイチェアなど）と誤解して説明しないでください。この商品は「{category}」カテゴリの商品です。
+
+【商品背景情報】
+{relevant_context[:5000]}
 
 【厳格ルール】
 1. **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。「おこげ」「私」といった一人称や個人の体験談を装った記述もすべて禁止です。
 2. **商品説明の圧縮**: 説明文は**5〜8段落（合計500〜700文字程度）**に凝縮し、余計なコピペ感のあるお決まりの美辞麗句（「肌にのせた瞬間に〜」「未来の肌への投資」など）を完全に排除してください。
-3. **段落分け**: 各段落は**1〜2文程度**とし、段落間には空行（\n\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
+3. **段落分け**: 各段落は**1〜2文程度**とし、段落間には空行（\\n\\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
 4. **絵文字の制限**: 絵文字は**1商品につき1〜2個まで**に厳しく制限してください。過剰な装飾は避けてください。
 5. **禁止ワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの誇張・下品な表現は厳禁です。
 6. **総合評価スコア**: この商品の総合評価点数として、必ず `{assigned_score}` を使用し、行頭に必ず `[総合評価: {assigned_score}]` と出力してください。
@@ -649,7 +707,10 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             client,
             'gemini-2.5-flash',
             desc_prompt,
-            config=types.GenerateContentConfig(temperature=0.6)
+            config=types.GenerateContentConfig(
+                temperature=0.3,
+                tools=[types.Tool(google_search=types.GoogleSearch())]
+            )
         )
         
         desc_text = desc_res.text.strip() if desc_res else f"[総合評価: {assigned_score}]\n\n詳細な製品紹介を準備中です。"
