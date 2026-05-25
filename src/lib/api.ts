@@ -249,8 +249,9 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
 /** Get related articles by category (excluding current slug) */
 export async function getRelatedArticles(currentSlug: string, category: string, limit = 3): Promise<ArticleItem[]> {
   const allArticles = await getAllArticles();
+  const targetNFC = decodeURIComponent(currentSlug).normalize('NFC');
   return allArticles
-    .filter(a => a.slug !== currentSlug && a.category === category)
+    .filter(a => a.slug.normalize('NFC') !== targetNFC && a.category === category)
     .slice(0, limit);
 }
 

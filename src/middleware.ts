@@ -38,6 +38,18 @@ export function middleware(request: NextRequest) {
     );
   }
 
+  // 3. 旧日本語スマートウォッチ記事から新英数字スラッグ記事への 301 リダイレクト
+  const oldWatchSlug = '20260525-腕に未来の健康を灯す2026年最新スマートウォッチ徹底比較';
+  if (
+    decodedPathname.includes(oldWatchSlug) ||
+    pathname.includes(encodeURIComponent(oldWatchSlug))
+  ) {
+    return NextResponse.redirect(
+      new URL('/articles/20260525-smartwatch-comparison', 'https://www.mikke-style.com'),
+      301
+    );
+  }
+
   return NextResponse.next();
 }
 

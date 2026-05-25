@@ -101,11 +101,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             {article.category && (
               <>
                 <span className="text-primary/30" aria-hidden="true">&gt;</span>
-                <Link href={`/search?category=${encodeURIComponent(article.category)}`} className="hover:text-primary transition-colors">{article.category}</Link>
+                <span className="text-foreground" aria-current="page">{article.category}</span>
               </>
             )}
-            <span className="text-primary/30" aria-hidden="true">&gt;</span>
-            <span className="text-foreground truncate max-w-[150px]" aria-current="page">{article.title}</span>
           </nav>
           
           {/* 🌸 Cute Article Hero */}
@@ -113,7 +111,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] pointer-events-none"></div>
             
             <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black mb-6">
-              Review
+              レビュー
             </div>
             
             <h1 className="article-title text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-2 text-foreground">

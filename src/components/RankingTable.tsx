@@ -150,7 +150,7 @@ export default function RankingTable({ products, title }: Props) {
   // Sorting logic based on activeTab
   const sortedProducts = [...products].sort((a, b) => {
     if (activeTab === "recommend") {
-      return b.score - a.score;
+      return a.rank - b.rank; // Original rank
     }
     if (activeTab === "cospa") {
       // Logic: Lower (Price / Score) is better, skipping non-numeric strings like "なし"

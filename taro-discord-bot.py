@@ -302,9 +302,10 @@ async def on_ready():
 
     # ローカル環境の場合のみ、22:00 のローカルスケジューラーを回す
     # (Renderリモート上では GitHub Actions があるためスキップ)
-    if not os.getenv("GITHUB_TOKEN"):
-        scheduler_thread = threading.Thread(target=_run_scheduler, daemon=True)
-        scheduler_thread.start()
+    # ※自動投稿停止のため、現在は無効化しています。
+    # if not os.getenv("GITHUB_TOKEN"):
+    #     scheduler_thread = threading.Thread(target=_run_scheduler, daemon=True)
+    #     scheduler_thread.start()
 
 
 @client.event

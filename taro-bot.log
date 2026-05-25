@@ -140,3 +140,27 @@ See README for more details:
 https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
 
   import google.generativeai as genai
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/api_core/_python_version_support.py:234: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/lib/python3.9/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/taro-discord-bot.py:9: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[2026-05-25 07:44:35] [INFO    ] discord.client: logging in using static token
+ダミーHTTPサーバー起動完了: ポート 10000
+[2026-05-25 07:44:36] [INFO    ] discord.gateway: Shard ID None has connected to Gateway (Session ID: 5600bf533a0f85a13fbe9bb2bfe2248e).
+たろさん専用Bot起動: アンチグラビティ#0568 (ID: 1499224759840538624)
+許可ユーザーID: 1094266902299283549
+スケジューラー起動: 毎日 22:00 にNotionの処理と自動記事作成を自動実行します。
+[Ping] RENDER_EXTERNAL_URL が未設定のため、セルフPingをスキップします。
