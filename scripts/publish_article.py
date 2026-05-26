@@ -137,19 +137,42 @@ def get_seasonal_catch_copy(category: str) -> str:
     return random.choice(choices)
 
 def format_eyecatch_title(title: str) -> str:
-    # Insert a <br /> tag at a natural break point if the title is long
-    if len(title) <= 11: return title
-    
-    # Preferred breaking points (particles and punctuation)
+    """
+    アイキャッチ用タイトルを3行に整形する。
+    対象形式: [情緒]。【[機能的説明][商品カテゴリ][N]選】
+    出力:
+      Line1: [情緒]         （句点なし）
+      Line2: [機能的説明]   （括弧なし）
+      Line3: 【[カテゴリN選]】 （3行目だけ括弧）
+    """
+    import re
+    # メインパターン: 情緒。【機能説明 + 商品N選】
+    m = re.match(r'^(.+?)。【(.+?)(\d+選)】$', title)
+    if m:
+        emotional   = m.group(1)  # 例: 髪に、潤いと輝きを
+        description = m.group(2)  # 例: 傷んだ髪を補修する市販シャンプー
+        count_part  = m.group(3)  # 例: 6選
+        # ひらがな末尾 → 漢字/カタカナ先頭の境界で分割
+        split_m = re.search(
+            r'^(.*[\u3041-\u3096])([\u4e00-\u9fff\u30a0-\u30ff].+)$',
+            description
+        )
+        if split_m:
+            line2 = split_m.group(1)  # 傷んだ髪を補修する
+            line3 = f'【{split_m.group(2)}{count_part}】'  # 【市販シャンプー6選】
+        else:
+            line2 = description
+            line3 = f'【{count_part}】'
+        return f'{emotional}<br />{line2}<br />{line3}'
+    # フォールバック: パターンに合わない場合は中間で１回改行
+    if len(title) <= 11:
+        return title
     separators = ["の", "で", "に", "は", "が", "を", "！", "？", "：", "、", " ", "　"]
-    # Look for a separator near the middle of the string (±3 chars)
     mid = len(title) // 2
     for offset in [0, 1, -1, 2, -2, 3, -3]:
         idx = mid + offset
         if 0 < idx < len(title) - 1 and title[idx] in separators:
             return title[:idx+1] + "<br />" + title[idx+1:]
-    
-    # Fallback: break at the midpoint
     return title[:mid] + "<br />" + title[mid:]
 
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
@@ -168,7 +191,8 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     
     # Format title with line breaks and adjust size for long text
     display_title = format_eyecatch_title(title)
-    font_size = "110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "75px"
+    line_count = display_title.count("<br />") + 1
+    font_size = "85px" if line_count >= 3 else ("110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "85px")
     
     css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
@@ -178,7 +202,7 @@ body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items
 .pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
 .pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
 .to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
-.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.25; text-align: center; padding: 0 60px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; word-break: keep-all; }}
+.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.3; text-align: center; width: 100%; padding: 0 60px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; word-break: keep-all; }}
 """
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
