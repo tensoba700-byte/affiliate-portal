@@ -238,7 +238,14 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
     }
   }
 
-  return allArticles.sort((a, b) => {
+  // JST基準の今日の日付を取得（予約投稿の判定用）
+  const todayStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const publishedArticles = allArticles.filter(a => {
+    if (!a.publishedAt) return true;
+    return a.publishedAt <= todayStr;
+  });
+
+  return publishedArticles.sort((a, b) => {
     if (a.publishedAt && b.publishedAt) {
       return a.publishedAt < b.publishedAt ? 1 : -1;
     }
