@@ -1,13 +1,16 @@
-import { getArticleBySlug } from './src/lib/api';
+import { getAllArticles } from './src/lib/api';
 
 async function main() {
   try {
-    console.log("Starting parse test...");
-    const article = await getArticleBySlug("20260523-2026年最新日焼け止めおすすめ人気ランキング絶対に焼かない");
-    console.log("Success! Title:", article?.title);
-    console.log("Rankings count:", article?.rankings.length);
+    console.log("Fetching all articles...");
+    const articles = await getAllArticles();
+    console.log(`Fetched ${articles.length} articles.`);
+    for (let i = 0; i < Math.min(10, articles.length); i++) {
+      const a = articles[i];
+      console.log(`[${i}] Title: "${a.title}" | Slug: "${a.slug}" | PublishedAt: "${a.publishedAt}"`);
+    }
   } catch (err) {
-    console.error("CRASHED during parsing:", err);
+    console.error("CRASHED:", err);
   }
 }
 

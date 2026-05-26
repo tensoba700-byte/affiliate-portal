@@ -58,37 +58,7 @@ def slugify(text: str) -> str:
 
 def get_dispersed_publish_date() -> str:
     jst = datetime.timezone(datetime.timedelta(hours=9))
-    today = datetime.datetime.now(jst).date()
-    
-    articles_dir = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "src", "content", "articles"
-    )
-    if not os.path.exists(articles_dir):
-        return today.strftime("%Y-%m-%d")
-        
-    latest_date = today
-    for fn in os.listdir(articles_dir):
-        if not fn.endswith(".md") or fn == "GENERATION_RULES.md":
-            continue
-        try:
-            with open(os.path.join(articles_dir, fn), 'r', encoding='utf-8') as f:
-                content = f.read()
-                m = re.search(r'publishDate:\s*["\']?(\d{4}-\d{2}-\d{2})["\']?', content)
-                if m:
-                    p_date = datetime.datetime.strptime(m.group(1), "%Y-%m-%d").date()
-                    if p_date > latest_date:
-                        latest_date = p_date
-        except Exception:
-            pass
-            
-    # If the latest article in the repo is already today or in the future, we schedule it for the day after that!
-    if latest_date >= today:
-        target_date = latest_date + datetime.timedelta(days=1)
-    else:
-        target_date = today
-        
-    return target_date.strftime("%Y-%m-%d")
+    return datetime.datetime.now(jst).strftime("%Y-%m-%d")
 
 def is_valid_product_details(details) -> bool:
     # Amazon check: must be a product page
