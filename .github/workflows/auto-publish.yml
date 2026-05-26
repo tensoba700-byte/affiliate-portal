@@ -47,12 +47,24 @@ jobs:
           echo "NOTION_API_KEY=${{ secrets.NOTION_API_KEY }}" > .env.local
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env.local
           echo "NOTION_DATABASE_ID=${{ secrets.NOTION_DATABASE_ID }}" >> .env.local
-          python scripts/auto_publish_batch.py
+          
+          # 1. まず Notion 競合記事キューから「未処理」のものがあるか探し、処理を試みる
+          python scripts/process_competitor_queue.py
+          EXIT_CODE=$?
+          
+          # 2. 終了コードが 2（キューが空、またはデータベース未設定）の場合は、フォールバックとして従来のバッチスクリプトを走らせる
+          if [ $EXIT_CODE -eq 2 ]; then
+            echo "💡 Notion queue is empty or database not found. Falling back to default batch article generation..."
+            python scripts/auto_publish_batch.py
+          elif [ $EXIT_CODE -ne 0 ]; then
+            echo "❌ Notion queue process failed with exit code $EXIT_CODE."
+            exit $EXIT_CODE
+          fi
 
       - name: Commit and push changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add src/content/articles public/eyecatch
+          git add src/content/articles public/eyecatch public/sitemap.xml public/sitemap-0.xml
           git diff --staged --quiet || git commit -m "chore: auto-publish article [skip ci]"
           git push origin main || echo "No changes to push"
