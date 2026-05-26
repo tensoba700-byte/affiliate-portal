@@ -34,7 +34,7 @@ def update_page_status(headers, page_id, status_name):
     payload = {
         "properties": {
             "Status": {
-                "select": {"name": status_name}
+                "status": {"name": status_name}
             }
         }
     }
@@ -79,7 +79,7 @@ def main():
     payload = {
         "filter": {
             "property": "Status",
-            "select": {"equals": "未処理"}
+            "status": {"equals": "未処理"}
         },
         "sorts": [
             {
