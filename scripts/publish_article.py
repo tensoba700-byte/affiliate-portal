@@ -255,6 +255,7 @@ def generate_content_with_llm(products_data, article_title):
 {rules_section}
 
 【厳守事項】
+0. **本記事は【🌸 A. 並列（Parallel）モード】で作成します。**
 1. **ランキング形式の禁止**: 全ての商品を「おすすめの選択肢」として並列に扱ってください。順位や「第○位」という表現は一切使わないでください。
 2. **NGワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの煽り文句や、過剰な強調表現は使用禁止です。
 3. **一人称の禁止**: 「おこげ」「私」といった一人称や個人の体験談を装った記述は全て削除してください。
@@ -352,9 +353,15 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"
         
+        # ★商品画像・アフィリエイト定義の直後（購入ボタンの1セットめ）
+        markdown += f"\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+
         # 説明文のフォーマット（1000文字以上）
         formatted_desc = p['description'].replace('\\n', '\n\n')
-        markdown += f"\n{formatted_desc}\n\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+        markdown += f"{formatted_desc}\n\n"
+        
+        # ★説明文の下（購入ボタンの2セットめ）
+        markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
         
         # 「こんな人におすすめ！」箇条書きの追加
         markdown += f"👤 **こんな人におすすめ！**\n"

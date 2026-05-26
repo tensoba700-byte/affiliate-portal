@@ -1,68 +1,95 @@
-# Notion Content Generation Rules
+# 📑 みっけ！記事生成・コンテンツ共通ルール
 
-This document outlines the rules for automated content generation and database management for the "Mikke!" affiliate portal.
-
-## Database Management
-
-### Publication Workflow
-1. **Article Identification**: Articles are identified in Notion's "みっけ！記事管理" database by their **記事タイトル** (Article Title).
-2. **Generation & Deployment**: Once an article is processed and pushed to GitHub:
-   - The markdown file is saved to `src/content/articles/`.
-   - The eyecatch image is saved to `public/eyecatch/`.
-
-## Article Planning & Creation Workflow
-
-### 1. Trend Analysis
-- Identify current trends before deciding on a theme.
-
-### 2. Determine Theme & Target
-- Decide on a specific theme and target audience.
-- *Example*: 「忙しいママ向け時短家電」, 「一人暮らし向けガジェット」.
-
-### 3. Product Research & Verification
-- Research 5-7 products that fit the chosen theme.
-- **Accurate Naming**: Write the name precisely as `[Manufacturer] [Product Name] [Model Number]`.
-
-## Article Content & Style Rules (Updated 2026-05-17)
-
-### 1. Writing Style (Brand Voice)
-- **Format**: **Parallel Selection** (Parallel list). **DO NOT use rankings** or "1st Place", "2nd Place", etc.
-- **Product Count**: **Exactly 6 items**. (商品数は必ず**6個**に固定してください。)
-- **Tone**: Professional yet friendly. Neutral and reliable.
-- **Persona**: NO persona (remove "Okoge"). No first-person experience or anecdotes.
-- **Language Constraints**:
-    - **Forbidden Words**: 「マジで」, 「ヤバい」, 「神アイテム」, 「最高」, 「究極」, etc.
-    - **Emojification**: Limit emoji usage to **1-2 emojis per product** across headings and description. Do not over-decorate.
-- **Product Descriptions**:
-    - **Length**: **1000+ characters** per product. Describe features, usability, and benefits in detail.
-    - **Paragraph Breaks**: Divide the description into paragraphs of **1-2 sentences each**, keeping them extremely short and inserting a blank line (`\n\n`) between them for maximum mobile readability.
-    - **Recommended for**: Provide a 3-point bulleted list of why this product is recommended for specific users.
-
-### 2. Layout & Formatting
-- **PR Disclosure**: Include a PR disclosure (`<p class="pr-disclosure">※本記事はアフィリエイト広告を含みます。</p>`) at the **very bottom of the summary section** (## 💬 まとめ), NOT at the top.
-- **Headings**: Use `### 🌸 [Product Name]` format for product sections.
-- **Buttons**: Use the following button text:
-    - `Amazonで価格を見る`
-    - `楽天市場で価格を見る`
-    - `Yahoo!で価格を見る`
-- **Exclusions**:
-    - NO star ratings.
-    - NO comparison tables.
-    - NO pros/cons boxes.
-
-### 3. Eyecatch Design Rules
-- **Canvas Size**: 1200 x 630 px.
-- **Background**: Solid White.
-- **Layout**: Grid-based arrangement of product images.
-- **Typography**: Large, centered title with 65% opacity white box.
-
-### 4. Affiliate Links
-- 記事生成時にAmazon・楽天・YahooのURLは必ずNotionから読み取った値をそのまま使って。
-- 絶対に自分でURLを生成・変更しない。
-- Notionの値：
-    - Amazon Affiliate URL → そのままAmazonボタンのリンクに使う
-    - Rakuten Affiliate URL → そのまま楽天ボタンのリンクに使う
-    - Yahoo Affiliate URL → そのままYahooボタンのリンクに使う
+本ドキュメントは、「みっけ！」アフィリエイトポータルにおける記事生成・コンテンツ管理・アイキャッチ画像デザインの【唯一無二の絶対ルール】です。
+Discordボット、GitHub Actions、AIアシスタントのすべての生成システムは、必ず本ルールを厳格に遵守して動作してください。
 
 ---
-*Updated on 2026-05-01*
+
+## 1. 🚯 共通・絶対禁止ルール (すべてのモードで共通)
+
+### 🚯 禁止ワード（1つでも含んだら即不合格）
+* **誇張・煽り表現**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」「劇的」「激変」「驚き」「絶対」「最強」「殿堂入り」
+* **一人称・個人体験の装い**: 「おこげ」「私」「僕」「筆者」などの一人称、および個人の体験談を装った記述はすべて禁止です。
+* **根拠なき検証アピール**: 「専門機器で徹底検証」「皮膚科医との共同開発」など、客観的根拠のない嘘の検証アピールは薬機法・景表法対策のため絶対に書かないでください。「編集部が厳選した」「読者に寄り添うおすすめの選択肢」といった誠実なトーンに統一してください。
+
+### 🚯 装飾・レイアウトの禁止事項
+* **過剰な絵文字**: 絵文字は**1商品につき1〜2個まで**に厳しく制限してください（見出し・本文含む）。
+* **無断な変数名の出力**: 本文中に `YAHOO_PRICE`・`RAKUTEN_PRICE`・`AMAZON_PRICE`・`YAHOO` などの内部的な変数名やプレースホルダーをそのまま露出させないでください。
+
+---
+
+## 2. ✍️ 記事の本文執筆ルール (すべてのモードで共通)
+
+### 📝 本文のライティングスタイル
+* **トーン＆マナー**: 知的でありながら優しく、読者に寄り添うニュートラルで信頼性の高いブランドボイス。
+* **商品説明の文量**: 各商品の紹介文（description）は、**必ず1000文字以上**で詳細に記述してください。特徴、使用感、他製品と比較したメリットを極めて詳細に記述し、コピペ感のないリッチなコンテンツに仕上げてください。
+* **スマホ向け段落分け**: スマホでの読みやすさを最優先し、各段落は**1〜2文程度（極めて短く）**で区切り、段落間には必ず**空行（\n\n）**を挿入してください。
+* **おすすめターゲットの提示**: 各商品の最後に、推奨する読者層を以下の形式で**3つの箇条書き**で作成してください。
+  ```markdown
+  👤 **こんな人におすすめ！**
+  - [具体的なおすすめ理由・ターゲット1]
+  - [具体的なおすすめ理由・ターゲット2]
+  - [具体的なおすすめ理由・ターゲット3]
+  ```
+
+### 📢 PR開示 (PR Disclosure)
+* 読者の信頼を確保するため、**「## 💬 まとめ」セクションの最後（一番下）** に必ず以下のPR開示テキストを1回だけ配置してください。
+  ```html
+  <p class="pr-disclosure">※本記事はアフィリエイト広告を含みます。</p>
+  ```
+
+---
+
+## 3. 🔄 モード別・見出しと構成ルール (並列 vs ランキング)
+
+生成指示に応じて、以下の2つのモードのいずれかを選択・切り替えて執筆します。
+
+### 🌸 A. 並列（Parallel）モード
+主に「トレンド分析からの自動バッチ投稿」で使用します。すべての商品を「おすすめの選択肢」としてフラットに紹介します。
+* **見出し形式**: `### 🌸 [商品名]`
+* **順位・スコアの排除**: 順位（第◯位）や、星評価、総合点数（`[総合評価: X.XX]`）は**絶対に記述しないでください**。
+* **Pros/Consの排除**: メリット・デメリットボックス（`:::pro` / `:::con`）は**使用しないでください**。
+
+### 👑 B. ランキング（Ranking）モード
+主に「競合サイト（my-best等）からの解析生成」で使用します。競合の検証要素を反映したリッチな比較構成にします。
+* **見出し形式**: `### 👑 第◯位: [商品名]`
+* **総合評価スコアの付与**: 商品ごとに、割り当てられた点数を以下の形式で行頭に必ず出力してください（1位は4.8〜4.9、最下位は4.3〜4.4のように綺麗に分散させること）。
+  ```markdown
+  [総合評価: 4.85]
+  ```
+* **メリット・デメリット（Pros/Cons）ボックスの付与**: 商品紹介の最後に、以下の形式でメリットとデメリットを記述してください。
+  * ※注意: デメリット（con）に「高価」「高い」「価格がネック」「費用がかかる」などの**価格に関する否定表現は絶対に書かないでください**。代わりに機能面・仕様面での具体的な懸念点（例：『防水性能が生活防水レベル』『設定にスマートフォンが必須』など）を書いてください。
+  ```markdown
+  :::pro
+  メリット1つめ（1行で簡潔に）
+  メリット2つめ（1行で簡潔に）
+  :::
+  :::con
+  デメリット1つめ（1行で簡潔に）
+  デメリット2つめ（1行で簡潔に）
+  :::
+  ```
+
+---
+
+## 4. 🎨 アイキャッチ画像・共通デザインルール
+
+すべての記事のアイキャッチ画像は、ブランドイメージ統一のため、以下の仕様で Puppeteer 撮影用のHTMLファイルを生成してください。
+
+* **画面サイズ**: 1200 x 630 px （横長）
+* **背景**: ソリッドホワイト（Solid White、`#ffffff`）
+* **レイアウト**: 紹介する6つの製品画像を3列×2行のグリッドで美しく等間隔に配置。
+  * 画像には `mix-blend-mode: multiply` を適用し、背景の白と綺麗に同化させる。
+  * 画像が6枚に満たない場合でも、空のグリッドプレースホルダーを置いて3x2の美しさを維持する。
+* **Typography (文字デザイン)**:
+  * フォント: Google Fonts の **`M PLUS Rounded 1c`** (Weight 800/900) を使用。
+  * 中央に大きく配置されたメインタイトル（フォントサイズ: 75px〜110pxで文字数に応じ自動調整）。
+  * タイトル文字の背後に、可読性を高めるため強力な白いテキストシャドウを適用（`text-shadow: 0 0 20px #fff, ...`）。
+  * 長いタイトルは自然な品詞の区切り（「の」「で」「に」など）で改行（`<br />`）を挿入する。
+
+---
+
+## 5. 🔗 アフィリエイトリンクの厳格ルール
+
+* Amazon・楽天・Yahoo!ショッピングのURLは、必ずNotionから読み取った（またはAPI検索で取得した）アフィリエイトURLをそのままボタンリンクに使用してください。
+* AIが勝手に自分の知識でアフィリエイトID（`tag=...`等）をでっち上げたり、変更したりすることは絶対に禁止です。

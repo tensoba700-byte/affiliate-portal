@@ -288,10 +288,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     let content = matterResult.content;
 
     // Custom markdown transformations (pro/con boxes, rating, affiliate buttons)
-    content = content.replace(/:::pro\n([\s\S]*?)\n:::/g,
+    content = content.replace(/:::pro\r?\n([\s\S]*?)\r?\n:::/g,
       '<div class="pro-box"><div class="pro-title">✅ メリット</div>$1</div>');
-    content = content.replace(/:::con\n([\s\S]*?)\n:::/g,
-      '<div class="con-box"><div class="pro-title">⚠️ デメリット</div>$1</div>');
+    content = content.replace(/:::con\r?\n([\s\S]*?)\r?\n:::/g,
+      '<div class="con-box"><div class="con-title">⚠️ デメリット</div>$1</div>');
 
     const ICON = (src: string, alt: string) => `<span class="btn-icon"><img src="${src}" alt="${alt}" width="16" height="16" /></span>`;
 
@@ -348,7 +348,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
       const hasPlaceholder = /\[(AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/i.test(s);
       if (hasPlaceholder) {
-        s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\](?:\s*\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\])*/i, DYNAMIC_BUTTONS);
+        s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\](?:\s*\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\])*/gi, DYNAMIC_BUTTONS);
         s = s.replace(/\[(?:AMAZON|RAKUTEN|YAHOO|AFFILIATE)_LINK_HERE\]/gi, '');
       }
       s = s.replace(/(?<!["'])https?:\/\/(?![^<>]*["'])[^\s<)\]]+/gi, '');

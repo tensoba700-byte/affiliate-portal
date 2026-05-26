@@ -248,14 +248,9 @@ def fetch_product_details(query: str, jan_code: str = ""):
                         else:
                             details["rakuten_url"] = direct_url
                         details["rakuten_price"] = "価格を見る"
-                        
-                        # Extract image url if possible from Rakuten search page
-                        img_match = re.search(r'https?://thumbnail\.image\.rakuten\.co\.jp/[^"\'\s>]+', res.text)
-                        if img_match and not details["image_url"]:
-                            details["image_url"] = img_match.group(0)
                         break
             except Exception: continue
-
+            
     if not details["yahoo_url"]:
         for q in search_queries:
             try:
@@ -264,29 +259,27 @@ def fetch_product_details(query: str, jan_code: str = ""):
                 if res.status_code == 200:
                     match = re.search(r'https?://store\.shopping\.yahoo\.co\.jp/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+\.html', res.text)
                     if match:
-                        details["yahoo_url"] = match.group(0)
+                        direct_url = match.group(0)
+                        details["yahoo_url"] = direct_url
                         details["yahoo_price"] = "価格を見る"
-                        
-                        # Extract image url if possible from Yahoo search page
-                        img_match = re.search(r'https?://item-shopping\.c\.yimg\.jp/i/l/[^"\'\s>]+', res.text)
-                        if img_match and not details["image_url"]:
-                            details["image_url"] = img_match.group(0)
                         break
             except Exception: continue
 
-    # 3. Amazon ASIN Scraping
-    browser_h = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
-    amazon_tag = os.getenv("AMAZON_ASSOCIATE_TAG", "mikkestyle-22")
+    # 3. Amazon Product Search (via scraping & parsing for real links)
     for q in search_queries:
         try:
-            res = requests.get(f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}", headers=browser_h, timeout=15)
-            for m in re.finditer(r'data-asin="([A-Z0-9]{10})"', res.text):
-                asin = m.group(1)
-                block = res.text[m.start():m.start() + 3000]
-                if not any(x in block.lower() for x in ["sponsored", "スポンサー"]):
-                    details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag={amazon_tag}"
+            url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}"
+            res = requests.get(url, headers=browser_h, timeout=10)
+            if res.status_code == 200:
+                asin_match = re.search(r'data-asin="([A-Z0-9]{10})"', res.text)
+                if asin_match:
+                    asin = asin_match.group(1)
+                    details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22"
+                    if not details["image_url"]:
+                        img_match = re.search(r'src="https://m\.media-amazon\.com/images/I/([^"]+)"', res.text)
+                        if img_match:
+                            details["image_url"] = f"https://m.media-amazon.com/images/I/{img_match.group(1)}"
                     break
-            if details["amazon_url"]: break
         except Exception: continue
 
     if not details["image_url"]: details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
@@ -352,8 +345,7 @@ def generate_with_retry(client, model_name, prompt, config=None, max_retries=3):
 def search_competitor_url(keyword: str) -> str:
     """
     指定されたキーワードでGoogle検索を行い、最も情報量が豊富で
-    信頼性の高いおすすめ・比較記事（my-best.comなど）のURLを1つ見つけて返します。
-    ハルシネーションによる「無関係なURL」の選出を防ぐため、二重の検証ステップを挟みます。
+    信頼性の高いおすすめ・比較記事（my-best.comなど）のURL wading を1つ見つけて返します。
     """
     if not client:
         print("❌ GEMINI_API_KEY が設定されていないため、検索を実行できません。")
@@ -382,56 +374,31 @@ def search_competitor_url(keyword: str) -> str:
         if not response or not response.text:
             print("⚠️ 検索結果から候補URLを抽出できませんでした。")
             return ""
-        text = response.text.strip()
-        print(f"🔍 検索 Grounding の生応答:\n{text}\n")
-        
+
+        lines = response.text.strip().split("\n")
         candidates = []
-        matches = re.findall(r'TITLE:\s*(.*?)\nURL:\s*(https?://[^\s`"\'<>\(\)\[\]]+)', text, re.IGNORECASE)
-        if not matches:
-            urls = re.findall(r'https?://[^\s`"\'<>\(\)\[\]]+', text)
-            for u in urls:
-                if "my-best.com" in u or "kakaku.com" in u or "360life.jp" in u:
-                    candidates.append({"title": keyword, "url": u})
-        else:
-            for m in matches:
-                candidates.append({"title": m[0].strip(), "url": m[1].strip()})
-        
-        if not candidates:
-            print("⚠️ 検索結果から候補URLを抽出できませんでした。")
-            return ""
-            
-        for cand in candidates:
-            cand_title = cand["title"]
-            cand_url = cand["url"]
-            
-            print(f"🧐 候補の検証中: 「{cand_title}」 ({cand_url})")
-            
-            verification_prompt = (
-                f"あなたはアフィリエイト記事の編集長です。以下の選定された競合URLとタイトルが、"
-                f"指定されたキーワード「{keyword}」に関するおすすめ・比較・レビュー記事であるかどうかを厳密に判定してください。\n"
-                f"タイトル: {cand_title}\n"
-                f"URL: {cand_url}\n"
-                f"キーワード: {keyword}\n\n"
-                f"もし、テーマが完全に一致し、そのキーワードのおすすめ記事である場合は「YES」、"
-                f"全く関係のない別の商品（例: スマートウォッチとマグカップなど）や無関係なURLである場合は「NO」と答えてください。\n"
-                f"余計な理由は一切含めず、「YES」または「NO」のいずれか1文字のみを出力してください。"
-            )
-            
-            ver_res = generate_with_retry(
-                client,
-                'gemini-2.5-flash',
-                verification_prompt,
-                config=types.GenerateContentConfig(temperature=0.0)
-            )
-            
-            decision = ver_res.text.strip().upper()
-            print(f"👉 判定結果: {decision}")
-            if "YES" in decision:
-                print(f"✨ 厳密検証をクリアした競合URL: {cand_url}")
-                return cand_url
-            else:
-                print(f"⚠️ テーマ不一致またはハルシネーションのため棄却しました: {cand_url}")
-                
+        current_title = ""
+        for line in lines:
+            if line.startswith("TITLE:"):
+                current_title = line.replace("TITLE:", "").strip()
+            elif line.startswith("URL:"):
+                url = line.replace("URL:", "").strip()
+                if url.startswith("http"):
+                    candidates.append((current_title, url))
+
+        # URLの信頼性・適合性検証
+        for title, url in candidates:
+            # 除外ドメインや不適合なURLのチェック
+            u = url.lower()
+            if "my-best.com" in u or "kakaku.com" in u or "360life.jp" in u:
+                print(f"   🎯 適合度の高い競合URLを発見しました: {url} ({title})")
+                return url
+
+        if candidates:
+            first_c = candidates[0][1]
+            print(f"   🎯 候補から最上位のURLを選出しました: {first_c}")
+            return first_c
+
         print("⚠️ すべての候補URLが検証をクリアできませんでした。")
         return ""
     except Exception as e:
@@ -439,11 +406,6 @@ def search_competitor_url(keyword: str) -> str:
         return ""
 
 def fetch_knowledge_by_search(keyword: str) -> str:
-    """
-    スクレイピングが失敗した場合に、Google Search Grounding を使って
-    そのキーワードに対する代表的なおすすめ商品6選の情報をGeminiに調査させ、
-    競合サイトの代わりとなるテキストを生成します。
-    """
     if not client:
         return ""
     print(f"💡 スクレイピングの代わりに Google Search Grounding で「{keyword}」のおすすめ商品を直接調査中...")
@@ -451,7 +413,7 @@ def fetch_knowledge_by_search(keyword: str) -> str:
         f"「{keyword} おすすめ」でGoogle検索を行い、現在日本国内で非常に人気が高く、"
         f"おすすめされる代表的な商品を6つ特定してください。\n"
         f"それぞれの商品の名称、メーカー名、主な特徴、および詳細な説明、そして「どんな人におすすめか」の情報を詳細にまとめ、"
-        f"1つのテキストとして出力してください。このテキスト is 後続の商品特定・記事執筆プロセスで競合サイトのデータとして使用されます。"
+        f"1つのテキストとして出力してください。"
     )
     try:
         response = generate_with_retry(
@@ -487,26 +449,23 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
     else:
         keyword = input_target
         print(f"🔑 検索キーワードを受信: 「{keyword}」")
-        # Google検索で競合URLを探索
         competitor_url = search_competitor_url(keyword)
-        
         if competitor_url:
             competitor_text = fetch_url_text(competitor_url)
-            
         if not competitor_text:
-            print("⚠️  選定した競合URLからのスクレイピングに失敗しました。フォールバック調査を実行します。")
+            print("⚠️ 競合URLからのスクレイピングに失敗しました。フォールバック調査を実行します。")
             competitor_text = fetch_knowledge_by_search(keyword)
 
     if not competitor_text:
-        print("❌ 競合サイトの解析および検索調査のすべてに失敗しました。サンプルデータを使用します。")
-        competitor_text = "【デスクツアー】在宅ワークが劇的に快適になる！おすすめの便利ガジェット6選をご紹介します。1. エルゴトロン LX モニターアーム（ディスプレイを浮かせてデスク広々） 2. BenQ ScreenBar Halo（目に優しいモニターライト） 3. HHKB Professional HYBRID Type-S（最高の打鍵感のキーボード） 4. Logicool MX Master 3S（多機能・静音マウス） 5. 山善 電動昇降デスク（姿勢改善・健康） 6. Anker 737 Charger（超急速充電）"
+        print("❌ 競合サイトの解析に失敗しました。サンプルを使用します。")
+        competitor_text = "【デスクツアー】在宅ワークが劇的に快適になる！おすすめの便利ガジェット6選をご紹介します。1. エルゴトロン LX モニターアーム 2. BenQ ScreenBar Halo 3. HHKB Professional HYBRID Type-S 4. Logicool MX Master 3S 5. 山善 電動昇降デスク 6. Anker 737 Charger"
 
     rules_text = load_generation_rules()
     title_quality_rules = load_title_quality_rules()
 
     print("🧠 [第1ステージ] Geminiで紹介商品を特定中...")
     
-    meta_prompt = f"""あなたはプロのWebライターとして、提供されたライバルサイト of テキストデータを分析し、
+    meta_prompt = f"""あなたはプロのWebライターとして、提供されたライバルサイトのテキストデータを分析し、
 そこで紹介されている「上位おすすめ商品」を【最大15件】特定してください。
 また、記事全体のタイトル、カテゴリ、要約、導入文、選び方のポイント、まとめ文を作成してください。
 商品の詳細説明文はこのステージでは記述せず、商品名と推奨ターゲットのみを返してください。
@@ -514,21 +473,21 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
 {title_quality_rules}
 
 【抽出・生成にあたっての厳格な指示】
-1. **商品名とターゲットの完全一致**: 各商品の特徴や紹介文を競合テキストから精査し、その商品に固有の「こんな人におすすめ」を正確に設定してください。他の商品の特徴が混ざったり、シャッフルされたりすることは絶対に避けてください。
+1. **商品名とターゲットの完全一致**: 各商品の特徴や紹介文を競合テキストから精査し、その商品に固有の「こんな人におすすめ」を正確に設定してください。
 2. **JANコードの抽出と補完**: 
-   - 提供された競合テキスト内にJANコード（13桁または8桁の数字）が記載されている場合は、それを完璧に抽出して `jan_code` に格納してください。
+   - 提供された競合テキスト内にJANコードがある場合は、それを完璧に抽出して `jan_code` に格納してください。
    - 事前知識から該当する商品の正確なJANコードがわかる場合は、必ずそれを調べて補完してください。
-   - JANコードがどうしても不明な場合、または数字8桁・13桁以外の場合は、必ず空文字 `""` にしてください。AmazonのASINやアルファベットを含む文字列は絶対に `jan_code` に入れないでください。
-3. **カテゴリ名の厳格制限**: `category` は必ず『美容・スキンケア』『ガジェット』『インテリア』『生活雑貨』『便利グッズ』の5つのいずれかに完全に一致させて分類してください。これら以外のカテゴリ名は絶対に使用しないでください。
-4. **情緒的かつSEOに配慮した英語スラッグの生成**: `english_slug` フィールドに、商品のテーマを簡潔に表す英語/半角英数字（例：`smartwatch-comparison`, `sunscreen-recommendations`, `kitchen-gadgets`）を生成してください。スペースは使わず、ハイフンで繋いでください。
+   - 不明な場合は必ず空文字 `""` にしてください。
+3. **カテゴリ名の厳格制限**: `category` は必ず『美容・スキンケア』『ガジェット』『インテリア』『生活雑貨』『便利グッズ』の5つのいずれかに完全に一致させて分類してください。
+4. **情緒的かつSEOに配慮した英語スラッグの生成**: `english_slug` フィールドに、商品のテーマを簡潔に表す半角英数字（例：`smartwatch-comparison`）を生成してください。
 5. **タイトルの絶対禁止ワード**: 以下の単語をタイトルに含めることは絶対に禁止します：
    - 誇張：「劇的」「激変」「驚き」「絶対」「マジ」「ヤバい」「神」「最強」「殿堂入り」
    - テンプレ：「おすすめ〇選」「人気〇選」「ランキング」「必見」「まとめ」「比較してみた」「徹底比較」「最新」「2024」「2026」
    - 一人称/二人称：「私が」「あなたも」
    - 感嘆符（！）の連続使用
    - タイトルは必ず `[情緒的なメインタイトル]【[キーワードを含むサブタイトル]】` の【基本形】で出力してください。
-6. **根拠なき検証アピールの禁止 (薬機法・景表法対策)**: 導入文（intro）やまとめ文（summary）において、「〇〇商品を徹底検証」「専門機器でのデータ検証」「皮膚科医による共同開発」など、客観的根拠のない嘘の検証アピールは絶対に書かないでください。「編集部が厳選した」「読者に寄り添うおすすめの選択肢」といった、誠実で法律的にも安全なトーンで執筆してください。
-7. **おこげペルソナ・一人称の排除**: 信頼性の高的かつ優しいブランドボイスで、親しみやすくも知的なトーンで記述してください。「おこげ」や「私」などの一人称は使用しないでください。
+6. **根拠なき検証アピールの禁止 (薬機法・景表法対策)**: 導入文（intro）やまとめ文（summary）において、客観的根拠のない嘘の検証アピールは絶対に書かないでください。
+7. **おこげペルソナ・一人称の排除**: 「おこげ」や「私」などの一人称は使用しないでください。
 
 提供された競合テキスト:
 ---
@@ -538,11 +497,11 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
 【第1ステージ JSONスキーマ】
 以下のJSONフォーマットで完全に記述し、JSON以外の余計なテキストは一切含めずに出力してください。
 {{
-  "title": "読者を惹きつける、上記品質基準を完全に満たした魅力的な記事タイトル（禁止ワードを完全に排除し、基本形を守ること）",
+  "title": "品質基準を完全に満たした魅力的な記事タイトル",
   "category": "美容・スキンケア/ガジェット/インテリア/生活雑貨/便利グッズ のいずれか",
-  "english_slug": "半角英数字とハイフンのみの英語スラッグ（例：smartwatch-comparison）",
+  "english_slug": "半角英数字とハイフンのみの英語スラッグ",
   "excerpt": "記事の簡単な要約（100文字程度）",
-  "intro": "記事の導入文。読者の悩みに寄り添い、本記事を読むメリットを魅力的に解説してください。PR開示テキストは含めないでください。",
+  "intro": "記事の導入文。PR開示テキストは含めないでください。",
   "points": [
     "選び方のポイント1",
     "選び方のポイント2",
@@ -550,20 +509,19 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
   ],
   "products": [
     {{
-      "name": "特定した商品名（メーカー名＋正確な商品名。余分なSEOキーワードは除外）",
-      "jan_code": "JANコード（数字8桁または13桁のみ。見つからない場合は空文字）",
+      "name": "特定した商品名",
+      "jan_code": "JANコード（見つからない場合は空文字）",
       "recommended_for": [
-        "この商品に完全に一致する、こんな人におすすめ1",
-        "この商品に完全に一致する、こんな人におすすめ2",
-        "この商品に完全に一致する、こんな人におすすめ3"
+        "こんな人におすすめ1",
+        "こんな人におすすめ2",
+        "こんな人におすすめ3"
       ]
     }}
   ],
-  "summary": "記事全体のまとめ文。最後に読者の背中を優しく押す言葉を添えてください。PR開示テキストは含めないでください。"
+  "summary": "記事全体のまとめ文。PR開示テキストは含めないでください。"
 }}
 """
 
-    # 新SDKの types.GenerateContentConfig クラスを使用
     config = types.GenerateContentConfig(
         temperature=0.4,
         response_mime_type="application/json"
@@ -606,7 +564,6 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
     title = data.get("title", "最新のおすすめアイテム").replace("2024", "2026")
     category = data.get("category", default_category)
     
-    # 5つの主要カテゴリのいずれかでない場合は「ガジェット」にフォールバック
     valid_categories = ["美容・スキンケア", "ガジェット", "インテリア", "生活雑貨", "便利グッズ"]
     if category not in valid_categories:
         category = default_category if default_category in valid_categories else "ガジェット"
@@ -657,7 +614,6 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         
         api_data = fetch_product_details(p_name, jan_code)
         
-        # 厳格なチェック
         if not is_valid_product_details(api_data):
             print(f"   ❌ 特定の商品ページURLが取得できませんでした（検索結果URLを含むため除外）")
             continue
@@ -697,7 +653,6 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             jan_code = p.get("jan_code", "")
             display_name = truncate_product_name(p_name)
             
-            # すでに採用済みの候補はスキップ
             if any(x[0].get("name") == p_name for x in accepted_candidates):
                 continue
                 
@@ -717,7 +672,6 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
             asin = asin_match.group(1) or asin_match.group(2) if asin_match else f"DUMMY{candidate_idx}"
             
-            # 画像URLの重複チェックのみ適用
             if api_data["image_url"] in used_images:
                 continue
                 
@@ -759,6 +713,9 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             print("   ⏳ 429回避のため、12秒間スリープします...")
             time.sleep(12)
             
+        # 順位に応じたスコアの決定 (1位は4.8〜4.9、最下位は4.3〜4.4のように綺麗に分散させる)
+        assigned_score = round(4.95 - ((item_idx + 1) * 0.1), 2)
+
         # 競合テキストから該当商品に関連する部分を抽出
         relevant_context = ""
         normalized_p_name = p_name.lower().replace(" ", "").replace("｜", "")
@@ -769,23 +726,28 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         if len(relevant_context) < 300:
             relevant_context = competitor_text[:12000]
             
+        # GENERATION_RULES.md を動的に読み込む
+        rules_text = load_generation_rules()
+        
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
 このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
-提供された【商品背景情報】およびGoogle検索によるリアルタイム情報に基づき、製品の正確な機能や仕様を記述し、高品質で読者に信頼される製品紹介文を執筆してください。
+提供された【商品背景情報】および【共通生成ルール】に基づき、製品の正確な機能や仕様を記述し、高品質で読者に信頼される製品紹介文を執筆してください。
 絶対に別の種類の商品と誤解して説明しないでください。この商品は「{category}」カテゴリの商品です。
 
 【商品背景情報】
 {relevant_context[:5000]}
 
-【厳格ルール】
-1. **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。「おこげ」「私」といった一人称や個人の体験談を装った記述もすべて禁止です。
-2. **商品説明の文字数**: 説明文は必ず**1000文字以上**で、競合テキストに負けないようにその製品の特徴、使い勝手、デザイン、他の製品と比較したメリットなどを極めて詳細に記述してください。文章が短すぎる（数百文字程度）のは絶対に不可です。
-3. **段落分け**: 各段落は**1〜2文程度**とし、段落間には空行（\\n\\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
-4. **絵文字の制限**: 絵文字は**1商品につき1〜2個まで**に厳しく制限してください。過剰な装飾は避けてください。
-5. **禁止ワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの誇張・下品な表現は厳禁です。
-6. **他の要素の出力禁止**: スター評価、点数、総合評価スコア、比較表、メリット・デメリットボックス（:::pro や :::con）、Amazon/楽天/Yahooなどのリンク、ボタンなどは**絶対にこのプロンプトでは出力しないでください**（後続のプログラムで自動付与するため、テキストのみで出力すること）。
+【共通生成ルール】
+{rules_text}
 
-そのまま記事に挿入できるプレーンテキストとして出力してください（JSONやマークダウンのコードブロックで囲わないでください）。
+【この商品セクションの執筆指示】
+1. 本記事は【👑 B. ランキング（Ranking）モード】で作成します。
+2. 総合評価スコアとして、行頭に必ず `[総合評価: {assigned_score}]` と出力してください。
+3. 商品紹介文は必ず【1000文字以上】で極めて詳細に執筆してください（スマホ向けの極めて短い段落分け「1〜2文程度で改行」を厳守すること）。
+4. 商品紹介文の直後に、メリット・デメリット（:::pro / :::con）ボックスを指示された形式で出力してください。
+   ※デメリットに「高価」「高い」などの価格に関する否定表現は絶対に書かないでください。機能・仕様面でのリアルな懸念点（例：『充電器が別売り』『サイズが大きく場所をとる』など）を記述してください。
+
+そのまま記事に挿入できるプレーンテキストとして出力してください（JSONやマークダウン of コードブロックで囲わないでください）。
 """
         desc_res = generate_with_retry(
             client,
@@ -797,7 +759,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             )
         )
         
-        desc_text = desc_res.text.strip() if desc_res else "詳細な製品紹介を準備中です。"
+        desc_text = desc_res.text.strip() if desc_res else f"[総合評価: {assigned_score}]\n\n詳細な製品紹介を準備中です。"
         desc = clean_variable_names(desc_text)
         
         image_urls.append(api_data["image_url"])
@@ -807,8 +769,8 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         rakuten_url = api_data["rakuten_url"]
         yahoo_url = api_data["yahoo_url"]
         
-        # 🌸 商品名 のヘッダーを付与 (ランキング形式は厳禁、見出し形式は ### 🌸 [商品名])
-        markdown += f"### 🌸 {display_name}\n"
+        # 👑 第◯位: 商品名 の順位ヘッダーを付与 (明示的にランキングモードを使用)
+        markdown += f"### 👑 第{item_idx+1}位: {display_name}\n"
         markdown += f"IMAGE: {api_data['image_url']}\n"
         markdown += f"AMAZON_PRICE: {api_data['amazon_price']}\n"
         markdown += f"RAKUTEN_PRICE: {api_data['rakuten_price']}\n"
@@ -817,10 +779,14 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         markdown += f"RAKUTEN: {rakuten_url}\n"
         markdown += f"YAHOO: {yahoo_url}\n\n"
         
-        # 説明文の結合
+        # ★商品画像・アフィリエイト定義の直後（購入ボタンの1セットめ）
+        markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+        
+        # 説明文および総合評価スコア・Pros/Cons の結合
         formatted_desc = desc.replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
         
+        # ★説明文の下（購入ボタンの2セットめ）
         markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
         
         markdown += f"👤 **こんな人におすすめ！**\n"
