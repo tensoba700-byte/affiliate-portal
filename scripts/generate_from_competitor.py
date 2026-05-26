@@ -97,9 +97,121 @@ def truncate_product_name(name: str) -> str:
             if idx > 8:
                 short_name = name[:idx].strip()
                 break
+    # Clean up trailing separators and spaces
+    short_name = re.sub(r'[\s｜\|、\-ー\+＋:]+$', '', short_name).strip()
     if len(short_name) > 45:
         short_name = short_name[:42] + "..."
     return short_name
+
+def extract_headings_ranking(html: str) -> str:
+    lines = []
+    matches = re.findall(r'<h[234][^>]*>(?:第)?(\d+)位[:：\s]*([^<]+)</h[234]>', html, re.IGNORECASE)
+    if not matches:
+        matches = re.findall(r'>\s*(?:第)?(\d+)位[:：\s]*([^<]+)<', html)
+    
+    if matches:
+        seen_ranks = set()
+        ranks = []
+        for rank_str, name in matches:
+            try:
+                rank = int(rank_str)
+            except ValueError:
+                continue
+            name = name.strip()
+            if rank not in seen_ranks and name:
+                seen_ranks.add(rank)
+                ranks.append((rank, name))
+        
+        if ranks:
+            ranks.sort(key=lambda x: x[0])
+            lines.append("【ヘッダー抽出のランキングデータ】")
+            for rank, name in ranks:
+                lines.append(f"{rank}位: {name}")
+            return "\n".join(lines)
+    return ""
+
+def extract_structured_ranking(url: str, html: str) -> str:
+    try:
+        json_ld_blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
+        for block in json_ld_blocks:
+            try:
+                data = json.loads(block.strip())
+                if isinstance(data, dict) and data.get("@type") == "Article":
+                    main_entity = data.get("mainEntity")
+                    item_lists = []
+                    if isinstance(main_entity, list):
+                        item_lists = main_entity
+                    elif isinstance(main_entity, dict):
+                        item_lists = [main_entity]
+                    
+                    for item in item_lists:
+                        if isinstance(item, dict) and item.get("@type") == "ItemList":
+                            list_items = item.get("itemListElement", [])
+                            if not list_items:
+                                continue
+                            
+                            lines = []
+                            lines.append("【マイベスト（my-best.com）の公式ランキング抽出データ】")
+                            lines.append(f"対象URL: {url}")
+                            lines.append(f"抽出商品数: {len(list_items)}")
+                            lines.append("")
+                            
+                            sorted_items = []
+                            for li in list_items:
+                                pos = li.get("position")
+                                if pos is not None:
+                                    try:
+                                        pos = int(pos)
+                                    except ValueError:
+                                        pos = 999
+                                else:
+                                    pos = 999
+                                sorted_items.append((pos, li))
+                            sorted_items.sort(key=lambda x: x[0])
+                            
+                            for rank, li in sorted_items:
+                                prod = li.get("item", {})
+                                if not isinstance(prod, dict):
+                                    continue
+                                name = prod.get("name") or li.get("name") or ""
+                                gtin = prod.get("gtin") or ""
+                                asin = prod.get("asin") or ""
+                                brand_data = prod.get("brand", {})
+                                brand_name = ""
+                                if isinstance(brand_data, dict):
+                                    brand_name = brand_data.get("name") or ""
+                                elif isinstance(brand_data, str):
+                                    brand_name = brand_data
+                                
+                                desc = prod.get("description") or prod.get("reviewBody") or ""
+                                
+                                lines.append(f"--- 商品 {rank}位 ---")
+                                lines.append(f"商品名: {name}")
+                                if brand_name:
+                                    lines.append(f"ブランド: {brand_name}")
+                                if gtin:
+                                    lines.append(f"JANコード: {gtin}")
+                                if asin:
+                                    lines.append(f"ASIN: {asin}")
+                                if desc:
+                                    lines.append(f"説明/要約: {desc}")
+                                lines.append("")
+                            
+                            if lines:
+                                return "\n".join(lines)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    try:
+        heading_data = extract_headings_ranking(html)
+        if heading_data:
+            return heading_data
+    except Exception:
+        pass
+        
+    return ""
 
 # ライバルサイトのHTMLテキスト取得
 def fetch_url_text(url: str) -> str:
@@ -111,11 +223,21 @@ def fetch_url_text(url: str) -> str:
         if res.status_code != 200:
             return ""
         html = res.text
-        html = re.sub(r'<script.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
-        html = re.sub(r'<style.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
-        text = re.sub(r'<[^>]+>', ' ', html)
+        
+        # 1. 構造化データの抽出
+        structured = extract_structured_ranking(url, html)
+        
+        # 2. HTMLのクリーンテキスト化
+        html_clean = re.sub(r'<script.*?</script>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        html_clean = re.sub(r'<style.*?</style>', '', html, flags=re.DOTALL | re.IGNORECASE)
+        text = re.sub(r'<[^>]+>', ' ', html_clean)
         text = re.sub(r'\s+', ' ', text).strip()
-        return text[:25000]
+        cleaned = text[:25000]
+        
+        if structured:
+            print(f"   🎯 構造化データから正確なランキング情報を抽出しました！")
+            return structured + "\n\n" + cleaned
+        return cleaned
     except Exception:
         return ""
 
@@ -458,6 +580,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
    - タイトルは必ず `[情緒的なメインタイトル]【[キーワードを含むサブタイトル]】` の【基本形】で出力してください。
 6. **根拠なき検証アピールの禁止 (薬機法・景表法対策)**: 導入文（intro）やまとめ文（summary）において、客観的根拠のない嘘の検証アピールは絶対に書かないでください。
 7. **おこげペルソナ・一人称の排除**: 「おこげ」や「私」などの一人称は使用しないでください。
+8. **公式ランキング抽出データの最優先利用**: 提供された競合テキストの先頭に「【マイベスト（my-best.com）の公式ランキング抽出データ】」や「【ヘッダー抽出のランキングデータ】」がある場合は、記載されている順位、商品名、ブランド、JANコード、ASINの情報を最優先で使用・抽出してください。
 
 提供された競合テキスト:
 ---
@@ -732,6 +855,14 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         desc_text = desc_res.text.strip() if desc_res else f"[総合評価: {assigned_score}]\n\n詳細な製品紹介を準備中です。"
         desc = clean_variable_names(desc_text)
         
+        # Clean desc of any duplicate headers, evaluation scores, or recommendation/button sections generated by the LLM
+        desc_clean = desc
+        desc_clean = re.sub(r'\[総合評価:\s*[\d\.]+\]', '', desc_clean)
+        desc_clean = re.sub(r'^###?\s+👑?\s*(?:第)?\d+位.*$', '', desc_clean, flags=re.MULTILINE)
+        desc_clean = re.sub(r'👤\s*\*\*こんな人におすすめ！\*\*.*$', '', desc_clean, flags=re.DOTALL)
+        desc_clean = re.sub(r'\[AMAZON_LINK_HERE\].*$', '', desc_clean, flags=re.MULTILINE)
+        desc_clean = desc_clean.strip()
+        
         image_urls.append(api_data["image_url"])
         
         escaped_name = urllib.parse.quote(p_name)
@@ -752,8 +883,11 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         # ★商品画像・アフィリエイト定義の直後（購入ボタンの1セットめ）
         markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
         
+        # 総合評価スコアを明示的に付与
+        markdown += f"[総合評価: {assigned_score}]\n\n"
+        
         # 説明文および総合評価スコア・Pros/Cons の結合
-        formatted_desc = desc.replace('\\n', '\n\n')
+        formatted_desc = desc_clean.replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
         
         # ★説明文の下（購入ボタンの2セットめ）
