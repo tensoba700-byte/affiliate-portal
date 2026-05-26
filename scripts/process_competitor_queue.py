@@ -105,7 +105,7 @@ def main():
     props = page["properties"]
 
     # 競合URLの取得
-    url_prop = props.get("URL", {})
+    url_prop = props.get("URL") or {}
     competitor_url = url_prop.get("url") or ""
 
     if not competitor_url:
@@ -114,8 +114,12 @@ def main():
         sys.exit(1)
 
     # カテゴリの取得
-    cat_prop = props.get("Category", {})
-    category = cat_prop.get("select", {}).get("name", "ガジェット")
+    cat_prop = props.get("Category") or {}
+    category = "ガジェット"
+    if cat_prop and isinstance(cat_prop, dict):
+        select_val = cat_prop.get("select")
+        if select_val and isinstance(select_val, dict):
+            category = select_val.get("name", "ガジェット")
 
     print(f"\n🚀 処理開始: {competitor_url} (Category: {category})")
     
