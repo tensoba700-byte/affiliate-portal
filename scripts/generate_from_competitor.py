@@ -65,17 +65,6 @@ def is_valid_product_details(details) -> bool:
     amz = details.get("amazon_url", "")
     if not amz or not ("/dp/" in amz or "/gp/" in amz):
         return False
-        
-    # Rakuten check: must be a specific item page
-    rak = details.get("rakuten_url", "")
-    if not rak or "item.rakuten.co.jp" not in rak:
-        return False
-        
-    # Yahoo check: must be a specific store/product page
-    yah = details.get("yahoo_url", "")
-    if not yah or not ("store.shopping.yahoo.co.jp" in yah or "shopping.yahoo.co.jp/product" in yah):
-        return False
-        
     return True
 
 def clean_variable_names(text: str) -> str:
@@ -254,7 +243,43 @@ def take_eyecatch_screenshot(slug: str) -> bool:
         return False
 
 # 高精度な商品検索APIクエリ
-def fetch_product_details(query: str, jan_code: str = ""):
+def extract_capacity(title: str) -> str:
+    match = re.search(r'(\d+)\s*(?:ml|mL|ミリリットル|g|グラム|袋|pcs)', title, re.IGNORECASE)
+    if match:
+        return match.group(1)
+    return ""
+
+def verify_title_match(amazon_title: str, target_title: str) -> bool:
+    if not amazon_title or not target_title:
+        return False
+        
+    # 1. Capacity Check
+    amz_cap = extract_capacity(amazon_title)
+    tgt_cap = extract_capacity(target_title)
+    if amz_cap and tgt_cap and amz_cap != tgt_cap:
+        return False
+        
+    # 2. Refill / Main body check
+    is_amz_refill = any(kw in amazon_title for kw in ["詰め替え", "詰めかえ", "つめかえ", "替え", "替", "レフィル", "refill"])
+    is_tgt_refill = any(kw in target_title for kw in ["詰め替え", "詰めかえ", "つめかえ", "替え", "替", "レフィル", "refill"])
+    if is_amz_refill != is_tgt_refill:
+        return False
+        
+    # 3. Set check
+    is_amz_set = any(kw in amazon_title for kw in ["セット", "個", "点", "本組"]) or bool(re.search(r'\d\s*(?:個|点|本)', amazon_title))
+    is_tgt_set = any(kw in target_title for kw in ["セット", "個", "点", "本組"]) or bool(re.search(r'\d\s*(?:個|点|本)', target_title))
+    if is_amz_set != is_tgt_set:
+        return False
+        
+    # 4. Strict exclusion check (only if Amazon title itself is NOT a refill/set)
+    if not is_amz_refill and not is_amz_set:
+        if any(kw in target_title for kw in ["詰め替え", "詰めかえ", "つめかえ", "替え", "替", "お試し", "ミニ", "トライアル", "サンプル", "レフィル"]):
+            return False
+            
+    return True
+
+# 高精度な商品検索APIクエリ
+def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
     details = {
         "image_url": "",
         "amazon_price": "なし",
@@ -262,119 +287,121 @@ def fetch_product_details(query: str, jan_code: str = ""):
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": ""
+        "amazon_url": "",
+        "amazon_name": "なし",
+        "rakuten_name": "なし",
+        "yahoo_name": "なし"
     }
     
-    clean_query = re.sub(r'[\(（\[［].*?[\)）\]］]', ' ', query)
-    noise_words = ["P&Gジャパン", "P&G", "資生堂", "カネボウ", "ロート製薬", "花王", "コーセー", "ポーラ", "ロレアル", "ラロッシュポゼ", "アルビオン", "ヤーマン", "アネッサ", "イハダ", "クレ・ド・ポー", "クラシエ", "ちふれ", "オルビス", "ファンケル"]
-    for nw in noise_words:
-        clean_query = re.sub(rf'\b{nw}\b', '', clean_query, flags=re.IGNORECASE)
-        
-    clean_query = re.sub(r'\s+', ' ', clean_query).strip()
-    words = clean_query.split()
-    fallback_query = " ".join(words[:3]) if len(words) > 3 else clean_query
+    browser_h = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/120.0.0.0"
+    }
 
-    # JANコードが数字だけで8桁か13桁であるか厳しくチェック（重複・文字化けASIN混入を防ぐ）
-    is_valid_jan = bool(jan_code and re.fullmatch(r'^\d{8}$|^\d{13}$', jan_code.strip()))
-
-    # 検索優先度クエリリストの構築
-    search_queries = []
-    if is_valid_jan:
-        search_queries.append(jan_code.strip())
-    search_queries.extend([clean_query, fallback_query])
-
-    # 1. Yahoo Shopping API V3
-    yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
-    if yahoo_app_id:
+    # 1. Amazon Link Construction & Detail Extraction
+    clean_asin = asin.strip() if asin else ""
+    if not clean_asin:
+        # Fallback to search organic ASIN
+        search_queries = [jan_code.strip()] if jan_code else []
+        search_queries.append(query)
         for q in search_queries:
             try:
-                url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={urllib.parse.quote(q)}&results=1"
-                res = requests.get(url, timeout=10)
+                url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}"
+                res = requests.get(url, headers=browser_h, timeout=10)
                 if res.status_code == 200:
-                    data = res.json()
-                    hits = data.get("hits", [])
-                    if hits:
-                        hit = hits[0]
+                    match = re.search(r'data-asin="([A-Z0-9]{10})"[^>]*data-component-type="s-search-result"', res.text)
+                    if not match:
+                        match = re.search(r'data-component-type="s-search-result"[^>]*data-asin="([A-Z0-9]{10})"', res.text)
+                    if match:
+                        clean_asin = match.group(1)
+                        break
+            except Exception:
+                continue
+
+    amazon_product_name = ""
+    if clean_asin:
+        details["amazon_url"] = f"https://www.amazon.co.jp/dp/{clean_asin}?tag=mikkestyle-22"
+        try:
+            dp_url = f"https://www.amazon.co.jp/dp/{clean_asin}"
+            res = requests.get(dp_url, headers=browser_h, timeout=10)
+            if res.status_code == 200:
+                title_match = re.search(r'<span id="productTitle"[^>]*>\s*(.*?)\s*</span>', res.text, re.DOTALL)
+                if title_match:
+                    amazon_product_name = re.sub(r'\s+', ' ', title_match.group(1)).strip()
+                    details["amazon_name"] = amazon_product_name
+                
+                price_match = re.search(r'"priceMobileShowActionFraction":\s*"([^"]+)"|class="a-price-whole">([^<]+)<', res.text)
+                if price_match:
+                    price_val = price_match.group(1) or price_match.group(2)
+                    details["amazon_price"] = re.sub(r'[^\d]', '', price_val) if price_val else "なし"
+                
+                img_match = re.search(r'"landingImage"\s*:\s*\{\s*"([^"]+)"|id="landingImage"[^>]*src="([^"]+)"', res.text)
+                if img_match:
+                    details["image_url"] = img_match.group(1) or img_match.group(2)
+        except Exception:
+            pass
+
+    # 2. Yahoo Shopping V3 API Search by JAN code with title verification
+    yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
+    if yahoo_app_id and jan_code:
+        try:
+            url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={jan_code.strip()}&results=20"
+            res = requests.get(url, timeout=10)
+            if res.status_code == 200:
+                hits = res.json().get("hits", [])
+                for hit in hits:
+                    hit_title = hit.get("name", "")
+                    if verify_title_match(amazon_product_name, hit_title):
                         details["yahoo_price"] = str(hit.get("price", ""))
                         details["yahoo_url"] = hit.get("url", "")
-                        img_url = hit.get("image", {}).get("medium") or ""
-                        if img_url and "/i/g/" in img_url: img_url = img_url.replace("/i/g/", "/i/l/")
-                        details["image_url"] = img_url
+                        details["yahoo_name"] = hit_title
+                        if not details["image_url"]:
+                            img_url = hit.get("image", {}).get("medium") or ""
+                            if img_url and "/i/g/" in img_url:
+                                img_url = img_url.replace("/i/g/", "/i/l/")
+                            details["image_url"] = img_url
                         break
-            except Exception: continue
-            
-    # 2. Rakuten Enterprise API
+        except Exception:
+            pass
+
+    # 3. Rakuten Developers API Search by JAN code with title verification
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
     rakuten_access_key = os.getenv("RAKUTEN_ACCESS_KEY")
     rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
-    if rakuten_app_id and rakuten_access_key:
-        for q in search_queries:
-            try:
-                params = {"format": "json", "keyword": q, "applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "hits": 1}
-                res = requests.get("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", params=params, timeout=10)
+    if rakuten_app_id and jan_code:
+        try:
+            endpoints = [
+                ("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170426", {"applicationId": rakuten_app_id, "affiliateId": rakuten_affiliate_id, "keyword": jan_code.strip(), "format": "json", "hits": 20}),
+                ("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", {"applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "keyword": jan_code.strip(), "format": "json", "hits": 20})
+            ]
+            rak_headers = {
+                "Referer": "https://www.mikke-style.com",
+                "Origin": "https://www.mikke-style.com"
+            }
+            for endpoint_url, params in endpoints:
+                if not params.get("applicationId"):
+                    continue
+                res = requests.get(endpoint_url, params=params, headers=rak_headers, timeout=10)
                 if res.status_code == 200:
                     items = res.json().get("Items", [])
-                    if items:
-                        item = items[0].get("Item", {})
-                        details["rakuten_price"] = str(item.get("itemPrice", ""))
-                        details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
-                        img_url = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
-                        if img_url: details["image_url"] = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
+                    for item_wrapper in items:
+                        item = item_wrapper.get("Item", {})
+                        item_title = item.get("itemName", "")
+                        if verify_title_match(amazon_product_name, item_title):
+                            details["rakuten_price"] = str(item.get("itemPrice", ""))
+                            details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
+                            details["rakuten_name"] = item_title
+                            if not details["image_url"]:
+                                img_url = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
+                                if img_url:
+                                    details["image_url"] = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
+                            break
+                    if details["rakuten_url"]:
                         break
-            except Exception: continue
+        except Exception:
+            pass
 
-    # 2.5 Rakuten & Yahoo Scraping Fallbacks (if API results are missing or fail)
-    browser_h = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
-    
-    if not details["rakuten_url"]:
-        for q in search_queries:
-            try:
-                search_url = f"https://search.rakuten.co.jp/search/mall/{urllib.parse.quote(q)}/"
-                res = requests.get(search_url, headers=browser_h, timeout=10)
-                if res.status_code == 200:
-                    match = re.search(r'https?://item\.rakuten\.co\.jp/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+', res.text)
-                    if match:
-                        direct_url = match.group(0)
-                        if rakuten_affiliate_id:
-                            details["rakuten_url"] = f"https://hb.afl.rakuten.co.jp/hgc/{rakuten_affiliate_id}/?pc={urllib.parse.quote(direct_url)}"
-                        else:
-                            details["rakuten_url"] = direct_url
-                        details["rakuten_price"] = "価格を見る"
-                        break
-            except Exception: continue
-            
-    if not details["yahoo_url"]:
-        for q in search_queries:
-            try:
-                search_url = f"https://shopping.yahoo.co.jp/search?p={urllib.parse.quote(q)}"
-                res = requests.get(search_url, headers=browser_h, timeout=10)
-                if res.status_code == 200:
-                    match = re.search(r'https?://store\.shopping\.yahoo\.co\.jp/[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+\.html', res.text)
-                    if match:
-                        direct_url = match.group(0)
-                        details["yahoo_url"] = direct_url
-                        details["yahoo_price"] = "価格を見る"
-                        break
-            except Exception: continue
-
-    # 3. Amazon Product Search (via scraping & parsing for real links)
-    for q in search_queries:
-        try:
-            url = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(q)}"
-            res = requests.get(url, headers=browser_h, timeout=10)
-            if res.status_code == 200:
-                asin_match = re.search(r'data-asin="([A-Z0-9]{10})"', res.text)
-                if asin_match:
-                    asin = asin_match.group(1)
-                    details["amazon_url"] = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22"
-                    if not details["image_url"]:
-                        img_match = re.search(r'src="https://m\.media-amazon\.com/images/I/([^"]+)"', res.text)
-                        if img_match:
-                            details["image_url"] = f"https://m.media-amazon.com/images/I/{img_match.group(1)}"
-                    break
-        except Exception: continue
-
-    if not details["image_url"]: details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
+    if not details["image_url"]:
+        details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
     return details
 
 def format_eyecatch_title(title: str) -> str:
@@ -430,8 +457,12 @@ def generate_with_retry(client, model_name, prompt, config=None, max_retries=3):
                 if res and res.text:
                     return res
             except Exception as e:
+                err_str = str(e).upper()
+                is_rate_limit = "429" in err_str or "RESOURCE_EXHAUSTED" in err_str or "QUOTA" in err_str or "UNAVAILABLE" in err_str
+                sleep_time = 65 if is_rate_limit else 15
                 print(f"   ⚠️ Gemini API Error with {current_model} (attempt {attempt+1}/{max_retries}): {e}")
-                time.sleep(15)
+                print(f"   ⏳ Rate limit or temporary error. Sleeping for {sleep_time} seconds...")
+                time.sleep(sleep_time)
     return None
 
 def search_competitor_url(keyword: str) -> str:
@@ -604,6 +635,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
     {{
       "name": "特定した商品名",
       "jan_code": "JANコード（見つからない場合は空文字）",
+      "asin": "ASIN（見つからない場合は空文字）",
       "recommended_for": [
         "こんな人におすすめ1",
         "こんな人におすすめ2",
@@ -701,26 +733,28 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             
         p_name = p.get("name", "")
         jan_code = p.get("jan_code", "")
+        asin = p.get("asin", "")
         display_name = truncate_product_name(p_name)
         
-        print(f"🧐 候補商品 [{candidate_idx+1}/{len(data.get('products', []))}] {p_name} (JAN: {jan_code}) の検証中...")
+        print(f"🧐 候補商品 [{candidate_idx+1}/{len(data.get('products', []))}] {p_name} (JAN: {jan_code}, ASIN: {asin}) の検証中...")
         
-        api_data = fetch_product_details(p_name, jan_code)
+        api_data = fetch_product_details(p_name, jan_code, asin)
         
         if not is_valid_product_details(api_data):
             print(f"   ❌ 特定の商品ページURLが取得できませんでした（検索結果URLを含むため除外）")
             continue
             
-        asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
-        asin = asin_match.group(1) or asin_match.group(2) if asin_match else ""
+        if not asin:
+            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
+            asin = asin_match.group(1) or asin_match.group(2) if asin_match else ""
         
         if asin in used_asins:
             print(f"   ❌ 重複検知: ASIN {asin} は既に他の商品で使用されています。")
             continue
-        if api_data["rakuten_url"] in used_rakuten_urls:
+        if api_data.get("rakuten_url") and api_data["rakuten_url"] != "なし" and api_data["rakuten_url"] in used_rakuten_urls:
             print(f"   ❌ 重複検知: 楽天URL は既に他の商品で使用されています。")
             continue
-        if api_data["yahoo_url"] in used_yahoo_urls:
+        if api_data.get("yahoo_url") and api_data["yahoo_url"] != "なし" and api_data["yahoo_url"] in used_yahoo_urls:
             print(f"   ❌ 重複検知: YahooURL は既に他の商品で使用されています。")
             continue
         if api_data["image_url"] in used_images:
@@ -728,8 +762,10 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             continue
             
         used_asins.add(asin)
-        used_rakuten_urls.add(api_data["rakuten_url"])
-        used_yahoo_urls.add(api_data["yahoo_url"])
+        if api_data.get("rakuten_url") and api_data["rakuten_url"] != "なし":
+            used_rakuten_urls.add(api_data["rakuten_url"])
+        if api_data.get("yahoo_url") and api_data["yahoo_url"] != "なし":
+            used_yahoo_urls.add(api_data["yahoo_url"])
         used_images.add(api_data["image_url"])
         
         accepted_candidates.append((p, api_data, display_name))
@@ -744,33 +780,39 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
                 
             p_name = p.get("name", "")
             jan_code = p.get("jan_code", "")
+            asin = p.get("asin", "")
             display_name = truncate_product_name(p_name)
             
             if any(x[0].get("name") == p_name for x in accepted_candidates):
                 continue
                 
             print(f"🧐 補填候補 [{candidate_idx+1}/{len(data.get('products', []))}] {p_name} の検証中（緩い条件）...")
-            api_data = fetch_product_details(p_name, jan_code)
+            api_data = fetch_product_details(p_name, jan_code, asin)
             
             if not api_data["image_url"]:
                 api_data["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"  # デフォルト画像
                 
-            if not api_data["amazon_url"]:
-                api_data["amazon_url"] = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(p_name)}&tag=mikkestyle-22"
-            if not api_data["rakuten_url"]:
-                api_data["rakuten_url"] = f"https://hb.afl.rakuten.co.jp/hgc/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//search.rakuten.co.jp/search/mall/{urllib.parse.quote(p_name)}/"
-            if not api_data["yahoo_url"]:
-                api_data["yahoo_url"] = f"https://store.shopping.yahoo.co.jp/search.html?p={urllib.parse.quote(p_name)}"
+            if not api_data.get("amazon_url"):
+                api_data["amazon_url"] = "なし"
+            if not api_data.get("rakuten_url"):
+                api_data["rakuten_url"] = "なし"
+            if not api_data.get("yahoo_url"):
+                api_data["yahoo_url"] = "なし"
                 
-            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
-            asin = asin_match.group(1) or asin_match.group(2) if asin_match else f"DUMMY{candidate_idx}"
+            if api_data["amazon_url"] != "なし":
+                asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
+                asin = asin_match.group(1) or asin_match.group(2) if asin_match else f"DUMMY{candidate_idx}"
+            else:
+                asin = f"DUMMY{candidate_idx}"
             
             if api_data["image_url"] in used_images:
                 continue
                 
             used_asins.add(asin)
-            used_rakuten_urls.add(api_data["rakuten_url"])
-            used_yahoo_urls.add(api_data["yahoo_url"])
+            if api_data["rakuten_url"] != "なし":
+                used_rakuten_urls.add(api_data["rakuten_url"])
+            if api_data["yahoo_url"] != "なし":
+                used_yahoo_urls.add(api_data["yahoo_url"])
             used_images.add(api_data["image_url"])
             
             accepted_candidates.append((p, api_data, display_name))
@@ -847,8 +889,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             'gemini-2.5-flash',
             desc_prompt,
             config=types.GenerateContentConfig(
-                temperature=0.3,
-                tools=[types.Tool(google_search=types.GoogleSearch())]
+                temperature=0.3
             )
         )
         
@@ -870,12 +911,17 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         rakuten_url = api_data["rakuten_url"]
         yahoo_url = api_data["yahoo_url"]
         
+        escaped_name = urllib.parse.quote(p_name)
+        amazon_url = api_data.get("amazon_url") or "なし"
+        rakuten_url = api_data.get("rakuten_url") or "なし"
+        yahoo_url = api_data.get("yahoo_url") or "なし"
+        
         # 👑 第◯位: 商品名 の順位ヘッダーを付与 (明示的にランキングモードを使用)
         markdown += f"### 👑 第{item_idx+1}位: {display_name}\n"
         markdown += f"IMAGE: {api_data['image_url']}\n"
-        markdown += f"AMAZON_PRICE: {api_data['amazon_price']}\n"
-        markdown += f"RAKUTEN_PRICE: {api_data['rakuten_price']}\n"
-        markdown += f"YAHOO_PRICE: {api_data['yahoo_price']}\n"
+        markdown += f"AMAZON_PRICE: {api_data.get('amazon_price') or 'なし'}\n"
+        markdown += f"RAKUTEN_PRICE: {api_data.get('rakuten_price') if api_data.get('rakuten_url') and api_data.get('rakuten_url') != 'なし' else 'なし'}\n"
+        markdown += f"YAHOO_PRICE: {api_data.get('yahoo_price') if api_data.get('yahoo_url') and api_data.get('yahoo_url') != 'なし' else 'なし'}\n"
         markdown += f"ASIN: {amazon_url}\n"
         markdown += f"RAKUTEN: {rakuten_url}\n"
         markdown += f"YAHOO: {yahoo_url}\n\n"
@@ -914,6 +960,23 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
     except Exception as e:
         print(f"⚠️  アイキャッチ生成をスキップしました: {e}")
 
+    print("\n==========================================================================")
+    print("📊 記事商品＆アフィリエイト先商品 照合一致レポート (目視確認用)")
+    print("==========================================================================")
+    for idx, (p, api_data, display_name) in enumerate(accepted_candidates):
+        print(f"Rank {idx+1}:")
+        print(f"  - マイベスト商品名 : {p.get('name')}")
+        print(f"  - 採用 Amazon名   : {api_data.get('amazon_name')}")
+        print(f"  - 採用 楽天名     : {api_data.get('rakuten_name')}")
+        print(f"  - 採用 Yahoo名    : {api_data.get('yahoo_name')}")
+        print(f"  - 価格 [Amazon]  : {api_data.get('amazon_price')} JPY")
+        print(f"  - 価格 [楽天]    : {api_data.get('rakuten_price') if api_data.get('rakuten_url') and api_data.get('rakuten_url') != 'なし' else 'なし'} JPY")
+        print(f"  - 価格 [Yahoo]   : {api_data.get('yahoo_price') if api_data.get('yahoo_url') and api_data.get('yahoo_url') != 'なし' else 'なし'} JPY")
+        print(f"  - Amazonリンク    : {api_data.get('amazon_url') or 'なし'}")
+        print(f"  - 楽天リンク      : {api_data.get('rakuten_url') or 'なし'}")
+        print(f"  - Yahooリンク     : {api_data.get('yahoo_url') or 'なし'}")
+        print("--------------------------------------------------------------------------")
+        
     print("🚀 すべての工程が完了しました！")
     return slug
 
