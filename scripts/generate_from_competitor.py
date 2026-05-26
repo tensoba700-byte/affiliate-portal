@@ -292,9 +292,43 @@ def fetch_product_details(query: str, jan_code: str = ""):
     if not details["image_url"]: details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
     return details
 
+def format_eyecatch_title(title: str) -> str:
+    # 長いタイトルに自然な改行を入れる
+    if len(title) <= 11: return title
+    separators = ["の", "で", "に", "は", "が", "を", "！", "？", "：", "、", " ", "　"]
+    mid = len(title) // 2
+    for offset in [0, 1, -1, 2, -2, 3, -3]:
+        idx = mid + offset
+        if 0 < idx < len(title) - 1 and title[idx] in separators:
+            return title[:idx+1] + "<br />" + title[idx+1:]
+    return title[:mid] + "<br />" + title[mid:]
+
 def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: list) -> str:
-    imgs_html = "".join([f'<div class="pw"><img src="{url}" class="pi" /></div>' for url in image_urls[:6]])
-    html = f'<!DOCTYPE html><html><body><div class="g">{imgs_html}</div><div class="to"><h1>{title}</h1></div></body></html>'
+    imgs_html = ""
+    target_count = min(6, len(image_urls))
+    for url in image_urls[:target_count]:
+        imgs_html += f'<div class="pw"><img src="{url}" class="pi" alt="" loading="eager" /></div>\n'
+    for _ in range(max(0, 6 - target_count)):
+        imgs_html += '<div class="pw"></div>\n'
+    
+    display_title = format_eyecatch_title(title)
+    font_size = "110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "75px"
+    
+    css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #fff; }}
+body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items: center; justify-content: center; position: relative; }}
+.g {{ display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); width: 1200px; height: 630px; padding: 20px; gap: 20px; }}
+.pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
+.pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
+.to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
+.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.25; text-align: center; padding: 0 60px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; word-break: keep-all; }}
+"""
+    html = f"""<!DOCTYPE html>
+<html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
+<div class="g">{imgs_html}</div>
+<div class="to"><h1 class="ti">{display_title}</h1></div>
+</body></html>"""
     path = f"public/eyecatch/{slug}.html"
     with open(path, 'w', encoding='utf-8') as f: f.write(html)
     return path
@@ -472,8 +506,8 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
 
     print("🧠 [第1ステージ] Geminiで紹介商品を特定中...")
     
-    meta_prompt = f"""あなたはプロのWebライターとして、提供されたライバルサイトのテキストデータを分析し、
-そこで紹介されている「上位おすすめ商品」を【最大10件】特定してください。
+    meta_prompt = f"""あなたはプロのWebライターとして、提供されたライバルサイト of テキストデータを分析し、
+そこで紹介されている「上位おすすめ商品」を【最大15件】特定してください。
 また、記事全体のタイトル、カテゴリ、要約、導入文、選び方のポイント、まとめ文を作成してください。
 商品の詳細説明文はこのステージでは記述せず、商品名と推奨ターゲットのみを返してください。
 
@@ -603,15 +637,16 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
     
     print("🧠 [第2ステージ] 各商品の超詳細説明文（1000文字以上）をループ生成中...")
     
-    valid_products_count = 0
     used_asins = set()
     used_rakuten_urls = set()
     used_yahoo_urls = set()
     used_images = set()
     
-    # 10件の候補から条件を満たす6つの商品を選定する
+    accepted_candidates = []  # 採用された商品のリスト [(p, api_data, display_name)]
+    
+    # 1. 厳格なチェック（3つのプラットフォームすべてが存在し、かつ重複がないもの）
     for candidate_idx, p in enumerate(data.get("products", [])):
-        if valid_products_count >= 6:
+        if len(accepted_candidates) >= 6:
             break
             
         p_name = p.get("name", "")
@@ -620,19 +655,16 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         
         print(f"🧐 候補商品 [{candidate_idx+1}/{len(data.get('products', []))}] {p_name} (JAN: {jan_code}) の検証中...")
         
-        # APIで画像と価格、URLを検索
         api_data = fetch_product_details(p_name, jan_code)
         
-        # 1. 有効な個別商品ページURLが3つのプラットフォームすべてで取得できたか？
+        # 厳格なチェック
         if not is_valid_product_details(api_data):
             print(f"   ❌ 特定の商品ページURLが取得できませんでした（検索結果URLを含むため除外）")
             continue
             
-        # AmazonのASINをURLから抽出
         asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
         asin = asin_match.group(1) or asin_match.group(2) if asin_match else ""
         
-        # 2. 重複チェック（同一記事内に同じASIN、楽天URL、YahooURL、画像URLがないか）
         if asin in used_asins:
             print(f"   ❌ 重複検知: ASIN {asin} は既に他の商品で使用されています。")
             continue
@@ -646,26 +678,90 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             print(f"   ❌ 重複検知: 画像URL は既に他の商品で使用されています。")
             continue
             
-        # 重複がなければ、この商品を採用！
         used_asins.add(asin)
         used_rakuten_urls.add(api_data["rakuten_url"])
         used_yahoo_urls.add(api_data["yahoo_url"])
         used_images.add(api_data["image_url"])
         
-        valid_products_count += 1
-        print(f"   ✅ 検証クリア！ {p_name} を第 {valid_products_count} 位として採用します。")
+        accepted_candidates.append((p, api_data, display_name))
+        print(f"   ✅ 検証クリア！ {p_name} を採用リストに追加しました。")
         
-        if valid_products_count > 1:
+    # 2. もし6件に満たない場合、フィルタリング条件を緩めて補充する
+    if len(accepted_candidates) < 6:
+        print(f"⚠️  警告: 厳格な条件を満たす商品が {len(accepted_candidates)} 件しか見つかりませんでした。残りの枠（{6 - len(accepted_candidates)}件）を緩い基準で補填します。")
+        for candidate_idx, p in enumerate(data.get("products", [])):
+            if len(accepted_candidates) >= 6:
+                break
+                
+            p_name = p.get("name", "")
+            jan_code = p.get("jan_code", "")
+            display_name = truncate_product_name(p_name)
+            
+            # すでに採用済みの候補はスキップ
+            if any(x[0].get("name") == p_name for x in accepted_candidates):
+                continue
+                
+            print(f"🧐 補填候補 [{candidate_idx+1}/{len(data.get('products', []))}] {p_name} の検証中（緩い条件）...")
+            api_data = fetch_product_details(p_name, jan_code)
+            
+            if not api_data["image_url"]:
+                api_data["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"  # デフォルト画像
+                
+            if not api_data["amazon_url"]:
+                api_data["amazon_url"] = f"https://www.amazon.co.jp/s?k={urllib.parse.quote(p_name)}&tag=mikkestyle-22"
+            if not api_data["rakuten_url"]:
+                api_data["rakuten_url"] = f"https://hb.afl.rakuten.co.jp/hgc/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//search.rakuten.co.jp/search/mall/{urllib.parse.quote(p_name)}/"
+            if not api_data["yahoo_url"]:
+                api_data["yahoo_url"] = f"https://store.shopping.yahoo.co.jp/search.html?p={urllib.parse.quote(p_name)}"
+                
+            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', api_data["amazon_url"])
+            asin = asin_match.group(1) or asin_match.group(2) if asin_match else f"DUMMY{candidate_idx}"
+            
+            # 画像URLの重複チェックのみ適用
+            if api_data["image_url"] in used_images:
+                continue
+                
+            used_asins.add(asin)
+            used_rakuten_urls.add(api_data["rakuten_url"])
+            used_yahoo_urls.add(api_data["yahoo_url"])
+            used_images.add(api_data["image_url"])
+            
+            accepted_candidates.append((p, api_data, display_name))
+            print(f"   ✅ 補填採用！ {p_name} を補填リストに追加しました。")
+            
+    # 3. もしそれでも6件に満たない場合（非常にまれ）、ダミー商品を補充して絶対に6件にする
+    while len(accepted_candidates) < 6:
+        dummy_idx = len(accepted_candidates) + 1
+        p = {
+            "name": f"おすすめの厳選アイテム {dummy_idx}",
+            "jan_code": "",
+            "recommended_for": ["実用性を重視する人", "使いやすさを求める人", "コストパフォーマンスを重視する人"]
+        }
+        api_data = {
+            "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
+            "amazon_url": f"https://www.amazon.co.jp/?tag=mikkestyle-22",
+            "rakuten_url": f"https://hb.afl.rakuten.co.jp/hgc/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//www.rakuten.co.jp/",
+            "yahoo_url": f"https://shopping.yahoo.co.jp/",
+            "amazon_price": "なし",
+            "rakuten_price": "価格を見る",
+            "yahoo_price": "価格を見る"
+        }
+        accepted_candidates.append((p, api_data, p["name"]))
+        print(f"   🚨 最終手段: ダミー商品 {p['name']} を追加して6件に到達させました。")
+        
+    # 採用された6つの商品を順次執筆
+    for item_idx, (p, api_data, display_name) in enumerate(accepted_candidates):
+        p_name = p.get("name", "")
+        
+        print(f"✍️  商品紹介の生成中 [{item_idx+1}/6]: {p_name}...")
+        
+        if item_idx > 0:
             print("   ⏳ 429回避のため、12秒間スリープします...")
             time.sleep(12)
             
-        # 順位に応じたスコアの決定 (1位は4.8〜4.9、最下位は4.3〜4.4のように綺麗に分散させる)
-        assigned_score = round(4.95 - (valid_products_count * 0.1), 2)
-        
         # 競合テキストから該当商品に関連する部分を抽出
         relevant_context = ""
         normalized_p_name = p_name.lower().replace(" ", "").replace("｜", "")
-        # シンプルに商品名の一部がマッチする部分を探すか、見つからない場合は前半を使用
         for line in competitor_text.split("\n"):
             clean_line = line.lower().replace(" ", "").replace("｜", "")
             if any(part in clean_line for part in normalized_p_name.split() if len(part) > 2):
@@ -675,31 +771,19 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             
         desc_prompt = f"""あなたは「みっけ！」アフィリエイトブログの専属プロライターです。
 このセクションは、記事全体の「{p_name}」という個別の商品紹介部分にそのまま挿入されます。
-提供された【商品背景情報】およびGoogle検索によるリアルタイム情報に基づき、製品の正確な機能や仕様（例：ベビーカーであれば、折りたたみやすさ、重さ、対象月齢、走行性など）を記述し、高品質で読者に信頼される製品紹介文を執筆してください。
-絶対に別の種類の商品（例：自動調理器やハイチェアなど）と誤解して説明しないでください。この商品は「{category}」カテゴリの商品です。
+提供された【商品背景情報】およびGoogle検索によるリアルタイム情報に基づき、製品の正確な機能や仕様を記述し、高品質で読者に信頼される製品紹介文を執筆してください。
+絶対に別の種類の商品と誤解して説明しないでください。この商品は「{category}」カテゴリの商品です。
 
 【商品背景情報】
 {relevant_context[:5000]}
 
 【厳格ルール】
 1. **自己紹介や読者への語りかけは絶対に禁止**です。「こんにちは」「みっけ！専属ライターの〇〇です」などの始まり方は絶対にしないでください。「おこげ」「私」といった一人称や個人の体験談を装った記述もすべて禁止です。
-2. **商品説明の圧縮**: 説明文は**5〜8段落（合計500〜700文字程度）**に凝縮し、余計なコピペ感のあるお決まりの美辞麗句（「肌にのせた瞬間に〜」「未来の肌への投資」など）を完全に排除してください。
+2. **商品説明の文字数**: 説明文は必ず**1000文字以上**で、競合テキストに負けないようにその製品の特徴、使い勝手、デザイン、他の製品と比較したメリットなどを極めて詳細に記述してください。文章が短すぎる（数百文字程度）のは絶対に不可です。
 3. **段落分け**: 各段落は**1〜2文程度**とし、段落間には空行（\\n\\n）を入れてスマホで最も読みやすい構成にしてください。また、文章が長く繋がらないように配慮してください。
 4. **絵文字の制限**: 絵文字は**1商品につき1〜2個まで**に厳しく制限してください。過剰な装飾は避けてください。
 5. **禁止ワード**: 「マジで」「ヤバい」「神アイテム」「最高」「究極」などの誇張・下品な表現は厳禁です。
-6. **総合評価スコア**: この商品の総合評価点数として、必ず `{assigned_score}` を使用し、行頭に必ず `[総合評価: {assigned_score}]` と出力してください。
-7. **メリット・デメリットの追加**: 
-   製品説明の後に、必ずメリットとデメリットのセクションを以下の形式で出力してください。
-   読者から信頼されるために、デメリット（con）は必ず具体的かつ誠実に書いてください。
-   ※注意: デメリット（con）に「高価」「高い」「価格帯が高め」「価格がネック」などの価格に関する否定表現は絶対に書かないでください（GENERATION_RULES.mdのルールに従ってください）。代わりに、機能面や仕様面での具体的な懸念点（例：『防水性能が生活防水レベル』『設定にスマートフォンが必須』など）を記述してください。
-   :::pro
-   メリット1つめ（1行で簡潔に）
-   メリット2つめ（1行で簡潔に）
-   :::
-   :::con
-   デメリット1つめ（1行で簡潔に）
-   デメリット2つめ（1行で簡潔に）
-   :::
+6. **他の要素の出力禁止**: スター評価、点数、総合評価スコア、比較表、メリット・デメリットボックス（:::pro や :::con）、Amazon/楽天/Yahooなどのリンク、ボタンなどは**絶対にこのプロンプトでは出力しないでください**（後続のプログラムで自動付与するため、テキストのみで出力すること）。
 
 そのまま記事に挿入できるプレーンテキストとして出力してください（JSONやマークダウンのコードブロックで囲わないでください）。
 """
@@ -713,7 +797,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
             )
         )
         
-        desc_text = desc_res.text.strip() if desc_res else f"[総合評価: {assigned_score}]\n\n詳細な製品紹介を準備中です。"
+        desc_text = desc_res.text.strip() if desc_res else "詳細な製品紹介を準備中です。"
         desc = clean_variable_names(desc_text)
         
         image_urls.append(api_data["image_url"])
@@ -723,8 +807,8 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         rakuten_url = api_data["rakuten_url"]
         yahoo_url = api_data["yahoo_url"]
         
-        # 👑 第1位: 商品名 の順位ヘッダーを付与
-        markdown += f"### 👑 第{valid_products_count}位: {display_name}\n"
+        # 🌸 商品名 のヘッダーを付与 (ランキング形式は厳禁、見出し形式は ### 🌸 [商品名])
+        markdown += f"### 🌸 {display_name}\n"
         markdown += f"IMAGE: {api_data['image_url']}\n"
         markdown += f"AMAZON_PRICE: {api_data['amazon_price']}\n"
         markdown += f"RAKUTEN_PRICE: {api_data['rakuten_price']}\n"
@@ -733,7 +817,7 @@ def generate_from_competitor(input_target: str, default_category: str = "ガジ�
         markdown += f"RAKUTEN: {rakuten_url}\n"
         markdown += f"YAHOO: {yahoo_url}\n\n"
         
-        # 総合評価スコア、説明文、メリット・デメリットの結合
+        # 説明文の結合
         formatted_desc = desc.replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
         
