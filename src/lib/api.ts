@@ -142,6 +142,12 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       product.rakuten = { price: '価格を見る', url: decoded };
     }
 
+    // Yahoo affiliate URL
+    const yahooMatch = section.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
+    if (yahooMatch) {
+      product.yahoo = { price: '価格を見る', url: yahooMatch[1] };
+    }
+
     // Prices
     const amzPrice = section.match(/AMAZON_PRICE:\s*(\d+)/i);
     const rakPrice = section.match(/RAKUTEN_PRICE:\s*(\d+)/i);

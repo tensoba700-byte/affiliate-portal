@@ -125,7 +125,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                   const subContent = subTitleRaw.replace(/[【】]/g, '');
                   
                   // Split "Mac miniと調和する" from "モニター選び6選"
-                  const monitorSelectMatch = subContent.match(/(.*)(モニター選び\d+選|選び\d+選|ガジェット\d+選|アイテム\d+選|文具\d+選|器具\d+選)(.*)/);
+                  const monitorSelectMatch = subContent.match(/(.*?)(モニター選び\d+選|選び\d+選|ガジェット\d+選|アイテム\d+選|文具\d+選|器具\d+選)(.*)/);
                   
                   if (monitorSelectMatch) {
                     const subPart1 = monitorSelectMatch[1].trim();
