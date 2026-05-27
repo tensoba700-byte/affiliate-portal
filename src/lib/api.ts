@@ -319,7 +319,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
     // Custom markdown transformations (pro/con boxes, rating, affiliate buttons)
     content = content.replace(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)\]/g, (match, score) => {
-      return `<div class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-xs font-black my-4 border border-rose-100/80"><span class="text-rose-500 text-sm">⭐</span> 総合評価 <span class="text-base font-black text-rose-700">${score}</span></div>`;
+      return `<div class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-xs font-black my-1 border border-rose-100/80"><span class="text-rose-500 text-sm">⭐</span> 総合評価 <span class="text-base font-black text-rose-700">${score}</span></div>`;
     });
 
     content = content.replace(/:::pro\r?\n([\s\S]*?)\r?\n:::/g,
@@ -376,7 +376,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
       if (imageUrl) {
-        s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1\n<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
+        s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
       }
 
       const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
