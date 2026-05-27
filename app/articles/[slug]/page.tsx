@@ -114,8 +114,23 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               レビュー
             </div>
             
-            <h1 className="article-title text-xl md:text-2xl lg:text-3xl font-black leading-snug mb-2 text-foreground">
-              {article.title}
+            <h1 className="article-title leading-snug mb-2 text-foreground flex flex-col items-center">
+              {(() => {
+                const parts = article.title.split(/(?=【)/);
+                if (parts.length > 1) {
+                  return (
+                    <>
+                      <span className="block text-lg md:text-xl lg:text-2xl text-foreground/80 mb-2 font-bold leading-normal">
+                        {parts[0]}
+                      </span>
+                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground">
+                        {parts.slice(1).join('')}
+                      </span>
+                    </>
+                  );
+                }
+                return <span className="text-xl md:text-2xl lg:text-3xl font-black">{article.title}</span>;
+              })()}
             </h1>
             
             <div className="flex items-center justify-center gap-2 mb-6 text-[10px] md:text-xs font-bold text-muted">

@@ -318,6 +318,10 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
     let content = matterResult.content;
 
     // Custom markdown transformations (pro/con boxes, rating, affiliate buttons)
+    content = content.replace(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)\]/g, (match, score) => {
+      return `<div class="inline-flex items-center gap-1.5 bg-rose-50 text-rose-600 px-4 py-1.5 rounded-full text-xs font-black my-4 border border-rose-100/80"><span class="text-rose-500 text-sm">⭐</span> 総合評価 <span class="text-base font-black text-rose-700">${score}</span></div>`;
+    });
+
     content = content.replace(/:::pro\r?\n([\s\S]*?)\r?\n:::/g,
       '<div class="pro-box"><div class="pro-title">✅ メリット</div>$1</div>');
     content = content.replace(/:::con\r?\n([\s\S]*?)\r?\n:::/g,
