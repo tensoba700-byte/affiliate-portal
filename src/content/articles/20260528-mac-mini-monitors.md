@@ -94,7 +94,7 @@ RAKUTEN_PRICE: 51120
 YAHOO_PRICE: 43800
 ASIN: B09M3GLDY2
 RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00txgvm.xpseka8e.g00txgvm.xpself20/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fbearhomes%2F2024-07-18-3865%2F
-YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fproduct%2Fj%2F4544438015480%2Fcompare
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fsearch%3Fp%3DBenQ%2520EW2880U
 
 BenQのEW2880Uは、映像美と高品位なサウンド体験を極限まで追求した、28インチのプレミアムな4Kエンターテインメントモニターです。🖥️
 
@@ -151,7 +151,7 @@ IMAGE: https://m.media-amazon.com/images/I/716aFHe0c2L.jpg
 AMAZON_PRICE: 37980
 ASIN: B0D95CWXWP
 RAKUTEN: https://search.rakuten.co.jp/search/mall/JAPANNEXT%20JN-iB4FL272U-C6-H/
-YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fproduct%2Fj%2F4589511166291%2Fcompare
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fsearch%3Fp%3DJAPANNEXT%2520JN-iB4FL272U-C6-H
 
 JAPANNEXTのJN-iB4FL272U-C6-Hは、最新世代の「IPS BLACK」テクノロジーをいち早く採用した高性能な27インチ4Kディスプレイです。🎨
 
@@ -265,7 +265,7 @@ AMAZON_PRICE: 36800
 RAKUTEN_PRICE: 39800
 ASIN: B0F8NPWRKK
 RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00u4hym.xpsek21a.g00u4hym.xpsel4ff/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fxiaomiofficial%2Fm66382%2F
-YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fproduct%2Fj%2F6941948706996%2Fcompare
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fsearch%3Fp%3DXiaomi%2520A27Ui
 
 Xiaomiの4Kモニター A27Uiは、コストパフォーマンスという概念を根本から覆す、驚異的な色彩表現力を持つ27インチUHDディスプレイです。🎨
 
@@ -320,8 +320,8 @@ IMAGE: https://m.media-amazon.com/images/I/710yap4MbDL.jpg
 AMAZON_PRICE: 28980
 YAHOO_PRICE: 35980
 ASIN: B09CGYHJ84
-RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00thrfm.xpsekf7a.g00thrfm.xpsel39a/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Flifeinnotech%2Fbf-ag-2701609-m306%2F
-YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fshopping.yahoo.co.jp%2Fproduct%2Fj%2F4580691191301%2Fcompare
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00ufvtm.xpsekc2c.g00ufvtm.xpsel816/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fiinex%2Fhb09cgyhj84%2F
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fstore.shopping.yahoo.co.jp%2Flifestyle-007%2F61845.html
 
 Dell S2722DCは、世界的なディスプレイメーカーとしての圧倒的な信頼性と機能美を結実させた、実用性抜群 of 27インチWQHDモニターです。💻
 

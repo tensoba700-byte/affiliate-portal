@@ -86,6 +86,48 @@ export default function RootLayout({
           crossOrigin="anonymous" 
           strategy="afterInteractive"
         />
+        
+        {/* Affiliate Preview Bypass for non-production environments */}
+        <Script id="affiliate-preview-bypass" strategy="afterInteractive">
+          {`
+            (function() {
+              if (typeof window !== 'undefined' && window.location.hostname !== 'www.mikke-style.com') {
+                document.addEventListener('click', function(e) {
+                  var target = e.target;
+                  while (target && target.tagName !== 'A') {
+                    target = target.parentElement;
+                  }
+                  if (target && target.tagName === 'A') {
+                    var href = target.getAttribute('href') || '';
+                    
+                    // 1. ValueCommerce (Yahoo! Shopping)
+                    if (href.indexOf('ck.jp.ap.valuecommerce.com') !== -1) {
+                      var match = href.match(/[?&]vc_url=([^&]+)/);
+                      if (match && match[1]) {
+                        var directUrl = decodeURIComponent(match[1]);
+                        e.preventDefault();
+                        window.open(directUrl, '_blank');
+                        return;
+                      }
+                    }
+                    
+                    // 2. Rakuten Affiliate
+                    if (href.indexOf('hb.afl.rakuten.co.jp') !== -1) {
+                      var match = href.match(/[?&]pc=([^&]+)/);
+                      if (match && match[1]) {
+                        var directUrl = decodeURIComponent(match[1]);
+                        e.preventDefault();
+                        window.open(directUrl, '_blank');
+                        return;
+                      }
+                    }
+                  }
+                }, true);
+              }
+            })();
+          `}
+        </Script>
+
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-500">
