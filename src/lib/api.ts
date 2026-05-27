@@ -238,11 +238,34 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
     }
   }
 
-  // JST基準の今日の日付を取得（予約投稿の判定用）
-  const todayStr = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
+  // JST時間基準での予約投稿判定（朝 07:00 / 夜 19:00 等の精密制御）
+  const now = new Date();
   const publishedArticles = allArticles.filter(a => {
     if (!a.publishedAt) return true;
-    return a.publishedAt <= todayStr;
+    try {
+      let pubStr = String(a.publishedAt).trim();
+      
+      // YYYY-MM-DD 形式なら、デフォルトで朝 07:00 JST とする
+      if (/^\d{4}-\d{2}-\d{2}$/.test(pubStr)) {
+        pubStr = `${pubStr}T07:00:00+09:00`;
+      }
+      // YYYY-MM-DD HH:mm 形式なら JST 指定に変換
+      else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/.test(pubStr)) {
+        pubStr = `${pubStr.replace(' ', 'T')}:00+09:00`;
+      }
+      // YYYY-MM-DD HH:mm:ss 形式なら JST 指定に変換
+      else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(pubStr)) {
+        pubStr = `${pubStr.replace(' ', 'T')}+09:00`;
+      }
+      
+      const pubDate = new Date(pubStr);
+      if (isNaN(pubDate.getTime())) {
+        return true; // 不正な日付形式の場合は安全のため表示
+      }
+      return pubDate <= now;
+    } catch (e) {
+      return true; // パースエラー時は安全のため表示
+    }
   });
 
   return publishedArticles.sort((a, b) => {
