@@ -1,12 +1,13 @@
 name: Auto Publish Articles
 
 on:
-  schedule:
-    # 朝5時 JST（遅延考慮で7時頃に投稿される想定）
-    - cron: '0 20 * * *'
-    # 夜18時 JST（遅延考慮で21時頃に投稿される想定）
-    - cron: '0 9 * * *'
+#  schedule:
+#    # 朝5時 JST（遅延考慮で7時頃に投稿される想定）
+#    - cron: '0 20 * * *'
+#    # 夜18時 JST（遅延考慮で21時頃に投稿される想定）
+#    - cron: '0 9 * * *'
   workflow_dispatch: {}    # 手動実行も可能
+
 
 jobs:
   publish:
