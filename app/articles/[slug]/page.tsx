@@ -118,13 +118,41 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
               {(() => {
                 const parts = article.title.split(/(?=【)/);
                 if (parts.length > 1) {
+                  const mainTitle = parts[0].trim();
+                  const subTitleRaw = parts[1].trim();
+                  
+                  // Extract content within brackets e.g. "Mac miniと調和するモニター選び6選"
+                  const subContent = subTitleRaw.replace(/[【】]/g, '');
+                  
+                  // Split "Mac miniと調和する" from "モニター選び6選"
+                  const monitorSelectMatch = subContent.match(/(.*)(モニター選び\d+選|選び\d+選|ガジェット\d+選|アイテム\d+選|文具\d+選|器具\d+選)(.*)/);
+                  
+                  if (monitorSelectMatch) {
+                    const subPart1 = monitorSelectMatch[1].trim();
+                    const subPart2 = `【${monitorSelectMatch[2].trim()}】`;
+                    
+                    return (
+                      <>
+                        <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-3 leading-normal">
+                          {mainTitle}
+                        </span>
+                        <span className="block text-sm md:text-base lg:text-lg text-foreground/75 mb-1 font-bold leading-normal">
+                          {subPart1}
+                        </span>
+                        <span className="block text-lg md:text-xl lg:text-2xl font-black text-primary">
+                          {subPart2}
+                        </span>
+                      </>
+                    );
+                  }
+                  
                   return (
                     <>
-                      <span className="block text-lg md:text-xl lg:text-2xl text-foreground/80 mb-2 font-bold leading-normal">
-                        {parts[0]}
+                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-2">
+                        {mainTitle}
                       </span>
-                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground">
-                        {parts.slice(1).join('')}
+                      <span className="block text-lg md:text-xl lg:text-2xl font-bold text-primary">
+                        {subTitleRaw}
                       </span>
                     </>
                   );
