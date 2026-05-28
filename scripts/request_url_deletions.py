@@ -35,16 +35,46 @@ slugs = [
 
 urls = [f"https://www.mikke-style.com/articles/{slug}" for slug in slugs]
 
-print("🔑 Authenticating with Service Account for Google Indexing API...")
-try:
-    creds = service_account.Credentials.from_service_account_file(
-        credentials_path,
-        scopes=["https://www.googleapis.com/auth/indexing"]
-    )
-    service = build("indexing", "v3", credentials=creds)
-except Exception as e:
-    print(f"❌ Authentication failed: {e}")
-    sys.exit(1)
+# Load env variables from .env.local
+from dotenv import load_dotenv
+from google.oauth2.credentials import Credentials
+load_dotenv(".env.local")
+
+print("🔑 Authenticating for Google Indexing API...")
+service = None
+
+# Attempt to authenticate with OAuth 2.0 Playground credentials first
+refresh_token = os.getenv("GOOGLE_REFRESH_TOKEN")
+client_id = os.getenv("GOOGLE_CLIENT_ID")
+client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
+
+if refresh_token and client_id and client_secret:
+    print("🔑 Authenticating with User OAuth 2.0 (via Refresh Token)...")
+    try:
+        creds = Credentials(
+            token=None,
+            refresh_token=refresh_token,
+            client_id=client_id,
+            client_secret=client_secret,
+            token_uri="https://oauth2.googleapis.com/token",
+            scopes=["https://www.googleapis.com/auth/indexing"]
+        )
+        service = build("indexing", "v3", credentials=creds)
+    except Exception as e:
+        print(f"⚠️ User OAuth 2.0 authentication failed: {e}")
+
+if not service:
+    print("🔑 Falling back to Service Account...")
+    try:
+        creds = service_account.Credentials.from_service_account_file(
+            credentials_path,
+            scopes=["https://www.googleapis.com/auth/indexing"]
+        )
+        service = build("indexing", "v3", credentials=creds)
+    except Exception as e:
+        print(f"❌ Service Account Authentication failed: {e}")
+        sys.exit(1)
+
 
 print(f"🔄 Requesting URL deletion index updates for {len(urls)} URLs...")
 success_count = 0
