@@ -45,10 +45,15 @@ service = None
 
 # Attempt to authenticate with OAuth 2.0 Playground credentials first
 refresh_token = os.getenv("GOOGLE_REFRESH_TOKEN")
-client_id = os.getenv("GOOGLE_CLIENT_ID")
-client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
 
-if refresh_token and client_id and client_secret:
+# Default Playground Credentials
+PLAYGROUND_CLIENT_ID = "407408718192.apps.googleusercontent.com"
+PLAYGROUND_CLIENT_SECRET = "m863mZ7713A45KmHgkua1w45"
+
+client_id = os.getenv("GOOGLE_CLIENT_ID") or PLAYGROUND_CLIENT_ID
+client_secret = os.getenv("GOOGLE_CLIENT_SECRET") or PLAYGROUND_CLIENT_SECRET
+
+if refresh_token:
     print("🔑 Authenticating with User OAuth 2.0 (via Refresh Token)...")
     try:
         creds = Credentials(
@@ -65,6 +70,7 @@ if refresh_token and client_id and client_secret:
 
 if not service:
     print("🔑 Falling back to Service Account...")
+
     try:
         creds = service_account.Credentials.from_service_account_file(
             credentials_path,

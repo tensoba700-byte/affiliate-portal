@@ -41,10 +41,15 @@ def update_sitemap():
 def get_indexing_service():
     # Attempt to authenticate with OAuth 2.0 Playground credentials first
     refresh_token = os.getenv("GOOGLE_REFRESH_TOKEN")
-    client_id = os.getenv("GOOGLE_CLIENT_ID")
-    client_secret = os.getenv("GOOGLE_CLIENT_SECRET")
     
-    if refresh_token and client_id and client_secret:
+    # Default Playground Credentials
+    PLAYGROUND_CLIENT_ID = "407408718192.apps.googleusercontent.com"
+    PLAYGROUND_CLIENT_SECRET = "m863mZ7713A45KmHgkua1w45"
+    
+    client_id = os.getenv("GOOGLE_CLIENT_ID") or PLAYGROUND_CLIENT_ID
+    client_secret = os.getenv("GOOGLE_CLIENT_SECRET") or PLAYGROUND_CLIENT_SECRET
+    
+    if refresh_token:
         print("🔑 Authenticating with OAuth 2.0 Playground credentials...")
         try:
             creds = Credentials(
@@ -58,6 +63,7 @@ def get_indexing_service():
             return build("indexing", "v3", credentials=creds)
         except Exception as e:
             print(f"⚠️ OAuth 2.0 Playground authentication failed: {e}")
+
             
     # Fallback to Service Account
     credentials_path = os.getenv("GA4_CREDENTIALS_PATH")
