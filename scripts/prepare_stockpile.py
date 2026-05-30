@@ -47,18 +47,60 @@ def update_page_status(page_id: str, status_name: str):
     except Exception as e:
         print(f"⚠️ ステータス更新エラー: {e}")
 
-def fetch_url_text(url: str) -> str:
-    """競合サイトのHTMLを取得します。"""
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/120.0.0.0"
-    }
+def fetch_url_text_puppeteer(url: str) -> str:
+    """Puppeteerを使ってヘッドレスブラウザでHTMLを動的に取得します。"""
+    import subprocess
+    import tempfile
+    
+    js_code = """
+const puppeteer = require('puppeteer');
+(async () => {
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  const page = await browser.newPage();
+  await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/120.0.0.0');
+  try {
+    await page.goto(process.argv[2], { waitUntil: 'networkidle2', timeout: 30000 });
+    const html = await page.content();
+    console.log(html);
+  } catch (e) {
+    console.error(e);
+    process.exit(1);
+  } finally {
+    await browser.close();
+  }
+})();
+"""
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    temp_js_path = os.path.join(project_root, "puppeteer_temp_scraper.js")
+    
     try:
-        res = requests.get(url, headers=headers, timeout=15)
-        if res.status_code == 200:
-            return res.text
+        with open(temp_js_path, "w", encoding="utf-8") as f:
+            f.write(js_code)
+            
+        res = subprocess.run(
+            ['node', temp_js_path, url],
+            capture_output=True,
+            text=True,
+            encoding='utf-8',
+            errors='ignore'
+        )
+        if res.returncode == 0:
+            return res.stdout
+        else:
+            print(f"⚠️ Puppeteer実行エラー: {res.stderr}")
+            return ""
     except Exception as e:
-        print(f"⚠️ URL取得エラー ({url}): {e}")
-    return ""
+        print(f"⚠️ Puppeteer呼び出し失敗: {e}")
+        return ""
+    finally:
+        if os.path.exists(temp_js_path):
+            try:
+                os.remove(temp_js_path)
+            except Exception:
+                pass
 
 def extract_capacity(title: str) -> str:
     """容量（ml, gなど）を抽出します。タイトルマッチングの精度向上用。"""
@@ -354,7 +396,7 @@ def main():
     update_page_status(page_id, "処理中")
     
     print(f"⏳ 競合ページのHTMLをダウンロード中...")
-    html = fetch_url_text(competitor_url)
+    html = fetch_url_text_puppeteer(competitor_url)
     if not html:
         print("❌ HTMLの取得に失敗しました。")
         update_page_status(page_id, "エラー")
