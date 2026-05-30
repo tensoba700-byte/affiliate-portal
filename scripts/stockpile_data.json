@@ -1,119 +1,272 @@
 {
-  "page_id": "36eddb45-8772-819d-8df5-f15242463d36",
-  "competitor_url": "https://my-best.com/6045",
+  "page_id": "370ddb45-8772-81a7-b0b6-e5c4b740f929",
+  "competitor_url": "https://my-best.com/21509",
   "default_category": "ガーデニング",
-  "default_title": "植物育成ライトのおすすめ人気ランキング",
+  "default_title": "水草育成LEDライトのおすすめ人気ランキング",
+  "competitor_title": "水草育成LEDライトのおすすめ人気ランキング",
+  "competitor_intro": "水槽に入れた水草の光合成を促すのに必要な「水草育成LEDライト」。電球色やサイズはさまざまで、観賞魚の飼育に使えるタイプもあります。上に載せるだけでよいものから小型の水槽に取り付け可能な自立式・クリップ式まであり種類が多いため、水草の種類や水槽に合わせて選びたいですよね。\n\n今回は、Amazon・楽天市場・Yahoo!ショッピングの売れ筋から、人気のおすすめ「水草育成LEDライト」をランキング形式でご紹介。ぜひ購入の際の参考にしてください！\n\nTRIANGLE LED VIVID 600",
+  "competitor_structure": [
+    {
+      "tag": "h2",
+      "text": "水草育成LEDライト全15商品おすすめ人気ランキング"
+    },
+    {
+      "tag": "h3",
+      "text": "DEWELアクアリウムライト"
+    },
+    {
+      "tag": "h3",
+      "text": "EAYHM水草植物育成ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "チャームTRIANGLE LED GROW"
+    },
+    {
+      "tag": "h3",
+      "text": "FEDOURフルスペクトル水槽照明LEDライト"
+    },
+    {
+      "tag": "h3",
+      "text": "Hygger水槽用LEDライト"
+    },
+    {
+      "tag": "h3",
+      "text": "スペクトラムブランズジャパンテトラ ｜ パワーLEDライト"
+    },
+    {
+      "tag": "h3",
+      "text": "ジェックスクリアLED リーフグロー ｜ 3224"
+    },
+    {
+      "tag": "h3",
+      "text": "リーフTRIANGLE LED VIVID 600"
+    },
+    {
+      "tag": "h3",
+      "text": "UrbanPulseLED水槽ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "Hygger水槽LEDライト"
+    },
+    {
+      "tag": "h3",
+      "text": "OsAtNb水槽ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "チャームAqullo Series ｜ TRIANGLE LED BRIGHT ｜ 274007"
+    },
+    {
+      "tag": "h3",
+      "text": "ledmomo水槽ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "Hygger水槽ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "ジェックスクリア LED POWERⅢ"
+    },
+    {
+      "tag": "h2",
+      "text": "水草育成LEDライトの売れ筋ランキングもチェック！"
+    },
+    {
+      "tag": "h2",
+      "text": "人気水槽用照明関連のおすすめ人気ランキング"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽バックスクリーン"
+    },
+    {
+      "tag": "h3",
+      "text": "60cm水槽ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "メダカの水槽用ライト"
+    },
+    {
+      "tag": "h3",
+      "text": "ペルチェ式水槽クーラー"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽用クーラー"
+    },
+    {
+      "tag": "h3",
+      "text": "小型水槽用ヒーター"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽用サーモスタット付きヒーター"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽用ヒーター"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽ライトスタンド"
+    },
+    {
+      "tag": "h2",
+      "text": "新着水槽用照明関連のおすすめ人気ランキング"
+    },
+    {
+      "tag": "h3",
+      "text": "水槽用ライト"
+    },
+    {
+      "tag": "h2",
+      "text": "人気水槽用照明関連の商品レビュー"
+    },
+    {
+      "tag": "h3",
+      "text": "Bonbi 薄型しつけるトレー"
+    },
+    {
+      "tag": "h3",
+      "text": "ペット用冷暖プレート"
+    },
+    {
+      "tag": "h3",
+      "text": "ファインキャット トイレに流せる木製猫砂"
+    },
+    {
+      "tag": "h3",
+      "text": "パピーコング"
+    },
+    {
+      "tag": "h3",
+      "text": "Pétion ペットドライヤー スリム"
+    },
+    {
+      "tag": "h2",
+      "text": "人気ペットフード ・ ペット用品関連のfavlist"
+    },
+    {
+      "tag": "h2",
+      "text": "カテゴリから探す"
+    }
+  ],
+  "competitor_buying_guide": "",
   "products": [
     {
       "rank": 1,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ ビジネスシューズ ｜ 315R",
+      "original_name": "DEWELアクアリウムライト",
       "jan_code": "",
-      "asin": "B009IJARRK",
-      "competitor_description": "",
+      "asin": "",
+      "competitor_description": "水槽に直接置くだけ、調節可能なスライド式水槽に直接置くだけで設置できるアクアリウムライトです。光が1段階から10段階まで徐々に明るくなり、3種類の点灯モードがあります。水槽に合わせて調節可能なスライド式で、30～45cmの水槽に使用可能です。",
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "25631",
+        "image_url": "https://img.my-best.com/product_images/d43daacdd2cec63cf1fcf415f7e7ed09.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=f2445cba69a3b17fc4292934e0ddd4d9",
+        "amazon_price": "2699",
         "rakuten_price": "なし",
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B009IJARRK?tag=mikkestyle-22",
-        "amazon_name": "REGAL(リーガル) メンズ ストレートチップ 315Rオックスフォード",
+        "amazon_url": "https://www.amazon.co.jp/dp/B09NSJ4TRB?tag=mikkestyle-22",
+        "amazon_name": "DEWEL 水槽 ライト 水槽用 照明 ledライト アクアリウムライト 防水 タイマ ー 水草 育成 熱帯魚 観賞魚 飼育 3つの照明モード 10段階明るさ調整 45-60の水槽対応",
         "rakuten_name": "なし",
         "yahoo_name": "なし"
       }
     },
     {
       "rank": 2,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ ストレートチップ",
-      "jan_code": "4534887503157",
-      "asin": "B084P3T5GV",
-      "competitor_description": "",
+      "original_name": "EAYHM水草植物育成ライト",
+      "jan_code": "",
+      "asin": "",
+      "competitor_description": "水草を美しく演出。ボトルアクアリウムやテラリウムに水草・植物の成長と、色鮮やかに見せる自然な白色の明るさ・色温度を兼ね備えた水草植物育成ライト。アタッチメントとスタンドの2WAY方式でフレームレス水槽、小型容器、枠付き水槽にも使用可能です。31~38cmで高さ調整ができるフレキシブルアームにより、照射角度・位置が自由に調節できます。",
       "resolved_details": {
-        "image_url": "https://item-shopping.c.yimg.jp/i/l/a-one1_regal-21vrbc-bl",
-        "amazon_price": "22671",
-        "rakuten_price": "なし",
-        "yahoo_price": "23160",
-        "rakuten_url": "",
-        "yahoo_url": "https://store.shopping.yahoo.co.jp/a-one1/regal-21vrbc-bl.html",
-        "amazon_url": "https://www.amazon.co.jp/dp/B084P3T5GV?tag=mikkestyle-22",
-        "amazon_name": "[リーガル] 21VRBC 21VR BC メンズ ビジネスシューズ ストレートチップ 靴 正規品",
-        "rakuten_name": "なし",
-        "yahoo_name": "リーガル REGAL 靴 メンズ ビジネスシューズ 21VR ストレートチップ 本革 フォーマルもOK ブラック"
-      }
-    },
-    {
-      "rank": 3,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ ストレートチップ ｜ 725RAL",
-      "jan_code": "4549470509751",
-      "asin": "B00MIWMZ7Y",
-      "competitor_description": "",
-      "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "31000",
+        "image_url": "https://img.my-best.com/product_images/d535e96e04caad8ab036f0bc21db5b9b.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=86829dd1489cd03e8b24479051a56fd0",
+        "amazon_price": "3099",
         "rakuten_price": "なし",
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B00MIWMZ7Y?tag=mikkestyle-22",
-        "amazon_name": "[リーガル] メンズ ビジネスシューズ 本革 内羽式 ストレートチップ クッション性 2E カジュアル デイリー オフィス フォーマル ドレス 冠婚葬祭 就活 725RAL",
+        "amazon_url": "https://www.amazon.co.jp/dp/B08C71NG57?tag=mikkestyle-22",
+        "amazon_name": "EAYHM 水槽 ライトと水草植物育成ライト スタンド 多機能 カラー LED 小型アクアリウム ライト",
+        "rakuten_name": "なし",
+        "yahoo_name": "なし"
+      }
+    },
+    {
+      "rank": 3,
+      "original_name": "チャームTRIANGLE LED GROW",
+      "jan_code": "",
+      "asin": "",
+      "competitor_description": "水草の育成におすすめ、三角形のアルミボディが特徴赤の波長を必要とする水草の育成におすすめな高性能LEDライトです。三角形のアルミボディが特徴的で、その表面にはアルマイト加工が施されており、耐食性・耐摩耗性に優れています。設置方法はライトリフトを使用した方式と吊り下げ式の2通りから選択可能です。",
+      "resolved_details": {
+        "image_url": "https://img.my-best.com/product_images/c697579acf552aaad2277b302582a3fa.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=d7871695834b9a1e072a6da639a3865e",
+        "amazon_price": "12140",
+        "rakuten_price": "なし",
+        "yahoo_price": "なし",
+        "rakuten_url": "",
+        "yahoo_url": "",
+        "amazon_url": "https://www.amazon.co.jp/dp/B09M85NRZ7?tag=mikkestyle-22",
+        "amazon_name": "アクロ ＴＲＩＡＮＧＬＥ ＬＥＤ ＧＲＯＷ ６００ 専用ライトスタンドセット ６０ｃｍ水槽 ライト アクアリウム 沖縄別途送料",
         "rakuten_name": "なし",
         "yahoo_name": "なし"
       }
     },
     {
       "rank": 4,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ ストレートチップ ｜ 01DRCD",
+      "original_name": "FEDOURフルスペクトル水槽照明LEDライト",
       "jan_code": "",
-      "asin": "B07KWM2356",
-      "competitor_description": "",
+      "asin": "",
+      "competitor_description": "魚や水草を美しく見せる。水槽幅30～50cmにぴったり水槽幅30～50cmにぴったりなLEDライトです。水槽の景観を鮮やかに照らし、 魚や水草を美しく見せてくれるほかに、植物の光合成の手助けをしてくれます。点灯時間は6時間・9時間・12時間・24時間の中から自由に設定可能です。",
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "36818",
+        "image_url": "https://img.my-best.com/product_images/f92caa244135f91c23d4d48cef064ca5.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=02a069130b80cfb36f4dd6d482d17092",
+        "amazon_price": "1480",
         "rakuten_price": "なし",
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B07KWM2356?tag=mikkestyle-22",
-        "amazon_name": "[リーガル] ストレートチップ 革底 01DR CD ブラック",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0CD22VHKT?tag=mikkestyle-22",
+        "amazon_name": "FEDOURフルスペクトル水槽照明LEDライト：タイマー付き 30cm40cm60cmの高輝度水槽ライト、伸縮可能なブラケット付き、水草育成/アクアリウム照明用ランプ",
         "rakuten_name": "なし",
         "yahoo_name": "なし"
       }
     },
     {
       "rank": 5,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ オックスフォード ストレートチップ",
-      "jan_code": "4937143298789",
-      "asin": "B0BDLCLQVX",
-      "competitor_description": "",
+      "original_name": "Hygger水槽用LEDライト",
+      "jan_code": "",
+      "asin": "",
+      "competitor_description": "必要な明るさを簡単に調整、飼育と水草の育成におすすめ赤RGB・青・白・緑の4色42個の高輝度LEDランプを採用している水槽用LEDライトです。光の照射範囲が広く深く、ルーメンの強度も適度で、観賞魚の飼育と水草の育成におすすめ。ライトの明るさは10段階で調整できるため、暗いから明るいまで幅広く対応し、飼育する魚の種類に応じて必要な明るさを簡単に調整可能です。",
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "28600",
+        "image_url": "https://img.my-best.com/product_images/e49be7877e40191f6289906f79b61e80.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=0201fc6b1a77c5f7e9620c483d049251",
+        "amazon_price": "2399",
         "rakuten_price": "なし",
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0BDLCLQVX?tag=mikkestyle-22",
-        "amazon_name": "REGAL(リーガル) メンズ ビジネスシューズ 230S 【Amazon.co.jp 限定】本革 日本製 ストレートチップ",
+        "amazon_url": "https://www.amazon.co.jp/dp/B07XDY8VKB?tag=mikkestyle-22",
+        "amazon_name": "hygger 水槽 ライト 30cm~45cm水槽対応 LED 30CM 40CM 45CM 3照明モード 5段階明るさ調整 3タイマー付き アクアリウムライト スライド式 熱帯魚ライト 水槽用 24LED 観賞魚飼育 水草育成 省エネ 長寿命 9W",
         "rakuten_name": "なし",
         "yahoo_name": "なし"
       }
     },
     {
       "rank": 6,
-      "original_name": "リーガルコーポレーション\nREGAL ｜ ウイングチップ ｜ 2589N",
+      "original_name": "スペクトラムブランズジャパンテトラ ｜ パワーLEDライト",
       "jan_code": "",
-      "asin": "B00MNKFY60",
-      "competitor_description": "",
+      "asin": "",
+      "competitor_description": "魚や水草が美しく見える。スリムデザインのLEDライト同クラスで高いレベルの1350ルーメン、色温度9000Kで魚や水草が美しく見えるLEDライトです。水草の育成に有効な400〜500nm、600〜660nmの波長を強化しています。ライト部は薄さ10ｍｍのスリムデザインです。",
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "33000",
+        "image_url": "https://img.my-best.com/product_images/8c8d6b93226ab4a42485e56502163c3e.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=cacbc21320d91608957fb1b9edd6bbda",
+        "amazon_price": "4973",
         "rakuten_price": "なし",
         "yahoo_price": "なし",
         "rakuten_url": "",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B00MNKFY60?tag=mikkestyle-22",
-        "amazon_name": "[リーガル] メンズ ビジネスシューズ 2589 NEB ブラック",
+        "amazon_url": "https://www.amazon.co.jp/dp/B09T3L19CZ?tag=mikkestyle-22",
+        "amazon_name": "テトラ (Tetra) テトラ パワーLEDライト 30 水槽 アクアリウム 植物育成ライト 防水性能(IPX7) RA92の高い演色性 水草育成 室内栽培 多肉植物育成 水耕栽培 室内園芸 金魚 熱帯魚 メダカ",
         "rakuten_name": "なし",
         "yahoo_name": "なし"
       }

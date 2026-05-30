@@ -48,11 +48,11 @@ def update_page_status(page_id: str, status_name: str):
         print(f"⚠️ ステータス更新エラー: {e}")
 
 def fetch_url_text_puppeteer(url: str) -> str:
-    """Puppeteerを使ってヘッドレスブラウザでHTMLを動的に取得します。"""
+    """Puppeteerを使ってヘッドレスブラウザでHTMLを動的に取得し、DOM解析してJSON文字列を返します。"""
     import subprocess
     import tempfile
     
-    js_code = """
+    js_code = r"""
 const puppeteer = require('puppeteer');
 (async () => {
   const browser = await puppeteer.launch({
@@ -63,8 +63,167 @@ const puppeteer = require('puppeteer');
   await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/120.0.0.0');
   try {
     await page.goto(process.argv[2], { waitUntil: 'networkidle2', timeout: 30000 });
-    const html = await page.content();
-    console.log(html);
+    
+    // 完全に描画されるのを少し待つ
+    await new Promise(r => setTimeout(r, 2000));
+    
+    const data = await page.evaluate(() => {
+      // 1. 記事タイトル
+      const competitor_title = document.querySelector('h1')?.textContent.trim() || document.title || "";
+      
+      // 2. 導入文（最初のH3より前に位置する長めの段落群）
+      const firstH3 = document.querySelector('h3');
+      const introParas = [];
+      if (firstH3) {
+        const allParas = Array.from(document.querySelectorAll('p'));
+        for (const p of allParas) {
+          if (p.compareDocumentPosition(firstH3) & Node.DOCUMENT_POSITION_FOLLOWING) {
+            const txt = p.textContent.trim();
+            if (txt.length > 20 && !txt.includes('徹底した自社検証')) {
+              introParas.push(txt);
+            }
+          }
+        }
+      }
+      const competitor_intro = introParas.join('\n\n');
+      
+      // 3. 構成情報（H2およびH3見出しのツリー）
+      const competitor_structure = Array.from(document.querySelectorAll('h2, h3')).map(h => ({
+        tag: h.tagName.toLowerCase(),
+        text: h.textContent.trim()
+      }));
+      
+      // 4. 選び方ガイド
+      let competitor_buying_guide = "";
+      const choiceH2 = Array.from(document.querySelectorAll('h2')).find(h2 => h2.textContent.includes('選び方') || h2.textContent.includes('選ぶ'));
+      if (choiceH2) {
+        const parts = [];
+        let next = choiceH2.nextElementSibling;
+        while (next) {
+          const tagName = next.tagName.toLowerCase();
+          if (tagName === 'h2') break;
+          if (tagName === 'p' || tagName === 'ul' || tagName === 'ol' || tagName === 'li') {
+            parts.push(next.textContent.trim());
+          } else {
+            const innerParas = Array.from(next.querySelectorAll('p, li')).map(el => el.textContent.trim());
+            if (innerParas.length > 0) {
+              parts.push(...innerParas);
+            } else {
+              const text = next.textContent.trim();
+              if (text && text.length > 15 && !text.includes('商品を見る') && !text.includes('最安価格')) {
+                parts.push(text);
+              }
+            }
+          }
+          next = next.nextElementSibling;
+        }
+        competitor_buying_guide = parts.filter(Boolean).join('\n\n');
+      }
+      
+      // 5. JSON-LDからGTIN（JAN）およびASINを事前に抽出
+      const jsonLdProducts = {};
+      const scripts = Array.from(document.querySelectorAll('script[type="application/ld+json"]'));
+      scripts.forEach(script => {
+        try {
+          const ld = JSON.parse(script.textContent.trim());
+          if (ld && ld['@type'] === 'Article' && ld.mainEntity) {
+            const listItems = ld.mainEntity.itemListElement || [];
+            listItems.forEach(li => {
+              const prod = li.item || {};
+              const name = prod.name || li.name || "";
+              const gtin = prod.gtin || "";
+              const asin = prod.asin || "";
+              if (name) {
+                jsonLdProducts[name.toLowerCase().trim()] = { gtin, asin };
+              }
+            });
+          }
+        } catch(e) {}
+      });
+      
+      // 6. 商品リストと商品説明の抽出
+      const h3s = Array.from(document.querySelectorAll('h3'));
+      const products = [];
+      let rankCounter = 1;
+      
+      h3s.forEach((h3) => {
+        const name = h3.textContent.trim();
+        // 不要な見出しを除外
+        if (!name || name.length < 2 || name.includes('売れ筋ランキング') || name.includes('おすすめ人気ランキング') || name.includes('レビュー') || name.includes('比較一覧表')) {
+          return;
+        }
+        
+        let description = "";
+        
+        // 階層走査 Strategy 1: 親コンテナの隣接div
+        let container = h3.parentElement?.parentElement;
+        let descEl = container?.nextElementSibling;
+        if (descEl && descEl.tagName.toLowerCase() === 'div') {
+          description = descEl.textContent.trim();
+        }
+        
+        // Strategy 2: Closest コンテナ内の2番目の子要素
+        if (!description) {
+          const wrapper = h3.closest('div[class*="css-"]');
+          if (wrapper) {
+            const divs = Array.from(wrapper.children);
+            if (divs.length >= 2) {
+              description = divs[1].textContent.trim();
+            }
+          }
+        }
+        
+        if (description && !description.includes('商品...') && !description.includes('徹底比較') && description !== 'EMPTY') {
+          let jan_code = "";
+          let asin = "";
+          const normName = name.toLowerCase().trim();
+          let match = jsonLdProducts[normName];
+          if (!match) {
+            const key = Object.keys(jsonLdProducts).find(k => k.includes(normName) || normName.includes(k));
+            if (key) match = jsonLdProducts[key];
+          }
+          if (match) {
+            jan_code = match.gtin || "";
+            asin = match.asin || "";
+          }
+          
+          let scraped_image = "";
+          const wrapper = h3.closest('div[class*="css-"]');
+          if (wrapper) {
+            const imgEl = wrapper.querySelector('img');
+            if (imgEl) {
+              scraped_image = imgEl.src || imgEl.getAttribute('data-src') || imgEl.getAttribute('src') || "";
+            }
+          }
+          if (!scraped_image) {
+            const container = h3.parentElement?.parentElement;
+            const imgEl = container?.querySelector('img');
+            if (imgEl) {
+              scraped_image = imgEl.src || imgEl.getAttribute('data-src') || imgEl.getAttribute('src') || "";
+            }
+          }
+          
+          products.push({
+            rank: rankCounter++,
+            name,
+            jan_code,
+            asin,
+            description,
+            scraped_image: scraped_image || ""
+          });
+        }
+      });
+      
+      return {
+        competitor_title,
+        competitor_intro,
+        competitor_structure,
+        competitor_buying_guide,
+        products
+      };
+    });
+    
+    console.log(JSON.stringify(data, null, 2));
   } catch (e) {
     console.error(e);
     process.exit(1);
@@ -395,15 +554,25 @@ def main():
     # ステータスを「処理中」に変更
     update_page_status(page_id, "処理中")
     
-    print(f"⏳ 競合ページのHTMLをダウンロード中...")
-    html = fetch_url_text_puppeteer(competitor_url)
-    if not html:
-        print("❌ HTMLの取得に失敗しました。")
+    print(f"⏳ 競合ページのHTMLをダウンロード＆解析中...")
+    scraped_json = fetch_url_text_puppeteer(competitor_url)
+    if not scraped_json:
+        print("❌ ページの取得・解析に失敗しました。")
         update_page_status(page_id, "エラー")
         sys.exit(1)
         
-    print("📦 ランキングリストと商品データを抽出中...")
-    products = extract_mybest_ranking(html, competitor_url)
+    try:
+        scraped_data = json.loads(scraped_json)
+    except Exception as e:
+        print(f"❌ 解析結果のJSONデコードに失敗しました: {e}")
+        update_page_status(page_id, "エラー")
+        sys.exit(1)
+        
+    competitor_title = scraped_data.get("competitor_title", "")
+    competitor_intro = scraped_data.get("competitor_intro", "")
+    competitor_structure = scraped_data.get("competitor_structure", [])
+    competitor_buying_guide = scraped_data.get("competitor_buying_guide", "")
+    products = scraped_data.get("products", [])
     
     if not products:
         print("❌ 商品の抽出に失敗しました。mybest形式でないか、DOMが変更された可能性があります。")
@@ -421,6 +590,13 @@ def main():
         print(f"[{idx+1}/{len(selected_products)}] {p['name']} の情報を検索中...")
         details = fetch_product_details(p["name"], p["jan_code"], p["asin"])
         
+        # Fallback to scraped competitor image if API returned Unsplash or empty
+        if not details.get("image_url") or "unsplash.com" in details.get("image_url", ""):
+            scraped_img = p.get("scraped_image", "")
+            if scraped_img:
+                print(f"📸 Fallback to scraped image for {p['name']}: {scraped_img}")
+                details["image_url"] = scraped_img
+        
         final_products_list.append({
             "rank": p["rank"],
             "original_name": p["name"],
@@ -437,6 +613,10 @@ def main():
         "competitor_url": competitor_url,
         "default_category": category,
         "default_title": name_str,
+        "competitor_title": competitor_title,
+        "competitor_intro": competitor_intro,
+        "competitor_structure": competitor_structure,
+        "competitor_buying_guide": competitor_buying_guide,
         "products": final_products_list
     }
     
