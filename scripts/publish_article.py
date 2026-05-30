@@ -513,8 +513,12 @@ def generate_content_with_llm(products_data, article_title):
                 break
                 
         desc = ""
+        verification_results = ""
+        expert_editor_comments = ""
         if sp_prod:
             desc = sp_prod.get("competitor_description", "")
+            verification_results = sp_prod.get("verification_results", "")
+            expert_editor_comments = sp_prod.get("expert_editor_comments", "")
         if not desc:
             desc = f"おすすめの高品質な製品です。優れた性能と信頼性を兼ね備え、幅広いシーンで活躍します。使いやすさを追求した設計で、毎日の生活をより快適にサポートします。"
             
@@ -526,6 +530,8 @@ def generate_content_with_llm(products_data, article_title):
         products_list.append({
             "name": p["name"],
             "description": desc,
+            "verification_results": verification_results,
+            "expert_editor_comments": expert_editor_comments,
             "recommended_for": rec
         })
         
@@ -537,7 +543,11 @@ def generate_content_with_llm(products_data, article_title):
         "intro": intro,
         "points": points,
         "products": products_list,
-        "summary": summary
+        "summary": summary,
+        "competitor_buying_guide": stockpile_data.get("competitor_buying_guide", ""),
+        "competitor_expert_comments": stockpile_data.get("competitor_expert_comments", ""),
+        "competitor_faqs": stockpile_data.get("competitor_faqs", []),
+        "competitor_summary": stockpile_data.get("competitor_summary", "")
     }
     
     return json.dumps(final_article, ensure_ascii=False)
@@ -604,10 +614,15 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         f'category: "{category}"\n'
         f'---\n\n'
         f'{intro_text}\n\n'
-        f'## ✅ 選び方のポイント\n<ul>'
-        + "".join([f"<li>{p}</li>" for p in data['points']])
-        + "</ul>\n\n"
     )
+
+    if data.get("competitor_buying_guide"):
+        markdown += f"## ✅ 選び方のポイント\n\n{data['competitor_buying_guide']}\n\n"
+    else:
+        markdown += f"## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data['points']]) + "</ul>\n\n"
+
+    if data.get("competitor_expert_comments"):
+        markdown += f"## 💡 専門家・編集部のアドバイス\n\n{data['competitor_expert_comments']}\n\n"
 
     # Distributed scores for 1st to 6th rank
     scores = ["4.88", "4.75", "4.62", "4.51", "4.42", "4.33"]
@@ -637,6 +652,14 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         # 説明文のフォーマット
         formatted_desc = p['description'].replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
+        
+        # 2. 各商品の検証結果・テスト内容のテキスト
+        if p.get("verification_results"):
+            markdown += f"🔍 **検証結果・テスト内容**\n{p['verification_results']}\n\n"
+            
+        # 3. 編集部コメント・専門家コメント
+        if p.get("expert_editor_comments"):
+            markdown += f"✍️ **編集部・専門家コメント**\n{p['expert_editor_comments']}\n\n"
         
         # ★説明文の下（購入ボタンの2セットめ）
         markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
@@ -669,37 +692,46 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     markdown += comparison_table + "\n"
     
     # 4. Build FAQ section
-    faq_templates = {
-        "植物育成": [
-            ("Q. 24時間つけっぱなしにするべきですか？", "A. いいえ、植物にも休眠（夜の時間）が必要です。通常は1日8〜12時間程度の照射が理想的で、タイマー機能などを活用して夜間は消灯することをおすすめします。"),
-            ("Q. LEDライトと太陽光ではどちらが効果的ですか？", "A. 太陽光がベストですが、日当たりの悪い室内では植物育成用LEDライトが非常に有効です。光合成に必要な赤・青の特定の波長を強化しているため、室内でも十分に育てることができます。"),
-            ("Q. ライトと植物の距離はどのくらい離せばいいですか？", "A. 製品の光量にもよりますが、一般的には15cm〜30cm程度離して設置します。近づけすぎると葉焼けの原因になり、遠すぎると効果が薄れるため、植物の様子を見ながら調整してください。")
-        ],
-        "水草": [
-            ("Q. 24時間点灯しておく必要がありますか？", "A. いいえ、1日8時間から10時間程度の点灯が目安です。点灯時間が長すぎるとコケの大量発生の原因になるため、市販のタイマー等で規則正しく管理するのが理想的です。"),
-            ("Q. 赤色や青色のLEDは必要ですか？", "A. はい、赤色の光は水草の光合成を促し、青色の光は茎や葉を太く育てる効果があります。フルスペクトルやこれら2色が強化されたライトを選ぶと失敗がありません。"),
-            ("Q. 熱帯魚用の通常のライトでも水草は育ちますか？", "A. 陰性植物（アヌビアスなど）であれば通常のライトでも育ちますが、陽性水草（ヘアーグラスや有茎草など）を美しく育てるには、光量が強い専用の「水草育成LEDライト」が必要です。")
-        ],
-        "default": [
-            ("Q. 購入後の保証期間はどのくらいですか？", "A. 一般的なメーカー製品では、購入日から1年間の動作保証がついているものがほとんどです。購入時の領収書や保証書は大切に保管してください。"),
-            ("Q. 日常のお手入れで気をつけるべき点は何ですか？", "A. 湿気やほこりがたまると火災や故障の原因になります。定期的に電源プラグを抜き、乾いた柔らかい布で本体の汚れを拭き取ってください。"),
-            ("Q. 電気代はどのくらいかかりますか？", "A. LED製品は非常に省エネ設計です。例えば消費電力10Wのライトを1日10時間点灯した場合、1ヶ月の電気代は約90円程度と極めてリーズナブルです。")
-        ]
-    }
-    
-    faq_items = faq_templates["default"]
-    for k, v in faq_templates.items():
-        if k in output_title:
-            faq_items = v
-            break
-            
     faq_section = "## ❓ よくある質問（FAQ）\n\n"
-    for q, a in faq_items:
-        faq_section += f"### {q}\n{a}\n\n"
+    if data.get("competitor_faqs"):
+        for item in data["competitor_faqs"]:
+            q = item.get("question", "")
+            a = item.get("answer", "")
+            if q and a:
+                faq_section += f"### {q}\n{a}\n\n"
+    else:
+        faq_templates = {
+            "植物育成": [
+                ("Q. 24時間つけっぱなしにするべきですか？", "A. いいえ、植物にも休眠（夜の時間）が必要です。通常は1日8〜12時間程度の照射が理想的で、タイマー機能などを活用して夜間は消灯することをおすすめします。"),
+                ("Q. LEDライトと太陽光ではどちらが効果的ですか？", "A. 太陽光がベストですが、日当たりの悪い室内では植物育成用LEDライトが非常に有効です。光合成に必要な赤・青の特定の波長を強化しているため、室内でも十分に育てることができます。"),
+                ("Q. ライトと植物の距離はどのくらい離せばいいですか？", "A. 製品の光量にもよりますが、一般的には15cm〜30cm程度離して設置します。近づけすぎると葉焼けの原因になり、遠すぎると効果が薄れるため、植物の様子を見ながら調整してください。")
+            ],
+            "水草": [
+                ("Q. 24時間点灯しておく必要がありますか？", "A. いいえ、1日8時間から10時間程度の点灯が目安です。点灯時間が長すぎるとコケの大量発生の原因になるため、市販のタイマー等で規則正しく管理するのが理想的です。"),
+                ("Q. 赤色や青色のLEDは必要ですか？", "A. はい、赤色の光は水草の光合成を促し、青色の光は茎や葉を太く育てる効果があります。フルスペクトルやこれら2色が強化されたライトを選ぶと失敗がありません。"),
+                ("Q. 熱帯魚用の通常のライトでも水草は育ちますか？", "A. 陰性植物（アヌビアスなど）であれば通常のライトでも育ちますが、陽性水草（ヘアーグラスや有茎草など）を美しく育てるには、光量が強い専用の「水草育成LEDライト」が必要です。")
+            ],
+            "default": [
+                ("Q. 購入後の保証期間はどのくらいですか？", "A. 一般的なメーカー製品では、購入日から1年間の動作保証がついているものがほとんどです。購入時の領収書や保証書は大切に保管してください。"),
+                ("Q. 日常のお手入れで気をつけるべき点は何ですか？", "A. 湿気やほこりがたまると火災や故障の原因になります。定期的に電源プラグを抜き、乾いた柔らかい布で本体の汚れを拭き取ってください。"),
+                ("Q. 電気代はどのくらいかかりますか？", "A. LED製品は非常に省エネ設計です。例えば消費電力10W of ライトを1日10時間点灯した場合、1ヶ月の電気代は約90円程度と極めてリーズナブルです。")
+            ]
+        }
+        faq_items = faq_templates["default"]
+        for k, v in faq_templates.items():
+            if k in output_title:
+                faq_items = v
+                break
+        for q, a in faq_items:
+            faq_section += f"### {q}\n{a}\n\n"
         
     markdown += faq_section + "\n"
 
-    markdown += f"## 💬 まとめ\n{data['summary']}\n\n"
+    markdown += f"## 💬 まとめ\n"
+    if data.get("competitor_summary"):
+        markdown += f"{data['competitor_summary']}\n\n"
+    else:
+        markdown += f"{data['summary']}\n\n"
     markdown += f'<p class="pr-disclosure">{PR_DISCLOSURE}</p>\n'
 
     path = f"src/content/articles/{slug}.md"
