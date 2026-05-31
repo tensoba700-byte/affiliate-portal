@@ -45,10 +45,10 @@ export default async function ArticlesPage() {
                 className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border animate-fade-in-up"
                 style={{ animationDelay: `${(i % 3) * 100}ms` }}
               >
-                <div className="aspect-square sm:aspect-[4/3] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4">
+                <div className="aspect-video w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
                   {article.coverImage ? (
                     // @ts-ignore
-                    <img src={article.coverImage} alt={article.title} className="object-cover w-full h-full transform transition-transform duration-700 group-hover:scale-105" />
+                    <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30 cursor-pointer">
                        <span className="text-3xl">🎀</span>

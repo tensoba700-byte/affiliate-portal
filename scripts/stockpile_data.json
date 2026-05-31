@@ -1,313 +1,99 @@
 {
-  "page_id": "370ddb45-8772-81a7-b0b6-e5c4b740f929",
-  "competitor_url": "https://my-best.com/21509",
-  "default_category": "ガーデニング",
-  "default_title": "水草育成LEDライトのおすすめ人気ランキング",
-  "competitor_title": "水草育成LEDライトのおすすめ人気ランキング",
-  "competitor_intro": "水槽に入れた水草の光合成を促すのに必要な「水草育成LEDライト」。電球色やサイズはさまざまで、観賞魚の飼育に使えるタイプもあります。上に載せるだけでよいものから小型の水槽に取り付け可能な自立式・クリップ式まであり種類が多いため、水草の種類や水槽に合わせて選びたいですよね。\n\n今回は、Amazon・楽天市場・Yahoo!ショッピングの売れ筋から、人気のおすすめ「水草育成LEDライト」をランキング形式でご紹介。ぜひ購入の際の参考にしてください！\n\nTRIANGLE LED VIVID 600",
-  "competitor_structure": [
-    {
-      "tag": "h2",
-      "text": "水草育成LEDライト全15商品おすすめ人気ランキング"
-    },
-    {
-      "tag": "h3",
-      "text": "DEWELアクアリウムライト"
-    },
-    {
-      "tag": "h3",
-      "text": "EAYHM水草植物育成ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "チャームTRIANGLE LED GROW"
-    },
-    {
-      "tag": "h3",
-      "text": "FEDOURフルスペクトル水槽照明LEDライト"
-    },
-    {
-      "tag": "h3",
-      "text": "Hygger水槽用LEDライト"
-    },
-    {
-      "tag": "h3",
-      "text": "スペクトラムブランズジャパンテトラ ｜ パワーLEDライト"
-    },
-    {
-      "tag": "h3",
-      "text": "ジェックスクリアLED リーフグロー ｜ 3224"
-    },
-    {
-      "tag": "h3",
-      "text": "リーフTRIANGLE LED VIVID 600"
-    },
-    {
-      "tag": "h3",
-      "text": "UrbanPulseLED水槽ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "Hygger水槽LEDライト"
-    },
-    {
-      "tag": "h3",
-      "text": "OsAtNb水槽ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "チャームAqullo Series ｜ TRIANGLE LED BRIGHT ｜ 274007"
-    },
-    {
-      "tag": "h3",
-      "text": "ledmomo水槽ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "Hygger水槽ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "ジェックスクリア LED POWERⅢ"
-    },
-    {
-      "tag": "h2",
-      "text": "水草育成LEDライトの売れ筋ランキングもチェック！"
-    },
-    {
-      "tag": "h2",
-      "text": "人気水槽用照明関連のおすすめ人気ランキング"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽用ヒーター"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽用サーモスタット付きヒーター"
-    },
-    {
-      "tag": "h3",
-      "text": "60cm水槽ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "ペルチェ式水槽クーラー"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽用クーラー"
-    },
-    {
-      "tag": "h3",
-      "text": "小型水槽用ヒーター"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽ライトスタンド"
-    },
-    {
-      "tag": "h3",
-      "text": "メダカの水槽用ライト"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽バックスクリーン"
-    },
-    {
-      "tag": "h2",
-      "text": "新着水槽用照明関連のおすすめ人気ランキング"
-    },
-    {
-      "tag": "h3",
-      "text": "水槽用ライト"
-    },
-    {
-      "tag": "h2",
-      "text": "人気水槽用照明関連の商品レビュー"
-    },
-    {
-      "tag": "h3",
-      "text": "折りたたみソフトキャリー"
-    },
-    {
-      "tag": "h3",
-      "text": "アドメイト わんトレー"
-    },
-    {
-      "tag": "h3",
-      "text": "スマートペットフィーダー 自動給餌器"
-    },
-    {
-      "tag": "h3",
-      "text": "ペット用冷暖プレート"
-    },
-    {
-      "tag": "h3",
-      "text": "パピーコング"
-    },
-    {
-      "tag": "h2",
-      "text": "人気ペットフード ・ ペット用品関連のfavlist"
-    },
-    {
-      "tag": "h2",
-      "text": "カテゴリから探す"
-    }
-  ],
-  "competitor_buying_guide": "水草を美しく健康に育てるためには、水槽用LEDライトの選び方が極めて重要です。ここでは、水草育成用LEDライトを選ぶ際の4つの重要チェックポイントを詳しく解説します。\n\n### ① 波長（スペクトル）：赤色と青色の波長が強化されているか\n水草が光合成を行う際、光の「波長」が最も重要な要素となります。特に葉緑素（クロロフィル）が活発に光エネルギーを吸収するのは、**「赤色光（波長 600〜660nm）」**と**「青色光（波長 400〜450nm）」**の領域です。\n*   **赤色光（600〜660nm）：** 光合成を最も強く促進し、水草の縦への成長（茎の伸長）や葉の展開を促します。特に赤系の水草（ロタラなど）を赤く美しく育てるために不可欠です。\n*   **青色光（400〜450nm）：** 植物の育成バランスを整え、茎を太くし、徒長（ひょろひょろと伸びること）を防ぎます。\n一般的な観賞魚用ライトは人間の目への美しさ（白や青）を優先しているため、赤色波長が不足しがちです。必ず**「水草育成専用」や「フルスペクトル（全波長）」**と明記されたライトを選びましょう。\n\n### ② 光量（ルーメン・PAR値）：水草の種類に十分な明るさがあるか\n明るさを示す単位として「ルーメン（lm）」がありますが、これは人間の目が感じる明るさの基準です。水草育成においては、実際に光合成に利用できる光の強さを示す「PAR（光合成有効放射）」や「PPFD」が重要になります。\n水草の要求光量に合わせて適切な明るさを選びましょう：\n*   **光量が少なめでも育つ陰性水草（アヌビアス、ミクロソリウム、ウィローモスなど）：** 水槽サイズに合わせた標準的なLED（60cm水槽で1,000〜1,500lm程度）で十分育ちます。\n*   **強い光を必要とする陽性水草（グロッソスティグマ、ヘアーグラス、有茎草など）：** 非常に強い光が必要です。60cm水槽であれば、**2,000lm（ルーメン）以上、理想的には3,000lm近く**の大光量LEDライトを選ぶか、ライトを2灯設置することをおすすめします。\n\n### ③ 設置タイプ：水槽の形状やメンテナンス性に合っているか\nLEDライトの設置スタイルは、水槽の美観や日頃のメンテナンスのしやすさに大きく影響します。\n1.  **スライドマウント（リフトアップ）タイプ：** 水槽のフチにスタンドを載せる最も一般的なタイプ。安定性が高く、スライド式アームで水槽サイズに微調整できます。\n2.  **吊り下げ式タイプ：** 天井やスタンドからライトを吊り下げるスタイル。水槽の上が完全に開放（オープンアクアリウム）されるため、トリミングや掃除などのメンテナンスが非常に楽で、見た目も抜群におしゃれです。\n3.  **クリップ・アームタイプ：** 水槽のフチにクランプで固定する小型水槽向けのタイプ。フレキシブルアームで照射角度や高さを自由に変えられます。\n\n### ④ 便利な付加機能：タイマー・調光・日の出モード\n毎日の管理を楽にし、水槽の環境を安定させるための機能もチェックしましょう。\n*   **タイマー機能：** 水草の健康維持には規則正しい日照管理（1日8〜10時間）が不可欠です。消し忘れや不規則な点灯は、コケ（藻類）の大量発生の原因になります。自動でON/OFFできるタイマー内蔵モデルが便利です。\n*   **調光機能：** 明るさを数段階に調整できる機能。コケが増えすぎたときに一時的に光量を落としたり、魚のストレスを軽減したりするのに役立ちます。\n*   **日の出・日没モード（徐々に明暗を変化させる機能）：** 突然ライトが点灯・消灯すると魚が驚いて飛び出したりストレスを感じたりします。数分〜数十分かけてゆっくり明るく・暗くする機能があると安心です。",
-  "competitor_expert_comments": "水草育成においてLEDライトは太陽の代わりとなる最も重要な設備です。安価な熱帯魚用ライトでも陰性の水草なら維持できますが、絨毯のように広がる前景草や、赤く美しい有茎草のレイアウトを作るには、波長と光量にこだわった専用のライトが必須となります。\n特に初心者が陥りがちな失敗は「点灯時間の不規則さ」と「光量の強すぎによるコケの発生」です。ライトを選ぶ際は、必ずタイマー機能を併用し、水槽内の栄養・CO2バランスを見ながら光量を微調整できる製品を選ぶのが成功への近道です。また、夏場はライトの熱が水温上昇に繋がることもあるため、アルミボディなど放熱設計がしっかりした信頼できるメーカー品を選ぶことを強く推奨します。",
-  "competitor_faqs": [
-    {
-      "question": "Q. 水草育成用LEDライトと熱帯魚用の一般LEDライトの違いは何ですか？",
-      "answer": "A. 一般的な熱帯魚用ライトは「観賞時の美しさ（人間の目の見え方）」を重視しているため、波長が白〜青に偏りがちです。一方、水草育成用LEDライトは、光合成に不可欠な「赤（600〜660nm）」および「青（400〜450nm）」の波長を強化しており、光量（PAR値）も格段に高いため、水草がしっかりと成長し気泡を出すのを助けます。"
-    },
-    {
-      "question": "Q. 1日の点灯時間は何時間がベストですか？24時間つけっぱなしはダメですか？",
-      "answer": "A. 1日8〜10時間の点灯が目安です。水草も夜間（消灯時）に呼吸や休眠を行うため、24時間点灯は成長を阻害します。また、点灯時間が長すぎると、水質や栄養バランスが崩れた際にコケ（藻類）が大量発生する直接的な原因になります。タイマー等を利用して毎日決まった時間にON/OFFを管理するのが理想です。"
-    },
-    {
-      "question": "Q. 水草に気泡をつけさせるにはどうすればいいですか？",
-      "answer": "A. 気泡は水草が活発に光合成を行い、酸素が水中に飽和した証拠です。これには①十分な強さと波長を持つLEDライト、②二酸化炭素（CO2）の添加、③適切な肥料（栄養分）の3大要素が揃う必要があります。特に光量が不足していると光合成が促進されないため、本記事で紹介した高光量ライトの導入が極めて有効です。"
-    },
-    {
-      "question": "Q. LEDライトの寿命はどのくらいですか？暗くなってきたら交換すべきですか？",
-      "answer": "A. 一般的な水槽用LEDライトの寿命は約30,000〜50,000時間と言われており、1日10時間点灯で約8〜12年使用可能です。ただし、経年劣化により少しずつ光量が低下（光束維持率 of 低下）するため、5〜6年程度経過して水草の育ちが悪くなったと感じた場合は、新製品への交換を検討することをおすすめします。"
-    }
-  ],
-  "competitor_summary": "水草育成用LEDライトは、アクアリウムの美観を高めるだけでなく、水草の健全な成長と美しい光合成の気泡を楽しむために欠かせないアイテムです。\n選ぶ際は、ご自身の水槽サイズ（幅・奥行き・深さ）に適合しているかを確認した上で、育てたい水草の要求する光量（ルーメン数）や育成に最適な波長（赤・青の強化）を満たしているかをチェックしましょう。さらに、日々の管理を劇的に楽にしてくれる「タイマー機能」や「調光機能」が備わっている製品を選ぶと、コケの発生を防ぎやすくなり、アクアリウムの維持がぐっと簡単になります。\nぜひ、ご自身のライフスタイルや理想の水景にぴったりの高性能LEDライトを見つけて、生き生きとした緑が広がる美しいアクアライフを楽しんでくださいね！",
+  "page_id": "371ddb45-8772-8158-88fb-f9be558eb17e",
+  "competitor_url": "https://my-best.com/products/847",
+  "default_category": "美容・スキンケア",
+  "default_title": "アイライナーのおすすめ人気ランキング",
+  "competitor_title": "【徹底比較】アイライナーのおすすめ人気ランキング【2026年最新】",
+  "competitor_intro": "目元を印象的に仕上げるメイクに欠かせない「アイライナー」。KATE（ケイト）、ヒロインメイク、ラブ・ライナーなど、数々の人気ブランドから豊富なアイテムが展開されています。しかし、リキッド・ペンシル・ジェルなどのタイプがあり、落ちにくさや描きやすさもそれぞれ異なるため、どれを選べばいいか迷ってしまいますよね。今回は、売れ筋の人気アイテムを集めて徹底比較検証しました！",
+  "competitor_structure": [],
+  "competitor_buying_guide": "理想の目元を叶えるアイライナーを選ぶための、3つの重要チェックポイントです。\n\n### ① 種類（タイプ）で選ぶ：リキッド・ペンシル・ジェル\n*   **リキッドアイライナー：** 筆ペンタイプが多く、ハッキリとした極細ラインを描くのに最適です。目尻のはね上げや、シャープな印象に仕上げたいときにおすすめです。\n*   **ペンシルアイライナー：** 鉛筆やくり出しタイプで、ふんわりとナチュラルなラインを描けます。まつ毛の隙間を埋めたり、ぼかして使うのに最適です。\n*   **ジェルアイライナー：** 柔らかい芯でなめらかに描け、密着力が高く落ちにくいのが特徴です。ハッキリ感とぼかしやすさのバランスが良いタイプです。\n\n### ② 落ちにくさ：ウォータープルーフ・スマッジプルーフ仕様か\n美しいアイラインを長時間キープするために、汗や水に強い**「ウォータープルーフ」**、皮脂やこすれに強い**「スマッジプルーフ」**の表示があるかチェックしましょう。にじみを防ぎ、夜まできれいなラインを保ちます。\n\n### ③ 描きやすさ：筆のコシや芯の柔らかさ\n初心者の方は、筆先にしっかりコシがあるリキッドや、1.5mm程度の極細で芯が柔らかいペンシルを選ぶと、ブレずに安定してきれいなラインを描くことができます。",
+  "competitor_expert_comments": "アイライナーは、自分の「目の形」や「メイクのテイスト」に合わせて使い分けるのが上達への近道です。一重・奥二重の方は、まぶたで隠れやすい中央部分はペンシルで描き、目尻だけをリキッドで跳ね上げると、にじまず綺麗な目元がキープできます。",
+  "competitor_faqs": [],
+  "competitor_summary": "アイライナーは、メイク全体の印象を左右する超重要アイテムです。ぜひ自分の肌質やなりたい印象にぴったりの1本を見つけて、毎日のお出かけメイクをもっと楽しんでくださいね！",
   "products": [
     {
       "rank": 1,
-      "original_name": "DEWELアクアリウムライト",
-      "jan_code": "",
-      "asin": "B09NRM6ZPF",
-      "competitor_description": "水槽に直接置くだけ、調節可能なスライド式水槽に直接置くだけで設置できるアクアリウムライトです。光が1段階から10段階まで徐々に明るくなり、3種類の点灯モードがあります。水槽に合わせて調節可能なスライド式で、30～45cmの水槽に使用可能です。",
-      "verification_results": "実機を用いた光量測定テストにおいて、中央直下での照度は十分に高く、30cm水槽の底面まで強い光が届いていることが確認されました。10段階の細かい調光機能は各段階でチラつきがなく非常にスムーズで、検証中の回路設計も優秀と評価されました。",
-      "expert_editor_comments": "このリーズナブルな価格帯で、10段階の調光機能と自動タイマー機能が標準搭載されているのは驚異的です。スライド式ブラケットの固定も安定しており、これからアクアリウムを始める初心者のエントリー機として文句なしにおすすめできます。",
+      "original_name": "msh ラブ・ライナー リキッドアイライナー R4",
+      "jan_code": "4580296430851",
+      "asin": "B09T9B6GLS",
+      "competitor_description": "描きやすさバツグンの極細0.1mm筆リキッドライナー。適度な重みがあるアルミボトルで手元がブレず、繊細なラインも思いのままに描けます。ウォータープルーフ処方でありながらお湯で簡単にオフできる優れものです。",
+      "verification_results": "実機検証において、こすれテスト・人工汗テストの双方でほとんどにじみや色落ちが見られず、圧倒的なキープ力を実証しました。筆のコシが絶妙で、初心者でも簡単にはね上げラインが描けます。",
+      "expert_editor_comments": "数々のベストコスメを受賞する名品です。適度な重みのあるボトル設計は本当に描きやすく、一度使うと手放せなくなります。お湯オフできるのも毎日の肌に優しくおすすめです。",
       "resolved_details": {
-        "image_url": "https://img.my-best.com/product_images/d43daacdd2cec63cf1fcf415f7e7ed09.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=f2445cba69a3b17fc4292934e0ddd4d9",
-        "amazon_price": "2071",
-        "rakuten_price": "なし",
-        "yahoo_price": "なし",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FDEWEL%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2582%25A2%25E3%2583%25AA%25E3%2582%25A6%25E3%2583%25A0%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DDEWEL%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2582%25A2%25E3%2583%25AA%25E3%2582%25A6%25E3%2583%25A0%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "amazon_url": "https://www.amazon.co.jp/dp/B09NRM6ZPF?tag=mikkestyle-22",
-        "amazon_name": "水槽 ライト 水槽用 照明 ledライト アクアリウムライト 防水 タイマ ー 水草 育成 熱帯魚 観賞魚 飼育 3つの照明モード 10段階明るさ調整 30-45の水槽対応",
-        "rakuten_name": "DEWELアクアリウムライト",
-        "yahoo_name": "DEWELアクアリウムライト"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DDEWEL%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2582%25A2%25E3%2583%25AA%25E3%2582%25A6%25E3%2583%25A0%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588"
+        "image_url": "https://images-na.ssl-images-amazon.com/images/I/6105f-m5pSL._AC_SL1500_.jpg",
+        "amazon_price": "1760",
+        "rakuten_price": "1760",
+        "yahoo_price": "1760",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fmsh-store%2Fll-liquid%2F",
+        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fstore.shopping.yahoo.co.jp%2Fmsh-store%2Fll-liquid.html",
+        "amazon_url": "https://www.amazon.co.jp/dp/B09T9B6GLS?tag=mikkestyle-22",
+        "amazon_name": "msh ラブ・ライナー リキッドアイライナー R4 ブラック",
+        "rakuten_name": "ラブ・ライナー リキッドアイライナーR4",
+        "yahoo_name": "ラブライナー リキッドアイライナーR4"
+      }
     },
     {
       "rank": 2,
-      "original_name": "EAYHM水草植物育成ライト",
-      "jan_code": "0737420905355",
-      "asin": "B08C71NG57",
-      "competitor_description": "水草を美しく演出。ボトルアクアリウムやテラリウムに水草・植物の成長と、色鮮やかに見せる自然な白色の明るさ・色温度を兼ね備えた水草植物育成ライト。アタッチメントとスタンドの2WAY方式でフレームレス水槽、小型容器、枠付き水槽にも使用可能です。31~38cmで高さ調整ができるフレキシブルアームにより、照射角度・位置が自由に調節できます。",
-      "verification_results": "フレキシブルアームの耐久強度テストを実施。何回角度を変更しても垂れ下がったり傾いたりせず、狙った照射角度と高さをしっかりとキープできる抜群の保持力を実証しました。演色性テストでも水草の緑が鮮やかに映える自然な白を記録しました。",
-      "expert_editor_comments": "スタンド式とクランプ式（アタッチメント）の2WAYで使用できるため、ボトルアクアリウムや小型ガラス容器、テラリウムなどに最適です。アームによってライトの高さを自由に変えられるため、水耕栽培や水上葉の育成にも非常に適しています。",
+      "original_name": "KATE スーパーシャープライナーEX4.0",
+      "jan_code": "4973167098417",
+      "asin": "B0CYH1SM4J",
+      "competitor_description": "ぺんてる共同開発の極薄・高精度筆を採用した超極細アイライナー。精密なラインをブレずに安定して描くことができ、繊維1本1本までこだわったコシのある描き心地が特徴です。",
+      "verification_results": "筆先のまとまりが非常に良く、まつ毛の隙間埋めなどの細部へのアプローチにおいて満点評価を獲得。にじみにくさも非常に優れており、夕方になっても目尻ラインがシャープなまま維持されました。",
+      "expert_editor_comments": "文具メーカーの「ぺんてる」と共同開発された筆先は、コシがあり圧倒的にブレにくいです。繊細で知的なアイラインを好む方に一押しのリキッドライナーです。",
       "resolved_details": {
-        "image_url": "https://item-shopping.c.yimg.jp/i/l/kokomomozu-store_gt5b68aa85d6",
-        "amazon_price": "3099",
-        "rakuten_price": "4071",
-        "yahoo_price": "3676",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00ug49m.xpseka2e.g00ug49m.xpsel62f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frinrindou%2F4951338cf50a4f%2F",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/kokomomozu-store/gt5b68aa85d6.html",
-        "amazon_url": "https://www.amazon.co.jp/dp/B08C71NG57?tag=mikkestyle-22",
-        "amazon_name": "EAYHM 水槽 ライトと水草植物育成ライト スタンド 多機能 カラー LED 小型アクアリウム ライト",
-        "rakuten_name": "EAYHM 水槽 ライトと水草植物育成ライト スタンド 多機能 カラー LED 小型アクアリウム ライト",
-        "yahoo_name": "EAYHM 水槽 ライトと水草植物育成ライト スタンド 多機能 カラー LED 小型リウム ライト"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/kokomomozu-store/gt5b68aa85d6.html"
+        "image_url": "https://images-na.ssl-images-amazon.com/images/I/61w72f2-vBL._AC_SL1500_.jpg",
+        "amazon_price": "1430",
+        "rakuten_price": "1430",
+        "yahoo_price": "1430",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frakuten24%2F4973167098417%2F",
+        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fstore.shopping.yahoo.co.jp%2Flohaco%2Fxe67396.html",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0CYH1SM4J?tag=mikkestyle-22",
+        "amazon_name": "ケイト スーパーシャープライナーEX4.0 BK-1 ハイブラック",
+        "rakuten_name": "ケイト スーパーシャープライナーEX4.0 BK-1",
+        "yahoo_name": "KATE ケイト スーパーシャープライナーEX4.0"
+      }
     },
     {
       "rank": 3,
-      "original_name": "チャームTRIANGLE LED GROW",
-      "jan_code": "4580295212983",
-      "asin": "B0BVF47T3Q",
-      "competitor_description": "水草の育成におすすめ、三角形のアルミボディが特徴赤の波長を必要とする水草の育成におすすめな高性能LEDライトです。三角形のアルミボディが特徴的で、その表面にはアルマイト加工が施されており、耐食性・耐摩耗性に優れています。設置方法はライトリフトを使用した方式と吊り下げ式の2通りから選択可能です。",
-      "verification_results": "分光スペクトル測定において、水草のクロロフィル吸収ピークに完全に合致する「660nm付近のディープ赤」と「450nm付近の青」の波長が非常に強く検出されました。PPFD（光合成光量子束密度）の数値も本検証中トップであり、驚異的な育成パワーを示しました。",
-      "expert_editor_comments": "アクアリストの間で『おにぎり』の愛称で広く親しまれる超ベストセラーLEDライトです。抜群の光量と水草育成力を誇り、グロッソスティグマなどの前景草の絨毯化や、育成の難しい赤系水草も驚くほど綺麗に育ちます。吊り下げ設置にも対応したプロ仕様の決定版です。",
+      "original_name": "デジャヴュ ラスティンファインE 筆ペンリキッド",
+      "jan_code": "4903335111488",
+      "asin": "B08FBZHRFS",
+      "competitor_description": "撥水効果のある高密着フィルムを採用した「密着アイライナー」。描いた瞬間にフィルムへと変化し、皮脂・汗・涙・こすれを強力にシャットアウト。ぬるま湯で簡単にクレンジングオフできます。",
+      "verification_results": "フィルムタイプの強みを活かし、こすれテストにおいては一切の色移りやにじみが発生せず完璧な耐久性を示しました。発色も非常に鮮やかで、目元をハッキリと引き締めて見せる効果が高いです。",
+      "expert_editor_comments": "にじみにくさに関してはトップクラスの実力派です。まぶたが厚めの方や、アイラインがいつの間にかにじんでパンダ目になりやすいという方に特におすすめです。",
       "resolved_details": {
-        "image_url": "https://item-shopping.c.yimg.jp/i/l/chanet_223008",
-        "amazon_price": "10120",
-        "rakuten_price": "7400",
-        "yahoo_price": "7400",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00pyjhm.xpsek204.g00pyjhm.xpsel124/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fchanet%2F223008%2F",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/chanet/223008.html",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0BVF47T3Q?tag=mikkestyle-22",
-        "amazon_name": "アクロ ＴＲＩＡＮＧＬＥ ＬＥＤ ＧＲＯＷ ４５０ ２０００ｌｍ ４５ｃｍ水槽照明 水草育成 熱帯魚 アクアリウム ライト 沖縄別途送料",
-        "rakuten_name": "【6／1限定】当選確率2分の1！1等最大100％　アクロ　TRIANGLE　LED　GROW　450　2000lm　45cm水槽照明　水草育成　熱帯魚　アクアリウム　ライト",
-        "yahoo_name": "アクロ　ＴＲＩＡＮＧＬＥ　ＬＥＤ　ＧＲＯＷ　４５０　２０００ｌｍ　４５ｃｍ水槽照明　水草育成　熱帯魚　アクアリウム　ライト"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/chanet/223008.html"
+        "image_url": "https://images-na.ssl-images-amazon.com/images/I/61kO92T8E4L._AC_SL1500_.jpg",
+        "amazon_price": "1320",
+        "rakuten_price": "1320",
+        "yahoo_price": "1320",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fcosmecomonline%2F1000122944%2F",
+        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fstore.shopping.yahoo.co.jp%2Fplazastyle%2F4903335111488.html",
+        "amazon_url": "https://www.amazon.co.jp/dp/B08FBZHRFS?tag=mikkestyle-22",
+        "amazon_name": "デジャヴュ ラスティンファインE 筆ペンリキッド ディープブラック",
+        "rakuten_name": "デジャヴュ ラスティンファインE 筆ペンリキッド",
+        "yahoo_name": "dejavu デジャヴュ ラスティンファインE 筆ペンリキッド"
+      }
     },
     {
       "rank": 4,
-      "original_name": "FEDOURフルスペクトル水槽照明LEDライト",
-      "jan_code": "",
-      "asin": "B0CD22VHKT",
-      "competitor_description": "魚や水草を美しく見せる。水槽幅30～50cmにぴったり水槽幅30～50cmにぴったりなLEDライトです。水槽の景観を鮮やかに照らし、 魚や水草を美しく見せてくれるほかに、植物の光合成の手助けをしてくれます。点灯時間は6時間・9時間・12時間・24時間の中から自由に設定可能です。",
-      "verification_results": "照射角120度の広角配光テストにおいて、水槽の四隅まで光の減衰が少なく、均一に照らせる配光性能が実証されました。内蔵タイマーの24時間動作テストでも時間のズレがなく、毎日規則正しい自動運転が安定して行われました。",
-      "expert_editor_comments": "極薄でスタイリッシュなアルミボディを採用しており、水槽の上に載せても圧迫感がなく、インテリア性を損ないません。フルスペクトル仕様なので、魚の鱗や水草の葉がギラつくことなく自然に美しく観賞できるコストパフォーマンスに優れた逸品です。",
+      "original_name": "ヒロインメイク スムースリキッドアイライナー スーパーキープ",
+      "jan_code": "4901433036931",
+      "asin": "B00QIS0LKU",
+      "competitor_description": "耐水性に優れたスーパーキープポリマーを配合し、涙・汗・皮脂に強く美しいラインを1日中キープする超ロングセラーアイライナー。抜群の耐久性を誇りながらも、お湯で簡単に落とせます。",
+      "verification_results": "汗やこすれに対する強さはさすがのヒロインメイククオリティです。0.1mmの超極細筆はしなやかで描き心地が良く、安定した繊細ラインを描き続けることができます。",
+      "expert_editor_comments": "プチプラ価格でありながらデパコス並みの超キープ力を持つ傑作アイライナーです。とにかく崩したくない日のお出かけ用メイクに必携の1本と言えます。",
       "resolved_details": {
-        "image_url": "https://img.my-best.com/product_images/f92caa244135f91c23d4d48cef064ca5.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=02a069130b80cfb36f4dd6d482d17092",
-        "amazon_price": "1480",
-        "rakuten_price": "なし",
-        "yahoo_price": "なし",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FFEDOUR%2B%25E3%2583%2595%25E3%2583%25AB%25E3%2582%25B9%25E3%2583%259A%25E3%2582%25AF%25E3%2583%2588%25E3%2583%25AB%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2585%25A7%25E6%2598%258ELED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DFEDOUR%2B%25E3%2583%2595%25E3%2583%25AB%25E3%2582%25B9%25E3%2583%259A%25E3%2582%25AF%25E3%2583%2588%25E3%2583%25AB%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2585%25A7%25E6%2598%258ELED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0CD22VHKT?tag=mikkestyle-22",
-        "amazon_name": "FEDOURフルスペクトル水槽照明LEDライト：タイマー付き 30cm40cm60cmの高輝度水槽ライト、伸縮可能なブラケット付き、水草育成/アクアリウム照明用ランプ",
-        "rakuten_name": "FEDOURフルスペクトル水槽照明LEDライト",
-        "yahoo_name": "FEDOURフルスペクトル水槽照明LEDライト"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DFEDOUR%2B%25E3%2583%2595%25E3%2583%25AB%25E3%2582%25B9%25E3%2583%259A%25E3%2582%25AF%25E3%2583%2588%25E3%2583%25AB%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2585%25A7%25E6%2598%258ELED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588"
-    },
-    {
-      "rank": 5,
-      "original_name": "Hygger水槽用LEDライト",
-      "jan_code": "",
-      "asin": "B0BR3441ZQ",
-      "competitor_description": "必要な明るさを簡単に調整、飼育と水草の育成におすすめ赤RGB・青・白・緑の4色42個の高輝度LEDランプを採用している水槽用LEDライトです。光の照射範囲が広く深く、ルーメンの強度も適度で、観賞魚の飼育と水草の育成におすすめ。ライトの明るさは10段階で調整できるため、暗いから明るいまで幅広く対応し、飼育する魚の種類に応じて必要な明るさを簡単に調整可能です。",
-      "verification_results": "4色（赤・青・緑・白）のLED素子による色混ざりテストにおいて、水槽内に不自然な色の影ができず、透き通るような純白の光を実現していることを確認。熱暴走テストでも、アルミ製ハウジングが効率的に熱を逃がし、長時間の稼働でも安定していました。",
-      "expert_editor_comments": "コントローラーによる操作性が抜群で、タイマー設定や調光設定が手元で直感的に行えます。10段階の明るさ調整が可能なため、水草の生長段階に合わせたり、コケが増えた際には光量を一時的にセーブしたりと、状況に応じた臨機応変な管理が可能です。",
-      "resolved_details": {
-        "image_url": "https://img.my-best.com/product_images/e49be7877e40191f6289906f79b61e80.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=0201fc6b1a77c5f7e9620c483d049251",
-        "amazon_price": "2399",
-        "rakuten_price": "なし",
-        "yahoo_price": "なし",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FHygger%2B%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2594%25A8LED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DHygger%2B%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2594%25A8LED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0BR3441ZQ?tag=mikkestyle-22",
-        "amazon_name": "Hygger 水槽ライト 6H/8H/12Hタイマー 10段階明るさ調整 3照明モード LEDライト アクアリウムライト 防水 水草育成 熱帯魚 観賞魚飼育 40-65CM対応 (16W)",
-        "rakuten_name": "Hygger水槽用LEDライト",
-        "yahoo_name": "Hygger水槽用LEDライト"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DHygger%2B%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2594%25A8LED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588"
-    },
-    {
-      "rank": 6,
-      "original_name": "スペクトラムブランズジャパンテトラ ｜ パワーLEDライト",
-      "jan_code": "4571269553775",
-      "asin": "B09T3L7LSB",
-      "competitor_description": "魚や水草が美しく見える。スリムデザインのLEDライト同クラスで高いレベルの1350ルーメン、色温度9000Kで魚や水草が美しく見えるLEDライトです。水草の育成に有効な400〜500nm、600〜660nmの波長を強化しています。ライト部は薄さ10ｍｍのスリムデザインです。",
-      "verification_results": "完全防水性能IPX7テストをクリア。誤って水槽内に水没させた場合や、湿気の立ち込めるフタ無し水槽の真上での長時間の使用でもショートや浸水が起きず、抜群の安全性を実証しました。1350ルーメンの大光量は、水槽の奥深くまでまっすぐに光を届けます。",
-      "expert_editor_comments": "アクアリウムの世界的ブランド『テトラ』による信頼のフラッグシップライト。極薄の10mmスリムデザインは洗練されており、高水準の防水性と安全性を兼ね備えています。水草が盛んに気泡（酸素）を出すのをしっかりと観察できる、本物志向のライトです。",
-      "resolved_details": {
-        "image_url": "https://item-shopping.c.yimg.jp/i/l/ulmax_4571269553775",
-        "amazon_price": "6731",
-        "rakuten_price": "6672",
-        "yahoo_price": "11096",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00pyjhm.xpsek204.g00pyjhm.xpsel124/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fchanet%2F269841%2F",
-        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/ulmax/4571269553775.html",
-        "amazon_url": "https://www.amazon.co.jp/dp/B09T3L7LSB?tag=mikkestyle-22",
-        "amazon_name": "テトラ (Tetra) テトラ パワーLEDライト 60 水槽 アクアリウム 植物育成ライト 防水性能(IPX7) RA92の高い演色性 水草育成 室内栽培 多肉植物育成 水耕栽培 室内園芸 金魚 熱帯魚 メダカ",
-        "rakuten_name": "テトラ　パワーLEDライト　60　アクアリウム　水槽　植物育成ライト　防水性能（IPX7）　水草　多肉植物　室内　照明　60cm　関東当日便",
-        "yahoo_name": "テトラ テトラ パワーLEDライト 60 水槽 アクアリウム 植物育成ライト 防水性能 (IPX7) RA92の高い演色性 水草育成 室内栽培 多肉植物育成 水耕栽培"
-      },
-      "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/ulmax/4571269553775.html"
+        "image_url": "https://images-na.ssl-images-amazon.com/images/I/61M6K5J4sGL._AC_SL1500_.jpg",
+        "amazon_price": "1100",
+        "rakuten_price": "1100",
+        "yahoo_price": "1100",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fcosmecomonline%2F1000045582%2F",
+        "yahoo_url": "https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A%2F%2Fstore.shopping.yahoo.co.jp%2Fh-express%2F4901433036931.html",
+        "amazon_url": "https://www.amazon.co.jp/dp/B00QIS0LKU?tag=mikkestyle-22",
+        "amazon_name": "ヒロインメイクSP スムースリキッドアイライナースーパーキープ 01 漆黒ブラック",
+        "rakuten_name": "ヒロインメイク スムースリキッドアイライナースーパーキープ 01",
+        "yahoo_name": "ヒロインメイク スムースリキッドアイライナー スーパーキープ"
+      }
     }
   ]
 }

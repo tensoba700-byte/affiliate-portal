@@ -121,6 +121,10 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       amazon: { price: '価格を見る', url: `https://www.amazon.co.jp/s?k=${q}` },
       yahoo: { price: '価格を見る', url: `https://shopping.yahoo.co.jp/search?p=${q}` },
       rakuten: { price: '価格を見る', url: `https://search.rakuten.co.jp/search/mall/${q}/` },
+      pros: [],
+      cons: [],
+      description: '',
+      features: []
     };
 
     // Image URL from IMAGE: tag
@@ -154,6 +158,62 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
     if (amzPrice && product.amazon) product.amazon.price = `${Number(amzPrice[1]).toLocaleString()}円`;
     if (rakPrice && product.rakuten) product.rakuten.price = `${Number(rakPrice[1]).toLocaleString()}円`;
     if (yahPrice && product.yahoo) product.yahoo.price = `${Number(yahPrice[1]).toLocaleString()}円`;
+
+    // Parse Pros (advantages)
+    const prosMatch = section.match(/:::pro\s*([\s\S]*?)\s*:::/);
+    if (prosMatch) {
+      product.pros = prosMatch[1]
+        .split('\n')
+        .map(line => line.replace(/^-\s*/, '').replace(/^\s*[\*•\+]\s*/, '').trim())
+        .filter(line => line.length > 0);
+    }
+
+    // Parse Cons (disadvantages)
+    const consMatch = section.match(/:::con\s*([\s\S]*?)\s*:::/);
+    if (consMatch) {
+      product.cons = consMatch[1]
+        .split('\n')
+        .map(line => line.replace(/^-\s*/, '').replace(/^\s*[\*•\+]\s*/, '').trim())
+        .filter(line => line.length > 0);
+    }
+
+    // Parse Description (first standard paragraph)
+    const bodyLines = section.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    const descLine = bodyLines.find(line => 
+      !line.startsWith('###') && 
+      !line.startsWith('[') && 
+      !line.startsWith('IMAGE:') && 
+      !line.startsWith('AMAZON_PRICE:') && 
+      !line.startsWith('RAKUTEN_PRICE:') && 
+      !line.startsWith('YAHOO_PRICE:') && 
+      !line.startsWith('ASIN:') && 
+      !line.startsWith('RAKUTEN:') && 
+      !line.startsWith('YAHOO:') &&
+      !line.startsWith(':::') &&
+      !line.startsWith('🔍') &&
+      !line.startsWith('✍️') &&
+      !line.startsWith('👤') &&
+      !line.startsWith('-')
+    );
+    if (descLine) {
+      product.description = descLine.length > 120 ? descLine.substring(0, 120) + '...' : descLine;
+    }
+
+    // Extract dynamic feature tags based on keywords
+    const features: string[] = [];
+    const lowerContent = section.toLowerCase();
+    if (lowerContent.includes('タイマー')) features.push('⏰ タイマー付き');
+    if (lowerContent.includes('調光') || lowerContent.includes('明るさ調整')) features.push('💡 調光可能');
+    if (lowerContent.includes('防水') || lowerContent.includes('防滴') || lowerContent.includes('防塵')) features.push('🛡️ 防水仕様');
+    if (lowerContent.includes('静音') || lowerContent.includes('静か')) features.push('🔇 静音設計');
+    if (lowerContent.includes('軽量') || lowerContent.includes('軽い') || lowerContent.includes('コンパクト')) features.push('🍃 軽量・小型');
+    if (lowerContent.includes('高コスパ') || lowerContent.includes('リーズナブル') || lowerContent.includes('コスパ')) features.push('💎 高コスパ');
+    if (lowerContent.includes('コードレス') || lowerContent.includes('充電式') || lowerContent.includes('バッテリー')) features.push('🔋 充電式');
+    if (lowerContent.includes('2way') || lowerContent.includes('2ウェイ')) features.push('🔄 2WAY方式');
+    
+    if (features.length > 0) {
+      product.features = features.slice(0, 3);
+    }
 
     products.push(product);
   }

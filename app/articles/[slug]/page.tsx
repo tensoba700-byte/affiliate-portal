@@ -239,9 +239,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                     href={`/articles/${rel.slug}`}
                     className="group bg-white rounded-3xl p-3 cute-shadow border border-card-border hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-3 bg-primary/5">
+                    <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-3 bg-primary/5 flex items-center justify-center">
                       {rel.coverImage ? (
-                        <img src={rel.coverImage} alt={rel.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" style={{ aspectRatio: '16 / 9', objectFit: 'cover', width: '100%' }} />
+                        <img src={rel.coverImage} alt={rel.title} loading="lazy" className="max-w-full max-h-full w-full h-full object-contain group-hover:scale-102 transition-transform duration-500" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-2xl">🎀</div>
                       )}

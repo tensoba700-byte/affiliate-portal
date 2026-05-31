@@ -109,10 +109,10 @@ export default async function Home() {
                     href={`/articles/${article.slug}`} 
                     className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border"
                   >
-                    <div className="aspect-[16/9] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4">
+                    <div className="aspect-[16/9] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
                       {article.coverImage ? (
                         // @ts-ignore
-                        <img src={article.coverImage} alt={article.title} className="absolute inset-0 object-cover object-center w-full h-full transform transition-transform duration-700 group-hover:scale-110" />
+                        <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
                           <span className="text-3xl">🎀</span>

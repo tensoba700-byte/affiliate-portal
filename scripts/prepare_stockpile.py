@@ -819,9 +819,12 @@ def extract_mybest_ranking(html: str, url: str) -> list:
     return products
 
 def main():
-    print("🔍 Notionから特定の商品ページ（水草育成LEDライト）を直接取得中...")
-    
-    target_page_id = "370ddb45-8772-81a7-b0b6-e5c4b740f929"
+    import sys
+    target_page_id = "371ddb45-8772-8158-88fb-f9be558eb17e"
+    if len(sys.argv) > 1:
+        target_page_id = sys.argv[1]
+        
+    print(f"🔍 Notionから特定の商品ページ（ID: {target_page_id}）を直接取得中...")
     res = requests.get(f"https://api.notion.com/v1/pages/{target_page_id}", headers=NOTION_HEADERS)
     if res.status_code != 200:
         print(f"❌ Notionページの取得に失敗しました: {res.status_code} {res.text}")

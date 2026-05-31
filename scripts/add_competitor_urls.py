@@ -25,54 +25,54 @@ def main():
     # List of 10 competitor URLs with unique categories
     items = [
         {
-            "name": "ヨガマットのおすすめ人気ランキング",
-            "url": "https://my-best.com/2642",
-            "category": "フィットネス"
+            "name": "クレンジングバームのおすすめ人気ランキング",
+            "url": "https://my-best.com/13106",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "自動給餌器のおすすめ人気ランキング",
-            "url": "https://my-best.com/514",
-            "category": "ペット"
+            "name": "化粧水のおすすめ人気ランキング",
+            "url": "https://my-best.com/products/434",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "ミニ財布のおすすめ人気ランキング",
-            "url": "https://my-best.com/1310",
-            "category": "ファッション"
+            "name": "さっぱり化粧水のおすすめ人気ランキング",
+            "url": "https://my-best.com/products/8473",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "電気圧力鍋のおすすめ人気ランキング",
-            "url": "https://my-best.com/144",
-            "category": "調理家電"
+            "name": "クッションファンデのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/416624",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "スマートロックのおすすめ人気ランキング",
-            "url": "https://my-best.com/10901",
-            "category": "スマートホーム"
+            "name": "プチプラクッションファンデのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/416641",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "マッサージガンのおすすめ人気ランキング",
-            "url": "https://my-best.com/13010",
-            "category": "健康家電"
+            "name": "美白美容液のおすすめ人気ランキング",
+            "url": "https://my-best.com/products/847",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "電動歯ブラシのおすすめ人気ランキング",
-            "url": "https://my-best.com/56",
-            "category": "オーラルケア"
+            "name": "日焼け止めのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/439",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "炭酸水メーカーのおすすめ人気ランキング",
-            "url": "https://my-best.com/543",
-            "category": "フード・ドリンク"
+            "name": "オーガニックのリップクリームのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/850",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "鼻吸い器のおすすめ人気ランキング",
-            "url": "https://my-best.com/1779",
-            "category": "ベビー用品"
+            "name": "かわいいリップクリームのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/851",
+            "category": "美容・スキンケア"
         },
         {
-            "name": "植物育成ライトのおすすめ人気ランキング",
-            "url": "https://my-best.com/6045",
-            "category": "ガーデニング"
+            "name": "アイシャドウのおすすめ人気ランキング",
+            "url": "https://my-best.com/products/680",
+            "category": "美容・スキンケア"
         }
     ]
 

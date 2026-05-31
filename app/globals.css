@@ -209,7 +209,9 @@ body {
 
 /* Ranking Titles */
 .cute-html-content h3 {
-  @apply text-2xl font-black mt-16 mb-8 p-4 bg-primary/5 rounded-2xl flex items-center gap-3 border-l-8 border-primary text-foreground;
+  @apply text-base md:text-2xl font-black mt-10 md:mt-16 mb-6 md:mb-8 p-3 md:p-4 bg-primary/5 rounded-xl md:rounded-2xl flex items-center gap-2 md:gap-3 border-l-4 md:border-l-8 border-primary text-foreground leading-snug;
+  word-break: break-all;
+  text-wrap: balance;
 }
 
 /* Pro / Con Boxes */
@@ -236,7 +238,68 @@ body {
 
 /* Spec Tables */
 .cute-html-content table {
-  @apply w-full border-collapse my-6 rounded-xl overflow-hidden shadow-sm border border-primary/10 mx-auto max-w-[500px];
+  @apply w-full border-collapse my-8 rounded-2xl overflow-hidden border mx-auto;
+  border-color: var(--card-border);
+  box-shadow: 0 6px 20px -2px var(--theme-shadow), 0 4px 6px -4px rgba(0, 0, 0, 0.02);
+  max-width: 850px;
+}
+
+@media (max-width: 768px) {
+  .cute-html-content table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+.cute-html-content th {
+  @apply px-4 py-3.5 text-xs font-black tracking-wider text-left border-b border-r;
+  background-color: var(--theme-grad-1);
+  color: var(--primary);
+  border-color: var(--card-border);
+  white-space: nowrap;
+  text-align: center;
+}
+
+.cute-html-content th:last-child {
+  border-r: none;
+}
+
+.cute-html-content td {
+  @apply px-4 py-3.5 text-xs font-bold border-b border-r transition-all duration-200;
+  border-color: var(--card-border);
+  color: var(--foreground);
+  opacity: 0.95;
+  text-align: center;
+}
+
+.cute-html-content td:last-child {
+  border-r: none;
+}
+
+/* Align product name left (now first column) */
+.cute-html-content td:first-child {
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 950;
+  min-width: 160px;
+}
+
+.cute-html-content tr:last-child td {
+  border-bottom: none;
+}
+
+.cute-html-content tr:hover td {
+  background-color: var(--theme-grad-1);
+  opacity: 1;
+}
+
+/* Decorate price column (now second column) */
+.cute-html-content td:nth-child(2) {
+  font-weight: 900;
+  color: #ff8fa3;
+  white-space: nowrap;
 }
 
 /* Body text font size for article content */
