@@ -68,6 +68,11 @@ const puppeteer = require('puppeteer');
     await new Promise(r => setTimeout(r, 2000));
     
     const data = await page.evaluate(() => {
+      // 0. 特殊文字・改行・空白を除去する正規化ヘルパー
+      const cleanName = (str) => {
+        return (str || "").toLowerCase().replace(/\s+/g, "").trim();
+      };
+
       // 1. 記事タイトル
       const competitor_title = document.querySelector('h1')?.textContent.trim() || document.title || "";
       
@@ -186,14 +191,25 @@ const puppeteer = require('puppeteer');
         try {
           const ld = JSON.parse(script.textContent.trim());
           if (ld && ld['@type'] === 'Article' && ld.mainEntity) {
-            const listItems = ld.mainEntity.itemListElement || [];
-            listItems.forEach(li => {
-              const prod = li.item || {};
-              const name = prod.name || li.name || "";
-              const gtin = prod.gtin || "";
-              const asin = prod.asin || "";
-              if (name) {
-                jsonLdProducts[name.toLowerCase().trim()] = { gtin, asin };
+            let itemLists = [];
+            if (Array.isArray(ld.mainEntity)) {
+              itemLists = ld.mainEntity;
+            } else {
+              itemLists = [ld.mainEntity];
+            }
+            
+            itemLists.forEach(item => {
+              if (item && (item['@type'] === 'ItemList' || item.itemListElement)) {
+                const listItems = item.itemListElement || [];
+                listItems.forEach(li => {
+                  const prod = li.item || {};
+                  const name = prod.name || li.name || "";
+                  const gtin = prod.gtin || "";
+                  const asin = prod.asin || "";
+                  if (name) {
+                    jsonLdProducts[cleanName(name)] = { gtin, asin };
+                  }
+                });
               }
             });
           }
@@ -258,7 +274,7 @@ const puppeteer = require('puppeteer');
         if (description && !description.includes('商品...') && !description.includes('徹底比較') && description !== 'EMPTY') {
           let jan_code = "";
           let asin = "";
-          const normName = name.toLowerCase().trim();
+          const normName = cleanName(name);
           let match = jsonLdProducts[normName];
           if (!match) {
             const key = Object.keys(jsonLdProducts).find(k => k.includes(normName) || normName.includes(k));
@@ -285,13 +301,69 @@ const puppeteer = require('puppeteer');
             }
           }
           
+          // Direct links scraping from the page
+          let amazon_scraped_url = "";
+          let rakuten_scraped_url = "";
+          let yahoo_scraped_url = "";
+          
+          let linkSibling = h3.nextElementSibling;
+          while (linkSibling) {
+            const siblingTag = linkSibling.tagName.toLowerCase();
+            if (siblingTag === 'h3' || siblingTag === 'h2') break;
+            
+            const aTags = [];
+            if (siblingTag === 'a') {
+              aTags.push(linkSibling);
+            }
+            aTags.push(...Array.from(linkSibling.querySelectorAll('a')));
+            
+            aTags.forEach(a => {
+              const href = a.href || "";
+              const text = a.textContent.trim().toLowerCase();
+              if (href.includes('/link') || href.includes('amazon.co.jp') || href.includes('rakuten.co.jp') || href.includes('shopping.yahoo.co.jp') || href.includes('valuecommerce.com')) {
+                if (text.includes('amazon') || href.includes('amazon.co.jp')) {
+                  amazon_scraped_url = href;
+                } else if (text.includes('楽天') || href.includes('rakuten.co.jp')) {
+                  rakuten_scraped_url = href;
+                } else if (text.includes('ヤフー') || text.includes('yahoo') || href.includes('shopping.yahoo.co.jp') || href.includes('valuecommerce.com')) {
+                  yahoo_scraped_url = href;
+                }
+              }
+            });
+            linkSibling = linkSibling.nextElementSibling;
+          }
+          
+          if (!amazon_scraped_url || !rakuten_scraped_url || !yahoo_scraped_url) {
+            let parent = h3.parentElement;
+            for (let depth = 0; depth < 5 && parent; depth++) {
+              const aTags = Array.from(parent.querySelectorAll('a'));
+              aTags.forEach(a => {
+                const href = a.href || "";
+                const text = a.textContent.trim().toLowerCase();
+                if (href.includes('/link') || href.includes('amazon.co.jp') || href.includes('rakuten.co.jp') || href.includes('shopping.yahoo.co.jp') || href.includes('valuecommerce.com')) {
+                  if ((text.includes('amazon') || href.includes('amazon.co.jp')) && !amazon_scraped_url) {
+                    amazon_scraped_url = href;
+                  } else if ((text.includes('楽天') || href.includes('rakuten.co.jp')) && !rakuten_scraped_url) {
+                    rakuten_scraped_url = href;
+                  } else if ((text.includes('ヤフー') || text.includes('yahoo') || href.includes('shopping.yahoo.co.jp') || href.includes('valuecommerce.com')) && !yahoo_scraped_url) {
+                    yahoo_scraped_url = href;
+                  }
+                }
+              });
+              parent = parent.parentElement;
+            }
+          }
+          
           products.push({
             rank: rankCounter++,
             name,
             jan_code,
             asin,
             description,
-            scraped_image: scraped_image || ""
+            scraped_image: scraped_image || "",
+            amazon_scraped_url: amazon_scraped_url || "",
+            rakuten_scraped_url: rakuten_scraped_url || "",
+            yahoo_scraped_url: yahoo_scraped_url || ""
           });
         }
       });
@@ -375,7 +447,142 @@ def verify_title_match(target_title: str, candidate_title: str) -> bool:
     match_rate = match_count / len(words)
     return match_rate >= 0.4
 
-def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
+def remove_rakuten_params(url: str) -> str:
+    """楽天アフィリエイトURLから m パラメータと rafcid パラメータを完全に削除します。"""
+    if not url:
+        return ""
+    try:
+        parsed = urllib.parse.urlparse(url)
+        qs = urllib.parse.parse_qs(parsed.query)
+        for param in ["m", "rafcid"]:
+            if param in qs:
+                del qs[param]
+        new_query = urllib.parse.urlencode(qs, doseq=True)
+        return urllib.parse.urlunparse(parsed._replace(query=new_query))
+    except Exception:
+        return url
+
+def wrap_yahoo_url(url: str, query: str) -> str:
+    """
+    Yahoo URLをバリューコマースラッパー形式に変換します。
+    /product/ や /product/j/ を含むURLは絶対に使わず、
+    そういうURLの場合は検索結果URLに切り替えます。
+    """
+    if not url:
+        # urlがない場合は、クエリを用いて検索結果URLを作る
+        encoded_query = urllib.parse.quote(query)
+        target_url = f"https://shopping.yahoo.co.jp/search?p={encoded_query}"
+    else:
+        # すでにバリューコマースリンクになっているかチェック
+        # 例: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=xxx&pid=xxx&vc_url=https%3A%2F%2F...
+        parsed = urllib.parse.urlparse(url)
+        if "valuecommerce.com" in parsed.netloc:
+            qs = urllib.parse.parse_qs(parsed.query)
+            target_url = qs.get("vc_url", [""])[0]
+            if not target_url:
+                target_url = url # fallback
+        else:
+            target_url = url
+
+        # /product/ や /product/j/ を含むかチェック
+        if "/product/" in target_url or "/product/j/" in target_url:
+            # 製品比較ページの場合は検索結果URLに切り替える
+            encoded_query = urllib.parse.quote(query)
+            target_url = f"https://shopping.yahoo.co.jp/search?p={encoded_query}"
+
+    # バリューコマースラッパーに包む
+    yahoo_sid = "3767611"
+    yahoo_pid = "2201292"
+    encoded_target = urllib.parse.quote(target_url)
+    return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
+
+def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
+    """my-bestのスクレイピングURLから、自分自身のアフィリエイトURLに再構築して返します。"""
+    if not scraped_url:
+        return ""
+    
+    parsed = urllib.parse.urlparse(scraped_url)
+    qs = urllib.parse.parse_qs(parsed.query)
+    
+    fallback_url = qs.get("fallback_url", [""])[0]
+    url_in_query = qs.get("url", [""])[0]
+    
+    base_url = fallback_url if fallback_url else scraped_url
+    
+    parsed_base = urllib.parse.urlparse(base_url)
+    qs_base = urllib.parse.parse_qs(parsed_base.query)
+    
+    if mall == "amazon":
+        # ASINの抽出を試みる
+        asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', base_url)
+        if not asin_match and url_in_query:
+            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', url_in_query)
+            
+        if asin_match:
+            asin_val = asin_match.group(1) or asin_match.group(2)
+            return f"https://www.amazon.co.jp/dp/{asin_val}?tag=mikkestyle-22"
+        
+        if "tag" in qs_base:
+            replaced_qs = qs_base.copy()
+            replaced_qs["tag"] = ["mikkestyle-22"]
+            new_query = urllib.parse.urlencode(replaced_qs, doseq=True)
+            return urllib.parse.urlunparse(parsed_base._replace(query=new_query))
+        else:
+            connector = "&" if parsed_base.query else "?"
+            return f"{base_url}{connector}tag=mikkestyle-22"
+            
+    elif mall == "rakuten":
+        rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID") or "15fa9210.e15d27f8.15fa9211.9e1f82bc"
+        target_url = ""
+        for param in ["url", "pc", "m"]:
+            if param in qs_base:
+                target_url = qs_base[param][0]
+                break
+            if param in qs:
+                target_url = qs[param][0]
+                break
+        
+        if not target_url:
+            if "rakuten.co.jp" in base_url and not "hb.afl.rakuten.co.jp" in base_url:
+                target_url = base_url
+            else:
+                for param in ["vc_url", "u"]:
+                    if param in qs_base:
+                        target_url = qs_base[param][0]
+                        break
+        
+        if not target_url:
+            target_url = base_url
+            
+        encoded_target = urllib.parse.quote(target_url)
+        raw_rak_url = f"https://hb.afl.rakuten.co.jp/ichiba/{rakuten_affiliate_id}/?pc={encoded_target}"
+        return remove_rakuten_params(raw_rak_url)
+        
+    elif mall == "yahoo":
+        yahoo_sid = os.getenv("YAHOO_AFFILIATE_SID") or "3767611"
+        yahoo_pid = os.getenv("YAHOO_AFFILIATE_PID") or "2201292"
+        
+        target_url = ""
+        for param in ["url", "vc_url", "u"]:
+            if param in qs_base:
+                target_url = qs_base[param][0]
+                break
+            if param in qs:
+                target_url = qs[param][0]
+                break
+                
+        if not target_url:
+            if "yahoo.co.jp" in base_url and not "valuecommerce.com" in base_url:
+                target_url = base_url
+            else:
+                target_url = base_url
+                
+        encoded_target = urllib.parse.quote(target_url)
+        return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
+
+    return scraped_url
+
+def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scraped_urls: dict = None):
     """Amazon, Yahoo, 楽天のAPIやスクレイピングから製品情報を取得します。"""
     details = {
         "image_url": "",
@@ -396,6 +603,16 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
 
     # 1. Amazon
     clean_asin = asin.strip() if asin else ""
+    if not clean_asin and scraped_urls and scraped_urls.get("amazon"):
+        # scraped_url から ASIN を探す
+        s_url = scraped_urls["amazon"]
+        asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', s_url)
+        if not asin_match:
+            decoded_s_url = urllib.parse.unquote(s_url)
+            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', decoded_s_url)
+        if asin_match:
+            clean_asin = asin_match.group(1) or asin_match.group(2)
+
     if not clean_asin:
         search_queries = [jan_code.strip()] if jan_code else []
         search_queries.append(query)
@@ -436,6 +653,9 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
         except Exception:
             pass
 
+    if not details["amazon_url"] and scraped_urls and scraped_urls.get("amazon"):
+        details["amazon_url"] = clean_and_convert_scraped_url(scraped_urls["amazon"], "amazon")
+
     # 2. Yahoo Shopping
     yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
     if yahoo_app_id and jan_code:
@@ -458,6 +678,11 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
                         break
         except Exception:
             pass
+
+    if not details["yahoo_url"] and scraped_urls and scraped_urls.get("yahoo"):
+        details["yahoo_url"] = clean_and_convert_scraped_url(scraped_urls["yahoo"], "yahoo")
+        if details["yahoo_name"] == "なし":
+            details["yahoo_name"] = query
 
     # 3. Rakuten
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
@@ -484,7 +709,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
                         item_title = item.get("itemName", "")
                         if verify_title_match(amazon_product_name or query, item_title):
                             details["rakuten_price"] = str(item.get("itemPrice", ""))
-                            details["rakuten_url"] = item.get("affiliateUrl") or item.get("itemUrl") or ""
+                            raw_rak_url = item.get("affiliateUrl") or item.get("itemUrl") or ""
+                            details["rakuten_url"] = remove_rakuten_params(raw_rak_url)
                             details["rakuten_name"] = item_title
                             if not details["image_url"]:
                                 img_url = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
@@ -495,6 +721,17 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = ""):
                         break
         except Exception:
             pass
+
+    if not details["rakuten_url"] and scraped_urls and scraped_urls.get("rakuten"):
+        details["rakuten_url"] = clean_and_convert_scraped_url(scraped_urls["rakuten"], "rakuten")
+        if details["rakuten_name"] == "なし":
+            details["rakuten_name"] = query
+
+    if details["rakuten_url"]:
+        details["rakuten_url"] = remove_rakuten_params(details["rakuten_url"])
+
+    # Yahoo URLをすべて一律にバリューコマースのsid=3767611&pid=2201292形式にし、/product/を排除
+    details["yahoo_url"] = wrap_yahoo_url(details.get("yahoo_url", ""), query)
 
     if not details["image_url"]:
         details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
@@ -743,7 +980,12 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
     final_products_list = []
     for idx, p in enumerate(selected_products):
         print(f"[{idx+1}/{len(selected_products)}] {p['name']} の情報を検索中...")
-        details = fetch_product_details(p["name"], p["jan_code"], p["asin"])
+        scraped_urls = {
+            "amazon": p.get("amazon_scraped_url", ""),
+            "rakuten": p.get("rakuten_scraped_url", ""),
+            "yahoo": p.get("yahoo_scraped_url", "")
+        }
+        details = fetch_product_details(p["name"], p["jan_code"], p["asin"], scraped_urls)
         
         # Fallback to scraped competitor image if API returned Unsplash or empty
         if not details.get("image_url") or "unsplash.com" in details.get("image_url", ""):
@@ -791,6 +1033,26 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
         "products": final_products_list
     }
     
+    # 書き込み前に全商品のyahoo_urlに適用
+    from urllib.parse import quote
+
+    def wrap_yahoo_vc(url):
+        if not url:
+            return url
+        if 'valuecommerce.com' in url:
+            return url  # すでにラップ済み
+        return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url={quote(url, safe='')}"
+
+    for p in output_data['products']:
+        if 'resolved_details' in p and 'yahoo_url' in p['resolved_details']:
+            p['resolved_details']['yahoo_url'] = wrap_yahoo_vc(p['resolved_details']['yahoo_url'])
+            if not p.get('yahoo_url'):
+                p['yahoo_url'] = p['resolved_details']['yahoo_url']
+            else:
+                p['yahoo_url'] = wrap_yahoo_vc(p['yahoo_url'])
+        else:
+            p['yahoo_url'] = wrap_yahoo_vc(p.get('yahoo_url', ''))
+            
     output_filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "stockpile_data.json")
     with open(output_filepath, "w", encoding="utf-8") as f:
         json.dump(output_data, f, ensure_ascii=False, indent=2)

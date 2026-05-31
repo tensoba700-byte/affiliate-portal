@@ -47,8 +47,10 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
 [総合評価: 4.88]
 
 IMAGE: https://img.my-best.com/product_images/d43daacdd2cec63cf1fcf415f7e7ed09.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=f2445cba69a3b17fc4292934e0ddd4d9
-AMAZON_PRICE: 2699
-ASIN: https://www.amazon.co.jp/dp/B09NSJ4TRB?tag=mikkestyle-22
+AMAZON_PRICE: 2071
+ASIN: https://www.amazon.co.jp/dp/B09NRM6ZPF?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FDEWEL%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2582%25A2%25E3%2583%25AA%25E3%2582%25A6%25E3%2583%25A0%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DDEWEL%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2582%25A2%25E3%2583%25AA%25E3%2582%25A6%25E3%2583%25A0%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -79,9 +81,13 @@ ASIN: https://www.amazon.co.jp/dp/B09NSJ4TRB?tag=mikkestyle-22
 ### 👑 第2位: EAYHM水草植物育成ライト
 [総合評価: 4.75]
 
-IMAGE: https://img.my-best.com/product_images/d535e96e04caad8ab036f0bc21db5b9b.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=86829dd1489cd03e8b24479051a56fd0
+IMAGE: https://item-shopping.c.yimg.jp/i/l/kokomomozu-store_gt5b68aa85d6
 AMAZON_PRICE: 3099
+RAKUTEN_PRICE: 4071
+YAHOO_PRICE: 3676
 ASIN: https://www.amazon.co.jp/dp/B08C71NG57?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00ug49m.xpseka2e.g00ug49m.xpsel62f/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frinrindou%2F4951338cf50a4f%2F
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/kokomomozu-store/gt5b68aa85d6.html
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -112,9 +118,13 @@ ASIN: https://www.amazon.co.jp/dp/B08C71NG57?tag=mikkestyle-22
 ### 👑 第3位: チャームTRIANGLE LED GROW
 [総合評価: 4.62]
 
-IMAGE: https://img.my-best.com/product_images/c697579acf552aaad2277b302582a3fa.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=d7871695834b9a1e072a6da639a3865e
-AMAZON_PRICE: 12140
-ASIN: https://www.amazon.co.jp/dp/B09M85NRZ7?tag=mikkestyle-22
+IMAGE: https://item-shopping.c.yimg.jp/i/l/chanet_223008
+AMAZON_PRICE: 10120
+RAKUTEN_PRICE: 7400
+YAHOO_PRICE: 7400
+ASIN: https://www.amazon.co.jp/dp/B0BVF47T3Q?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00pyjhm.xpsek204.g00pyjhm.xpsel124/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fchanet%2F223008%2F
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/chanet/223008.html
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -148,6 +158,8 @@ ASIN: https://www.amazon.co.jp/dp/B09M85NRZ7?tag=mikkestyle-22
 IMAGE: https://img.my-best.com/product_images/f92caa244135f91c23d4d48cef064ca5.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=02a069130b80cfb36f4dd6d482d17092
 AMAZON_PRICE: 1480
 ASIN: https://www.amazon.co.jp/dp/B0CD22VHKT?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FFEDOUR%2B%25E3%2583%2595%25E3%2583%25AB%25E3%2582%25B9%25E3%2583%259A%25E3%2582%25AF%25E3%2583%2588%25E3%2583%25AB%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2585%25A7%25E6%2598%258ELED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DFEDOUR%2B%25E3%2583%2595%25E3%2583%25AB%25E3%2582%25B9%25E3%2583%259A%25E3%2582%25AF%25E3%2583%2588%25E3%2583%25AB%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2585%25A7%25E6%2598%258ELED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -180,7 +192,9 @@ ASIN: https://www.amazon.co.jp/dp/B0CD22VHKT?tag=mikkestyle-22
 
 IMAGE: https://img.my-best.com/product_images/e49be7877e40191f6289906f79b61e80.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=0201fc6b1a77c5f7e9620c483d049251
 AMAZON_PRICE: 2399
-ASIN: https://www.amazon.co.jp/dp/B07XDY8VKB?tag=mikkestyle-22
+ASIN: https://www.amazon.co.jp/dp/B0BR3441ZQ?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FHygger%2B%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2594%25A8LED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//shopping.yahoo.co.jp/search%3Fp%3DHygger%2B%25E6%25B0%25B4%25E6%25A7%25BD%25E7%2594%25A8LED%25E3%2583%25A9%25E3%2582%25A4%25E3%2583%2588
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -211,9 +225,13 @@ ASIN: https://www.amazon.co.jp/dp/B07XDY8VKB?tag=mikkestyle-22
 ### 👑 第6位: スペクトラムブランズジャパンテトラ ｜ パワーLEDライト
 [総合評価: 4.33]
 
-IMAGE: https://img.my-best.com/product_images/8c8d6b93226ab4a42485e56502163c3e.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=cacbc21320d91608957fb1b9edd6bbda
-AMAZON_PRICE: 4973
-ASIN: https://www.amazon.co.jp/dp/B09T3L19CZ?tag=mikkestyle-22
+IMAGE: https://item-shopping.c.yimg.jp/i/l/ulmax_4571269553775
+AMAZON_PRICE: 6731
+RAKUTEN_PRICE: 6672
+YAHOO_PRICE: 11096
+ASIN: https://www.amazon.co.jp/dp/B09T3L7LSB?tag=mikkestyle-22
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00pyjhm.xpsek204.g00pyjhm.xpsel124/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fchanet%2F269841%2F
+YAHOO: https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url=https%3A//store.shopping.yahoo.co.jp/ulmax/4571269553775.html
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]
 
@@ -245,12 +263,12 @@ ASIN: https://www.amazon.co.jp/dp/B09T3L19CZ?tag=mikkestyle-22
 
 | 順位 | 商品名 | 価格 | 特徴 |
 | :---: | :--- | :---: | :--- |
-| 第1位 | DEWELアクアリウムライト | ¥2,699 | 水槽に直接置くだけ、調節可能なスライド式水槽に直接置くだけで設置できるアクアリウ... |
+| 第1位 | DEWELアクアリウムライト | ¥2,071 | 水槽に直接置くだけ、調節可能なスライド式水槽に直接置くだけで設置できるアクアリウ... |
 | 第2位 | EAYHM水草植物育成ライト | ¥3,099 | 水草を美しく演出。ボトルアクアリウムやテラリウムに水草・植物の成長と、色鮮やかに... |
-| 第3位 | チャームTRIANGLE LED GROW | ¥12,140 | 水草の育成におすすめ、三角形のアルミボディが特徴赤の波長を必要とする水草の育成に... |
+| 第3位 | チャームTRIANGLE LED GROW | ¥10,120 | 水草の育成におすすめ、三角形のアルミボディが特徴赤の波長を必要とする水草の育成に... |
 | 第4位 | FEDOURフルスペクトル水槽照明LEDライト | ¥1,480 | 魚や水草を美しく見せる。水槽幅30～50cmにぴったり水槽幅30～50cmにぴっ... |
 | 第5位 | Hygger水槽用LEDライト | ¥2,399 | 必要な明るさを簡単に調整、飼育と水草の育成におすすめ赤RGB・青・白・緑の4色4... |
-| 第6位 | スペクトラムブランズジャパンテトラ ｜ パワーLEDライト | ¥4,973 | 魚や水草が美しく見える。スリムデザインのLEDライト同クラスで高いレベルの135... |
+| 第6位 | スペクトラムブランズジャパンテトラ ｜ パワーLEDライト | ¥6,731 | 魚や水草が美しく見える。スリムデザインのLEDライト同クラスで高いレベルの135... |
 
 ## ❓ よくある質問（FAQ）
 
