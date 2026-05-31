@@ -136,10 +136,9 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
     // Rakuten affiliate URL
     const rakutenMatch = section.match(/RAKUTEN:\s*(https?:\/\/[^\s]+)/i);
     if (rakutenMatch) {
-      // Decode any URL-encoded pc= parameter
+      // Keep any URL-encoded pc= parameter as is
       const rawUrl = rakutenMatch[1];
-      const decoded = rawUrl.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (encoded) => decodeURIComponent(encoded));
-      product.rakuten = { price: '価格を見る', url: decoded };
+      product.rakuten = { price: '価格を見る', url: rawUrl };
     }
 
     // Yahoo affiliate URL
@@ -367,7 +366,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
       const asin = asinMatch ? asinMatch[1] : undefined;
       const rakutenRaw = rakutenMatch ? rakutenMatch[1] : undefined;
-      const rakuten = rakutenRaw ? rakutenRaw.replace(/(?<=\?pc=|&pc=)https?%3A%2F%2F[^&\s]*/gi, (enc) => decodeURIComponent(enc)) : undefined;
+      const rakuten = rakutenRaw;
       const yahoo = yahooMatch ? yahooMatch[1] : undefined;
       const imageUrl = imageMatch ? imageMatch[1] : undefined;
       
