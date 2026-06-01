@@ -43,30 +43,48 @@ async function main() {
     // ページ読み込み: networkidle0 で初期リクエストが完了するまで待機
     await page.goto(fileUrl, { waitUntil: 'networkidle0', timeout: 30000 });
 
-    // 全商品画像の読み込み完了を確実に待機
+    // 全商品画像の読み込み完了を確実に待機し、エラーがあれば検知する
     await page.evaluate(async () => {
       const images = Array.from(document.querySelectorAll('img'));
       console.log(`Waiting for ${images.length} images to load...`);
-      await Promise.allSettled(
+      
+      const results = await Promise.allSettled(
         images.map(async (img) => {
-          // すでに完了している場合はスキップ
-          if (img.complete && img.naturalWidth > 0) return;
-          // load / error イベントを待つ
+          if (img.complete && img.naturalWidth > 0) {
+            return { src: img.src, success: true };
+          }
+          
           await new Promise((resolve) => {
             if (img.complete) { resolve(); return; }
             const onDone = () => resolve();
             img.addEventListener('load', onDone, { once: true });
             img.addEventListener('error', onDone, { once: true });
-            // タイムアウト: 15秒
-            setTimeout(resolve, 15000);
+            setTimeout(resolve, 15000); // 15s timeout
           });
-          // decode() でピクセルデータが確実に展開されるまで待つ
+          
           if (typeof img.decode === 'function') {
             await img.decode().catch(() => {});
           }
+          
+          const success = img.complete && img.naturalWidth > 0;
+          return { src: img.src, success };
         })
       );
-      console.log('All images settled.');
+      
+      const failed = results
+        .map((r, i) => {
+          if (r.status === 'rejected') return { src: images[i].src, reason: 'rejected' };
+          if (!r.value.success) return { src: r.value.src, reason: 'blank/404' };
+          return null;
+        })
+        .filter(Boolean);
+        
+      if (failed.length > 0) {
+        const errorMsg = failed.map(f => `- ${f.src} (${f.reason})`).join('\n');
+        throw new Error(`Some images failed to load or are blank (404/CORS/error):\n${errorMsg}`);
+      }
+      
+      console.log('All images loaded successfully.');
     });
 
     // フォント・mix-blend-mode のレンダリングが落ち着くまで追加待機

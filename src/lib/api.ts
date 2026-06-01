@@ -201,19 +201,25 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
     }
 
     // Extract dynamic feature tags based on keywords
+    // Extract dynamic feature tags based on keywords or explicit FEATURES tag
     const features: string[] = [];
-    const lowerContent = section.toLowerCase();
-    if (lowerContent.includes('タイマー')) features.push('⏰ タイマー付き');
-    if (lowerContent.includes('調光') || lowerContent.includes('明るさ調整')) features.push('💡 調光可能');
-    if (lowerContent.includes('防水') || lowerContent.includes('防滴') || lowerContent.includes('防塵')) features.push('🛡️ 防水仕様');
-    if (lowerContent.includes('静音') || lowerContent.includes('静か')) features.push('🔇 静音設計');
-    if (lowerContent.includes('軽量') || lowerContent.includes('軽い') || lowerContent.includes('コンパクト')) features.push('🍃 軽量・小型');
-    if (lowerContent.includes('高コスパ') || lowerContent.includes('リーズナブル') || lowerContent.includes('コスパ')) features.push('💎 高コスパ');
-    if (lowerContent.includes('コードレス') || lowerContent.includes('充電式') || lowerContent.includes('バッテリー')) features.push('🔋 充電式');
-    if (lowerContent.includes('2way') || lowerContent.includes('2ウェイ')) features.push('🔄 2WAY方式');
-    
-    if (features.length > 0) {
-      product.features = features.slice(0, 3);
+    const customFeaturesMatch = section.match(/FEATURES:\s*(.+)/i);
+    if (customFeaturesMatch) {
+      product.features = customFeaturesMatch[1].split(',').map(f => f.trim()).slice(0, 3);
+    } else {
+      const lowerContent = section.toLowerCase();
+      if (lowerContent.includes('タイマー')) features.push('⏰ タイマー付き');
+      if (lowerContent.includes('調光') || lowerContent.includes('明るさ調整')) features.push('💡 調光可能');
+      if (lowerContent.includes('防水') || lowerContent.includes('防滴') || lowerContent.includes('防塵')) features.push('🛡️ 防水仕様');
+      if (lowerContent.includes('静音') || lowerContent.includes('静か')) features.push('🔇 静音設計');
+      if (lowerContent.includes('軽量') || lowerContent.includes('軽い') || lowerContent.includes('コンパクト')) features.push('🍃 軽量・小型');
+      if (lowerContent.includes('高コスパ') || lowerContent.includes('リーズナブル') || lowerContent.includes('コスパ')) features.push('💎 高コスパ');
+      if (lowerContent.includes('コードレス') || lowerContent.includes('充電式') || lowerContent.includes('バッテリー')) features.push('🔋 充電式');
+      if (lowerContent.includes('2way') || lowerContent.includes('2ウェイ')) features.push('🔄 2WAY方式');
+      
+      if (features.length > 0) {
+        product.features = features.slice(0, 3);
+      }
     }
 
     products.push(product);
