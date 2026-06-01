@@ -196,7 +196,8 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       !line.startsWith('-')
     );
     if (descLine) {
-      product.description = descLine.length > 120 ? descLine.substring(0, 120) + '...' : descLine;
+      const cleaned = descLine.replace(/\*\*/g, '').replace(/__/g, '').trim();
+      product.description = cleaned.length > 120 ? cleaned.substring(0, 120) + '...' : cleaned;
     }
 
     // Extract dynamic feature tags based on keywords
