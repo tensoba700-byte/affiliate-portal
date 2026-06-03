@@ -483,7 +483,7 @@ def wrap_yahoo_url(url: str, query: str) -> str:
     """
     if not url:
         # urlがない場合は、クエリを用いて検索結果URLを作る
-        encoded_query = urllib.parse.quote(query)
+        encoded_query = urllib.parse.quote(query, safe='')
         target_url = f"https://shopping.yahoo.co.jp/search?p={encoded_query}"
     else:
         # すでにバリューコマースリンクになっているかチェック
@@ -500,13 +500,13 @@ def wrap_yahoo_url(url: str, query: str) -> str:
         # /product/ や /product/j/ を含むかチェック
         if "/product/" in target_url or "/product/j/" in target_url:
             # 製品比較ページの場合は検索結果URLに切り替える
-            encoded_query = urllib.parse.quote(query)
+            encoded_query = urllib.parse.quote(query, safe='')
             target_url = f"https://shopping.yahoo.co.jp/search?p={encoded_query}"
 
     # バリューコマースラッパーに包む
     yahoo_sid = "3767611"
     yahoo_pid = "2201292"
-    encoded_target = urllib.parse.quote(target_url)
+    encoded_target = urllib.parse.quote(target_url, safe='')
     return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
 
 def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:

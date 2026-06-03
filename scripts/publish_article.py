@@ -220,7 +220,7 @@ def clean_yahoo_url(url: str, product_name: str) -> str:
     # 1. Avoid shopping.yahoo.co.jp/product/ or /product/j/ to prevent ValueCommerce errors
     if "shopping.yahoo.co.jp/product/" in url or "/product/j/" in url:
         # Fallback to search query
-        query = urllib.parse.quote(product_name)
+        query = urllib.parse.quote(product_name, safe='')
         url = f"https://shopping.yahoo.co.jp/search?p={query}"
         
     # 2. Check if it's already a ValueCommerce link
@@ -229,10 +229,10 @@ def clean_yahoo_url(url: str, product_name: str) -> str:
             parts = url.split("vc_url=")
             # Re-encode the vc_url query param
             decoded_vc = urllib.parse.unquote(parts[1])
-            url = parts[0] + "vc_url=" + urllib.parse.quote(decoded_vc)
+            url = parts[0] + "vc_url=" + urllib.parse.quote(decoded_vc, safe='')
     else:
         # It's a direct Yahoo Shopping link, wrap it with ValueCommerce
-        url = f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url={urllib.parse.quote(url)}"
+        url = f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url={urllib.parse.quote(url, safe='')}"
         
     return url
 
