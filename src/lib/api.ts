@@ -119,7 +119,7 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       imageUrl: '',
       score,
       amazon: { price: '価格を見る', url: `https://www.amazon.co.jp/s?k=${q}` },
-      yahoo: { price: '価格を見る', url: `https://shopping.yahoo.co.jp/search?p=${q}` },
+      yahoo: undefined,
       rakuten: { price: '価格を見る', url: `https://search.rakuten.co.jp/search/mall/${q}/` },
       pros: [],
       cons: [],
@@ -144,20 +144,11 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
       const rawUrl = rakutenMatch[1];
       product.rakuten = { price: '価格を見る', url: rawUrl };
     }
-
-    // Yahoo affiliate URL
-    const yahooMatch = section.match(/YAHOO:\s*(https?:\/\/[^\s]+)/i);
-    if (yahooMatch) {
-      product.yahoo = { price: '価格を見る', url: yahooMatch[1] };
-    }
-
     // Prices
     const amzPrice = section.match(/AMAZON_PRICE:\s*(\d+)/i);
     const rakPrice = section.match(/RAKUTEN_PRICE:\s*(\d+)/i);
-    const yahPrice = section.match(/YAHOO_PRICE:\s*(\d+)/i);
     if (amzPrice && product.amazon) product.amazon.price = `${Number(amzPrice[1]).toLocaleString()}円`;
     if (rakPrice && product.rakuten) product.rakuten.price = `${Number(rakPrice[1]).toLocaleString()}円`;
-    if (yahPrice && product.yahoo) product.yahoo.price = `${Number(yahPrice[1]).toLocaleString()}円`;
 
     // Parse Pros (advantages)
     const prosMatch = section.match(/:::pro\s*([\s\S]*?)\s*:::/);
@@ -412,7 +403,6 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       return `<div class="affiliate-buttons">
         ${btn('btn-amazon',  amazonL,  'https://www.amazon.co.jp/favicon.ico',       'Amazon',   prices?.amazon)}
         ${btn('btn-rakuten', rakutenL, 'https://www.rakuten.co.jp/favicon.ico',      '楽天市場', prices?.rakuten)}
-        ${btn('btn-yahoo',   yahooL,   'https://shopping.yahoo.co.jp/favicon.ico',   'Yahoo!',   prices?.yahoo)}
       </div>`;
     };
 

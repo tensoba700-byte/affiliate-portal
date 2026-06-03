@@ -669,33 +669,10 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     if not details["amazon_url"] and scraped_urls and scraped_urls.get("amazon"):
         details["amazon_url"] = clean_and_convert_scraped_url(scraped_urls["amazon"], "amazon")
 
-    # 2. Yahoo Shopping
-    yahoo_app_id = os.getenv("YAHOO_SHOPPING_APP_ID")
-    if yahoo_app_id and jan_code:
-        try:
-            url = f"https://shopping.yahooapis.jp/ShoppingWebService/V3/itemSearch?appid={yahoo_app_id}&query={jan_code.strip()}&results=20"
-            res = requests.get(url, timeout=10)
-            if res.status_code == 200:
-                hits = res.json().get("hits", [])
-                for hit in hits:
-                    hit_title = hit.get("name", "")
-                    if verify_title_match(amazon_product_name or query, hit_title):
-                        details["yahoo_price"] = str(hit.get("price", ""))
-                        details["yahoo_url"] = hit.get("url", "")
-                        details["yahoo_name"] = hit_title
-                        if not details["image_url"]:
-                            img_url = hit.get("image", {}).get("medium") or ""
-                            if img_url and "/i/g/" in img_url:
-                                img_url = img_url.replace("/i/g/", "/i/l/")
-                            details["image_url"] = img_url
-                        break
-        except Exception:
-            pass
-
-    if not details["yahoo_url"] and scraped_urls and scraped_urls.get("yahoo"):
-        details["yahoo_url"] = clean_and_convert_scraped_url(scraped_urls["yahoo"], "yahoo")
-        if details["yahoo_name"] == "なし":
-            details["yahoo_name"] = query
+    # 2. Yahoo Shopping (Disabled)
+    details["yahoo_price"] = "なし"
+    details["yahoo_url"] = ""
+    details["yahoo_name"] = "なし"
 
     # 3. Rakuten
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
@@ -743,8 +720,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     if details["rakuten_url"]:
         details["rakuten_url"] = remove_rakuten_params(details["rakuten_url"])
 
-    # Yahoo URLをすべて一律にバリューコマースのsid=3767611&pid=2201292形式にし、/product/を排除
-    details["yahoo_url"] = wrap_yahoo_url(details.get("yahoo_url", ""), query)
+    # Yahoo URLをすべて一律にバリューコマースのsid=3767611&pid=2201292形式にし、/product/を排除 (Disabled)
+    details["yahoo_url"] = ""
 
     if not details["image_url"]:
         details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"

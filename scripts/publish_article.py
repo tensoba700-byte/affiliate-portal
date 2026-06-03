@@ -276,10 +276,10 @@ def get_notion_data(article_title: str):
             "image_url": resolved.get("image_url") or "",
             "amazon_url": resolved.get("amazon_url") or "",
             "rakuten_url": clean_rakuten_url(resolved.get("rakuten_url") or ""),
-            "yahoo_url": clean_yahoo_url(resolved.get("yahoo_url") or "", clean_name),
+            "yahoo_url": "",
             "amazon_price": str(resolved.get("amazon_price", "なし")),
             "rakuten_price": str(resolved.get("rakuten_price", "なし")),
-            "yahoo_price": str(resolved.get("yahoo_price", "なし")),
+            "yahoo_price": "なし",
             "category": category
         })
     return products
@@ -639,15 +639,15 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
             markdown += f"IMAGE: {notion_p['image_url']}\n"
         
         if notion_p:
-            for platform in ['amazon', 'rakuten', 'yahoo']:
+            for platform in ['amazon', 'rakuten']:
                 price = notion_p.get(f'{platform}_price')
                 if price and price != "なし": markdown += f"{platform.upper()}_PRICE: {price}\n"
-            for platform, key in [('amazon', 'asin'), ('rakuten', 'rakuten'), ('yahoo', 'yahoo')]:
+            for platform, key in [('amazon', 'asin'), ('rakuten', 'rakuten')]:
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"
         
         # ★商品画像・アフィリエイト定義 of 直後（購入ボタン of 1セットめ）
-        markdown += f"\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+        markdown += f"\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]\n\n"
 
         # 説明文のフォーマット
         formatted_desc = p['description'].replace('\\n', '\n\n')
@@ -662,7 +662,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
             markdown += f"✍️ **編集部・専門家コメント**\n{p['expert_editor_comments']}\n\n"
         
         # ★説明文の下（購入ボタンの2セットめ）
-        markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE] [YAHOO_LINK_HERE]\n\n"
+        markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]\n\n"
         
         # メリット・デメリット（Pros/Cons）ボックスの付与
         pros, cons = generate_pros_cons(p['description'], i + 1)
@@ -680,7 +680,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
         price = "なし"
         if notion_p:
-            price = notion_p.get("amazon_price") or notion_p.get("rakuten_price") or notion_p.get("yahoo_price") or "なし"
+            price = notion_p.get("amazon_price") or notion_p.get("rakuten_price") or "なし"
         if price and price != "なし":
             price_formatted = f"¥{int(price):,}" if price.isdigit() else price
         else:
