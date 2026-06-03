@@ -278,12 +278,33 @@ body {
   border-r: none;
 }
 
-/* Align product name left (now first column) */
+/* Align rank column center */
 .cute-html-content td:first-child {
-  text-align: left;
+  text-align: center;
+  font-weight: 900;
+  min-width: 65px;
   white-space: nowrap;
+}
+
+/* Decorate product name column (second column) */
+.cute-html-content td:nth-child(2) {
+  text-align: left;
   font-weight: 950;
-  min-width: 160px;
+  min-width: 180px;
+}
+
+/* Decorate price column (third column) */
+.cute-html-content td:nth-child(3) {
+  font-weight: 900;
+  color: #ff8fa3;
+  white-space: nowrap;
+  min-width: 80px;
+}
+
+/* Decorate features column (fourth column) */
+.cute-html-content td:nth-child(4) {
+  text-align: left;
+  min-width: 280px; /* 特徴カラムが潰れないように最低幅を確保 */
 }
 
 .cute-html-content tr:last-child td {
@@ -293,13 +314,6 @@ body {
 .cute-html-content tr:hover td {
   background-color: var(--theme-grad-1);
   opacity: 1;
-}
-
-/* Decorate price column (now second column) */
-.cute-html-content td:nth-child(2) {
-  font-weight: 900;
-  color: #ff8fa3;
-  white-space: nowrap;
 }
 
 /* Body text font size for article content */

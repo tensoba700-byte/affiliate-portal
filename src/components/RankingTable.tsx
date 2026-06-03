@@ -270,6 +270,7 @@ export default function RankingTable({ products, title }: Props) {
                         alt={p.name}
                         className="object-contain w-full h-full"
                         style={{ borderRadius: '12px', mixBlendMode: 'multiply' }}
+                        referrerPolicy="no-referrer"
                       />
                     </div>
                   ) : (

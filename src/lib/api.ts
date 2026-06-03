@@ -448,7 +448,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       s = s.replace(/RAKUTEN_AFFILIATE_URL:\s*https?:\/\/[^\s]+[ \t]*\n?/gi, '');
 
       if (imageUrl) {
-        s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" /></div>\n`);
+        s = s.replace(/(###\s*(?:👑?\s*第\d+位:?|🌸)[^\n]*\n)/i, `$1<div class="product-image-container"><img src="${imageUrl}" alt="${productName}" class="product-image" referrerpolicy="no-referrer" /></div>\n`);
       }
 
       const DYNAMIC_BUTTONS = buildButtons(productName, asin, rakuten, yahoo, prices);
