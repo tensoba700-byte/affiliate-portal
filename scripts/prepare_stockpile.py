@@ -217,11 +217,24 @@ const puppeteer = require('puppeteer');
       });
       
       // 6. 商品リストと商品説明の抽出 (Accumulating sibling content for verification results, comments)
+      const h2s = Array.from(document.querySelectorAll('h2'));
+      const rankingH2 = h2s.find(h2 => {
+        const txt = h2.textContent || "";
+        return txt.includes('おすすめ人気ランキング') || txt.includes('徹底比較') || txt.includes('売れ筋ランキング') || txt.includes('おすすめ人気商品');
+      });
+
       const h3s = Array.from(document.querySelectorAll('h3'));
       const products = [];
       let rankCounter = 1;
       
       h3s.forEach((h3) => {
+        // ランキングH2が定義されている場合、そのH2より前に位置するH3は除外する
+        if (rankingH2) {
+          const pos = rankingH2.compareDocumentPosition(h3);
+          if (!(pos & Node.DOCUMENT_POSITION_FOLLOWING)) {
+            return;
+          }
+        }
         const name = h3.textContent.trim();
         // 不要な見出しを除外
         if (!name || name.length < 2 || name.includes('売れ筋ランキング') || name.includes('おすすめ人気ランキング') || name.includes('レビュー') || name.includes('比較一覧表')) {
@@ -976,28 +989,50 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
         }
     }
 
-    # 最大6個に制限
-    selected_products = products[:6]
-    print(f"ℹ️ 上位 {len(selected_products)} 件の商品のアフィリエイト詳細情報を取得します...")
-    
+    # === 太郎さんの差し替えルール：Amazonの個別詳細ページ(ASIN)が存在しない商品は自動繰り上げ ===
     final_products_list = []
-    for idx, p in enumerate(selected_products):
-        print(f"[{idx+1}/{len(selected_products)}] {p['name']} の情報を検索中...")
+    rank_counter = 1
+    
+    print(f"ℹ️ Amazon個別商品ページが存在する商品を上位から順に6件収集します...")
+    
+    for idx, p in enumerate(products):
+        if len(final_products_list) >= 6:
+            break
+            
+        print(f"\n🔍 [候補走査] 順位 {p['rank']}: {p['name']} (JAN: {p['jan_code']}) を検証中...")
+        
         scraped_urls = {
             "amazon": p.get("amazon_scraped_url", ""),
             "rakuten": p.get("rakuten_scraped_url", ""),
             "yahoo": p.get("yahoo_scraped_url", "")
         }
+        
         details = fetch_product_details(p["name"], p["jan_code"], p["asin"], scraped_urls)
         
-        # Fallback to scraped competitor image if API returned Unsplash or empty
+        # Amazonの個別商品ページが存在するか、およびAdonnaのような販売終了・誤ヒットのチェック
+        has_valid_amazon = False
+        if details.get("amazon_url") and "/dp/" in details.get("amazon_url"):
+            # Adonnaの特別除外措置、および誤検知防止
+            is_adonna = "4562364262679" in p["jan_code"] or "adonna" in p["name"].lower() or "アドナ" in p["name"]
+            is_mismatch = False
+            amazon_name = details.get("amazon_name", "").lower()
+            if "カラコン" in amazon_name or "cruum" in amazon_name:
+                is_mismatch = True
+                
+            if not is_adonna and not is_mismatch:
+                has_valid_amazon = True
+                
+        if not has_valid_amazon:
+            print(f"  ⚠️ スキップ: {p['name']} はAmazonの個別商品ページが存在しない（または販売終了・誤ヒット）ため、次点へ繰り上げます。")
+            continue
+            
+        print(f"  ✅ 採用！ {p['name']} を {rank_counter} 位として登録します。")
+        
         if not details.get("image_url") or "unsplash.com" in details.get("image_url", ""):
             scraped_img = p.get("scraped_image", "")
             if scraped_img:
-                print(f"📸 Fallback to scraped image for {p['name']}: {scraped_img}")
                 details["image_url"] = scraped_img
         
-        # Try to find fallbacks based on name keywords
         p_name_lower = p['name'].lower()
         fallback_match = None
         for key, vals in product_fallbacks.items():
@@ -1009,7 +1044,7 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
         e_comments = fallback_match["expert_editor_comments"] if fallback_match else "高い機能性と使いやすさを兼ね備えたバランスの良いLEDライトです。十分な明るさと必要な機能をしっかりと網羅しており、アクアリウム初心者からステップアップしたい中級者の方まで幅広くおすすめできます。"
         
         final_products_list.append({
-            "rank": p["rank"],
+            "rank": rank_counter,
             "original_name": p["name"],
             "jan_code": p["jan_code"],
             "asin": p["asin"],
@@ -1018,6 +1053,7 @@ LEDライトの設置スタイルは、水槽の美観や日頃のメンテナ�
             "expert_editor_comments": e_comments,
             "resolved_details": details
         })
+        rank_counter += 1
         time.sleep(1)
         
     # 出力データの準備
