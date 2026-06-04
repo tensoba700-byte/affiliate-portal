@@ -71,14 +71,62 @@ def clean_variable_names(text: str) -> str:
     return text
 
 
-def slugify(text: str) -> str:
+CATEGORY_SLUGS = {
+    "美容液": "serum",
+    "クレンジングオイル": "cleansing-oil",
+    "化粧水": "toner",
+    "フェイスパック": "face-mask",
+    "シートマスク": "face-mask",
+    "クレンジングバーム": "cleansing-balm",
+    "アイライナー": "eyeliner",
+    "シャンプー": "shampoo",
+    "トリートメント": "treatment",
+    "ヘアオイル": "hair-oil",
+    "リップ": "lip",
+    "ファンデーション": "foundation",
+    "日焼け止め": "sunscreen",
+    "コンシーラー": "concealer",
+    "アイシャドウ": "eyeshadow",
+    "マスカラ": "mascara",
+    "チーク": "blush",
+}
+
+def slugify(text: str, category: str = None, publish_date: str = None) -> str:
     """Generate a filename-friendly slug from title."""
-    text = text.replace("2024", "2026")
-    text = re.sub(r'[^\w\s-]', '', text).strip().lower()
-    text = re.sub(r'[-\s]+', '-', text)
-    jst = datetime.timezone(datetime.timedelta(hours=9))
-    date_prefix = datetime.datetime.now(jst).strftime("%Y%m%d")
-    return f"{date_prefix}-{text[:30]}"
+    slug_part = None
+    for keyword, eng_slug in CATEGORY_SLUGS.items():
+        if keyword in text:
+            slug_part = eng_slug
+            break
+            
+    date_prefix = None
+    if publish_date:
+        m = re.match(r'^(\d{4})-(\d{2})-(\d{2})', publish_date.strip())
+        if m:
+            date_prefix = f"{m.group(1)}{m.group(2)}{m.group(3)}"
+            
+    if not date_prefix:
+        jst = datetime.timezone(datetime.timedelta(hours=9))
+        date_prefix = datetime.datetime.now(jst).strftime("%Y%m%d")
+
+    if slug_part:
+        return f"{date_prefix}-{slug_part}"
+    else:
+        print(f"[WARN] Unknown category: {category or 'None'}")
+        
+        articles_dir = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "src", "content", "articles"
+        )
+        os.makedirs(articles_dir, exist_ok=True)
+        
+        num = 1
+        while True:
+            candidate_slug = f"{date_prefix}-article-{num:03d}"
+            file_path = os.path.join(articles_dir, f"{candidate_slug}.md")
+            if not os.path.exists(file_path):
+                return candidate_slug
+            num += 1
 
 def extract_badge(title: str) -> str:
     m = re.search(r'(\d+)選', title)
@@ -570,7 +618,7 @@ def truncate_product_name(name: str) -> str:
 # PR開示テキスト（記事の最上部に1回だけ表示）
 PR_DISCLOSURE = "※本記事はアフィリエイト広告を含みます。"
 
-def run_publish(article_title: str, category: str = None, slug: str = None):
+def run_publish(article_title: str, category: str = None, slug: str = None, publish_date: str = None):
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
     if not products: return False
@@ -591,7 +639,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     data = json.loads(raw)
     
     output_title = data.get("title") or article_title.replace("2024", "2026")
-    slug = slug or slugify(output_title)
+    slug = slug or slugify(output_title, category, publish_date)
 
     # PR開示を先頭に1回だけ配置（frontmatter直後の本文の最初）
     intro_text = data['intro']
@@ -605,12 +653,16 @@ def run_publish(article_title: str, category: str = None, slug: str = None):
     summary_clean = re.sub(r'<p class="pr-disclosure">.*?</p>', '', summary_clean).strip()
     data['summary'] = clean_variable_names(summary_clean)
 
+    # publishDateの設定
+    if not publish_date:
+        publish_date = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y-%m-%d")
+
     markdown = (
         f'--- \n'
         f'title: "{output_title}"\n'
         f'coverImage: ""\n'
         f'excerpt: "{data["excerpt"]}"\n'
-        f'publishDate: "{datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime("%Y-%m-%d")}"\n'
+        f'publishDate: "{publish_date}"\n'
         f'category: "{category}"\n'
         f'---\n\n'
         f'{intro_text}\n\n'
@@ -752,11 +804,12 @@ if __name__ == "__main__":
     parser.add_argument("--title", help="Title of the article in Notion")
     parser.add_argument("--category", help="Category of the article")
     parser.add_argument("--slug", help="Slug/URL for the article")
+    parser.add_argument("--date", help="Publish date of the article")
     
     args = parser.parse_args()
     
     if args.title:
-        success = run_publish(args.title, args.category, args.slug)
+        success = run_publish(args.title, args.category, args.slug, args.date)
         if not success:
             sys.exit(1)
     else:
