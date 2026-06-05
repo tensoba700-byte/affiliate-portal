@@ -1,0 +1,55 @@
+global:
+  max_products:
+    ranking_article: 6
+    comparison_article: 10
+    single_product_article: 1
+
+美容・スキンケア:
+  slug_prefix: beauty
+  article_type: ranking_article
+  selection_points:
+    - 洗浄力
+    - 保湿成分
+    - 肌へのやさしさ
+    - 使用感
+  faq_template: beauty
+
+ガジェット:
+  slug_prefix: gadget
+  article_type: ranking_article
+  selection_points:
+    - 性能
+    - サイズ
+    - バッテリー
+    - 対応機能
+  faq_template: gadget
+
+インテリア:
+  slug_prefix: interior
+  article_type: ranking_article
+  selection_points:
+    - デザイン
+    - サイズ・設置スペース
+    - 素材・耐久性
+    - 価格帯
+  faq_template: interior
+
+生活雑貨:
+  slug_prefix: daily-goods
+  article_type: ranking_article
+  selection_points:
+    - 使いやすさ
+    - 耐久性
+    - サイズ
+    - コスパ
+  faq_template: daily-goods
+
+便利グッズ:
+  slug_prefix: useful-goods
+  article_type: ranking_article
+  selection_points:
+    - 機能性
+    - 携帯性
+    - 使いやすさ
+    - コスパ
+  faq_template: useful-goods

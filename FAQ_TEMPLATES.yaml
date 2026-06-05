@@ -1,0 +1,43 @@
+faq_generation:
+  min_questions: 1
+  max_questions: 3
+
+beauty:
+  seed_questions:
+    - 使用感は？
+    - 主な特徴は？
+    - どんな人に向いている？
+    - 成分の特徴は？
+    - 使用上の注意点は？
+
+gadget:
+  seed_questions:
+    - 使い心地は？
+    - 主な特徴は？
+    - どんな人に向いている？
+    - スペックの特徴は？
+    - 使用上の注意点は？
+
+interior:
+  seed_questions:
+    - 使い心地は？
+    - 主な特徴は？
+    - どんな部屋に合う？
+    - 素材・サイズの特徴は？
+    - 使用上の注意点は？
+
+daily-goods:
+  seed_questions:
+    - 使い心地は？
+    - 主な特徴は？
+    - どんな人に向いている？
+    - 使い方の特徴は？
+    - 使用上の注意点は？
+
+useful-goods:
+  seed_questions:
+    - 使い心地は？
+    - 主な特徴は？
+    - どんな場面で使える？
+    - 機能の特徴は？
+    - 使用上の注意点は？
