@@ -593,6 +593,51 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
         encoded_target = urllib.parse.quote(target_url)
         return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
 
+def generate_search_keywords(name: str) -> list:
+    s = re.sub(r'[\uff5c\uff0f|/：:;；,，.．_＿\-ー─\(\)（）]', ' ', name)
+    s = re.sub(r'([a-z])([A-Z])', r'\1 \2', s)
+    s = re.sub(r'([a-zA-Z0-9]+)([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)', r'\1 \2', s)
+    s = re.sub(r'([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)([a-zA-Z0-9]+)', r'\1 \2', s)
+    
+    words = [w.strip() for w in s.split() if w.strip()]
+    if not words:
+        return [name]
+        
+    keywords = []
+    
+    # 1. 英語(ストップワード除外) + 日本語特徴語 を最優先
+    stop_words = {"the", "founders", "brand", "official", "co", "ltd", "inc", "japan", "公式", "ブランド", "日本"}
+    filtered_words = [w for w in words if w.lower() not in stop_words]
+    
+    eng_words = [w for w in filtered_words if re.match(r'^[a-zA-Z0-9]+$', w)]
+    jp_words = [w for w in filtered_words if not re.match(r'^[a-zA-Z0-9]+$', w)]
+    
+    if eng_words and jp_words:
+        keywords.append(f"{eng_words[0]} {jp_words[0]}")
+        if len(jp_words) > 1:
+            keywords.append(f"{eng_words[0]} {jp_words[1]}")
+            
+    if filtered_words:
+        keywords.append(" ".join(filtered_words[:3]))
+        if len(filtered_words) >= 2:
+            keywords.append(" ".join(filtered_words[:2]))
+            
+    keywords.append(" ".join(words[:4]))
+    if len(words) >= 2:
+        keywords.append(" ".join(words[:2]))
+    if len(words) >= 3:
+        keywords.append(" ".join(words[:3]))
+            
+    seen = set()
+    unique_keywords = []
+    for kw in keywords:
+        kw_clean = " ".join(kw.split())
+        if kw_clean and kw_clean not in seen:
+            seen.add(kw_clean)
+            unique_keywords.append(kw_clean)
+            
+    return unique_keywords
+
 def fetch_rakuten_image(name, jan=None):
     url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
     app_id = os.getenv("RAKUTEN_APP_ID")
@@ -604,6 +649,17 @@ def fetch_rakuten_image(name, jan=None):
         "Origin": "https://www.mikke-style.com"
     }
     
+    # ダミー画像を弾くヘルパー
+    def is_invalid_image(img_url: str) -> bool:
+        if not img_url:
+            return True
+        img_url_lower = img_url.lower()
+        invalid_patterns = ["noimage", "rakuten_banner", "banner", "gift", "guide", "logo"]
+        for pattern in invalid_patterns:
+            if pattern in img_url_lower:
+                return True
+        return False
+    
     # 1. JANコードがある場合は、まずJANコードのみで検索する
     if jan and str(jan).strip():
         params = {
@@ -613,54 +669,84 @@ def fetch_rakuten_image(name, jan=None):
             "affiliateId": affiliate_id,
             "keyword": str(jan).strip(),
             "imageFlag": 1,
-            "hits": 1
+            "hits": 3
         }
         try:
             res = requests.get(url, params=params, headers=headers, timeout=10)
-            data = res.json()
-            img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
-            if img:
-                return img
-        except:
-            pass
+            if res.status_code == 200:
+                data = res.json()
+                items = data.get("Items", [])
+                for item_wrapper in items:
+                    item = item_wrapper.get("Item", {})
+                    img = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
+                    if img and not is_invalid_image(img):
+                        img = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img)
+                        return img
+        except Exception as e:
+            print(f"⚠️ JAN検索エラー ({jan}): {e}")
             
-    # 2. JANコード検索でヒットしない、またはJANがない場合は商品名で検索する
-    clean_name = re.sub(r'[\uff5c\uff0f|/]', ' ', name)
-    clean_name = " ".join(clean_name.split())
+    # 2. キーワード候補を生成して順次試す
+    keywords = generate_search_keywords(name)
+    print(f"🔍 '{name}' の検索用キーワード候補: {keywords}")
     
-    # 最初の2単語で検索を試みる（長すぎるとヒットしないため）
-    words = clean_name.split()
-    if len(words) > 2:
-        search_kw = " ".join(words[:2])
-    else:
-        search_kw = clean_name
-        
+    for kw in keywords:
+        time.sleep(1.0) # 429エラー回避のためのスリープ
+        params = {
+            "format": "json",
+            "applicationId": app_id,
+            "accessKey": access_key,
+            "affiliateId": affiliate_id,
+            "keyword": kw,
+            "imageFlag": 1,
+            "hits": 5
+        }
+        try:
+            res = requests.get(url, params=params, headers=headers, timeout=10)
+            if res.status_code == 200:
+                data = res.json()
+                items = data.get("Items", [])
+                for item_wrapper in items:
+                    item = item_wrapper.get("Item", {})
+                    item_title = item.get("itemName", "")
+                    img = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
+                    if img and not is_invalid_image(img):
+                        # タイトルの一致度を検証
+                        if verify_title_match(name, item_title):
+                            img = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img)
+                            print(f"✅ ヒットしました (キーワード: '{kw}'): '{item_title[:30]}' -> {img[:50]}")
+                            return img
+            elif res.status_code == 429:
+                print(f"⚠️ 429エラーが発生しました。キーワード '{kw}' の試行後に少し待ちます。")
+                time.sleep(2.0)
+        except Exception as e:
+            print(f"⚠️ キーワード検索エラー ('{kw}'): {e}")
+            
+    # 3. それでもヒットしない場合は商品名全体で検索を試みる
+    time.sleep(1.0)
     params = {
         "format": "json",
         "applicationId": app_id,
         "accessKey": access_key,
         "affiliateId": affiliate_id,
-        "keyword": search_kw,
+        "keyword": name,
         "imageFlag": 1,
-        "hits": 1
+        "hits": 5
     }
     try:
         res = requests.get(url, params=params, headers=headers, timeout=10)
-        data = res.json()
-        img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
-        if img:
-            return img
-    except:
-        pass
+        if res.status_code == 200:
+            data = res.json()
+            items = data.get("Items", [])
+            for item_wrapper in items:
+                item = item_wrapper.get("Item", {})
+                img = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
+                if img and not is_invalid_image(img):
+                    img = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img)
+                    return img
+    except Exception as e:
+        print(f"⚠️ 商品名全体検索エラー: {e}")
         
-    # 3. それでもヒットしない場合は商品名全体で検索を試みる
-    params["keyword"] = name
-    try:
-        res = requests.get(url, params=params, headers=headers, timeout=10)
-        data = res.json()
-        return data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
-    except:
-        return None
+    return None
 
 def amazon_image_from_asin(asin):
     if not asin:
