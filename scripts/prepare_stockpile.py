@@ -593,7 +593,26 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
         encoded_target = urllib.parse.quote(target_url)
         return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
 
-    return scraped_url
+def fetch_rakuten_image(name, jan=None):
+    url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
+    keyword = f"{jan} {name}" if jan else name
+    params = {
+        "applicationId": os.getenv("RAKUTEN_APP_ID"),
+        "keyword": keyword,
+        "imageFlag": 1,
+        "hits": 1
+    }
+    res = requests.get(url, params=params)
+    data = res.json()
+    try:
+        return data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
+    except:
+        return None
+
+def amazon_image_from_asin(asin):
+    if not asin:
+        return None
+    return f"https://m.media-amazon.com/images/I/{asin}.jpg"
 
 def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scraped_urls: dict = None):
     """Amazon, Yahoo, 楽天のAPIやスクレイピングから製品情報を取得します。"""
@@ -1015,15 +1034,12 @@ def main():
             def clean_name_local(s):
                 return s.lower().replace(" ", "").replace("　", "").strip()
             
-            scraped_image_map = {}
             scraped_rakuten_map = {}
             scraped_yahoo_map = {}
             for original_p in products:
                 p_name = original_p.get("name", "")
                 p_clean = clean_name_local(p_name)
                 if p_name:
-                    if original_p.get("scraped_image"):
-                        scraped_image_map[p_clean] = original_p.get("scraped_image")
                     if original_p.get("rakuten_scraped_url"):
                         scraped_rakuten_map[p_clean] = original_p.get("rakuten_scraped_url")
                     if original_p.get("yahoo_scraped_url"):
@@ -1045,26 +1061,19 @@ def main():
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
                 
-                # 画像URLのマージ
-                ep_clean = clean_name_local(p.get("name", ""))
-                img_url = ""
-                if ep_clean in scraped_image_map:
-                    img_url = scraped_image_map[ep_clean]
-                else:
-                    for name_key, img_val in scraped_image_map.items():
-                        if name_key in ep_clean or ep_clean in name_key:
-                            img_url = img_val
-                            break
+                # 画像取得：1.楽天API 2.Amazon ASINから生成 3.どちらも不可ならエラー
+                image = fetch_rakuten_image(p["name"], p.get("jan"))
+                if not image:
+                    image = amazon_image_from_asin(p.get("asin"))
+                if not image:
+                    raise Exception(f"image_url missing: {p['name']}")
+                p["image_url"] = image
                 
-                # 画像URLフィルター（不正なバッジやアセット画像を除外し、正しい画像URLパターンのみ残す）
-                if img_url:
-                    if "ranking-badge" in img_url or "assets.my-best.com/_next/static" in img_url:
-                        img_url = ""
-                    elif "img.my-best.com/product_images/" not in img_url:
-                        img_url = ""
-                p["image_url"] = img_url
+                # APIのレートリミットを考慮したウェイト
+                time.sleep(0.5)
 
                 # 楽天URL
+                ep_clean = clean_name_local(p.get("name", ""))
                 r_url = ""
                 if ep_clean in scraped_rakuten_map:
                     r_url = scraped_rakuten_map[ep_clean]
