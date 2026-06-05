@@ -595,16 +595,56 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
 
 def fetch_rakuten_image(name, jan=None):
     url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
-    keyword = f"{jan} {name}" if jan else name
+    app_id = os.getenv("RAKUTEN_APP_ID")
+    
+    # 1. JANコードがある場合は、まずJANコードのみで検索する
+    if jan and str(jan).strip():
+        params = {
+            "applicationId": app_id,
+            "keyword": str(jan).strip(),
+            "imageFlag": 1,
+            "hits": 1
+        }
+        try:
+            res = requests.get(url, params=params, timeout=10)
+            data = res.json()
+            img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
+            if img:
+                return img
+        except:
+            pass
+            
+    # 2. JANコード検索でヒットしない、またはJANがない場合は商品名で検索する
+    clean_name = re.sub(r'[\uff5c\uff0f|/]', ' ', name)
+    clean_name = " ".join(clean_name.split())
+    
+    # 最初の2単語で検索を試みる（長すぎるとヒットしないため）
+    words = clean_name.split()
+    if len(words) > 2:
+        search_kw = " ".join(words[:2])
+    else:
+        search_kw = clean_name
+        
     params = {
-        "applicationId": os.getenv("RAKUTEN_APP_ID"),
-        "keyword": keyword,
+        "applicationId": app_id,
+        "keyword": search_kw,
         "imageFlag": 1,
         "hits": 1
     }
-    res = requests.get(url, params=params)
-    data = res.json()
     try:
+        res = requests.get(url, params=params, timeout=10)
+        data = res.json()
+        img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
+        if img:
+            return img
+    except:
+        pass
+        
+    # 3. それでもヒットしない場合は商品名全体で検索を試みる
+    params["keyword"] = name
+    try:
+        res = requests.get(url, params=params, timeout=10)
+        data = res.json()
         return data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
     except:
         return None
