@@ -188,3 +188,14 @@ Discordボット、GitHub Actions、AIアシスタントのすべての生成シ
 * **GitHub Actionsのcronジョブは使わない。**
 * **Discordからの自動投稿は使わない。**
 * **Googleトレンドからの完全自動投稿は使わない。**
+
+---
+
+## 8. 📸 商品画像取得ルール
+
+* **my-bestからの画像取得は禁止**します。
+* 以下の優先順位で必ず画像URLを取得してください：
+  1. 楽天APIで商品名+JANコードで検索して `mediumImageUrls` を取得。
+  2. 楽天APIで取れない場合はAmazon ASINから生成（`https://m.media-amazon.com/images/I/{ASIN}.jpg`）。
+  3. どちらも取れない場合はエラーで停止（`image_url` の空文字は絶対禁止）。
+* この処理は `prepare_stockpile.py` の `main()` 内で必ず実行してください。
