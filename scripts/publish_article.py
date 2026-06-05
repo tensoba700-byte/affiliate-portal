@@ -309,13 +309,18 @@ def get_notion_data(article_title: str):
         # stockpile_mapからASIN・rakuten_url・yahoo_url・image_urlを取得してマージ
         mapped_p = stockpile_map.get(raw_name) or stockpile_map.get(clean_name) or {}
         
-        asin = mapped_p.get("asin") or resolved.get("asin") or ""
-        amazon_url = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22" if asin else (resolved.get("amazon_url") or "")
+        # 1. Amazonリンク：ASINがあれば必ずhttps://www.amazon.co.jp/dp/{ASIN}?tag=mikkestyle-22を使う
+        asin = mapped_p.get("asin") or ""
+        amazon_url = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22" if asin else ""
         
-        # rakuten_url・image_urlはstockpile_data.jsonの値を使う
-        rakuten_url = clean_rakuten_url(mapped_p.get("rakuten_url") or resolved.get("rakuten_url") or "")
-        yahoo_url = clean_yahoo_url(mapped_p.get("yahoo_url") or resolved.get("yahoo_url") or "", clean_name)
-        image_url = mapped_p.get("image_url") or resolved.get("image_url") or ""
+        # 2. 楽天リンク：stockpile_data.jsonのrakuten_urlを使う
+        rakuten_url = mapped_p.get("rakuten_url") or ""
+        
+        # 3. 商品画像・アイキャッチ：stockpile_data.jsonのimage_urlを使う
+        image_url = mapped_p.get("image_url") or ""
+        
+        # Yahooリンク（バリューコマース用）
+        yahoo_url = mapped_p.get("yahoo_url") or ""
         
         products.append({
             "id": item_id,
