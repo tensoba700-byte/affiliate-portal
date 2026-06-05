@@ -290,6 +290,14 @@ def get_notion_data(article_title: str):
     category = stockpile_data.get("category", "美容・スキンケア")
     json_products = stockpile_data.get("products", [])
     
+    # stockpile_data.jsonを読み込んで商品名でマッチングする処理を追加
+    try:
+        stockpile = json.load(open("scripts/stockpile_data.json"))
+        stockpile_map = {p["name"]: p for p in stockpile["products"]}
+    except Exception as e:
+        print(f"⚠️ stockpile_map build failed: {e}")
+        stockpile_map = {}
+    
     for i, p in enumerate(json_products):
         resolved = p.get("resolved_details", p)
         
@@ -298,13 +306,24 @@ def get_notion_data(article_title: str):
         
         item_id = p.get("id") or f"stockpile_{i + 1}"
         
+        # stockpile_mapからASIN・rakuten_url・yahoo_url・image_urlを取得してマージ
+        mapped_p = stockpile_map.get(raw_name) or stockpile_map.get(clean_name) or {}
+        
+        asin = mapped_p.get("asin") or resolved.get("asin") or ""
+        amazon_url = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22" if asin else (resolved.get("amazon_url") or "")
+        
+        # rakuten_url・image_urlはstockpile_data.jsonの値を使う
+        rakuten_url = clean_rakuten_url(mapped_p.get("rakuten_url") or resolved.get("rakuten_url") or "")
+        yahoo_url = clean_yahoo_url(mapped_p.get("yahoo_url") or resolved.get("yahoo_url") or "", clean_name)
+        image_url = mapped_p.get("image_url") or resolved.get("image_url") or ""
+        
         products.append({
             "id": item_id,
             "name": clean_name,
-            "image_url": resolved.get("image_url") or "",
-            "amazon_url": resolved.get("amazon_url") or "",
-            "rakuten_url": clean_rakuten_url(resolved.get("rakuten_url") or ""),
-            "yahoo_url": "",
+            "image_url": image_url,
+            "amazon_url": amazon_url,
+            "rakuten_url": rakuten_url,
+            "yahoo_url": yahoo_url,
             "amazon_price": str(resolved.get("amazon_price", "なし")),
             "rakuten_price": str(resolved.get("rakuten_price", "なし")),
             "yahoo_price": "なし",
