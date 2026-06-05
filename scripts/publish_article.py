@@ -351,7 +351,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         sys.path.append(script_dir)
     try:
         from validate_article_draft import validate
-        validate()
+        if not validate():
+            return False
     except ImportError as e:
         print(f"❌ Failed to import validator: {e}")
         return False

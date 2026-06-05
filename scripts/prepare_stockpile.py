@@ -828,11 +828,11 @@ def main():
     competitor_url = url_prop.get("url") or ""
     
     cat_prop = props.get("Category") or {}
-    category = "ガジェット"
+    category = ""
     if cat_prop and isinstance(cat_prop, dict):
         select_val = cat_prop.get("select")
         if select_val:
-            category = select_val.get("name", "ガジェット")
+            category = select_val.get("name", "")
             
     title_prop = props.get("Name", {}).get("title") or []
     name_str = title_prop[0].get("plain_text") if title_prop else "Untitled"
@@ -864,13 +864,7 @@ def main():
         update_page_status(page_id, "エラー")
         sys.exit(1)
         
-    competitor_title = scraped_data.get("competitor_title", "")
-    competitor_intro = scraped_data.get("competitor_intro", "")
-    competitor_structure = scraped_data.get("competitor_structure", [])
     competitor_buying_guide = scraped_data.get("competitor_buying_guide", "")
-    competitor_expert_comments = scraped_data.get("competitor_expert_comments", "")
-    competitor_faqs = scraped_data.get("competitor_faqs", [])
-    competitor_summary = scraped_data.get("competitor_summary", "")
     products = scraped_data.get("products", [])
     
     if not products:
@@ -879,223 +873,240 @@ def main():
         sys.exit(1)
         
     print(f"🎉 成功！ {len(products)} 個の商品を検出しました。")
+
+    # ── Gemini Flash による事実抽出 ──
+    import google.generativeai as genai
     
-    # ターゲットに応じた高品質なフォールバックの設定
-    is_aquarium = "21509" in competitor_url or "水草" in name_str or "水草" in competitor_title
-    
-    if not competitor_buying_guide and is_aquarium:
-        competitor_buying_guide = """水草を美しく健康に育てるためには、水槽用LEDライトの選び方が極めて重要です。ここでは、水草育成用LEDライトを選ぶ際の4つの重要チェックポイントを詳しく解説します。
+    genai_key = os.getenv("GEMINI_API_KEY")
+    if not genai_key:
+        print("❌ エラー: GEMINI_API_KEY が .env.local に設定されていません。")
+        update_page_status(page_id, "エラー")
+        sys.exit(1)
+        
+    genai.configure(api_key=genai_key)
 
-### ① 波長（スペクトル）：赤色と青色の波長が強化されているか
-水草が光合成を行う際、光の「波長」が最も重要な要素となります。特に葉緑素（クロロフィル）が活発に光エネルギーを吸収するのは、**「赤色光（波長 600〜660nm）」**と**「青色光（波長 400〜450nm）」**の領域です。
-*   **赤色光（600〜660nm）：** 光合成を最も強く促進し、水草の縦への成長（茎の伸長）や葉の展開を促します。特に赤系の水草（ロタラなど）を赤く美しく育てるために不可欠です。
-*   **青色光（400〜450nm）：** 植物の育成バランスを整え、茎を太くし、徒長（ひょろひょろと伸びること）を防ぎます。
-一般的な観賞魚用ライトは人間の目への美しさ（白や青）を優先しているため、赤色波長が不足しがちです。必ず**「水草育成専用」や「フルスペクトル（全波長）」**と明記されたライトを選びましょう。
+    # 前処理: タイトル、ランキング順位、総合評価、点数、編集部コメント、おすすめコメントを削除
+    def clean_scraping_text(text: str) -> str:
+        if not text:
+            return ""
+        lines_list = text.split('\n')
+        cleaned_lines = []
+        for line in lines_list:
+            # ランキング順位の除去（第X位、X位など）
+            line = re.sub(r'第?\d+位\s*', '', line)
+            # 総合評価・点数の除去
+            line = re.sub(r'(総合評価|評価)[:：]?\s*\d+(\.\d+)?分?|点数[:：]?\s*\d+(\.\d+)?', '', line)
+            # 編集部コメント・おすすめコメントなどの見出しやその内容が含まれる行をスキップ
+            if re.search(r'編集部|おすすめコメント|おすすめのポイント|編集部のコメント|検証結果|おすすめポイント|ライターコメント', line):
+                continue
+            cleaned_lines.append(line)
+        return '\n'.join(cleaned_lines)
 
-### ② 光量（ルーメン・PAR値）：水草の種類に十分な明るさがあるか
-明るさを示す単位として「ルーメン（lm）」がありますが、これは人間の目が感じる明るさの基準です。水草育成においては、実際に光合成に利用できる光の強さを示す「PAR（光合成有効放射）」や「PPFD」が重要になります。
-水草の要求光量に合わせて適切な明るさを選びましょう：
-*   **光量が少なめでも育つ陰性水草（アヌビアス、ミクロソリウム、ウィローモスなど）：** 水槽サイズに合わせた標準的なLED（60cm水槽で1,000〜1,500lm程度）で十分育ちます。
-*   **強い光を必要とする陽性水草（グロッソスティグマ、ヘアーグラス、有茎草など）：** 非常に強い光が必要です。60cm水槽であれば、**2,000lm（ルーメン）以上、理想的には3,000lm近く**の大光量LEDライトを選ぶか、ライトを2灯設置することをおすすめします。
+    clean_buying_guide = clean_scraping_text(competitor_buying_guide)
 
-### ③ 設置タイプ：水槽の形状やメンテナンス性に合っているか
-LEDライトの設置スタイルは、水槽の美観や日頃のメンテナンスのしやすさに大きく影響します。
-1.  **スライドマウント（リフトアップ）タイプ：** 水槽のフチにスタンドを載せる最も一般的なタイプ。安定性が高く、スライド式アームで水槽サイズに微調整できます。
-2.  **吊り下げ式タイプ：** 天井やスタンドからライトを吊り下げるスタイル。水槽の上が完全に開放（オープンアクアリウム）されるため、トリミングや掃除などのメンテナンスが非常に楽で、見た目も抜群におしゃれです。
-3.  **クリップ・アームタイプ：** 水槽のフチにクランプで固定する小型水槽向けのタイプ。フレキシブルアームで照射角度や高さを自由に変えられます。
+    prompt = f"""あなたは記事ライターではありません。入力されたWeb記事から事実のみを抽出し、指定JSONへ変換するデータ変換器です。
 
-### ④ 便利な付加機能：タイマー・調光・日の出モード
-毎日の管理を楽にし、水槽の環境を安定させるための機能もチェックしましょう。
-*   **タイマー機能：** 水草の健康維持には規則正しい日照管理（1日8〜10時間）が不可欠です。消し忘れや不規則な点灯は、コケ（藻類）の大量発生の原因になります。自動でON/OFFできるタイマー内蔵モデルが便利です。
-*   **調光機能：** 明るさを数段階に調整できる機能。コケが増えすぎたときに一時的に光量を落としたり、魚のストレスを軽減したりするのに役立ちます。
-*   **日の出・日没モード（徐々に明暗を変化させる機能）：** 突然ライトが点灯・消灯すると魚が驚いて飛び出したりストレスを感じたりします。数分〜数十分かけてゆっくり明るく・暗くする機能があると安心です。"""
+【目的】記事本文の再利用は禁止。文章表現・言い回し・評価表現を捨て、事実データのみ抽出する。
 
-    if is_aquarium and ("マイベスト" in competitor_expert_comments or "コンテンツ制作チーム" in competitor_expert_comments or len(competitor_expert_comments) > 1000 or not competitor_expert_comments):
-        competitor_expert_comments = """水草育成においてLEDライトは太陽の代わりとなる最も重要な設備です。安価な熱帯魚用ライトでも陰性の水草なら維持できますが、絨毯のように広がる前景草や、赤く美しい有茎草のレイアウトを作るには、波長と光量にこだわった専用のライトが必須となります。
-特に初心者が陥りがちな失敗は「点灯時間の不規則さ」と「光量の強すぎによるコケの発生」です。ライトを選ぶ際は、必ずタイマー機能を併用し、水槽内の栄養・CO2バランスを見ながら光量を微調整できる製品を選ぶのが成功への近道です。また、夏場はライトの熱が水温上昇に繋がることもあるため、アルミボディなど放熱設計がしっかりした信頼できるメーカー品を選ぶことを強く推奨します。"""
+【禁止事項】以下を保存しない：記事本文の要約・言い換え／レビュー文章／ランキング順位／marketing copy／キャッチコピー／比喩／感想／評価表現／編集部コメント／比較表現
+禁止語例：高評価・人気・おすすめ・優秀・話題・ベストバイ・コスパが良い・肌に優しい・洗浄力が高い
 
-    if not competitor_faqs and is_aquarium:
-        competitor_faqs = [
-            {
-                "question": "Q. 水草育成用LEDライトと熱帯魚用の一般LEDライトの違いは何ですか？",
-                "answer": "A. 一般的な熱帯魚用ライトは「観賞時の美しさ（人間の目の見え方）」を重視しているため、波長が白〜青に偏りがちです。一方、水草育成用LEDライトは、光合成に不可欠な「赤（600〜660nm）」および「青（400〜450nm）」の波長を強化しており、光量（PAR値）も格段に高いため、水草がしっかりと成長し気泡を出すのを助けます。"
+【文章表現の扱い】文章表現・説明文・レビュー文の再利用は禁止。ただし商品仕様・成分名・機能名などの固有情報はそのまま保持してよい。
+
+【selection_points】選び方の観点キーワードのみ・説明文禁止
+例：["洗浄力", "保湿力", "乳化のしやすさ"]
+
+【recommended_for】明示的に判断できる対象のみ・不明なら空配列
+
+【facts】検証可能な客観的事実のみ・1項目1文・修飾語削除
+許可例：W洗顔不要／無香料／アルコールフリー／濡れた手でも使用可能／植物由来オイル配合
+禁止例：保湿力が高い／人気がある／使いやすい／コスパが良い
+
+【出力】JSON以外の文字を出力しない
+
+【最終チェック】①元記事の文章が残ってないか②評価表現がないか③marketing copyがないか④factsが客観的事実のみか⑤JSON以外の文字がないか。違反があれば修正してから出力。
+
+【入力Web記事テキスト】
+■ カテゴリ: {category}
+■ 選び方ガイド本文:
+{clean_buying_guide}
+
+■ 商品リスト:
+"""
+
+    for p in products:
+        p_name = p.get("name", "")
+        p_jan = p.get("jan_code", "")
+        p_asin = p.get("asin", "")
+        p_desc = clean_scraping_text(p.get("description", ""))
+        
+        prompt += f"\n・商品名: {p_name}\n"
+        prompt += f"  JANコード: {p_jan}\n"
+        prompt += f"  ASIN: {p_asin}\n"
+        prompt += f"  商品説明本文: {p_desc}\n"
+
+    # OpenAPI 互換スキーマ定義
+    schema = {
+        "type": "OBJECT",
+        "properties": {
+            "category": {"type": "STRING", "description": "記事のカテゴリ名"},
+            "selection_points": {
+                "type": "ARRAY",
+                "items": {"type": "STRING"},
+                "description": "選び方の観点キーワードのみ（説明文禁止）"
             },
-            {
-                "question": "Q. 1日の点灯時間は何時間がベストですか？24時間つけっぱなしはダメですか？",
-                "answer": "A. 1日8〜10時間の点灯が目安です。水草も夜間（消灯時）に呼吸や休眠を行うため、24時間点灯は成長を阻害します。また、点灯時間が長すぎると、水質や栄養バランスが崩れた際にコケ（藻類）が大量発生する直接的な原因になります。タイマー等を利用して毎日決まった時間にON/OFFを管理するのが理想です。"
+            "source_urls": {
+                "type": "ARRAY",
+                "items": {"type": "STRING"},
+                "description": "情報源のURLの一覧"
             },
-            {
-                "question": "Q. 水草に気泡をつけさせるにはどうすればいいですか？",
-                "answer": "A. 気泡は水草が活発に光合成を行い、酸素が水中に飽和した証拠です。これには①十分な強さと波長を持つLEDライト、②二酸化炭素（CO2）の添加、③適切な肥料（栄養分）の3大要素が揃う必要があります。特に光量が不足していると光合成が促進されないため、本記事で紹介した高光量ライトの導入が極めて有効です。"
-            },
-            {
-                "question": "Q. LEDライトの寿命はどのくらいですか？暗くなってきたら交換すべきですか？",
-                "answer": "A. 一般的な水槽用LEDライトの寿命は約30,000〜50,000時間と言われており、1日10時間点灯で約8〜12年使用可能です。ただし、経年劣化により少しずつ光量が低下（光束維持率 of 低下）するため、5〜6年程度経過して水草の育ちが悪くなったと感じた場合は、新製品への交換を検討することをおすすめします。"
+            "products": {
+                "type": "ARRAY",
+                "items": {
+                    "type": "OBJECT",
+                    "properties": {
+                        "name": {"type": "STRING", "description": "商品名"},
+                        "jan": {"type": "STRING", "description": "JANコード（取得できない場合は空文字）"},
+                        "asin": {"type": "STRING", "description": "ASIN（取得できない場合は空文字）"},
+                        "recommended_for": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                            "description": "明示的に判断できるおすすめ対象（不明なら空配列）"
+                        },
+                        "facts": {
+                            "type": "ARRAY",
+                            "items": {"type": "STRING"},
+                            "description": "検証可能な客観的事実のみ（1項目1文、修飾語削除）"
+                        }
+                    },
+                    "required": ["name", "jan", "asin", "recommended_for", "facts"]
+                }
             }
-        ]
-
-    if not competitor_summary and is_aquarium:
-        competitor_summary = """水草育成用LEDライトは、アクアリウムの美観を高めるだけでなく、水草の健全な成長と美しい光合成の気泡を楽しむために欠かせないアイテムです。
-選ぶ際は、ご自身の水槽サイズ（幅・奥行き・深さ）に適合しているかを確認した上で、育てたい水草の要求する光量（ルーメン数）や育成に最適な波長（赤・青の強化）を満たしているかをチェックしましょう。さらに、日々の管理を劇的に楽にしてくれる「タイマー機能」や「調光機能」が備わっている製品を選ぶと、コケの発生を防ぎやすくなり、アクアリウムの維持がぐっと簡単になります。
-ぜひ、ご自身のライフスタイルや理想の水景にぴったりの高性能LEDライトを見つけて、生き生きとした緑が広がる美しいアクアライフを楽しんでくださいね！"""
-
-    product_fallbacks = {
-        "dewel": {
-            "verification_results": "実機を用いた光量測定テストにおいて、中央直下での照度は十分に高く、30cm水槽の底面まで強い光が届いていることが確認されました。10段階の細かい調光機能は各段階でチラつきがなく非常にスムーズで、検証中の回路設計も優秀と評価されました。",
-            "expert_editor_comments": "このリーズナブルな価格帯で、10段階の調光機能と自動タイマー機能が標準搭載されているのは驚異的です。スライド式ブラケットの固定も安定しており、これからアクアリウムを始める初心者のエントリー機として文句なしにおすすめできます。"
         },
-        "eayhm": {
-            "verification_results": "フレキシブルアームの耐久強度テストを実施。何回角度を変更しても垂れ下がったり傾いたりせず、狙った照射角度と高さをしっかりとキープできる抜群の保持力を実証しました。演色性テストでも水草の緑が鮮やかに映える自然な白を記録しました。",
-            "expert_editor_comments": "スタンド式とクランプ式（アタッチメント）の2WAYで使用できるため、ボトルアクアリウムや小型ガラス容器、テラリウムなどに最適です。アームによってライトの高さを自由に変えられるため、水耕栽培や水上葉の育成にも非常に適しています。"
-        },
-        "triangle": {
-            "verification_results": "分光スペクトル測定において、水草のクロロフィル吸収ピークに完全に合致する「660nm付近のディープ赤」と「450nm付近の青」の波長が非常に強く検出されました。PPFD（光合成光量子束密度）の数値も本検証中トップであり、驚異的な育成パワーを示しました。",
-            "expert_editor_comments": "アクアリストの間で『おにぎり』の愛称で広く親しまれる超ベストセラーLEDライトです。抜群の光量と水草育成力を誇り、グロッソスティグマなどの前景草の絨毯化や、育成の難しい赤系水草も驚くほど綺麗に育ちます。吊り下げ設置にも対応したプロ仕様の決定版です。"
-        },
-        "fedour": {
-            "verification_results": "照射角120度の広角配光テストにおいて、水槽の四隅まで光の減衰が少なく、均一に照らせる配光性能が実証されました。内蔵タイマーの24時間動作テストでも時間のズレがなく、毎日規則正しい自動運転が安定して行われました。",
-            "expert_editor_comments": "極薄でスタイリッシュなアルミボディを採用しており、水槽の上に載せても圧迫感がなく、インテリア性を損ないません。フルスペクトル仕様なので、魚の鱗や水草の葉がギラつくことなく自然に美しく観賞できるコストパフォーマンスに優れた逸品です。"
-        },
-        "hygger": {
-            "verification_results": "4色（赤・青・緑・白）のLED素子による色混ざりテストにおいて、水槽内に不自然な色の影ができず、透き通るような純白の光を実現していることを確認。熱暴走テストでも、アルミ製ハウジングが効率的に熱を逃がし、長時間の稼働でも安定していました。",
-            "expert_editor_comments": "コントローラーによる操作性が抜群で、タイマー設定や調光設定が手元で直感的に行えます。10段階の明るさ調整が可能なため、水草の生長段階に合わせたり、コケが増えた際には光量を一時的にセーブしたりと、状況に応じた臨機応変な管理が可能です。"
-        },
-        "テトラ": {
-            "verification_results": "完全防水性能IPX7テストをクリア。誤って水槽内に水没させた場合や、湿気の立ち込めるフタ無し水槽の真上での長時間の使用でもショートや浸水が起きず、抜群の安全性を実証しました。1350ルーメンの大光量は、水槽の奥深くまでまっすぐに光を届けます。",
-            "expert_editor_comments": "アクアリウムの世界的ブランド『テトラ』による信頼のフラッグシップライト。極薄の10mmスリムデザインは洗練されており、高水準の防水性と安全性を兼ね備えています。水草が盛んに気泡（酸素）を出すのをしっかりと観察できる、本物志向のライトです。"
-        }
+        "required": ["category", "selection_points", "source_urls", "products"]
     }
 
-    # === 太郎さんの差し替えルール：Amazonの個別詳細ページ(ASIN)が存在しない商品は自動繰り上げ ===
-    final_products_list = []
-    rank_counter = 1
-    
-    print(f"ℹ️ Amazon個別商品ページが存在する商品を上位から順に6件収集します...")
-    
-    for idx, p in enumerate(products):
-        if len(final_products_list) >= 6:
-            break
-            
-        print(f"\n🔍 [候補走査] 順位 {p['rank']}: {p['name']} (JAN: {p['jan_code']}) を検証中...")
-        
-        scraped_urls = {
-            "amazon": p.get("amazon_scraped_url", ""),
-            "rakuten": p.get("rakuten_scraped_url", ""),
-            "yahoo": p.get("yahoo_scraped_url", "")
-        }
-        
-        details = fetch_product_details(p["name"], p["jan_code"], p["asin"], scraped_urls)
-        
-        # Amazonの個別商品ページが存在するか、およびAdonnaのような販売終了・誤ヒットのチェック
-        has_valid_amazon = False
-        if details.get("amazon_url") and "/dp/" in details.get("amazon_url"):
-            # Adonnaの特別除外措置、および誤検知防止
-            is_adonna = "4562364262679" in p["jan_code"] or "adonna" in p["name"].lower() or "アドナ" in p["name"]
-            is_mismatch = False
-            amazon_name = details.get("amazon_name", "").lower()
-            if "カラコン" in amazon_name or "cruum" in amazon_name:
-                is_mismatch = True
-                
-            if not is_adonna and not is_mismatch:
-                has_valid_amazon = True
-                
-        if not has_valid_amazon:
-            print(f"  ⚠️ スキップ: {p['name']} はAmazonの個別商品ページが存在しない（または販売終了・誤ヒット）ため、次点へ繰り上げます。")
-            continue
-            
-        print(f"  ✅ 採用！ {p['name']} を {rank_counter} 位として登録します。")
-        
-        if not details.get("image_url") or "unsplash.com" in details.get("image_url", ""):
-            scraped_img = p.get("scraped_image", "")
-            if scraped_img:
-                details["image_url"] = scraped_img
-        
-        p_name_lower = p['name'].lower()
-        fallback_match = None
-        for key, vals in product_fallbacks.items():
-            if key in p_name_lower:
-                fallback_match = vals
-                break
-        
-        v_results = fallback_match["verification_results"] if fallback_match else "実機を用いた光量測定テストにおいて、水槽全域にわたって安定した照度分布を記録しました。十分な有効波長を確保しており、光合成の効率を最大化する設計であることを実証しています。"
-        e_comments = fallback_match["expert_editor_comments"] if fallback_match else "高い機能性と使いやすさを兼ね備えたバランスの良いLEDライトです。十分な明るさと必要な機能をしっかりと網羅しており、アクアリウム初心者からステップアップしたい中級者の方まで幅広くおすすめできます。"
-        
-        final_products_list.append({
-            "rank": rank_counter,
-            "original_name": p["name"],
-            "jan_code": p["jan_code"],
-            "asin": p["asin"],
-            "competitor_description": p["description"],
-            "verification_results": v_results,
-            "expert_editor_comments": e_comments,
-            "resolved_details": details
-        })
-        rank_counter += 1
-        time.sleep(1)
-        
-    # 出力データの準備
-    output_data = {
-        "page_id": page_id,
-        "competitor_url": competitor_url,
-        "default_category": category,
-        "default_title": name_str,
-        "competitor_title": competitor_title,
-        "competitor_intro": competitor_intro,
-        "competitor_structure": competitor_structure,
-        "competitor_buying_guide": competitor_buying_guide,
-        "competitor_expert_comments": competitor_expert_comments,
-        "competitor_faqs": competitor_faqs,
-        "competitor_summary": competitor_summary,
-        "products": final_products_list
+    model = genai.GenerativeModel('models/gemini-2.5-flash')
+    generation_config = {
+        "response_mime_type": "application/json",
+        "response_schema": schema,
+        "temperature": 0.0
     }
+
+    extracted_data = None
+    last_response_text = ""
     
-    # 書き込み前に全商品のyahoo_urlに適用
-    from urllib.parse import quote
-
-    def wrap_yahoo_vc(url):
-        if not url:
-            return url
-        if 'valuecommerce.com' in url:
-            return url  # すでにラップ済み
-        return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url={quote(url, safe='')}"
-
-    for p in output_data['products']:
-        if 'resolved_details' in p and 'yahoo_url' in p['resolved_details']:
-            p['resolved_details']['yahoo_url'] = wrap_yahoo_vc(p['resolved_details']['yahoo_url'])
-            if not p.get('yahoo_url'):
-                p['yahoo_url'] = p['resolved_details']['yahoo_url']
+    for attempt in range(1, 4):
+        try:
+            print(f"🔄 Gemini Flash 事実抽出を実行中 (試行 {attempt}/3)...")
+            response = model.generate_content(prompt, generation_config=generation_config)
+            res_text = response.text.strip()
+            last_response_text = res_text
+            
+            data = json.loads(res_text)
+            
+            # バリデーション
+            if not data.get("category"):
+                raise ValueError("Validation failed: category is empty")
+            if not data.get("products") or len(data["products"]) == 0:
+                raise ValueError("Validation failed: products list is empty")
+                
+            for p in data["products"]:
+                # スキーマにないキーのチェック
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts"}
+                if not all(k in allowed_keys for k in p.keys()):
+                    raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
+                if not p.get("facts") or len(p["facts"]) == 0:
+                    raise ValueError(f"Validation failed: product '{p.get('name')}' has no facts")
+                # jan と asin の空文字補完
+                if "jan" not in p:
+                    p["jan"] = ""
+                if "asin" not in p:
+                    p["asin"] = ""
+                if "recommended_for" not in p:
+                    p["recommended_for"] = []
+                    
+            # 成功時のデータ処理
+            if "source_urls" in data and data["source_urls"]:
+                data["_source_urls"] = data.pop("source_urls")
             else:
-                p['yahoo_url'] = wrap_yahoo_vc(p['yahoo_url'])
-        else:
-            p['yahoo_url'] = wrap_yahoo_vc(p.get('yahoo_url', ''))
-            
+                if "source_urls" in data:
+                    data.pop("source_urls")
+                data["_source_urls"] = [competitor_url]
+                
+            extracted_data = data
+            print("✅ バリデーション成功！")
+            break
+        except Exception as e:
+            print(f"⚠️ 試行 {attempt} 失敗: {e}")
+            if attempt == 3:
+                print("❌ すべての試行が失敗しました。")
+                update_page_status(page_id, "エラー")
+                sys.exit(1)
+            time.sleep(2)
+
+    # stockpile_data.json の保存
     output_filepath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "stockpile_data.json")
     with open(output_filepath, "w", encoding="utf-8") as f:
-        json.dump(output_data, f, ensure_ascii=False, indent=2)
+        json.dump(extracted_data, f, ensure_ascii=False, indent=2)
         
     print("=" * 60)
-    print("🔥 データの収集が完了しました！")
+    print("🔥 事実抽出とデータの保存が完了しました！")
     print(f"💾 データファイル保存場所: {output_filepath}")
     print("=" * 60)
     
-    # 画面に情報を美しくダンプする
-    print("\n【🌟 記事執筆用 抽出商品サマリー】")
-    for p in final_products_list:
-        d = p["resolved_details"]
-        print(f"\n🌸 第{p['rank']}位: {p['original_name']}")
-        if p['jan_code']: print(f"   - JANコード: {p['jan_code']}")
-        if p['asin']: print(f"   - ASIN: {p['asin']}")
-        print(f"   - Amazon名: {d['amazon_name']} (価格: {d['amazon_price']}円)")
-        print(f"   - 楽天名: {d['rakuten_name']} (価格: {d['rakuten_price']}円)")
-        print(f"   - Yahoo名: {d['yahoo_name']} (価格: {d['yahoo_price']}円)")
-        print(f"   - アフィリエイトURL:")
-        if d['amazon_url']: print(f"     * Amazon: {d['amazon_url']}")
-        if d['rakuten_url']: print(f"     * 楽天: {d['rakuten_url']}")
-        if d['yahoo_url']: print(f"     * Yahoo: {d['yahoo_url']}")
-        print(f"   - 画像URL: {d['image_url'][:80]}...")
-        
-    print("\n✅ ステータスは「処理中」にしてあります。")
-    print("   これからAntigravity（AI）が本データを元に執筆を行い、ファイルを保存・本番公開します。")
+    # 提出用ログ出力
+    print("\n【Gemini レスポンス例】")
+    print(last_response_text)
+    
+    print("\n【バリデーション結果】")
+    print("・categoryが空でない: OK" if extracted_data.get("category") else "・categoryが空でない: NG")
+    print(f"・productsが1件以上 (件数: {len(extracted_data.get('products', []))}): OK" if len(extracted_data.get('products', [])) >= 1 else "・productsが1件以上: NG")
+    
+    facts_ok = True
+    for p in extracted_data.get("products", []):
+        if not p.get("facts") or len(p["facts"]) == 0:
+            facts_ok = False
+            print(f"  - 商品 '{p.get('name')}' のfactsが0件です")
+    print("・各商品のfactsが最低1件以上: OK" if facts_ok else "・各商品のfactsが最低1件以上: NG")
+    
+    # スキーマ外キー検証
+    extra_keys = []
+    root_keys = set(extracted_data.keys())
+    allowed_root_keys = {"category", "selection_points", "_source_urls", "products"}
+    for k in root_keys:
+        if k not in allowed_root_keys:
+            extra_keys.append(f"Root: {k}")
+    for p in extracted_data.get("products", []):
+        for k in p.keys():
+            if k not in {"name", "jan", "asin", "recommended_for", "facts"}:
+                extra_keys.append(f"Product({p.get('name')}): {k}")
+    if not extra_keys:
+        print("・スキーマにないキーを出力しない: OK")
+    else:
+        print(f"・スキーマにないキーを出力しない: NG (検出された余分なキー: {extra_keys})")
+
+    # 本文保存チェック
+    forbidden_keys = ["article_body", "review_text", "marketing_copy", "ranking_description", "competitor_buying_guide", "competitor_expert_comments", "competitor_faqs", "competitor_summary", "description", "competitor_intro", "competitor_title"]
+    has_body = False
+    for fk in forbidden_keys:
+        if fk in extracted_data:
+            has_body = True
+            print(f"  - ルートに禁止キー '{fk}' が存在します")
+    for p in extracted_data.get("products", []):
+        for fk in forbidden_keys:
+            if fk in p:
+                has_body = True
+                print(f"  - 商品 '{p.get('name')}' に禁止キー '{fk}' が存在します")
+    print("・本文が保存されていないことの確認: OK (本文系フィールドは一切含まれていません)" if not has_body else "・本文が保存されていないことの確認: NG (本文系フィールドが含まれています)")
+
+    # ファイルサイズ
+    size_kb = os.path.getsize(output_filepath) / 1024.0
+    print(f"・stockpile_data.jsonの総サイズ: {size_kb:.2f} KB")
+    print(f"・products件数: {len(extracted_data.get('products', []))} 件")
+    
+    # ステータスを「処理完了」に変更
+    update_page_status(page_id, "処理完了")
 
 if __name__ == "__main__":
     main()

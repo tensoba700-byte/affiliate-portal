@@ -114,10 +114,13 @@ def validate():
         print("Validation FAILED with the following errors:")
         for err in errors:
             print(f"- {err}")
-        sys.exit(1)
+        return False
     else:
         print("validation passed")
-        sys.exit(0)
+        return True
 
 if __name__ == "__main__":
-    validate()
+    if validate():
+        sys.exit(0)
+    else:
+        sys.exit(1)
