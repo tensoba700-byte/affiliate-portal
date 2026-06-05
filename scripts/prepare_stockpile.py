@@ -1048,6 +1048,13 @@ def main():
                         if name_key in ep_clean or ep_clean in name_key:
                             img_url = img_val
                             break
+                
+                # 画像URLフィルター（不正なバッジやアセット画像を除外し、正しい画像URLパターンのみ残す）
+                if img_url:
+                    if "ranking-badge" in img_url or "assets.my-best.com/_next/static" in img_url:
+                        img_url = ""
+                    elif "img.my-best.com/product_images/" not in img_url:
+                        img_url = ""
                 p["image_url"] = img_url
                     
             # 成功時のデータ処理
