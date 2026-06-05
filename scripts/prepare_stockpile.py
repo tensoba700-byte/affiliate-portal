@@ -1011,20 +1011,27 @@ def main():
             if not data.get("products") or len(data["products"]) == 0:
                 raise ValueError("Validation failed: products list is empty")
                 
-            # Puppeteer画像マッピング用準備
+            # Puppeteer画像・URLマッピング用準備
             def clean_name_local(s):
                 return s.lower().replace(" ", "").replace("　", "").strip()
             
             scraped_image_map = {}
+            scraped_rakuten_map = {}
+            scraped_yahoo_map = {}
             for original_p in products:
                 p_name = original_p.get("name", "")
-                p_img = original_p.get("scraped_image", "")
-                if p_name and p_img:
-                    scraped_image_map[clean_name_local(p_name)] = p_img
+                p_clean = clean_name_local(p_name)
+                if p_name:
+                    if original_p.get("scraped_image"):
+                        scraped_image_map[p_clean] = original_p.get("scraped_image")
+                    if original_p.get("rakuten_scraped_url"):
+                        scraped_rakuten_map[p_clean] = original_p.get("rakuten_scraped_url")
+                    if original_p.get("yahoo_scraped_url"):
+                        scraped_yahoo_map[p_clean] = original_p.get("yahoo_scraped_url")
 
             for p in data["products"]:
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1056,6 +1063,28 @@ def main():
                     elif "img.my-best.com/product_images/" not in img_url:
                         img_url = ""
                 p["image_url"] = img_url
+
+                # 楽天URL
+                r_url = ""
+                if ep_clean in scraped_rakuten_map:
+                    r_url = scraped_rakuten_map[ep_clean]
+                else:
+                    for name_key, r_val in scraped_rakuten_map.items():
+                        if name_key in ep_clean or ep_clean in name_key:
+                            r_url = r_val
+                            break
+                p["rakuten_url"] = r_url
+
+                # YahooURL
+                y_url = ""
+                if ep_clean in scraped_yahoo_map:
+                    y_url = scraped_yahoo_map[ep_clean]
+                else:
+                    for name_key, y_val in scraped_yahoo_map.items():
+                        if name_key in ep_clean or ep_clean in name_key:
+                            y_url = y_val
+                            break
+                p["yahoo_url"] = y_url
                     
             # 成功時のデータ処理
             if "source_urls" in data and data["source_urls"]:
@@ -1110,7 +1139,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
