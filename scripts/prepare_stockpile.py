@@ -594,19 +594,29 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
         return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
 
 def fetch_rakuten_image(name, jan=None):
-    url = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
+    url = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
     app_id = os.getenv("RAKUTEN_APP_ID")
+    access_key = os.getenv("RAKUTEN_ACCESS_KEY")
+    affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
+    
+    headers = {
+        "Referer": "https://www.mikke-style.com",
+        "Origin": "https://www.mikke-style.com"
+    }
     
     # 1. JANコードがある場合は、まずJANコードのみで検索する
     if jan and str(jan).strip():
         params = {
+            "format": "json",
             "applicationId": app_id,
+            "accessKey": access_key,
+            "affiliateId": affiliate_id,
             "keyword": str(jan).strip(),
             "imageFlag": 1,
             "hits": 1
         }
         try:
-            res = requests.get(url, params=params, timeout=10)
+            res = requests.get(url, params=params, headers=headers, timeout=10)
             data = res.json()
             img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
             if img:
@@ -626,13 +636,16 @@ def fetch_rakuten_image(name, jan=None):
         search_kw = clean_name
         
     params = {
+        "format": "json",
         "applicationId": app_id,
+        "accessKey": access_key,
+        "affiliateId": affiliate_id,
         "keyword": search_kw,
         "imageFlag": 1,
         "hits": 1
     }
     try:
-        res = requests.get(url, params=params, timeout=10)
+        res = requests.get(url, params=params, headers=headers, timeout=10)
         data = res.json()
         img = data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
         if img:
@@ -643,7 +656,7 @@ def fetch_rakuten_image(name, jan=None):
     # 3. それでもヒットしない場合は商品名全体で検索を試みる
     params["keyword"] = name
     try:
-        res = requests.get(url, params=params, timeout=10)
+        res = requests.get(url, params=params, headers=headers, timeout=10)
         data = res.json()
         return data["Items"][0]["Item"]["mediumImageUrls"][0]["imageUrl"]
     except:
