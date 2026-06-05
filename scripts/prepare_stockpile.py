@@ -1011,9 +1011,20 @@ def main():
             if not data.get("products") or len(data["products"]) == 0:
                 raise ValueError("Validation failed: products list is empty")
                 
+            # Puppeteer画像マッピング用準備
+            def clean_name_local(s):
+                return s.lower().replace(" ", "").replace("　", "").strip()
+            
+            scraped_image_map = {}
+            for original_p in products:
+                p_name = original_p.get("name", "")
+                p_img = original_p.get("scraped_image", "")
+                if p_name and p_img:
+                    scraped_image_map[clean_name_local(p_name)] = p_img
+
             for p in data["products"]:
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1026,6 +1037,18 @@ def main():
                     p["asin"] = ""
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
+                
+                # 画像URLのマージ
+                ep_clean = clean_name_local(p.get("name", ""))
+                img_url = ""
+                if ep_clean in scraped_image_map:
+                    img_url = scraped_image_map[ep_clean]
+                else:
+                    for name_key, img_val in scraped_image_map.items():
+                        if name_key in ep_clean or ep_clean in name_key:
+                            img_url = img_val
+                            break
+                p["image_url"] = img_url
                     
             # 成功時のデータ処理
             if "source_urls" in data and data["source_urls"]:
@@ -1080,7 +1103,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
