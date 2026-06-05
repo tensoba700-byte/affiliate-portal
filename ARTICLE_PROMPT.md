@@ -80,3 +80,13 @@ single_product_article：FAQ最大2問
 - analysis.pros/cons/recommended_forは全て配列（null禁止）
 - ui.faqが1〜3件・question/answerは空文字禁止
 - meta.excerptが80〜150文字
+
+## 文体ルール
+- 語尾は「〜だ」「〜である」「〜している」調で統一
+- 「〜だよ」「〜だね」「〜んだ」などの口語調は禁止
+- 「おすすめ」「ぴったり」「最適」などの評価表現は禁止
+
+## FAQ生成の追加ルール
+- FAQの回答は必ずfactsに記載がある内容のみ使用
+- factsに回答根拠がない質問は省略する
+- 「〜かもしれません」「〜と考えられます」などの推測表現は禁止
