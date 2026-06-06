@@ -210,6 +210,19 @@ Discordボット、GitHub Actions、AIアシスタントのすべての生成シ
 変更する場合は必ずたろさんに確認を取ること。
 
 ## 10. 記事生成後の確認ルール
-記事生成・git push後は必ず以下の手順を踏むこと：
-1. 公開URLをたろさんに報告（https://www.mikke-style.com/articles/[slug]）
-2. たろさんが実ページを確認してOKが出るまで次の記事に進まない
+- 通常の書き溜め時：
+  - URL確認不要・そのまま次の記事へ進む
+- 以下のファイルまたは処理を修正した時のみURL確認必須：
+  - publish_article.py
+  - prepare_stockpile.py
+  - src/lib/api.ts
+  - src/components/RankingTable.tsx
+  - アフィリエイトリンク処理
+  - 商品画像処理
+  - アイキャッチ生成処理
+
+- 確認必須時の手順：
+  1. 修正・git push
+  2. 公開URLをたろさんに報告（https://www.mikke-style.com/articles/[slug]）
+  3. たろさんが実ページ確認
+  4. OKが出たら終了（OKが出るまで次の記事に進まない）
