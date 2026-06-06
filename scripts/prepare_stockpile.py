@@ -836,11 +836,12 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     rakuten_app_id = os.getenv("RAKUTEN_APP_ID")
     rakuten_access_key = os.getenv("RAKUTEN_ACCESS_KEY")
     rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
-    if rakuten_app_id and jan_code:
+    if rakuten_app_id:
+        search_kw = jan_code.strip() if jan_code and jan_code.strip() else (generate_search_keywords(query)[0] if generate_search_keywords(query) else query)
         try:
             endpoints = [
-                ("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170426", {"applicationId": rakuten_app_id, "affiliateId": rakuten_affiliate_id, "keyword": jan_code.strip(), "format": "json", "hits": 20}),
-                ("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", {"applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "keyword": jan_code.strip(), "format": "json", "hits": 20})
+                ("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170426", {"applicationId": rakuten_app_id, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20}),
+                ("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", {"applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20})
             ]
             rak_headers = {
                 "Referer": "https://www.mikke-style.com",
@@ -1186,7 +1187,7 @@ def main():
 
             for p in data["products"]:
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1233,6 +1234,22 @@ def main():
                             y_url = y_val
                             break
                 p["yahoo_url"] = y_url
+
+                # Amazon、楽天の価格および詳細情報の取得
+                orig_p = next((x for x in products if x.get("name") == p.get("name")), {})
+                scraped_urls = {
+                    "amazon": orig_p.get("amazon_scraped_url", ""),
+                    "rakuten": orig_p.get("rakuten_scraped_url", ""),
+                    "yahoo": orig_p.get("yahoo_scraped_url", "")
+                }
+                details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
+                p["resolved_details"] = details
+                
+                # 最も確実な製品画像を details からマージして上書きする
+                if details.get("image_url"):
+                    # Unsplash のプレースホルダー画像や、404 の可能性のある ASIN 画像でなければ採用
+                    if not details["image_url"].startswith("https://images.unsplash.com") and "m.media-amazon.com" not in details["image_url"]:
+                        p["image_url"] = details["image_url"]
                     
             # 成功時のデータ処理
             if "source_urls" in data and data["source_urls"]:
@@ -1287,7 +1304,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")

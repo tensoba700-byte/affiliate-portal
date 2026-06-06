@@ -136,6 +136,7 @@ function BuyButton({
         </span>
         <span className="flex flex-col leading-tight text-left">
           <span className="md:hidden font-black text-[10px] tracking-tight">{shortLabel}</span>
+          {price && <span className="md:hidden text-[9px] font-bold opacity-90 leading-none">{price}</span>}
           <span className="hidden md:inline font-black text-[11px]">{label}で探す</span>
           {price && <span className="hidden md:inline text-[11px] font-black tracking-wider">{price}</span>}
         </span>
