@@ -166,16 +166,22 @@ def format_eyecatch_title(title: str) -> str:
         emotional   = m.group(1)
         description = m.group(2)
         count_part  = m.group(3)
-        split_m = re.search(
-            r'^(.*[\u3041-\u3096])([\u4e00-\u9fff\u30a0-\u30ff].+)$',
-            description
-        )
-        if split_m:
-            line2 = split_m.group(1)
-            line3 = f'【{split_m.group(2)}{count_part}】'
+        # 品詞や意味のまとまり（〜の選び方、〜おすすめ）を考慮した優先的分割パターン
+        opt_match = re.search(r'^(.*?(?:の選び方と|の選び方|と|に|で|は|が))((?:おすすめ|人気|厳選|最新|注目).+)$', description)
+        if opt_match:
+            line2 = opt_match.group(1)
+            line3 = f'【{opt_match.group(2)}{count_part}】'
         else:
-            line2 = description
-            line3 = f'【{count_part}】'
+            split_m = re.search(
+                r'^(.*[\u3041-\u3096])([\u4e00-\u9fff\u30a0-\u30ff].+)$',
+                description
+            )
+            if split_m:
+                line2 = split_m.group(1)
+                line3 = f'【{split_m.group(2)}{count_part}】'
+            else:
+                line2 = description
+                line3 = f'【{count_part}】'
         return f'{emotional}<br />{line2}<br />{line3}'
     if len(title) <= 11:
         return title

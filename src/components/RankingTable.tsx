@@ -215,7 +215,6 @@ export default function RankingTable({ products, title }: Props) {
           style={{ background: C.headerBg, color: C.headerText, borderBottom: `2px solid ${C.border}` }}
         >
           <span className="flex items-center gap-1.5">✨ {title}</span>
-          <span className="text-[10px] md:text-xs opacity-75 font-bold bg-white/60 px-2.5 py-0.5 rounded-full border border-primary/10">実機テスト検証済み</span>
         </div>
       )}
 
