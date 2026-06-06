@@ -1006,32 +1006,44 @@ def main():
     print(f"  競合URL: {competitor_url}")
     print(f"  カテゴリ: {category}")
     
+    # ── 手動バイパス用ファイルのパス ──
+    temp_json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "extracted_data_temp.json")
+    
+    bypass_mode = False
+    if os.path.exists(temp_json_path) and os.path.getsize(temp_json_path) > 100:
+        print("💡 手動バイパス用の一時JSONファイルを検出しました。スクレイピングとGemini呼び出しをスキップします。")
+        bypass_mode = True
+
     # ステータスを「処理中」に変更
     update_page_status(page_id, "処理中")
     
-    print(f"⏳ 競合ページのHTMLをダウンロード＆解析中...")
-    scraped_json = fetch_url_text_puppeteer(competitor_url)
-    if not scraped_json:
-        print("❌ ページの取得・解析に失敗しました。")
-        update_page_status(page_id, "エラー")
-        sys.exit(1)
-        
-    try:
-        scraped_data = json.loads(scraped_json)
-    except Exception as e:
-        print(f"❌ 解析結果のJSONデコードに失敗しました: {e}")
-        update_page_status(page_id, "エラー")
-        sys.exit(1)
-        
-    competitor_buying_guide = scraped_data.get("competitor_buying_guide", "")
-    products = scraped_data.get("products", [])
+    products = []
+    competitor_buying_guide = ""
     
-    if not products:
-        print("❌ 商品の抽出に失敗しました。mybest形式でないか、DOMが変更された可能性があります。")
-        update_page_status(page_id, "エラー")
-        sys.exit(1)
+    if not bypass_mode:
+        print(f"⏳ 競合ページのHTMLをダウンロード＆解析中...")
+        scraped_json = fetch_url_text_puppeteer(competitor_url)
+        if not scraped_json:
+            print("❌ ページの取得・解析に失敗しました。")
+            update_page_status(page_id, "エラー")
+            sys.exit(1)
+            
+        try:
+            scraped_data = json.loads(scraped_json)
+        except Exception as e:
+            print(f"❌ 解析結果のJSONデコードに失敗しました: {e}")
+            update_page_status(page_id, "エラー")
+            sys.exit(1)
+            
+        competitor_buying_guide = scraped_data.get("competitor_buying_guide", "")
+        products = scraped_data.get("products", [])
         
-    print(f"🎉 成功！ {len(products)} 個の商品を検出しました。")
+        if not products:
+            print("❌ 商品の抽出に失敗しました。mybest形式でないか、DOMが変更された可能性があります。")
+            update_page_status(page_id, "エラー")
+            sys.exit(1)
+            
+        print(f"🎉 成功！ {len(products)} 個の商品を検出しました。")
 
     # ── Gemini Flash による事実抽出 ──
     import google.generativeai as genai
@@ -1155,14 +1167,26 @@ def main():
     extracted_data = None
     last_response_text = ""
     
+    # ── 手動バイパス用ファイルのパス ──
+    temp_json_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "extracted_data_temp.json")
+    temp_prompt_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "prompt_temp.txt")
+    
     for attempt in range(1, 4):
         try:
-            print(f"🔄 Gemini Flash 事実抽出を実行中 (試行 {attempt}/3)...")
-            response = model.generate_content(prompt, generation_config=generation_config)
-            res_text = response.text.strip()
-            last_response_text = res_text
-            
-            data = json.loads(res_text)
+            # もし手動で埋めた temp JSON があれば、それを読み込んで Gemini 呼び出しをバイパスする
+            if os.path.exists(temp_json_path) and os.path.getsize(temp_json_path) > 100:
+                print("💡 手動バイパス用の一時JSONファイルを検出しました。Gemini呼び出しをスキップしてこれを読み込みます。")
+                with open(temp_json_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    res_text = json.dumps(data, ensure_ascii=False)
+                    last_response_text = res_text
+            else:
+                print(f"🔄 Gemini Flash 事実抽出を実行中 (試行 {attempt}/3)...")
+                response = model.generate_content(prompt, generation_config=generation_config)
+                res_text = response.text.strip()
+                last_response_text = res_text
+                
+                data = json.loads(res_text)
             
             # バリデーション
             if not data.get("category"):
@@ -1202,7 +1226,9 @@ def main():
                     p["recommended_for"] = []
                 
                 # 画像取得：1.楽天API 2.Amazon ASINから生成 3.どちらも不可ならエラー
-                image = fetch_rakuten_image(p["name"], p.get("jan"))
+                image = p.get("image_url")
+                if not image:
+                    image = fetch_rakuten_image(p["name"], p.get("jan"))
                 if not image:
                     image = amazon_image_from_asin(p.get("asin"))
                 if not image:
@@ -1214,36 +1240,41 @@ def main():
 
                 # 楽天URL
                 ep_clean = clean_name_local(p.get("name", ""))
-                r_url = ""
-                if ep_clean in scraped_rakuten_map:
-                    r_url = scraped_rakuten_map[ep_clean]
-                else:
-                    for name_key, r_val in scraped_rakuten_map.items():
-                        if name_key in ep_clean or ep_clean in name_key:
-                            r_url = r_val
-                            break
+                r_url = p.get("rakuten_url")
+                if not r_url:
+                    if ep_clean in scraped_rakuten_map:
+                        r_url = scraped_rakuten_map[ep_clean]
+                    else:
+                        for name_key, r_val in scraped_rakuten_map.items():
+                            if name_key in ep_clean or ep_clean in name_key:
+                                r_url = r_val
+                                break
                 p["rakuten_url"] = r_url
 
                 # YahooURL
-                y_url = ""
-                if ep_clean in scraped_yahoo_map:
-                    y_url = scraped_yahoo_map[ep_clean]
-                else:
-                    for name_key, y_val in scraped_yahoo_map.items():
-                        if name_key in ep_clean or ep_clean in name_key:
-                            y_url = y_val
-                            break
+                y_url = p.get("yahoo_url")
+                if not y_url:
+                    if ep_clean in scraped_yahoo_map:
+                        y_url = scraped_yahoo_map[ep_clean]
+                    else:
+                        for name_key, y_val in scraped_yahoo_map.items():
+                            if name_key in ep_clean or ep_clean in name_key:
+                                y_url = y_val
+                                break
                 p["yahoo_url"] = y_url
 
                 # Amazon、楽天の価格および詳細情報の取得
-                orig_p = next((x for x in products if x.get("name") == p.get("name")), {})
-                scraped_urls = {
-                    "amazon": orig_p.get("amazon_scraped_url", ""),
-                    "rakuten": orig_p.get("rakuten_scraped_url", ""),
-                    "yahoo": orig_p.get("yahoo_scraped_url", "")
-                }
-                details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
-                p["resolved_details"] = details
+                if "resolved_details" not in p:
+                    orig_p = next((x for x in products if x.get("name") == p.get("name")), {})
+                    scraped_urls = {
+                        "amazon": orig_p.get("amazon_scraped_url", ""),
+                        "rakuten": orig_p.get("rakuten_scraped_url", ""),
+                        "yahoo": orig_p.get("yahoo_scraped_url", "")
+                    }
+                    details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
+                    p["resolved_details"] = details
+                else:
+                    details = p["resolved_details"]
                 
                 # 最も確実な製品画像を details からマージして上書きする
                 if details.get("image_url"):
@@ -1266,8 +1297,31 @@ def main():
             print(f"⚠️ 試行 {attempt} 失敗: {e}")
             if attempt == 3:
                 print("❌ すべての試行が失敗しました。")
-                update_page_status(page_id, "エラー")
-                sys.exit(1)
+                print(f"📢 Gemini API呼び出し失敗（クォータ等）。手動処理用に一時ファイルを生成します。")
+                # プロンプトを書き出す
+                with open(temp_prompt_path, "w", encoding="utf-8") as pf:
+                    pf.write(prompt)
+                # ダミーJSONテンプレートを書き出す
+                dummy_json = {
+                    "category": category,
+                    "selection_points": ["洗浄力", "保湿成分", "肌へのやさしさ", "使用感"],
+                    "source_urls": [competitor_url],
+                    "products": []
+                }
+                for p in products:
+                    dummy_json["products"].append({
+                        "name": p.get("name", ""),
+                        "jan": p.get("jan_code", ""),
+                        "asin": p.get("asin", ""),
+                        "recommended_for": [],
+                        "facts": []
+                    })
+                with open(temp_json_path, "w", encoding="utf-8") as jf:
+                    json.dump(dummy_json, jf, ensure_ascii=False, indent=2)
+                print(f"💾 プロンプトを書き出しました: {temp_prompt_path}")
+                print(f"💾 ダミーJSONを書き出しました: {temp_json_path}")
+                print(f"👉 {temp_json_path} に各商品の facts や recommended_for を手動で入力後、再度このスクリプトを実行してください。")
+                sys.exit(2)
             time.sleep(2)
 
     # stockpile_data.json の保存
