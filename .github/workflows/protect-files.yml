@@ -1,0 +1,27 @@
+name: Protect Files
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            src/lib/api.ts
+            src/components/RankingTable.tsx
+
+      - name: Check protected files
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "::warning::⚠️ 保護対象ファイルが変更されています。変更理由を確認してください：src/lib/api.ts または src/components/RankingTable.tsx"

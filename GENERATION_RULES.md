@@ -199,3 +199,17 @@ Discordボット、GitHub Actions、AIアシスタントのすべての生成シ
   2. 楽天APIで取れない場合はAmazon ASINから生成（`https://m.media-amazon.com/images/I/{ASIN}.jpg`）。
   3. どちらも取れない場合はエラーで停止（`image_url` の空文字は絶対禁止）。
 * この処理は `prepare_stockpile.py` の `main()` 内で必ず実行してください。
+
+---
+
+## 9. 絶対に変更禁止なファイル（収益化・表示機能）
+以下のファイルはたろさんの明示的な指示がない限り変更禁止：
+- src/lib/api.ts
+- src/components/RankingTable.tsx
+記事本文・画像・アフィリエイトリンク生成は変更可。収益化機能と表示機能は触らない。
+変更する場合は必ずたろさんに確認を取ること。
+
+## 10. 記事生成後の確認ルール
+記事生成・git push後は必ず以下の手順を踏むこと：
+1. 公開URLをたろさんに報告（https://www.mikke-style.com/articles/[slug]）
+2. たろさんが実ページを確認してOKが出るまで次の記事に進まない
