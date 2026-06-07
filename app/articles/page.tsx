@@ -29,9 +29,7 @@ export default async function ArticlesPage() {
             <span className="text-foreground">すべての記事</span>
           </nav>
           <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 flex items-center justify-center gap-2">
-            <span className="text-primary theme-emoji-sweet">💐</span>
-            <span className="text-primary theme-emoji-science font-mono select-none">✦</span>
-            記事一覧
+            <span className="text-primary">💐</span> 記事一覧
           </h1>
           <p className="text-sm text-muted font-bold">
             気になるアイテムの記事をみつけてね！
@@ -44,7 +42,7 @@ export default async function ArticlesPage() {
               <Link 
                 href={`/articles/${article.slug}`} 
                 key={article.id}
-                className="group flex flex-col bg-white/70 backdrop-blur-md rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-zinc-950/8 hover:border-zinc-950/15 animate-fade-in-up"
+                className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border animate-fade-in-up"
                 style={{ animationDelay: `${(i % 3) * 100}ms` }}
               >
                 <div className="aspect-video w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
@@ -53,8 +51,7 @@ export default async function ArticlesPage() {
                     <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30 cursor-pointer">
-                       <span className="text-3xl theme-emoji-sweet">🎀</span>
-                       <span className="text-3xl theme-emoji-science font-mono select-none">✦</span>
+                       <span className="text-3xl">🎀</span>
                     </div>
                   )}
                 </div>
@@ -76,14 +73,10 @@ export default async function ArticlesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-[2rem] border border-card-border cute-shadow">
-            <span className="text-5xl mb-4 block theme-emoji-sweet">🥺</span>
-            <span className="text-5xl mb-4 block theme-emoji-science font-mono select-none">Ø</span>
+          <div className="text-center py-20 bg-white rounded-3xl border border-card-border cute-shadow">
+            <span className="text-5xl mb-4 block">🥺</span>
             <p className="text-lg text-foreground font-black mb-2">まだ記事がありません</p>
-            <p className="text-muted font-bold text-sm">
-              <span className="theme-emoji-sweet">Discordでかわいい記事を生成してね！</span>
-              <span className="theme-emoji-science">記事の追加をお待ちください。</span>
-            </p>
+            <p className="text-muted font-bold text-sm">Discordでかわいい記事を生成してね！</p>
           </div>
         )}
       </div>

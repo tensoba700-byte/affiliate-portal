@@ -2,14 +2,14 @@
 import { useState, useEffect } from "react";
 
 export default function ThemeSwitcher() {
-  const [theme, setTheme] = useState("clean-science");
+  const [theme, setTheme] = useState("peach");
   const [font, setFont] = useState("sans");
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const savedTheme = localStorage.getItem("mikke-theme") || "clean-science";
+    const savedTheme = localStorage.getItem("mikke-theme") || "peach";
     const savedFont = localStorage.getItem("mikke-font") || "sans";
     setTheme(savedTheme);
     setFont(savedFont);
@@ -67,7 +67,6 @@ export default function ThemeSwitcher() {
             <p className="text-[10px] font-black text-muted mb-2">カラー</p>
             <div className="flex gap-2 flex-wrap">
               {[
-                { key: "clean-science", color: "#71717a", label: "無機質グレー" },
                 { key: "original-orange", color: "#ff5a36", label: "オレンジ" },
                 { key: "peach", color: "#ff8fa3", label: "ピンク" },
                 { key: "mint", color: "#4fdaab", label: "ミント" },
