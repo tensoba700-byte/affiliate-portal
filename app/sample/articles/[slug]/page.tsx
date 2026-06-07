@@ -26,6 +26,12 @@ export default async function SampleArticleDetail({ params }: PageProps) {
   let article;
   try {
     article = await getArticleBySlug(slug);
+    if (article && article.content) {
+      // Remove forced <br /> tags inside paragraphs to restore natural flow on mobile
+      article.content = article.content.replace(/<p>([\s\S]*?)<\/p>/g, (match, pContent) => {
+        return `<p>${pContent.replace(/<br\s*\/?>/gi, '')}</p>`;
+      });
+    }
   } catch (error) {
     article = null;
   }
