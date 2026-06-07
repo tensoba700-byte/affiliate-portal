@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Zen_Maru_Gothic, Noto_Sans_JP } from "next/font/google";
 import Link from "next/link";
-import ThemeSwitcher from "@/src/components/ThemeSwitcher";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
 import CookieConsent from "@/src/components/CookieConsent";
@@ -64,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} h-full antialiased`} data-theme="peach" data-font="sans">
+    <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} h-full antialiased`} data-theme="clean-science" data-font="sans">
       <head>
         {/* Google Analytics 4 */}
         <Script
@@ -160,7 +159,6 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
-        <ThemeSwitcher />
         <CookieConsent />
       </body>
     </html>

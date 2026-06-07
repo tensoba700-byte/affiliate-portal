@@ -19,86 +19,129 @@ export default async function Home() {
     console.error("Failed to fetch articles:", error);
   }
 
-  // Cute Categories
-  const categories = [
-    { id: '1', name: 'Beauty & Skincare', jp: '美容・スキンケア', image: '/images/category_beauty_1775564212926.png' },
-    { id: '2', name: 'Tech & Gadgets', jp: 'ガジェット', image: '/images/cat_gadget_1775565122276.png' },
-    { id: '3', name: 'Interior', jp: 'インテリア', image: '/images/category_lifestyle_1775564225940.png' },
-    { id: '4', name: 'Daily Goods', jp: '生活雑貨', image: '/images/cat_daily_1775565137707.png' },
-    { id: '5', name: 'Useful Goods', jp: '便利グッズ', image: '/images/cat_useful_1775565153706.png' },
+  // Recommended products based on the clean science UI mock
+  const recommendedProducts = [
+    { id: 'p1', name: 'CLEANSE OIL', price: '¥1,300', rating: '4.5', image: '/images/prod_cleanse_oil.png' },
+    { id: 'p2', name: 'MOIST LOTION', price: '¥1,500', rating: '4.5', image: '/images/prod_moist_lotion.png' },
+    { id: 'p3', name: 'BALANCE TONER', price: '¥1,500', rating: '4.5', image: '/images/prod_balance_toner.png' },
   ];
 
   return (
-    <div className="flex flex-col items-center w-full pb-24 overflow-x-hidden">
+    <div className="flex flex-col items-center w-full pb-24 overflow-x-hidden mt-[-64px]">
       
-      {/* 🌸 Cute Hero Section */}
-      <section className="w-full relative px-6 pt-20 pb-28 flex flex-col items-center justify-center min-h-[50vh] animate-fade-in-up">
-        {/* Soft background blobs */}
-        <div className="absolute top-10 left-[10%] w-[50vw] h-[50vw] bg-primary/10 rounded-full blur-[80px] -z-10 mix-blend-multiply pointer-events-none"></div>
-        <div className="absolute bottom-10 right-[10%] w-[40vw] h-[40vw] bg-yellow-300/10 rounded-full blur-[60px] -z-10 mix-blend-multiply pointer-events-none"></div>
-
-        <div className="container mx-auto text-center max-w-3xl z-10">
-          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white cute-shadow text-sm font-bold text-primary mb-8 animate-float">
-            <span className="text-lg">✨</span>
-            あなたにぴったりのアイテムがここに
-          </div>
-          
-          <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-6 text-foreground leading-[1.2] tracking-normal">
-            お気に入りを、<br className="md:hidden" />
-            <span className="text-primary relative inline-block">
-              みっけ！
-              <svg className="absolute -bottom-2 md:-bottom-4 left-0 w-full" viewBox="0 0 200 20" preserveAspectRatio="none">
-                <path d="M0,10 Q100,20 200,5" fill="none" stroke="currentColor" strokeWidth="8" strokeLinecap="round" className="text-primary/30" />
-              </svg>
-            </span>
-          </h1>
-          <p className="text-base md:text-xl text-muted font-bold max-w-2xl mx-auto mb-10 leading-relaxed">
-            暮らしをちょっと可愛く、もっと楽しく。<br className="hidden md:block" />
-            話題のアイテムから隠れた名品まで徹底レビュー♡
+      {/* 💿 Concrete Hero Banner Section with overlapping header effect */}
+      <section 
+        className="w-full relative min-h-[42vh] md:min-h-[50vh] flex flex-col justify-end bg-cover bg-center px-6 pb-8 pt-24"
+        style={{ backgroundImage: 'url("/images/hero_concrete.png")' }}
+      >
+        <div className="absolute inset-0 bg-black/5 mix-blend-multiply pointer-events-none"></div>
+        
+        {/* Subtle Overlay Text */}
+        <div className="container mx-auto max-w-5xl z-10 text-white/90 drop-shadow-sm select-none pointer-events-none mb-4">
+          <p className="text-[10px] md:text-xs font-mono font-bold tracking-[0.25em] uppercase text-white/70">
+            MINIMALISM & SCIENCE
           </p>
+          <h2 className="text-xl md:text-3xl font-bold tracking-[0.15em] mt-1 font-mono">
+            INDUSTRIAL MINIMALISM
+          </h2>
         </div>
       </section>
 
-      {/* 🌟 Cute Category Cards */}
-      <section className="w-full px-4 -mt-10 relative z-20">
-        <div className="container mx-auto max-w-6xl">
-          {/* Responsive grid for all viewports */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-5 px-2">
-            {categories.map((cat, i) => (
-              <Link 
-                key={cat.id} 
-                href={`/search?category=${encodeURIComponent(cat.jp)}`} 
-                className="group relative h-40 md:h-64 lg:h-72 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden cute-shadow block transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl animate-fade-in-up"
-                style={{ animationDelay: `${i * 80}ms` }}
+      {/* 🧭 Horizontal Category Navigation Bar */}
+      <div className="w-full bg-[#d4d4d8]/90 backdrop-blur-md border-b border-zinc-300/40 sticky top-16 z-30 flex justify-center">
+        <div className="container mx-auto max-w-5xl px-4 overflow-x-auto hide-scrollbar">
+          <nav className="flex items-center space-x-6 md:space-x-12 py-3 text-[13px] md:text-[14px] font-bold text-zinc-900 whitespace-nowrap min-w-max">
+            <Link href="/" className="border-b-2 border-white pb-1.5 transition-colors">ホーム</Link>
+            <Link href="/articles" className="hover:opacity-70 pb-1.5 transition-opacity">特集</Link>
+            <Link href="/articles" className="hover:opacity-70 pb-1.5 transition-opacity">アイテム</Link>
+            <Link href="/articles" className="hover:opacity-70 pb-1.5 transition-opacity">コスメ</Link>
+            <Link href="/articles" className="hover:opacity-70 pb-1.5 transition-opacity">ショップ</Link>
+          </nav>
+        </div>
+      </div>
+
+      {/* 🛡️ Content Wrapper */}
+      <div className="container mx-auto max-w-5xl px-4 mt-8 md:mt-12 w-full space-y-12">
+
+        {/* 📰 今月の特集 (Monthly Feature Banner) */}
+        <section className="w-full">
+          <h2 className="text-base md:text-lg font-bold text-zinc-800 tracking-wider mb-4 font-sans border-b border-zinc-300/50 pb-2">
+            今月の特集：韓国ミニマルビューティー
+          </h2>
+          
+          <div className="group relative overflow-hidden rounded-2xl border border-zinc-950/8 bg-white/70 backdrop-blur-md p-6 md:p-8 flex flex-row items-center justify-between gap-6 hover:border-zinc-950/15 hover:shadow-lg transition-all duration-300">
+            {/* Left Content */}
+            <div className="flex-1 flex flex-col justify-center">
+              <h3 className="text-lg md:text-3xl font-bold text-zinc-900 tracking-tight leading-snug">
+                透明感を引き出す、<br />
+                究極のシンプルケア
+              </h3>
+              <div className="mt-6">
+                <Link href="/articles" className="inline-flex items-center gap-1.5 text-xs font-mono font-bold tracking-widest text-zinc-500 group-hover:text-black transition-colors">
+                  READ MORE <span className="text-sm">→</span>
+                </Link>
+              </div>
+            </div>
+            
+            {/* Right Image */}
+            <div className="w-24 h-24 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-xl overflow-hidden flex-shrink-0 bg-zinc-50">
+              <img 
+                src="/images/banner_skincare.png" 
+                alt="韓国ミニマルビューティー" 
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* 🧪 おすすめコスメ (Recommended Products Horizontal Scroll) */}
+        <section className="w-full">
+          <h2 className="text-base md:text-lg font-bold text-zinc-800 tracking-wider mb-4 font-sans border-b border-zinc-300/50 pb-2">
+            おすすめコスメ
+          </h2>
+          
+          <div className="flex gap-4 overflow-x-auto pb-4 px-1 -mx-4 md:mx-0 md:px-0 hide-scrollbar scroll-smooth">
+            {recommendedProducts.map((prod) => (
+              <div 
+                key={prod.id} 
+                className="flex-shrink-0 w-[150px] sm:w-[180px] md:w-[220px] bg-white/70 backdrop-blur-md rounded-2xl border border-zinc-950/8 p-3 flex flex-col justify-between hover:border-zinc-950/15 hover:shadow-lg transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-10 duration-500"></div>
-                {/* Image */}
-                <img 
-                  src={cat.image} 
-                  alt={cat.jp} 
-                  loading="lazy"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                {/* Text Content */}
-                <div className="absolute inset-x-0 bottom-0 p-3 md:p-6 z-20 text-center">
-                  <h3 className="text-sm md:text-lg lg:text-xl font-black text-white leading-tight drop-shadow-md">
-                    {cat.jp}
-                  </h3>
+                {/* Product Image */}
+                <div className="w-full aspect-square rounded-xl bg-zinc-50 overflow-hidden mb-3">
+                  <img 
+                    src={prod.image} 
+                    alt={prod.name} 
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              </Link>
+                {/* Product Text */}
+                <div className="flex flex-col flex-1 px-1">
+                  <h3 className="text-xs font-mono font-bold tracking-wider text-zinc-950 truncate">
+                    {prod.name}
+                  </h3>
+                  <div className="flex justify-between items-center mt-3 pt-2 border-t border-zinc-100">
+                    <span className="text-[12px] font-bold text-zinc-900 font-mono">
+                      {prod.price}
+                    </span>
+                    <span className="text-[10px] font-bold text-zinc-500 flex items-center gap-0.5 font-mono">
+                      ★ {prod.rating}
+                    </span>
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 📚 Main Article List */}
-      <section className="w-full pt-20 md:pt-32 px-6">
-        <div className="container mx-auto max-w-5xl">
-          <div className="flex flex-col items-center justify-center mb-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-black text-foreground mb-3 flex items-center gap-2">
-              <span className="text-primary">💌</span> 新着のおすすめ
+        {/* 📚 新着のおすすめ (Main Article List) */}
+        <section className="w-full pt-4">
+          <div className="flex items-center justify-between mb-6 border-b border-zinc-300/50 pb-2">
+            <h2 className="text-base md:text-lg font-bold text-zinc-800 tracking-wider font-sans">
+              新着のおすすめ
             </h2>
-            <p className="text-muted font-bold text-sm">毎日のお買い物がもっと楽しくなる情報をピックアップ！</p>
+            <p className="text-zinc-500 font-bold text-[11px] font-mono">NEW RELEASES</p>
           </div>
 
           {recentArticles.length > 0 ? (
@@ -107,36 +150,40 @@ export default async function Home() {
                 <React.Fragment key={article.id}>
                   <Link 
                     href={`/articles/${article.slug}`} 
-                    className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border"
+                    className="group flex flex-col bg-white/70 backdrop-blur-md rounded-2xl p-3 border border-zinc-950/8 hover:border-zinc-950/15 hover:shadow-lg transition-all duration-300"
                   >
-                    <div className="aspect-[16/9] w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
+                    <div className="aspect-[16/9] w-full rounded-xl bg-zinc-50 relative overflow-hidden mb-3 flex items-center justify-center">
                       {article.coverImage ? (
-                        // @ts-ignore
-                        <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
+                        <img 
+                          src={article.coverImage} 
+                          alt={article.title} 
+                          loading="lazy"
+                          className="object-cover w-full h-full transform transition-transform duration-750 group-hover:scale-101" 
+                        />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30">
-                          <span className="text-3xl">🎀</span>
+                        <div className="w-full h-full flex items-center justify-center bg-zinc-100 text-zinc-300 text-sm font-mono tracking-widest font-bold">
+                          NO IMAGE
                         </div>
                       )}
-                      {/* Cute Badge */}
-                      <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-[10px] font-black text-primary shadow-sm border border-primary/10">
+                      {/* Clean Badge */}
+                      <div className="absolute top-3 left-3 bg-zinc-950 px-2 py-0.5 rounded text-[9px] font-mono font-bold text-white tracking-widest uppercase">
                         NEW
                       </div>
                     </div>
                     
-                    <div className="flex flex-col flex-1 px-3 pb-2 text-center">
-                      <p className="text-[10px] font-bold text-primary mb-2">
+                    <div className="flex flex-col flex-1 px-1">
+                      <p className="text-[10px] font-bold text-zinc-400 font-mono mb-1.5">
                         {(() => {
                           const d = new Date(article.publishedAt || "");
                           return isNaN(d.getTime()) ? '' : d.toLocaleDateString('ja-JP');
                         })()}
                       </p>
-                      <h3 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                      <h3 className="article-title text-sm font-bold text-zinc-900 leading-snug group-hover:text-zinc-500 transition-colors line-clamp-2">
                         {article.title}
                       </h3>
                     </div>
                   </Link>
-                  {/* 先頭カードの下に広告⑤〜⑦をランダム表示 */}
+                  {/* First card ad injection */}
                   {idx === 0 && (
                     <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center w-full">
                       <AdBanner type="large" />
@@ -146,20 +193,24 @@ export default async function Home() {
               ))}
             </div>
           ) : (
-             <div className="text-center py-20 bg-white rounded-3xl border border-card-border cute-shadow">
-              <span className="text-5xl mb-4 block">🥺</span>
-              <p className="text-lg text-foreground font-black mb-2">まだ記事がありません</p>
-              <p className="text-muted font-bold text-sm">Discordでかわいい記事を生成してね！</p>
+             <div className="text-center py-20 bg-white rounded-2xl border border-zinc-200/50">
+              <span className="text-3xl mb-4 block font-mono">Ø</span>
+              <p className="text-sm text-zinc-800 font-bold mb-1 font-mono">NO ARTICLES FOUND</p>
+              <p className="text-zinc-500 text-xs font-bold">Discordで記事を生成してください。</p>
             </div>
           )}
           
-          <div className="mt-16 text-center">
-            <Link href="/articles" className="inline-flex items-center justify-center px-12 py-4 rounded-full bg-primary text-white font-black text-sm hover:bg-primary/90 transition-all duration-300 shadow-lg hover:shadow-primary/30 hover:-translate-y-1">
-              もっと見る 👀
+          <div className="mt-12 text-center">
+            <Link 
+              href="/articles" 
+              className="inline-flex items-center justify-center px-10 py-3 rounded-full border border-zinc-800 text-zinc-900 font-bold text-xs hover:bg-zinc-900 hover:text-white transition-colors tracking-widest font-mono"
+            >
+              VIEW ALL ARTICLES
             </Link>
           </div>
-        </div>
-      </section>
+        </section>
+
+      </div>
     </div>
   );
 }

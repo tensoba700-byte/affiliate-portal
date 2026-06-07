@@ -28,18 +28,36 @@ html[data-font="serif"] { --current-font: var(--font-noto-serif); }
    🎨 THEME DEFINITIONS
    ========================================= */
 
-/* デフォルトフォールバック */
+/* デフォルトフォールバック - クリーンサイエンス（無機質グレー） */
 :root {
-  --background: #fff8f5; 
-  --foreground: #5a4b49; 
-  --primary: #ff8fa3; 
+  --background: #ebedee; 
+  --foreground: #18181b; 
+  --primary: #18181b; 
   --primary-foreground: #ffffff;
-  --muted: #a89f9e;
-  --card: rgba(255, 255, 255, 0.95);
-  --card-border: rgba(255, 143, 163, 0.15); 
-  --theme-shadow: rgba(255, 143, 163, 0.2);
-  --theme-grad-1: rgba(255, 143, 163, 0.08);
-  --theme-grad-2: rgba(255, 219, 143, 0.08);
+  --muted: #71717a;
+  --card: #ffffff;
+  --card-border: rgba(24, 24, 27, 0.08); 
+  --theme-shadow: rgba(24, 24, 27, 0.04);
+  --theme-grad-1: rgba(24, 24, 27, 0.02);
+  --theme-grad-2: rgba(24, 24, 27, 0.01);
+  --list-bullet: "✦";
+  --heading-bullet: "//";
+}
+
+/* 0. クリーンサイエンス（無機質グレー＆クリーンサイエンス） */
+html[data-theme="clean-science"] {
+  --background: #ebedee; 
+  --foreground: #18181b; 
+  --primary: #18181b; 
+  --primary-foreground: #ffffff;
+  --muted: #71717a;
+  --card: #ffffff;
+  --card-border: rgba(24, 24, 27, 0.08); 
+  --theme-shadow: rgba(24, 24, 27, 0.04);
+  --theme-grad-1: rgba(24, 24, 27, 0.02);
+  --theme-grad-2: rgba(24, 24, 27, 0.01);
+  --list-bullet: "✦";
+  --heading-bullet: "//";
 }
 
 /* 1. ピーチピンク（可愛い・温かい） */
@@ -54,6 +72,8 @@ html[data-theme="peach"] {
   --theme-shadow: rgba(255, 143, 163, 0.2);
   --theme-grad-1: rgba(255, 143, 163, 0.08);
   --theme-grad-2: rgba(255, 219, 143, 0.08);
+  --list-bullet: "♡";
+  --heading-bullet: "🎀";
 }
 
 /* 2. ミントグリーン */
@@ -68,6 +88,8 @@ html[data-theme="mint"] {
   --theme-shadow: rgba(79, 218, 171, 0.2);
   --theme-grad-1: rgba(79, 218, 171, 0.08);
   --theme-grad-2: rgba(143, 227, 255, 0.08);
+  --list-bullet: "✦";
+  --heading-bullet: "🌱";
 }
 
 /* 3. ラベンダーパープル */
@@ -82,6 +104,8 @@ html[data-theme="lavender"] {
   --theme-shadow: rgba(168, 139, 232, 0.2);
   --theme-grad-1: rgba(168, 139, 232, 0.08);
   --theme-grad-2: rgba(255, 186, 213, 0.08);
+  --list-bullet: "✧";
+  --heading-bullet: "🔮";
 }
 
 /* 4. レモンイエロー */
@@ -96,6 +120,8 @@ html[data-theme="lemon"] {
   --theme-shadow: rgba(242, 186, 73, 0.2);
   --theme-grad-1: rgba(242, 186, 73, 0.08);
   --theme-grad-2: rgba(255, 143, 163, 0.05);
+  --list-bullet: "★";
+  --heading-bullet: "🍋";
 }
 
 /* 5. 水色（スカイブルー） */
@@ -110,6 +136,8 @@ html[data-theme="skyblue"] {
   --theme-shadow: rgba(118, 192, 255, 0.2);
   --theme-grad-1: rgba(118, 192, 255, 0.08);
   --theme-grad-2: rgba(255, 255, 255, 0.1);
+  --list-bullet: "❄";
+  --heading-bullet: "💧";
 }
 
 /* 6. 初めのオレンジ（オリジナル版・スッキリ） */
@@ -124,6 +152,8 @@ html[data-theme="original-orange"] {
   --theme-shadow: rgba(255, 90, 54, 0.2);
   --theme-grad-1: rgba(255, 90, 54, 0.08);
   --theme-grad-2: rgba(255, 255, 255, 0.1);
+  --list-bullet: "▫";
+  --heading-bullet: "🍊";
 }
 
 body {
@@ -296,7 +326,7 @@ body {
 /* Decorate price column (third column) */
 .cute-html-content td:nth-child(3) {
   font-weight: 900;
-  color: #ff8fa3;
+  color: var(--primary);
   white-space: nowrap;
   min-width: 80px;
 }
@@ -412,16 +442,16 @@ body {
   margin-bottom: 2rem;
   border-radius: 16px;
   overflow: hidden;
-  border: 1.5px solid #F8D7E3;
-  box-shadow: 0 4px 16px rgba(224,106,140,0.07);
+  border: 1.5px solid var(--card-border);
+  box-shadow: 0 4px 16px var(--theme-shadow);
 }
 .ctbl-title {
   font-size: 14px !important;
   font-weight: 900 !important;
-  background: #FFF0F5;
-  color: #b85c7a;
+  background: var(--theme-grad-1);
+  color: var(--foreground);
   padding: 12px 16px;
-  border-bottom: 1px solid #F8D7E3;
+  border-bottom: 1px solid var(--card-border);
   margin: 0 !important;
 }
 .ctbl-scroll { overflow-x: auto; }
@@ -431,17 +461,17 @@ body {
   font-size: 13px;
   background: white;
 }
-.ctbl thead tr { background: #FFF8FB; }
+.ctbl thead tr { background: var(--theme-grad-2); }
 .ctbl th {
   padding: 10px 12px;
   font-weight: 900;
   font-size: 11px;
-  color: #b85c7a;
+  color: var(--foreground);
   text-align: left;
-  border-bottom: 1px solid #F8D7E3;
+  border-bottom: 1px solid var(--card-border);
   white-space: nowrap;
 }
-.ctbl td { padding: 10px 12px; border-bottom: 1px solid #FDF0F5; }
+.ctbl td { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
 .ctbl-rank { font-weight: 900; white-space: nowrap; font-size: 13px; }
 .ctbl-name { font-weight: 700; }
 .ctbl-price { font-weight: 900; color: #e07000; white-space: nowrap; }
@@ -465,3 +495,384 @@ body {
   text-wrap: balance;
   line-height: 1.4;
 }
+
+/* =========================================
+   💿 CLEAN SCIENCE THEME OVERRIDES
+   ========================================= */
+html[data-theme="clean-science"] .cute-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(24, 24, 27, 0.08);
+}
+
+html[data-theme="clean-science"] .cute-html-content h2::before {
+  content: "▪";
+  margin-right: 0.5rem;
+  color: var(--primary);
+}
+
+html[data-theme="clean-science"] .cute-html-content h3 {
+  border-left-color: var(--primary);
+  background-color: rgba(24, 24, 27, 0.03);
+  color: var(--foreground);
+  border-left-width: 4px;
+  border-radius: 8px;
+}
+
+html[data-theme="clean-science"] .cute-html-content li::before {
+  content: "—";
+  color: var(--muted);
+}
+
+html[data-theme="clean-science"] .cute-html-content blockquote {
+  background-color: rgba(24, 24, 27, 0.02);
+  border-color: rgba(24, 24, 27, 0.08);
+  border-radius: 12px;
+}
+
+html[data-theme="clean-science"] .cute-html-content blockquote::before {
+  color: rgba(24, 24, 27, 0.08);
+}
+
+html[data-theme="clean-science"] .cute-html-content ul {
+  background: white;
+  border-color: rgba(24, 24, 27, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.02);
+  border-radius: 16px;
+}
+
+html[data-theme="clean-science"] .cute-html-content a {
+  color: var(--foreground);
+  background-color: rgba(24, 24, 27, 0.05);
+}
+
+html[data-theme="clean-science"] .cute-html-content a:hover {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+html[data-theme="clean-science"] .comparison-table-wrap {
+  border-color: rgba(24, 24, 27, 0.08);
+  box-shadow: none;
+  border-radius: 12px;
+}
+
+html[data-theme="clean-science"] .ctbl-title {
+  background: rgba(24, 24, 27, 0.03);
+  color: var(--foreground);
+  border-bottom-color: rgba(24, 24, 27, 0.08);
+}
+
+html[data-theme="clean-science"] .ctbl th {
+  color: var(--foreground);
+  background-color: rgba(24, 24, 27, 0.02);
+  border-bottom-color: rgba(24, 24, 27, 0.08);
+  border-right-color: rgba(24, 24, 27, 0.05);
+}
+
+html[data-theme="clean-science"] .ctbl td {
+  border-bottom-color: rgba(24, 24, 27, 0.04);
+  border-right-color: rgba(24, 24, 27, 0.04);
+}
+
+html[data-theme="clean-science"] .ctbl-price {
+  color: var(--foreground) !important;
+}
+
+html[data-theme="clean-science"] .cute-shadow {
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05), 0 2px 8px -2px rgba(0, 0, 0, 0.02);
+}
+
+html[data-theme="clean-science"] .pro-box {
+  background-color: rgba(24, 24, 27, 0.02);
+  border-color: rgba(24, 24, 27, 0.08);
+  color: var(--foreground);
+  border-radius: 12px;
+}
+
+html[data-theme="clean-science"] .con-box {
+  background-color: rgba(24, 24, 27, 0.01);
+  border-color: rgba(24, 24, 27, 0.04);
+  color: var(--muted);
+  border-radius: 12px;
+}
+
+/* --- Emoji & Icon Theme Toggles --- */
+.theme-emoji-sweet {
+  display: inline-block;
+}
+html[data-theme="clean-science"] .theme-emoji-sweet {
+  display: none !important;
+}
+
+.theme-emoji-science {
+  display: none;
+}
+html[data-theme="clean-science"] .theme-emoji-science {
+  display: inline-block !important;
+}
+
+/* --- Clean Science Button & Badge Overrides --- */
+html[data-theme="clean-science"] .btn-amazon,
+html[data-theme="clean-science"] .btn-rakuten,
+html[data-theme="clean-science"] .btn-yahoo {
+  background: var(--foreground) !important;
+  color: var(--background) !important;
+  box-shadow: 0 4px 12px rgba(24, 24, 27, 0.05) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+html[data-theme="clean-science"] .btn-amazon:hover,
+html[data-theme="clean-science"] .btn-rakuten:hover,
+html[data-theme="clean-science"] .btn-yahoo:hover {
+  background: var(--muted) !important;
+  color: var(--background) !important;
+  box-shadow: 0 6px 16px rgba(24, 24, 27, 0.1) !important;
+}
+
+html[data-theme="clean-science"] .btn-icon {
+  background: rgba(255, 255, 255, 0.15) !important;
+  filter: grayscale(1) brightness(1.2) !important;
+}
+
+/* Hardcoded pink rating badge override */
+html[data-theme="clean-science"] .inline-flex.bg-rose-50.text-rose-600 {
+  background-color: rgba(24, 24, 27, 0.03) !important;
+  color: var(--foreground) !important;
+  border-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+html[data-theme="clean-science"] .inline-flex.bg-rose-50.text-rose-600 span {
+  color: var(--foreground) !important;
+}
+
+html[data-theme="clean-science"] .inline-flex.bg-rose-50.text-rose-600 span.text-rose-700 {
+  color: var(--foreground) !important;
+}
+
+/* Sharp corner override for clean science */
+html[data-theme="clean-science"] .rounded-\[2rem\] {
+  border-radius: 16px !important;
+}
+
+/* --- Premium Typography Tuning for Clean Science --- */
+html[data-theme="clean-science"] .cute-html-content p {
+  font-size: 14px !important;
+  line-height: 1.9 !important;
+  letter-spacing: 0.05em !important;
+  color: #27272a !important; /* zinc-800 for softer reading */
+  margin-bottom: 1.5rem !important;
+}
+
+html[data-theme="clean-science"] .cute-html-content h2 {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  margin-top: 3rem !important;
+  margin-bottom: 1.5rem !important;
+  border-bottom: 1px solid rgba(24, 24, 27, 0.08) !important;
+  padding-bottom: 0.75rem !important;
+}
+
+html[data-theme="clean-science"] .cute-html-content h3 {
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 1rem !important;
+  border-left: 2px solid var(--primary) !important;
+  padding-left: 0.75rem !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+html[data-theme="clean-science"] .cute-html-content ul {
+  background: rgba(24, 24, 27, 0.02) !important;
+  border: 1px solid rgba(24, 24, 27, 0.06) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="clean-science"] .cute-html-content li::before {
+  content: "—" !important;
+  color: var(--muted) !important;
+}
+
+/* Mobile responsive fixes for table */
+@media (max-width: 640px) {
+  html[data-theme="clean-science"] .cute-html-content table {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* =========================================
+   🔘 CLEAN SCIENCE RANKING TABLE OVERRIDES
+   ========================================= */
+html[data-theme="clean-science"] .clean-science-table-wrapper {
+  border-color: rgba(24, 24, 27, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03) !important;
+  border-radius: 16px !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper > div {
+  border-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+/* Header */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background"] {
+  background: #ffffff !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="linear-gradient(135deg, #FFF0F5, #FFE4E1)"] {
+  background: rgba(24, 24, 27, 0.02) !important;
+  color: #18181b !important;
+  border-bottom-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="linear-gradient(135deg, #FFF0F5, #FFE4E1)"] span {
+  color: #18181b !important;
+}
+
+/* Tabs container */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background: rgb(255, 251, 253)"],
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background: #FFFBFD"] {
+  background: #ffffff !important;
+  border-bottom-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+/* Tab buttons */
+html[data-theme="clean-science"] .clean-science-table-wrapper button {
+  border-radius: 8px !important;
+  font-family: inherit !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Inactive Tab Button */
+html[data-theme="clean-science"] .clean-science-table-wrapper button[style*="background: rgb(250, 240, 244)"],
+html[data-theme="clean-science"] .clean-science-table-wrapper button[style*="background: #FAF0F4"] {
+  background: rgba(24, 24, 27, 0.02) !important;
+  color: #71717a !important;
+  border-color: rgba(24, 24, 27, 0.06) !important;
+  box-shadow: none !important;
+}
+
+/* Active Tab Button */
+html[data-theme="clean-science"] .clean-science-table-wrapper button[style*="background: rgb(224, 106, 140)"],
+html[data-theme="clean-science"] .clean-science-table-wrapper button[style*="background: #e06a8c"] {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #18181b !important;
+  box-shadow: 0 4px 12px rgba(24, 24, 27, 0.15) !important;
+}
+
+/* Divide-y container border */
+html[data-theme="clean-science"] .clean-science-table-wrapper .divide-y {
+  border-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper .divide-y > div {
+  border-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+/* Product list item */
+html[data-theme="clean-science"] .clean-science-table-wrapper .divide-y > div:hover {
+  background-color: rgba(24, 24, 27, 0.01) !important;
+}
+
+/* Rank Badge top 3 - keep gold but let it stand out elegantly */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background: linear-gradient(135deg, rgb(255, 215, 0)"] {
+  /* Keep gold but subtle shadow */
+  box-shadow: 0 3px 10px rgba(24, 24, 27, 0.05) !important;
+}
+
+/* Rank Badge non top 3 */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background: rgb(250, 240, 244)"],
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="background: #FAF0F4"] {
+  background: rgba(24, 24, 27, 0.04) !important;
+  color: #18181b !important;
+  border-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+/* Score rating badge border and text colors */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[class*="border-pink-200"] {
+  border-color: rgba(24, 24, 27, 0.08) !important;
+  background-color: #ffffff !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper span[class*="text-pink-500"] {
+  color: #18181b !important;
+}
+
+/* Spec tags */
+html[data-theme="clean-science"] .clean-science-table-wrapper span[class*="bg-pink-50/30"] {
+  background-color: rgba(24, 24, 27, 0.03) !important;
+  color: #27272a !important;
+  border-color: rgba(24, 24, 27, 0.06) !important;
+  border-radius: 6px !important;
+}
+
+/* Image container */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[class*="border-pink-100"] {
+  border-color: rgba(24, 24, 27, 0.06) !important;
+  box-shadow: 0 4px 12px rgba(24, 24, 27, 0.03) !important;
+  border-radius: 12px !important;
+}
+
+/* Description border */
+html[data-theme="clean-science"] .clean-science-table-wrapper p[class*="border-pink-200"] {
+  border-left-color: #18181b !important;
+}
+
+/* Pros/Cons Box grid */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[class*="bg-pink-50/10"] {
+  background-color: rgba(24, 24, 27, 0.01) !important;
+  border-color: rgba(24, 24, 27, 0.04) !important;
+  border-radius: 12px !important;
+}
+
+/* Buy buttons */
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: rgba(24, 24, 27, 0.1) !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"]:hover {
+  background: #3f3f46 !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[style*="background: rgba(255, 255, 255, 0.2)"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] img {
+  filter: grayscale(1) brightness(2) !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span {
+  color: #ffffff !important;
+}
+
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-pink-500"],
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-rose-500"],
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-emerald-500"],
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-amber-500"],
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-red-500"],
+html[data-theme="clean-science"] .clean-science-table-wrapper a[style*="background"] span[class*="text-orange-500"] {
+  color: #ffffff !important;
+}
+
+/* Footer note */
+html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="footerBg"] {
+  background: rgba(24, 24, 27, 0.02) !important;
+  color: #71717a !important;
+  border-top-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+

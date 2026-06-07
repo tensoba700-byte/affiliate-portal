@@ -37,24 +37,28 @@ export default function Header() {
 
       {/* Mobile Header */}
       <div className="flex items-center justify-between md:hidden px-4 h-16">
-        <button onClick={toggleMenu} className="text-primary" aria-label="メニュー">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <button onClick={toggleMenu} className="text-foreground/80 hover:text-primary transition-colors p-1" aria-label="メニュー">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="4" y1="12" x2="20" y2="12" />
             <line x1="4" y1="6" x2="20" y2="6" />
             <line x1="4" y1="18" x2="20" y2="18" />
           </svg>
         </button>
-        <Link href="/" className="text-2xl font-black tracking-tight text-primary flex items-center gap-1 hover:opacity-80 transition-opacity animate-float">
-          みっけ！
+        
+        <Link href="/" className="flex flex-col items-center hover:opacity-85 transition-opacity">
+          <span className="text-2xl font-black tracking-tight text-foreground leading-none">みっけ！</span>
+          <span className="text-[9px] font-bold text-muted tracking-widest leading-none mt-1 uppercase">mikke!</span>
         </Link>
-        {/* placeholder to keep spacing */}
-        <div className="w-8" />
+
+        <Link href="/search" className="text-foreground/80 hover:text-primary transition-colors p-1" aria-label="検索">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </Link>
       </div>
 
-      {/* Mobile Search Bar (always visible on mobile) */}
-      <div className="px-4 pb-2 md:hidden">
-        <SearchBar />
-      </div>
+      {/* Mobile Search Bar (removed to match clean minimal layout) */}
 
       {/* Mobile Menu Overlay */}
       {open && (
@@ -62,7 +66,9 @@ export default function Header() {
       )}
       <div className={`fixed inset-y-0 left-0 w-72 bg-white shadow-2xl transform ${open ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 z-50`}>
         <div className="flex items-center justify-between p-6 border-b border-primary/5">
-          <span className="text-xl font-black text-primary">メニュー 🌷</span>
+          <span className="text-xl font-black text-primary">
+            メニュー <span className="theme-emoji-sweet">🌷</span><span className="theme-emoji-science font-mono select-none">✦</span>
+          </span>
           <button onClick={toggleMenu} aria-label="閉じる" className="text-primary p-2 hover:bg-primary/5 rounded-full transition-colors">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
@@ -72,10 +78,10 @@ export default function Header() {
         </div>
         <nav className="flex flex-col p-6 space-y-4">
           <Link href="/" className="text-base font-black text-foreground hover:text-primary transition-colors flex items-center gap-2" onClick={toggleMenu}>
-            <span>🏠</span> ホーム
+            <span className="theme-emoji-sweet">🏠</span><span className="theme-emoji-science font-mono select-none">✦</span> ホーム
           </Link>
           <Link href="/articles" className="text-base font-black text-foreground hover:text-primary transition-colors flex items-center gap-2" onClick={toggleMenu}>
-            <span>📚</span> すべての記事
+            <span className="theme-emoji-sweet">📚</span><span className="theme-emoji-science font-mono select-none">✦</span> すべての記事
           </Link>
           <div className="pt-4 pb-2">
             <p className="text-[10px] font-black text-muted tracking-widest uppercase mb-4">カテゴリー</p>

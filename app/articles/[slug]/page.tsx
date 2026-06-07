@@ -230,7 +230,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
           {relatedArticles.length > 0 && (
             <section className="mt-16">
               <h2 className="text-xl md:text-2xl font-black text-foreground mb-8 text-center flex items-center justify-center gap-2">
-                <span className="text-primary">🌈</span> あわせて見たい記事
+                <span className="text-primary theme-emoji-sweet">🌈</span>
+                <span className="text-primary theme-emoji-science font-mono select-none">✦</span>
+                あわせて見たい記事
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {relatedArticles.map((rel) => (
@@ -243,7 +245,10 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                       {rel.coverImage ? (
                         <img src={rel.coverImage} alt={rel.title} loading="lazy" className="max-w-full max-h-full w-full h-full object-contain group-hover:scale-102 transition-transform duration-500" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">🎀</div>
+                        <div className="w-full h-full flex items-center justify-center text-2xl">
+                        <span className="theme-emoji-sweet">🎀</span>
+                        <span className="theme-emoji-science font-mono select-none text-muted">✦</span>
+                      </div>
                       )}
                     </div>
                     <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
