@@ -8,7 +8,7 @@ export default function SampleHome() {
       title: '夕方の毛穴に絶望したくない！大忙し美容オタクが本音で選ぶ最強クレンジングバーム7選',
       excerpt: '仕事に趣味に大忙しで日中の化粧直しはゼロ！メイクも毛穴汚れも一気にリセットできる最強のクレンジングバームを本音レビュー！',
       date: '2026.06.09',
-      category: 'スキンケア',
+      category: '毛穴・くすみリセット',
       image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80'
     },
     {
@@ -16,7 +16,7 @@ export default function SampleHome() {
       title: '砂漠肌をもちもちに！夕方まで乾燥知らずのプチプラ実力派化粧水6選',
       excerpt: '冷房や乾燥でカサカサになりがちなお肌に、たっぷり惜しみなく使えるプチプラなのにデパコス級のしっとり感を得られる本命化粧水。',
       date: '2026.06.08',
-      category: 'スキンケア',
+      category: 'プチプラ実力派',
       image: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&q=80'
     }
   ];
@@ -84,15 +84,16 @@ export default function SampleHome() {
       {/* 🧭 Horizontal Category Navigation Bar */}
       <div className="w-full max-w-4xl px-4 mt-6 relative z-10">
         <div className="w-full bg-white border border-card-border rounded-xl px-5 py-3.5 flex justify-between items-center text-[11px] font-bold text-foreground overflow-x-auto hide-scrollbar whitespace-nowrap gap-6">
-          <div className="flex gap-4">
-            <Link href="/sample" className="bg-zinc-950 text-white px-3.5 py-1 rounded transition-colors">ホーム</Link>
-            <Link href="/sample/column" className="text-muted hover:text-primary px-3.5 py-1 rounded transition-colors border border-transparent hover:border-zinc-200">美容コラム</Link>
+          <div className="flex gap-3">
+            <Link href="/sample" className="bg-zinc-950 text-white px-3.5 py-1.5 rounded transition-colors">ホーム</Link>
+            <Link href="/sample/column" className="text-muted hover:text-primary px-3.5 py-1.5 rounded transition-colors border border-transparent hover:border-zinc-200">美容コラム</Link>
           </div>
           <div className="flex items-center gap-4 text-zinc-300">
             <span>|</span>
-            <span className="text-zinc-400 cursor-not-allowed">クレンジング検証</span>
-            <span className="text-zinc-400 cursor-not-allowed">化粧水検証</span>
-            <span className="text-zinc-400 cursor-not-allowed">ヘアケア検証</span>
+            <span className="text-zinc-400 font-bold uppercase tracking-wider text-[10px]">VERIFICATIONS:</span>
+            <span className="text-zinc-400 cursor-not-allowed border border-dashed border-zinc-200 px-3 py-1 rounded bg-zinc-50/50">アイテム別</span>
+            <span className="text-zinc-400 cursor-not-allowed border border-dashed border-zinc-200 px-3 py-1 rounded bg-zinc-50/50">お悩み別</span>
+            <span className="text-zinc-400 cursor-not-allowed border border-dashed border-zinc-200 px-3 py-1 rounded bg-zinc-50/50">プチプラ実力派</span>
           </div>
         </div>
       </div>
