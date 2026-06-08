@@ -171,7 +171,7 @@ export default async function SampleArticleDetail({ params }: PageProps) {
           </div>
           <div className="text-center sm:text-left space-y-2">
             <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 justify-center sm:justify-start">
-              <span className="text-sm font-black text-foreground">カナ（みっけ！専属美容ライター）</span>
+              <span className="text-sm font-black text-foreground">ツキ（みっけ！専属美容ライター）</span>
               <span className="bg-zinc-100 text-zinc-800 text-[8px] font-black px-2 py-0.5 rounded-full w-fit mx-auto sm:mx-0">
                 本音レビュアー
               </span>

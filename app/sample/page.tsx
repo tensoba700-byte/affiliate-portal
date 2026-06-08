@@ -218,6 +218,54 @@ export default function SampleHome() {
           </div>
         </section>
 
+        {/* 🧪 Background Composite Demo (Multiply vs Original) */}
+        <section className="w-full bg-white border border-card-border p-6 rounded-2xl">
+          <div className="flex justify-between items-end mb-6 border-b border-card-border pb-3">
+            <div className="space-y-1">
+              <h2 className="text-xs font-black text-foreground tracking-widest uppercase flex items-center gap-1.5">
+                <span>✦</span> BACKGROUND BLEND DEMO (CSS乗算テスト)
+              </h2>
+              <p className="text-[9px] text-muted font-bold tracking-wider">ECサイトの白背景画像をグレー背景に溶け込ませるデモ</p>
+            </div>
+            <span className="text-[10px] font-bold text-muted uppercase font-mono">LAB DEMO</span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+            {/* Original White Background Card */}
+            <div className="border border-card-border rounded-xl p-4 flex flex-col items-center">
+              <span className="text-[9px] font-black bg-zinc-100 text-zinc-800 px-2 py-0.5 rounded mb-3">元の画像 (白背景)</span>
+              <div className="w-full h-48 bg-zinc-50 border border-zinc-100 rounded-lg flex items-center justify-center overflow-hidden">
+                <img 
+                  src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&q=80" 
+                  alt="Original White Background Product" 
+                  className="h-full object-contain"
+                />
+              </div>
+              <p className="text-[10px] text-muted font-bold mt-2 text-center">ECサイトによくある典型的な白背景の商品画像</p>
+            </div>
+
+            {/* Blended Background Card */}
+            <div className="border border-card-border rounded-xl p-4 flex flex-col items-center">
+              <span className="text-[9px] font-black bg-zinc-950 text-white px-2 py-0.5 rounded mb-3">CSS乗算後 (グレー背景に溶け込み)</span>
+              {/* Wrapped in a container with concrete-like light-grey background */}
+              <div 
+                className="w-full h-48 rounded-lg flex items-center justify-center overflow-hidden relative"
+                style={{ 
+                  backgroundColor: '#f4f4f5',
+                  backgroundImage: 'radial-gradient(circle, rgba(24,24,27,0.03) 0%, rgba(24,24,27,0.08) 100%)'
+                }}
+              >
+                <img 
+                  src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&q=80" 
+                  alt="Blended Product" 
+                  className="h-full object-contain mix-blend-multiply"
+                />
+              </div>
+              <p className="text-[10px] text-muted font-bold mt-2 text-center">CSS乗算を使うと、白背景が消えてグレー背景に自然に馴染むよ！</p>
+            </div>
+          </div>
+        </section>
+
       </div>
     </div>
   );
