@@ -545,7 +545,7 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
             return f"{base_url}{connector}tag=mikkestyle-22"
             
     elif mall == "rakuten":
-        rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID") or "15fa9210.e15d27f8.15fa9211.9e1f82bc"
+        rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID") or "52aa350c.c59bcb5a.52aa350d.c841a8ec"
         target_url = ""
         for param in ["url", "pc", "m"]:
             if param in qs_base:
@@ -1275,8 +1275,18 @@ def main():
                     }
                     details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
                     p["resolved_details"] = details
+                    # アフィリエイトID適用済みのリンクをルートにも代入
+                    if details.get("rakuten_url"):
+                        p["rakuten_url"] = details["rakuten_url"]
+                    if details.get("yahoo_url"):
+                        p["yahoo_url"] = details["yahoo_url"]
                 else:
                     details = p["resolved_details"]
+                    # すでに resolved_details がある場合もルートに適用
+                    if details.get("rakuten_url"):
+                        p["rakuten_url"] = details["rakuten_url"]
+                    if details.get("yahoo_url"):
+                        p["yahoo_url"] = details["yahoo_url"]
                 
                 # 最も確実な製品画像を details からマージして上書きする
                 if details.get("image_url"):

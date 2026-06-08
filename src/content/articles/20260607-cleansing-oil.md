@@ -18,7 +18,7 @@ IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/mujirushi-ryohin/cabinet/it
 AMAZON_PRICE: 990
 RAKUTEN_PRICE: 990
 ASIN: https://www.amazon.co.jp/dp/B0F4WF5J6S?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252Fd934991d553fa498a67f0255198eb262%26pc%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252Fd934991d553fa498a67f0255198eb262&is_mobile_app=false&position=item1&product_id=8981456&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Fd934991d553fa498a67f0255198eb262&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//product.rakuten.co.jp/product/-/d934991d553fa498a67f0255198eb262
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -44,7 +44,7 @@ IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/mujirushi-ryohin/cabinet/it
 AMAZON_PRICE: 1290
 RAKUTEN_PRICE: 1290
 ASIN: https://www.amazon.co.jp/dp/B0F1MCXQ3M?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F87390027786ac5ea26a7851868ac4c60%26pc%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F87390027786ac5ea26a7851868ac4c60&is_mobile_app=false&position=item1&product_id=8333684&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F87390027786ac5ea26a7851868ac4c60&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//product.rakuten.co.jp/product/-/87390027786ac5ea26a7851868ac4c60
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -71,7 +71,7 @@ IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/cosmecomonline/cabinet/item
 AMAZON_PRICE: 1540
 RAKUTEN_PRICE: 1540
 ASIN: https://www.amazon.co.jp/dp/B09X73XQ71?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F2957fded7d79ef1fc3bf5b26798e6281%26pc%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F2957fded7d79ef1fc3bf5b26798e6281&is_mobile_app=false&position=item1&product_id=568247&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F2957fded7d79ef1fc3bf5b26798e6281&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//product.rakuten.co.jp/product/-/2957fded7d79ef1fc3bf5b26798e6281
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -96,7 +96,7 @@ RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.j
 IMAGE: https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=640
 AMAZON_PRICE: 1377
 ASIN: https://www.amazon.co.jp/dp/B0DN9ZYY2V?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fsearch.rakuten.co.jp%252Fsearch%252Fmall%252Fmatsukiyo%252BW%25252FM%252BAAA%252BMOIST%252BINTENSIVE%252BACTIVE%252BCLEANSE%252B%2525E3%252582%2525A2%2525E3%252582%2525AF%2525E3%252583%252586%2525E3%252582%2525A3%2525E3%252583%252596%2525E3%252582%2525AF%2525E3%252583%2525AC%2525E3%252583%2525B3%2525E3%252582%2525BA%252B%2525E3%252582%2525AF%2525E3%252583%2525AC%2525E3%252583%2525B3%2525E3%252582%2525B8%2525E3%252583%2525B3%2525E3%252582%2525B0%2525E3%252582%2525AA%2525E3%252582%2525A4%2525E3%252583%2525AB%26pc%3Dhttps%253A%252F%252Fsearch.rakuten.co.jp%252Fsearch%252Fmall%252Fmatsukiyo%252BW%25252FM%252BAAA%252BMOIST%252BINTENSIVE%252BACTIVE%252BCLEANSE%252B%2525E3%252582%2525A2%2525E3%252582%2525AF%2525E3%252583%252586%2525E3%252582%2525A3%2525E3%252583%252596%2525E3%252582%2525AF%2525E3%252583%2525AC%2525E3%252583%2525B3%2525E3%252582%2525BA%252B%2525E3%252582%2525AF%2525E3%252583%2525AC%2525E3%252583%2525B3%2525E3%252582%2525B8%2525E3%252583%2525B3%2525E3%252582%2525B0%2525E3%252582%2525AA%2525E3%252582%2525A4%2525E3%252583%2525AB&is_mobile_app=false&position=item1&product_id=18324271&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2Fmatsukiyo%2BW%252FM%2BAAA%2BMOIST%2BINTENSIVE%2BACTIVE%2BCLEANSE%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2583%2586%25E3%2582%25A3%25E3%2583%2596%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25B3%25E3%2582%25BA%2B%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25B3%25E3%2582%25B8%25E3%2583%25B3%25E3%2582%25B0%25E3%2582%25AA%25E3%2582%25A4%25E3%2583%25AB&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//search.rakuten.co.jp/search/mall/matsukiyo%2BW%252FM%2BAAA%2BMOIST%2BINTENSIVE%2BACTIVE%2BCLEANSE%2B%25E3%2582%25A2%25E3%2582%25AF%25E3%2583%2586%25E3%2582%25A3%25E3%2583%2596%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25B3%25E3%2582%25BA%2B%25E3%2582%25AF%25E3%2583%25AC%25E3%2583%25B3%25E3%2582%25B8%25E3%2583%25B3%25E3%2582%25B0%25E3%2582%25AA%25E3%2582%25A4%25E3%2583%25AB
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -122,7 +122,7 @@ IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/aozorablue/cabinet/gazou18/
 AMAZON_PRICE: 1245
 RAKUTEN_PRICE: 1280
 ASIN: https://www.amazon.co.jp/dp/B0D9W54R57?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252Faa5ded009774a996fa04b51b2047f24b%26pc%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252Faa5ded009774a996fa04b51b2047f24b&is_mobile_app=false&position=item1&product_id=4490217&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Faa5ded009774a996fa04b51b2047f24b&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//product.rakuten.co.jp/product/-/aa5ded009774a996fa04b51b2047f24b
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -148,7 +148,7 @@ IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/shuuemura/cabinet/12824584/
 AMAZON_PRICE: 5720
 RAKUTEN_PRICE: 5720
 ASIN: https://www.amazon.co.jp/dp/B0CVMX91RT?tag=mikkestyle-22
-RAKUTEN: https://my-best.com/link?fallback_url=https%3A%2F%2Fhb.afl.rakuten.co.jp%2Fichiba%2F15fa9210.e15d27f8.15fa9211.9e1f82bc%2Fmybest_0_0_presses_2322_90-22%3Fm%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F84356a423ce7390a2dd41084ae6530ff%26pc%3Dhttps%253A%252F%252Fproduct.rakuten.co.jp%252Fproduct%252F-%252F84356a423ce7390a2dd41084ae6530ff&is_mobile_app=false&position=item1&product_id=2133923&send_id=2322&shp_code&tag_type=presses&url=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2F84356a423ce7390a2dd41084ae6530ff&utm_campaign&utm_medium&utm_source
+RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A//product.rakuten.co.jp/product/-/84356a423ce7390a2dd41084ae6530ff
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 

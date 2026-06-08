@@ -247,10 +247,115 @@ def take_eyecatch_screenshot(slug: str) -> bool:
         print(f"❌ Eyecatch screenshot failed: {e}")
         return False
 
+def clean_and_convert_scraped_url(scraped_url: str, mall: str, product_name: str = "") -> str:
+    """my-bestのスクレイピングURL等から、自分自身のアフィリエイトURLに再構築して返します。"""
+    if not scraped_url:
+        return ""
+    
+    parsed = urllib.parse.urlparse(scraped_url)
+    qs = urllib.parse.parse_qs(parsed.query)
+    
+    fallback_url = qs.get("fallback_url", [""])[0]
+    url_in_query = qs.get("url", [""])[0]
+    
+    base_url = fallback_url if fallback_url else scraped_url
+    
+    parsed_base = urllib.parse.urlparse(base_url)
+    qs_base = urllib.parse.parse_qs(parsed_base.query)
+    
+    if mall == "amazon":
+        asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', base_url)
+        if not asin_match and url_in_query:
+            asin_match = re.search(r'/dp/([A-Z0-9]{10})|/gp/product/([A-Z0-9]{10})', url_in_query)
+            
+        if asin_match:
+            asin_val = asin_match.group(1) or asin_match.group(2)
+            return f"https://www.amazon.co.jp/dp/{asin_val}?tag=mikkestyle-22"
+        
+        if "tag" in qs_base:
+            replaced_qs = qs_base.copy()
+            replaced_qs["tag"] = ["mikkestyle-22"]
+            new_query = urllib.parse.urlencode(replaced_qs, doseq=True)
+            return urllib.parse.urlunparse(parsed_base._replace(query=new_query))
+        else:
+            connector = "&" if parsed_base.query else "?"
+            return f"{base_url}{connector}tag=mikkestyle-22"
+            
+    elif mall == "rakuten":
+        rakuten_affiliate_id = "52aa350c.c59bcb5a.52aa350d.c841a8ec"
+        target_url = ""
+        for param in ["url", "pc", "m"]:
+            if param in qs_base:
+                target_url = qs_base[param][0]
+                break
+            if param in qs:
+                target_url = qs[param][0]
+                break
+        
+        if not target_url:
+            if "rakuten.co.jp" in base_url and not "hb.afl.rakuten.co.jp" in base_url:
+                target_url = base_url
+            else:
+                for param in ["vc_url", "u"]:
+                    if param in qs_base:
+                        target_url = qs_base[param][0]
+                        break
+        
+        if not target_url:
+            target_url = base_url
+            
+        encoded_target = urllib.parse.quote(target_url)
+        raw_rak_url = f"https://hb.afl.rakuten.co.jp/ichiba/{rakuten_affiliate_id}/?pc={encoded_target}"
+        return clean_rakuten_url(raw_rak_url)
+        
+    elif mall == "yahoo":
+        yahoo_sid = "3767611"
+        yahoo_pid = "2201292"
+        
+        target_url = ""
+        for param in ["url", "vc_url", "u"]:
+            if param in qs_base:
+                target_url = qs_base[param][0]
+                break
+            if param in qs:
+                target_url = qs[param][0]
+                break
+                
+        if not target_url:
+            if "yahoo.co.jp" in base_url and not "valuecommerce.com" in base_url:
+                target_url = base_url
+            else:
+                target_url = base_url
+                
+        if "/product/" in target_url or "/product/j/" in target_url:
+            if product_name:
+                encoded_query = urllib.parse.quote(product_name, safe='')
+                target_url = f"https://shopping.yahoo.co.jp/search?p={encoded_query}"
+
+        encoded_target = urllib.parse.quote(target_url)
+        return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
+
+    return scraped_url
+
 def clean_rakuten_url(url: str) -> str:
     if not url or url == "なし":
         return ""
+    
+    if "my-best.com" in url:
+        return clean_and_convert_scraped_url(url, "rakuten")
+        
     cleaned = url
+    taro_rakuten_id = "52aa350c.c59bcb5a.52aa350d.c841a8ec"
+    match = re.search(r'hb\.afl\.rakuten\.co\.jp/ichiba/([a-zA-Z0-9\._\-]+)/', cleaned)
+    if match:
+        current_id = match.group(1)
+        if current_id != taro_rakuten_id:
+            cleaned = cleaned.replace(f"/ichiba/{current_id}/", f"/ichiba/{taro_rakuten_id}/")
+    else:
+        if "rakuten.co.jp" in cleaned and not "hb.afl.rakuten.co.jp" in cleaned:
+            encoded_target = urllib.parse.quote(cleaned)
+            cleaned = f"https://hb.afl.rakuten.co.jp/ichiba/{taro_rakuten_id}/?pc={encoded_target}"
+
     cleaned = re.sub(r'[?&]m=[^&]*', '', cleaned)
     cleaned = re.sub(r'[?&]rafcid=[^&]*', '', cleaned)
     cleaned = cleaned.replace("?&", "?").rstrip("?&")
@@ -260,19 +365,55 @@ def clean_yahoo_url(url: str, product_name: str) -> str:
     if not url or url == "なし":
         return ""
     
-    if "shopping.yahoo.co.jp/product/" in url or "/product/j/" in url:
+    if "my-best.com" in url:
+        return clean_and_convert_scraped_url(url, "yahoo", product_name)
+        
+    cleaned = url
+    yahoo_sid = "3767611"
+    yahoo_pid = "2201292"
+    
+    if "shopping.yahoo.co.jp/product/" in cleaned or "/product/j/" in cleaned:
         query = urllib.parse.quote(product_name, safe='')
-        url = f"https://shopping.yahoo.co.jp/search?p={query}"
+        cleaned = f"https://shopping.yahoo.co.jp/search?p={query}"
         
-    if "valuecommerce.com" in url:
-        if "vc_url=" in url:
-            parts = url.split("vc_url=")
-            decoded_vc = urllib.parse.unquote(parts[1])
-            url = parts[0] + "vc_url=" + urllib.parse.quote(decoded_vc, safe='')
+    if "valuecommerce.com" in cleaned:
+        parsed = urllib.parse.urlparse(cleaned)
+        qs = urllib.parse.parse_qs(parsed.query)
+        
+        sid_list = qs.get("sid", [])
+        pid_list = qs.get("pid", [])
+        vc_url_list = qs.get("vc_url", [])
+        
+        need_rebuild = False
+        if not sid_list or sid_list[0] != yahoo_sid:
+            need_rebuild = True
+        if not pid_list or pid_list[0] != yahoo_pid:
+            need_rebuild = True
+            
+        vc_url = vc_url_list[0] if vc_url_list else ""
+        if "/product/" in vc_url or "/product/j/" in vc_url:
+            query = urllib.parse.quote(product_name, safe='')
+            vc_url = f"https://shopping.yahoo.co.jp/search?p={query}"
+            need_rebuild = True
+            
+        if need_rebuild:
+            if not vc_url:
+                vc_url = cleaned
+            
+            encoded_vc = urllib.parse.quote(vc_url, safe='')
+            cleaned = f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_vc}"
+        else:
+            if "vc_url=" in cleaned:
+                parts = cleaned.split("vc_url=")
+                decoded_vc = urllib.parse.unquote(parts[1])
+                if "/product/" in decoded_vc or "/product/j/" in decoded_vc:
+                    query = urllib.parse.quote(product_name, safe='')
+                    decoded_vc = f"https://shopping.yahoo.co.jp/search?p={query}"
+                cleaned = parts[0] + "vc_url=" + urllib.parse.quote(decoded_vc, safe='')
     else:
-        url = f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid=3767611&pid=2201292&vc_url={urllib.parse.quote(url, safe='')}"
+        cleaned = f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={urllib.parse.quote(cleaned, safe='')}"
         
-    return url
+    return cleaned
 
 def get_notion_data(article_title: str):
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -319,14 +460,16 @@ def get_notion_data(article_title: str):
         asin = mapped_p.get("asin") or ""
         amazon_url = f"https://www.amazon.co.jp/dp/{asin}?tag=mikkestyle-22" if asin else ""
         
-        # 2. 楽天リンク：stockpile_data.jsonのrakuten_urlを使う
-        rakuten_url = mapped_p.get("rakuten_url") or ""
+        # 2. 楽天リンク：resolved_details内のrakuten_urlを優先
+        rakuten_url = mapped_p.get("resolved_details", {}).get("rakuten_url") or mapped_p.get("rakuten_url") or ""
+        rakuten_url = clean_rakuten_url(rakuten_url)
         
         # 3. 商品画像・アイキャッチ：stockpile_data.jsonのimage_urlを使う
         image_url = mapped_p.get("image_url") or ""
         
         # Yahooリンク（バリューコマース用）
-        yahoo_url = mapped_p.get("yahoo_url") or ""
+        yahoo_url = mapped_p.get("resolved_details", {}).get("yahoo_url") or mapped_p.get("yahoo_url") or ""
+        yahoo_url = clean_yahoo_url(yahoo_url, clean_name)
         
         products.append({
             "id": item_id,
