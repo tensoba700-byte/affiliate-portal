@@ -74,7 +74,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
       <script dangerouslySetInnerHTML={{
         __html: `
           document.documentElement.setAttribute('data-theme', 'clean-science');
-          document.documentElement.setAttribute('data-font', 'sans');
+          document.documentElement.setAttribute('data-font', 'serif');
         `
       }} />
 

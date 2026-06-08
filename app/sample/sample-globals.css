@@ -1,5 +1,28 @@
 /* app/sample/sample-globals.css */
 
+/* =========================================
+   🎨 CLEAN SCIENCE THEME ROOT VARIABLES
+   ========================================= */
+html[data-theme="clean-science"] {
+  --background: #f4f4f5 !important; /* zinc-100 (無機質グレー) */
+  --foreground: #18181b !important; /* zinc-900 */
+  --primary: #18181b !important;
+  --primary-foreground: #ffffff !important;
+  --muted: #71717a !important; /* zinc-500 */
+  --card: #ffffff !important;
+  --card-border: rgba(24, 24, 27, 0.08) !important;
+  --theme-shadow: rgba(0, 0, 0, 0.03) !important;
+  --theme-grad-1: rgba(24, 24, 27, 0.02) !important;
+  --theme-grad-2: rgba(24, 24, 27, 0.01) !important;
+}
+
+html[data-theme="clean-science"] body {
+  background-color: #f4f4f5 !important;
+  background-image: radial-gradient(circle at 80% 10%, rgba(24, 24, 27, 0.03) 0%, transparent 40%),
+                    radial-gradient(circle at 10% 90%, rgba(24, 24, 27, 0.01) 0%, transparent 40%) !important;
+  color: #18181b !important;
+}
+
 /* --- Clean Science Button & Badge Overrides --- */
 html[data-theme="clean-science"] .btn-amazon,
 html[data-theme="clean-science"] .btn-rakuten,
@@ -300,4 +323,40 @@ html[data-theme="clean-science"] .clean-science-table-wrapper div[style*="footer
   background: rgba(24, 24, 27, 0.02) !important;
   color: #71717a !important;
   border-top-color: rgba(24, 24, 27, 0.08) !important;
+}
+
+/* =========================================
+   🔘 GLOBAL CARD & LAYOUT OVERRIDES FOR CLEAN SCIENCE
+   ========================================= */
+html[data-theme="clean-science"] .cute-shadow,
+html[data-theme="clean-science"] .shadow-sm,
+html[data-theme="clean-science"] .shadow-md,
+html[data-theme="clean-science"] .shadow-lg,
+html[data-theme="clean-science"] .shadow-xl {
+  box-shadow: 0 4px 20px rgba(24, 24, 27, 0.02), 0 2px 8px rgba(24, 24, 27, 0.01) !important;
+}
+
+html[data-theme="clean-science"] .border-card-border,
+html[data-theme="clean-science"] .border-zinc-200,
+html[data-theme="clean-science"] .border-zinc-100 {
+  border-color: rgba(24, 24, 27, 0.06) !important;
+}
+
+/* Ensure clean-science cards are crisp white with minimal grey borders */
+html[data-theme="clean-science"] .bg-white {
+  background-color: #ffffff !important;
+  border-color: rgba(24, 24, 27, 0.06) !important;
+}
+
+/* Ambient glow adjustments */
+html[data-theme="clean-science"] .from-zinc-200\/40,
+html[data-theme="clean-science"] .from-zinc-200\/30 {
+  --tw-gradient-from: rgba(24, 24, 27, 0.03) var(--tw-gradient-from-position) !important;
+}
+
+/* Category Navigation styling override */
+html[data-theme="clean-science"] .cursor-not-allowed {
+  background-color: rgba(24, 24, 27, 0.01) !important;
+  border-color: rgba(24, 24, 27, 0.04) !important;
+  color: #71717a !important;
 }
