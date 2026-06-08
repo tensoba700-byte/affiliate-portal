@@ -969,9 +969,11 @@ def extract_mybest_ranking(html: str, url: str) -> list:
 
 def main():
     import sys
-    target_page_id = "371ddb45-8772-8158-88fb-f9be558eb17e"
-    if len(sys.argv) > 1:
-        target_page_id = sys.argv[1]
+    if len(sys.argv) < 2:
+        print("❌ エラー: NotionのページIDを引数に指定してください。")
+        print("使用例: python3 scripts/prepare_stockpile.py <page_id>")
+        sys.exit(1)
+    target_page_id = sys.argv[1]
         
     print(f"🔍 Notionから特定の商品ページ（ID: {target_page_id}）を直接取得中...")
     res = requests.get(f"https://api.notion.com/v1/pages/{target_page_id}", headers=NOTION_HEADERS)

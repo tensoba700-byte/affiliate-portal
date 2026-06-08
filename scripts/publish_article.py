@@ -394,6 +394,33 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     except Exception as e:
         print(f"❌ Failed to read article_draft.json: {e}")
         return False
+
+    # 整合性チェック: ローカル一時データが指定された記事タイトルと一致しているか
+    stockpile_path = os.path.join(script_dir, "stockpile_data.json")
+    if os.path.exists(stockpile_path):
+        try:
+            with open(stockpile_path, 'r', encoding='utf-8') as sf:
+                stock_data = json.load(sf)
+                stock_cat = stock_data.get("category", "")
+                norm_title = article_title.lower()
+                norm_cat = stock_cat.lower()
+                words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+', norm_title) if len(w) >= 2]
+                if words and not any(w in norm_cat for w in words):
+                    print(f"❌ 整合性エラー: 指定タイトル '{article_title}' と stockpile_data.json のカテゴリ '{stock_cat}' が一致しません。")
+                    print("👉 prepare_stockpile.py が正しい Notion ページIDで実行されているか確認してください。")
+                    return False
+        except Exception as e:
+            print(f"⚠️ stockpile_data.json の整合性チェックをスキップ (ロードエラー: {e})")
+
+    draft_title = data.get("meta", {}).get("title", "")
+    if draft_title:
+        norm_title = article_title.lower()
+        norm_draft = draft_title.lower()
+        words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+', norm_title) if len(w) >= 2]
+        if words and not any(w in norm_draft for w in words):
+            print(f"❌ 整合性エラー: 指定タイトル '{article_title}' と article_draft.json のメタタイトル '{draft_title}' が一致しません。")
+            print("👉 記事執筆プロセス (おこげ等の下書き作成) が正しいデータで行われているか確認してください。")
+            return False
     
     output_title = data.get("meta", {}).get("title") or article_title.replace("2024", "2026")
     slug = slug or slugify(output_title, category, publish_date)
