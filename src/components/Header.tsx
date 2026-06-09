@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import SearchBar from "@/src/components/SearchBar";
 
 const categories = [
@@ -12,9 +13,14 @@ const categories = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   const toggleMenu = () => setOpen(!open);
+
+  if (pathname?.startsWith('/sample')) {
+    return null;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full cute-glass">

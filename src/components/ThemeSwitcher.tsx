@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function ThemeSwitcher() {
+  const pathname = usePathname();
   const [theme, setTheme] = useState("peach");
   const [font, setFont] = useState("sans");
   const [mounted, setMounted] = useState(false);
@@ -16,15 +18,19 @@ export default function ThemeSwitcher() {
   }, []);
 
   useEffect(() => {
+    // Skip theme overrides on sample route
+    if (pathname?.startsWith('/sample')) return;
+
     if (mounted) {
       document.documentElement.setAttribute('data-theme', theme);
       document.documentElement.setAttribute('data-font', font);
       localStorage.setItem("mikke-theme", theme);
       localStorage.setItem("mikke-font", font);
     }
-  }, [theme, font, mounted]);
+  }, [theme, font, mounted, pathname]);
 
   if (!mounted) return null;
+  if (pathname?.startsWith('/sample')) return null;
 
   return (
     <div className="fixed bottom-4 left-4 z-50 flex flex-col items-start gap-2">
