@@ -1,9 +1,10 @@
 /* app/sample/sample-globals.css */
 
 /* =========================================
-   🎨 CLEAN SCIENCE THEME ROOT VARIABLES
+   🎨 CLEAN SCIENCE THEME ROOT VARIABLES & OVERRIDES
    ========================================= */
-html[data-theme="clean-science"] {
+html[data-theme="clean-science"],
+.clean-science-theme-wrapper {
   --background: #f4f4f5 !important; /* zinc-100 (無機質グレー) */
   --foreground: #18181b !important; /* zinc-900 */
   --primary: #18181b !important;
@@ -16,11 +17,23 @@ html[data-theme="clean-science"] {
   --theme-grad-2: rgba(24, 24, 27, 0.01) !important;
 }
 
-html[data-theme="clean-science"] body {
+/* Hide global layout elements during sample preview */
+body.is-sample-route header,
+body.is-sample-route footer,
+body.is-sample-route div.fixed.bottom-4.left-4 { /* ThemeSwitcher fixed container */
+  display: none !important;
+}
+
+body.is-sample-route {
   background-color: #f4f4f5 !important;
   background-image: radial-gradient(circle at 80% 10%, rgba(24, 24, 27, 0.03) 0%, transparent 40%),
                     radial-gradient(circle at 10% 90%, rgba(24, 24, 27, 0.01) 0%, transparent 40%) !important;
   color: #18181b !important;
+}
+
+/* Force serif font when data-font is serif on the sample route */
+html[data-font="serif"] body.is-sample-route {
+  font-family: var(--font-noto-serif), "Noto Serif JP", serif !important;
 }
 
 /* --- Clean Science Button & Badge Overrides --- */
