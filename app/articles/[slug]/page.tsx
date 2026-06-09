@@ -64,24 +64,42 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
   const relatedArticles = await getRelatedArticles(slug, article.category || "");
 
   // Structured Data (JSON-LD)
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Article',
-    headline: article.title,
-    description: article.excerpt,
-    image: article.coverImage,
-    datePublished: article.publishedAt,
-    author: {
-      '@type': 'Organization',
-      name: 'みっけ！',
-    },
-  };
+  const jsonLdList: any[] = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: article.title,
+      description: article.excerpt,
+      image: article.coverImage,
+      datePublished: article.publishedAt,
+      author: {
+        '@type': 'Organization',
+        name: 'みっけ！',
+      },
+    }
+  ];
+
+  if (article.rankings && article.rankings.length > 0) {
+    jsonLdList.push({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: `${article.title} ランキング`,
+      itemListElement: article.rankings.map((prod: any, index: number) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: prod.name,
+        url: `https://www.mikke-style.com/articles/${slug}#${index + 1}`
+      }))
+    });
+  }
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ 
+          __html: JSON.stringify(jsonLdList.length === 1 ? jsonLdList[0] : jsonLdList) 
+        }}
       />
       <article className="w-full pb-24 animate-fade-in-up bg-background">
         

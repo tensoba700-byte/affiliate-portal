@@ -399,7 +399,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
 
       const btn = (cls: string, url: string, iconSrc: string, label: string, price?: string) => {
         const priceHtml = price && price !== 'なし' ? `<span class="btn-price">¥${Number(price).toLocaleString()}〜</span>` : '';
-        return `<a href="${url}" target="_blank" class="${cls}">${ICON(iconSrc, label)}<span class="btn-text-stack"><span class="btn-label">${label}で探す</span>${priceHtml}</span></a>`;
+        return `<a href="${url}" target="_blank" rel="noopener noreferrer nofollow sponsored" class="${cls}">${ICON(iconSrc, label)}<span class="btn-text-stack"><span class="btn-label">${label}で探す</span>${priceHtml}</span></a>`;
       };
 
       return `<div class="affiliate-buttons">

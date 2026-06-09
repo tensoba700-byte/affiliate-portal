@@ -118,7 +118,7 @@ function BuyButton({
     <a
       href={url || "#"}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noopener noreferrer nofollow sponsored"
       className="flex items-center justify-center md:justify-between gap-1.5 md:gap-3 px-1.5 md:px-4 py-2 md:py-2.5 font-black transition-all duration-300 rounded-xl active:scale-95 shadow-sm hover:shadow-md border border-black/5 flex-1 md:flex-initial"
       style={{
         background: hovered ? hoverBg : bg,
@@ -271,6 +271,8 @@ export default function RankingTable({ products, title }: Props) {
                         className="object-contain w-full h-full"
                         style={{ borderRadius: '12px', mixBlendMode: 'multiply' }}
                         referrerPolicy="no-referrer"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                   ) : (
