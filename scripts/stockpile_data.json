@@ -1,188 +1,204 @@
 {
-  "category": "3Dアートペン",
+  "category": "保湿クリーム",
   "selection_points": [
-    "対象年齢・安全性",
-    "使用フィラメントの種類",
-    "給電方法（コードレスか有線か）",
-    "温度調節機能・加熱方式"
+    "保湿力",
+    "配合成分",
+    "肌へのやさしさ",
+    "テクスチャー・ベタつきにくさ"
   ],
   "products": [
     {
-      "name": "メガハウス 3Dドリームアーツペン レインボーセット",
-      "jan": "4975430514334",
-      "asin": "B07XG4DSP7",
+      "name": "良品計画無印良品 敏感肌用 ｜ 敏感肌用クリーム",
+      "jan": "4550583435110",
+      "asin": "B0CL3YB2ZB",
       "recommended_for": [
-        "熱を使用しない安全なペンを探している人",
-        "小さな子どもへのプレゼントを探している人"
+        "敏感肌",
+        "乾燥肌"
       ],
       "facts": [
-        "熱を使わずにジェル状のインクを可視光線（ライト）で固めて立体物を作る方式を採用している。",
-        "専用のインクペン7色とエアーアップライトがセットになっている。",
-        "イラストシートの上をなぞったり、専用の型（3Dプリントパーツ）を使ったりして作品を作れる。"
+        "アレルギーテスト済み",
+        "無香料",
+        "無着色",
+        "無鉱物油",
+        "弱酸性",
+        "パラベンフリー",
+        "アルコールフリー"
       ],
-      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kurashi-no-kakera/cabinet/r_2025120724/20251207021320_230_1.jpg?_ex=640x640",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/sn-mart/cabinet/onesell045/sn0fdb93a12f_0.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00ty83m.xpsekd54.g00ty83m.xpsel07d/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsn-mart%2Fsn0fdb93a12f%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kurashi-no-kakera/cabinet/r_2025120724/20251207021320_230_1.jpg?_ex=640x640",
-        "amazon_price": "3588",
-        "rakuten_price": "13853",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/sn-mart/cabinet/onesell045/sn0fdb93a12f_0.jpg?_ex=640x640",
+        "amazon_price": "1591",
+        "rakuten_price": "3446",
         "yahoo_price": "なし",
-        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00utd8m.xpsekcb0.g00utd8m.xpsel305/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkurashi-no-kakera%2F20251207021320_230%2F",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00ty83m.xpsekd54.g00ty83m.xpsel07d/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fsn-mart%2Fsn0fdb93a12f%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B07XG4DSP7?tag=mikkestyle-22",
-        "amazon_name": "メガハウス(MegaHouse) 3Dドリームアーツペン レインボー7色セット",
-        "rakuten_name": "3Dドリームアーツペン レインボー7色セット",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0CL3YB2ZB?tag=mikkestyle-22",
+        "amazon_name": "敏感肌用クリーム 50g 83435110",
+        "rakuten_name": "敏感肌用クリーム 50g 83435110",
         "yahoo_name": "なし"
       }
     },
     {
-      "name": "Kizare 3Dペン",
-      "jan": "8905660068730",
-      "asin": "B0G7BS6HZ1",
+      "name": "花王キュレル ｜ 潤浸保湿 フェイスクリーム",
+      "jan": "4901301236210",
+      "asin": "B01M109Z7B",
       "recommended_for": [
-        "ノズルから出た素材を直接手で触って修正したい人",
-        "火傷を防止したい子ども向け工作"
+        "乾燥性敏感肌",
+        "乾燥肌"
       ],
       "facts": [
-        "融点85度のPCL低温フィラメントを採用している。",
-        "ノズルから押し出された素材を直接指で修正することが可能である。",
-        "本体重量は約46gの超軽量設計である。"
+        "弱酸性",
+        "無香料",
+        "無着色",
+        "アルコールフリー",
+        "アレルギーテスト済み",
+        "乾燥性敏感肌の方の協力によるパッチテスト済み"
       ],
-      "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kyorindo/cabinet/item10/4901301236210-24.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00t96nm.xpseke13.g00t96nm.xpsel4da/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkyorindo%2F4901301236210-24%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "5699",
-        "rakuten_price": "なし",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kyorindo/cabinet/item10/4901301236210-24.jpg?_ex=640x640",
+        "amazon_price": "2427",
+        "rakuten_price": "46420",
         "yahoo_price": "なし",
-        "rakuten_url": "",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00t96nm.xpseke13.g00t96nm.xpsel4da/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkyorindo%2F4901301236210-24%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0G7BS6HZ1?tag=mikkestyle-22",
-        "amazon_name": "3Dペン 知育玩具 子供用 小学生 低温で設計 シンプルで使いやすい クリスマスプレゼント描画 手工芸 自由創作 ワイヤレスデザイン 6歳 7歳 8歳のお子様に適した工作おもちゃ (ブルー,9メートル消耗品)",
-        "rakuten_name": "なし",
+        "amazon_url": "https://www.amazon.co.jp/dp/B01M109Z7B?tag=mikkestyle-22",
+        "amazon_name": "キュレル 潤浸保湿フェイスクリーム 40g",
+        "rakuten_name": "【医薬部外品】 花王 キュレル 潤浸保湿 フェイスクリーム 40g　×24個 ◆",
         "yahoo_name": "なし"
       }
     },
     {
-      "name": "room109 3Doodler Create+ 3Dプリンティングペンセット",
-      "jan": "0817005022407",
-      "asin": "B07B7PQCZV",
+      "name": "第一三共ヘルスケアMINON Amino Moist ｜ モイストチャージ クリーム",
+      "jan": "4987107637376",
+      "asin": "B0CCRCPWCP",
       "recommended_for": [
-        "多様な色のフィラメントを使って本格的な立体アートを楽しみたい人",
-        "初心者向けのチュートリアルアプリを使いたい人"
+        "乾燥肌",
+        "敏感肌"
       ],
       "facts": [
-        "ABSプラスチックまたはPLAプラスチック製のフィラメントを使用する。",
-        "15色の詰め替え用フィラメントが同梱されている。",
-        "初心者向けのチュートリアルや図面を提供する専用アプリが用意されている。"
+        "アレルギーテスト済み",
+        "無香料",
+        "無着色",
+        "アルコールフリー",
+        "パラベンフリー",
+        "弱酸性",
+        "敏感肌・乾燥肌の方による連用テスト済み"
       ],
-      "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/onemakem/cabinet/biiino/item/main-image/20260429115712_1.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00tyssm.xpsekadc.g00tyssm.xpsel1cb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fonemakem%2F4987107637376%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "40018",
-        "rakuten_price": "なし",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/onemakem/cabinet/biiino/item/main-image/20260429115712_1.jpg?_ex=640x640",
+        "amazon_price": "2196",
+        "rakuten_price": "2998",
         "yahoo_price": "なし",
-        "rakuten_url": "",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00tyssm.xpsekadc.g00tyssm.xpsel1cb/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fonemakem%2F4987107637376%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B07B7PQCZV?tag=mikkestyle-22",
-        "amazon_name": "3Doodler (スリードゥードラー) Create+ 3Dプリントペン ティーン/大人/クリエイター向け ブラック (2023年モデル) 詰め替え用フィラメント+ステンシルブック+入門ガイド付き(日本語ではない場合があります)",
-        "rakuten_name": "なし",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0CCRCPWCP?tag=mikkestyle-22",
+        "amazon_name": "MINON(ミノン) アミノモイスト モイストチャージ クリーム 40g 【敏感肌 乾燥肌】うるおい続く 独自処方 保湿クリーム 顔 保湿",
+        "rakuten_name": "【送料無料】 ミノン アミノモイスト モイストチャージ クリーム 40g 【まとめ買いでさらにお得】第一三共ヘルスケア 保湿クリーム フェイスクリーム 敏感肌 乾燥肌 スキンケア 潤い 顔 保湿 アミノ酸 無香料 無着色 低刺激",
         "yahoo_name": "なし"
       }
     },
     {
-      "name": "SCRIB3D ジュニア 3Dプリントペンセット",
-      "jan": "0860008147455",
-      "asin": "B0DHQVTHVT",
+      "name": "コーセーCarté ｜ カルテHD 高保湿クリーム",
+      "jan": "4971710512496",
+      "asin": "B08KPZVX6T",
       "recommended_for": [
-        "コードレスで使用できる子ども向け3Dペンを探している人",
-        "安全チップが搭載された製品を選びたい人"
+        "超乾燥肌",
+        "乾燥肌"
       ],
       "facts": [
-        "火傷を防ぐための接触冷感チップをペン先に搭載している。",
-        "BPAフリーで非毒性のPCLフィラメントを9m分同梱している。",
-        "30分の充電でワイヤレス（コードレス）使用が可能である。"
+        "無香料",
+        "無着色",
+        "アルコールフリー",
+        "アレルギーテスト済み",
+        "敏感肌の方の協力によるパッチテスト済み"
       ],
-      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/scrib3d/cabinet/biiino/item/main-image/20260603115228_1.jpg?_ex=640x640",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kusurinofukutaro/cabinet/syohin97/10142420.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00rw7pm.xpsekb52.g00rw7pm.xpsel5d3/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkusurinofukutaro%2F10142420%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "9439",
-        "rakuten_price": "なし",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kusurinofukutaro/cabinet/syohin97/10142420.jpg?_ex=640x640",
+        "amazon_price": "2640",
+        "rakuten_price": "5280",
         "yahoo_price": "なし",
-        "rakuten_url": "",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00rw7pm.xpsekb52.g00rw7pm.xpsel5d3/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkusurinofukutaro%2F10142420%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0DHQVTHVT?tag=mikkestyle-22",
-        "amazon_name": "SCRIB3D ジュニア3Dプリントペンセット フィラメント、アクティビティガイド、USB充電ケーブル付き",
-        "rakuten_name": "なし",
+        "amazon_url": "https://www.amazon.co.jp/dp/B08KPZVX6T?tag=mikkestyle-22",
+        "amazon_name": "カルテHD 【医薬部外品】 モイスチュア クリーム 40g ヘパリン類似物質 モイスチャライジング ハイドレーティング 保湿クリーム 顔 乾燥 肌あれ 高保湿 敏感肌 低刺激 無香料",
+        "rakuten_name": "《セット販売》　コーセー カルテHD モイスチュア クリーム 高保湿クリーム (40g)×2個セット フェイスクリーム　【医薬部外品】",
         "yahoo_name": "なし"
       }
     },
     {
-      "name": "Generic 3Dプリント 描画ペン",
-      "jan": "",
-      "asin": "B0FV89YXPZ",
+      "name": "スタイリングライフ・ホールディングスBCL 乾燥さん ｜ 薬用高保湿クリーム",
+      "jan": "4515061013815",
+      "asin": "B0D9Q7KGNK",
       "recommended_for": [
-        "紙や布などに盛り上がった線や質感を描きたい人",
-        "ヘアドライヤーや電気ヒーターを使って手軽に膨らませたい人"
+        "乾燥肌",
+        "ゆらぎ肌"
       ],
       "facts": [
-        "熱や乾燥によってインクが膨らみ、線に立体感を加えることができる特殊インクペンである。",
-        "小さなペン先を備えており、細かいディテールの描画に適している。",
-        "紙や布、グリーティングカードなどのデコレーションに使用できる。"
+        "無香料",
+        "無着色",
+        "アルコールフリー",
+        "パラベンフリー",
+        "鉱物油フリー",
+        "石油系界面活性剤フリー"
       ],
-      "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/shiton22/cabinet/4515061013815.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00ulh4m.xpsek1a6.g00ulh4m.xpsel7a0/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fshiton22%2F4515061013815%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "1769",
-        "rakuten_price": "なし",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/shiton22/cabinet/4515061013815.jpg?_ex=640x640",
+        "amazon_price": "1818",
+        "rakuten_price": "1583",
         "yahoo_price": "なし",
-        "rakuten_url": "",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00ulh4m.xpsek1a6.g00ulh4m.xpsel7a0/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fshiton22%2F4515061013815%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0FV89YXPZ?tag=mikkestyle-22",
-        "amazon_name": "バブルブラシ – 5インチ ペイントツール | アートペン – DIYポップコーン3Dプリント描画ペン 子供のための鮮やかなデザインを作成 ペイントクラフト ヘアドライヤーやヒーターで簡単に使用",
-        "rakuten_name": "なし",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0D9Q7KGNK?tag=mikkestyle-22",
+        "amazon_name": "乾燥さん 薬用高保湿クリーム 50g 医薬部外品 保湿クリーム 高保湿 敏感肌 乾燥肌 ヘパリン類似物質 肌荒れ防止 にきび防止 潤いバリア",
+        "rakuten_name": "乾燥さん 薬用高保湿クリーム(50g) 4515061013815 -ko",
         "yahoo_name": "なし"
       }
     },
     {
-      "name": "R Trading 3Doodler Start+",
-      "jan": "0817005023848",
-      "asin": "B0CMGGGS4M",
+      "name": "花王SOFINA iP ｜ ゴールデンタイムリペア 深夜浸透クリーム",
+      "jan": "4901301446466",
+      "asin": "B0DH4Q5YHM",
       "recommended_for": [
-        "環境や体に配慮された素材を選びたい人",
-        "USB充電式のコードレス3Dペンを探している人"
+        "乾燥肌",
+        "夜用ケア"
       ],
       "facts": [
-        "サトウキビとコーンスターチを原料とした生分解性プラスチックフィラメントを使用している。",
-        "触っても熱くない低温設計のノズルを採用している。",
-        "USBケーブルで充電してコードレスで使用できる。"
+        "アレルギーテスト済み",
+        "夜用クリーム",
+        "乾燥小じわを目立たなくする効能評価試験済み"
       ],
-      "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-      "rakuten_url": null,
+      "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kenkoukan-r/cabinet/goq001/11965_1.jpg?_ex=640x640",
+      "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00rz9um.xpsek124.g00rz9um.xpselde6/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkenkoukan-r%2F4901301446466%2F",
       "yahoo_url": null,
       "resolved_details": {
-        "image_url": "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500",
-        "amazon_price": "5499",
-        "rakuten_price": "なし",
+        "image_url": "https://thumbnail.image.rakuten.co.jp/@0_mall/kenkoukan-r/cabinet/goq001/11965_1.jpg?_ex=640x640",
+        "amazon_price": "2970",
+        "rakuten_price": "2640",
         "yahoo_price": "なし",
-        "rakuten_url": "",
+        "rakuten_url": "https://hb.afl.rakuten.co.jp/hgc/g00rz9um.xpsek124.g00rz9um.xpselde6/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fkenkoukan-r%2F4901301446466%2F",
         "yahoo_url": "",
-        "amazon_url": "https://www.amazon.co.jp/dp/B0CMGGGS4M?tag=mikkestyle-22",
-        "amazon_name": "3Doodler Start＋ 3Dペン [並行輸入品]",
-        "rakuten_name": "なし",
+        "amazon_url": "https://www.amazon.co.jp/dp/B0DH4Q5YHM?tag=mikkestyle-22",
+        "amazon_name": "SOFINA iP ソフィーナｉＰゴールデンタイムリペア深夜浸透クリーム【クリーム】",
+        "rakuten_name": "ソフィーナ　iP　ゴールデンタイムリペア　深夜浸透クリーム　 55g ●翌日配達「あす楽」対象商品（休業日を除く）●",
         "yahoo_name": "なし"
       }
     }
   ],
   "_source_urls": [
-    "https://my-best.com/2418"
+    "https://my-best.com/2637"
   ]
 }
