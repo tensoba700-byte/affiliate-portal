@@ -312,9 +312,9 @@ YAHOO: https://store.shopping.yahoo.co.jp/kaikyou/4580445419309.html
 ---
 
 ## 🌈 あわせて見たい関連記事
+- [水槽に、生命の輝きを。【水草を育むLED照明6選】](/articles/20260531-aquarium-led-lights)
 - [料理を、もっと美味しく、軽やかに。【毎日使いたくなるフライパン6選】](/articles/20260530-frying-pans)
 - [風格と信頼を、足元に。【ビジネスマンを支えるリーガルの革靴6選】](/articles/20260529-regal-business-shoes)
 - [料理を、もっと美味しく、軽やかに。【毎日使いたくなるフライパン6選】](/articles/20260528-frying-pans)
 - [飲み頃温度を、どこまでも。【日常を豊かにする水筒の選び方】](/articles/20260526-daily-life-water-bottle-guide)
-- [台所に、職人の意志を置く。【料理好きが認める本格キッチン道具6選】](/articles/20260525-台所に職人の意志を置く料理好きが認める本格キッチン)
 

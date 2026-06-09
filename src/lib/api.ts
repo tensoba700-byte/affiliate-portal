@@ -36,6 +36,7 @@ export interface ArticleItem {
   coverImage?: string | null; // kept for markdown fallback
   content?: string; // rendered HTML from markdown fallback
   rankings: Product[]; // parsed product ranking data
+  faq?: { question: string; answer: string }[];
 }
 
 /**
@@ -94,6 +95,41 @@ async function fetchUnsplashImage(query: string): Promise<string | null> {
     console.error(`Unsplash API error for "${query}":`, err);
   }
   return null;
+}
+
+/**
+ * Parse FAQ sections from raw markdown content.
+ * Looks for questions like "### Q. QuestionText" and answers like "A. AnswerText".
+ */
+export function parseFaqsFromMarkdown(raw: string): { question: string; answer: string }[] {
+  const faqs: { question: string; answer: string }[] = [];
+  const regex = /###\s*[Qq]\s*[\.：:]\s*(.*?)\r?\n\s*[Aa]\s*[\.：:]\s*([\s\S]*?)(?=\r?\n\r?\n|\r?\n#|$)/g;
+  
+  let match;
+  while ((match = regex.exec(raw)) !== null) {
+    const question = match[1].trim();
+    const answer = match[2].trim().replace(/\r?\n/g, ' ');
+    if (question && answer) {
+      faqs.push({ question, answer });
+    }
+  }
+  
+  if (faqs.length === 0) {
+    const lines = raw.split('\n');
+    let currentQ = '';
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.match(/^###\s*[Qq]\s*[\.：:]/i)) {
+        currentQ = line.replace(/^###\s*[Qq]\s*[\.：:]\s*/i, '').trim();
+      } else if (currentQ && line.match(/^[Aa]\s*[\.：:]/i)) {
+        const answer = line.replace(/^[Aa]\s*[\.：:]\s*/i, '').trim();
+        faqs.push({ question: currentQ, answer });
+        currentQ = '';
+      }
+    }
+  }
+  
+  return faqs;
 }
 
 /**
@@ -257,6 +293,7 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
           thumbnail: coverImage,
           category: matterResult.data.category || '',
           body: undefined,
+          faq: parseFaqsFromMarkdown(matterResult.content),
         } as ArticleItem;
       })
       .sort((a, b) => {
@@ -287,6 +324,7 @@ export async function getAllArticles(): Promise<ArticleItem[]> {
         body: f.body as Document,
         coverImage: f.thumbnail?.fields?.file?.url ?? null,
         rankings: [],
+        faq: [],
       } as ArticleItem;
     });
   } catch (err) {
@@ -498,6 +536,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
       category: matterResult.data.category || '',
       thumbnail: null,
       body: undefined,
+      faq: parseFaqsFromMarkdown(matterResult.content),
     } as ArticleItem;
   }
 
@@ -521,6 +560,7 @@ export async function getArticleBySlug(slug: string): Promise<ArticleItem | null
         body: f.body as Document,
         coverImage: f.thumbnail?.fields?.file?.url ?? null,
         rankings: [],
+        faq: [],
       } as ArticleItem;
     }
   } catch (err) {

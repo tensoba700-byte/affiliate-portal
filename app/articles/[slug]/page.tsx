@@ -93,6 +93,21 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
     });
   }
 
+  if (article.faq && article.faq.length > 0) {
+    jsonLdList.push({
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: article.faq.map((item: any) => ({
+        '@type': 'Question',
+        name: item.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: item.answer
+        }
+      }))
+    });
+  }
+
   return (
     <>
       <script

@@ -19,4 +19,10 @@ git add .
 git commit -m "chore: automated article publication $(date +'%Y-%m-%d %H:%M:%S')"
 git push origin main
 
+# 4. Wait for Vercel deployment (150s) and trigger Google Indexing API
+echo "--- Waiting for Vercel deployment to finish (150s) ---"
+sleep 150
+echo "--- Triggering Google Indexing API ---"
+python3 scripts/seo_automation.py
+
 echo "--- Automation Complete ---"
