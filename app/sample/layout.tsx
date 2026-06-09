@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect } from 'react';
 import './sample-globals.css';
+import SampleHeader from './components/SampleHeader';
+import SampleFooter from './components/SampleFooter';
 
 export default function SampleLayout({
   children,
@@ -20,8 +22,12 @@ export default function SampleLayout({
   }, []);
 
   return (
-    <div className="clean-science-theme-wrapper min-h-screen w-full flex flex-col">
-      {children}
+    <div className="clean-science-theme-wrapper min-h-screen w-full flex flex-col bg-background text-foreground">
+      <SampleHeader />
+      <main className="flex-1 flex flex-col w-full">
+        {children}
+      </main>
+      <SampleFooter />
     </div>
   );
 }
