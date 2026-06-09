@@ -234,3 +234,8 @@ Discordボット、GitHub Actions、AIアシスタントのすべての生成シ
 - 価格取得失敗時は価格未取得として扱い、価格表示ロジックを削除してはならない
 - ランキングタブ（おすすめ順・コスパ順・人気順）は価格データを元にソートが機能すること
 - src/lib/api.tsとsrc/components/RankingTable.tsxの価格表示・ソートロジックは維持する
+
+## 12. 禁止フォルダ・ファイル
+- scratch/フォルダのスクリプトは作成・実行禁止
+- 一時的なスクリプトもscratch/には置かない
+- 既存のスクリプト（prepare_stockpile.py・publish_article.py・validate_article_draft.py）のみ使用する
