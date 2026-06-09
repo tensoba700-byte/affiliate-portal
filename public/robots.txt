@@ -7,3 +7,4 @@ Host: https://www.mikke-style.com
 
 # Sitemaps
 Sitemap: https://www.mikke-style.com/sitemap.xml
+Sitemap: https://www.mikke-style.com/feed.xml

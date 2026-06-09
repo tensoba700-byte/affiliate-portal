@@ -2,6 +2,11 @@
 module.exports = {
   siteUrl: 'https://www.mikke-style.com',
   generateRobotsTxt: true,
+  robotsTxtOptions: {
+    additionalSitemaps: [
+      'https://www.mikke-style.com/feed.xml',
+    ],
+  },
   sitemapSize: 7000,
   outDir: 'public',
   // Percent-encode and NFC normalize all paths generated in the sitemap to prevent invalid XML or duplicate issues
