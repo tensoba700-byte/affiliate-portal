@@ -1,2 +1,5 @@
 # Ignore scripts folder from Vercel build
-scripts/
+scripts/**/*.py
+scripts/**/*.sh
+scripts/**/*.log
+scripts/**/*.json
