@@ -501,7 +501,8 @@ body {
 }
 
 /* --- Wrapper Base --- */
-.sample-wrapper {
+.sample-wrapper,
+.s-home-wrapper {
   background-color: var(--s-bg);
   color: var(--s-ink);
   font-family: var(--s-font-body);

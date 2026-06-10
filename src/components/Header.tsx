@@ -2,10 +2,16 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import SearchBar from "@/src/components/SearchBar";
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  if (pathname?.startsWith('/sample')) {
+    return null;
+  }
 
   return (
     <header className="sample-header">

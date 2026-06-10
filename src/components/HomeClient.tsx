@@ -92,7 +92,7 @@ export default function HomeClient({ initialArticles }: HomeClientProps) {
   ];
 
   return (
-    <div className="sample-wrapper">
+    <div className="s-home-wrapper">
       {/* ── Hero Banner ── */}
       <div className="s-hero">
         <div
