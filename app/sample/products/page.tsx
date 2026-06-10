@@ -195,9 +195,10 @@ export default async function SampleProductsPage({ searchParams }: PageProps) {
               </div>
 
               <Link href={`/sample/articles/${prod.articleSlug}`} className="s-prod-report-btn">
-                📄 ガチ検証レポートを読む
+                📄 この記事で紹介
               </Link>
             </div>
+
           );
         })}
       </div>
