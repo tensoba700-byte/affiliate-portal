@@ -72,10 +72,10 @@ export default function SampleHome() {
               <span className="text-[9px] font-bold text-muted tracking-widest uppercase font-mono">EDITORIAL EDITION</span>
             </div>
             <h2 className="text-base md:text-xl font-black text-foreground leading-snug">
-              ミニマル美容の美学：肌に深く向き合う、洗練されたケアの提案。
+              「夕方の毛穴に絶望したくない…！」大忙しオタクがガチで選ぶ本命コスメ
             </h2>
             <p className="text-muted text-xs font-bold leading-relaxed max-w-2xl">
-              仕事に趣味に忙しい毎日だからこそ、本当に必要なものだけを厳選。余計なものを削ぎ落とした、塩系スタイリッシュなスキンケアの最適解。
+              日中の化粧直しはゼロ！毎日バタバタ大忙しな美容ライターのツキが、実生活で使い倒して「本当に崩れない」「時短で効く」と確信した神アイテムだけを厳選して本音レビューするよ！
             </p>
           </div>
         </div>
