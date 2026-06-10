@@ -116,7 +116,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
           __html: JSON.stringify(jsonLdList.length === 1 ? jsonLdList[0] : jsonLdList) 
         }}
       />
-      <article className="w-full pb-24 animate-fade-in-up bg-background">
+      <article className="w-full pb-24 animate-fade-in-up bg-background s-article-page">
         
         <div className="container mx-auto max-w-3xl px-4 pt-8">
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Zen_Maru_Gothic, Noto_Sans_JP } from "next/font/google";
+import { Noto_Serif_JP, Noto_Sans_JP } from "next/font/google";
 import Link from "next/link";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
@@ -7,11 +7,11 @@ import CookieConsent from "@/src/components/CookieConsent";
 import Script from "next/script";
 import "./globals.css";
 
-const zenMaru = Zen_Maru_Gothic({
+const notoSerif = Noto_Serif_JP({
   weight: ['400', '700'],
-  variable: "--font-zen-maru",
-  subsets: ["latin"],
+  variable: "--font-noto-serif",
   display: "swap",
+  preload: false,
 });
 
 const notoSans = Noto_Sans_JP({
@@ -63,7 +63,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${zenMaru.variable} ${notoSans.variable} h-full antialiased`} data-theme="peach" data-font="sans">
+    <html lang="ja" className={`${notoSerif.variable} ${notoSans.variable} h-full antialiased`} data-theme="peach" data-font="sans">
       <head>
         {/* Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />

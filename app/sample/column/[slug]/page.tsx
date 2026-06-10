@@ -67,7 +67,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
   };
 
   return (
-    <div className="s-col-detail">
+    <div className="s-col-detail s-article-page">
 
       {/* Breadcrumb */}
       <nav className="s-breadcrumb">

@@ -2557,5 +2557,159 @@ body:has(.sample-wrapper) > div.fixed {
   }
 }
 
+/* =========================================
+   🖤 ARTICLE DETAIL PAGE BLACK/MONO THEME
+   ========================================= */
+.s-article-page {
+  /* 変数のオーバーライド */
+  --background: #F7F7F5 !important;
+  --foreground: #1A1A1A !important;
+  --muted: #888888 !important;
+  --muted-2: #888888 !important;
+  --primary: #1A1A1A !important;
+  --primary-foreground: #ffffff !important;
+  --card: #ffffff !important;
+  --card-border: rgba(26, 26, 26, 0.1) !important;
+  --theme-shadow: rgba(0, 0, 0, 0.03) !important;
+  --theme-grad-1: transparent !important;
+  --theme-grad-2: transparent !important;
 
+  /* スタンドアローンデザインシステムの変数もオーバーライド */
+  --s-bg: #F7F7F5 !important;
+  --s-surface: #FFFFFF !important;
+  --s-surface-2: #F5F4F1 !important;
+  --s-border: rgba(26, 26, 26, 0.1) !important;
+  --s-border-soft: rgba(26, 26, 26, 0.05) !important;
+  --s-ink: #1A1A1A !important;
+  --s-ink-2: #444444 !important;
+  --s-muted: #888888 !important;
+  --s-muted-2: #888888 !important;
+  --s-accent: #1A1A1A !important;
+  --s-accent-dark: #1A1A1A !important;
+  --s-accent-bg: rgba(26, 26, 26, 0.05) !important;
 
+  /* 基本フォント（本文）を Noto Sans JP に設定 */
+  font-family: var(--font-noto-sans), sans-serif !important;
+  background-color: #F7F7F5 !important;
+  color: #1A1A1A !important;
+}
+
+/* 記事ページ内の見出しに Noto Serif JP を適用 */
+.s-article-page h1,
+.s-article-page h2,
+.s-article-page h3,
+.s-article-page h4,
+.s-article-page h5,
+.s-article-page h6,
+.s-article-page .article-title,
+.s-article-page .s-article-h1 {
+  font-family: var(--font-noto-serif), serif !important;
+  color: #1A1A1A !important;
+}
+
+/* ピンク系のデザイン装飾を削除・変更 */
+.s-article-page .bg-primary\/5 {
+  background-color: rgba(26, 26, 26, 0.05) !important;
+}
+
+.s-article-page .bg-primary\/10 {
+  background-color: rgba(26, 26, 26, 0.1) !important;
+}
+
+.s-article-page .text-primary {
+  color: #1A1A1A !important;
+}
+
+/* 記事内HTMLコンテンツの装飾（リボンやハート）のピンク系を無彩色（モダンなマーク）に変更 */
+.s-article-page .cute-html-content h2::before {
+  content: "✦" !important; /* リボン🎀の代わりに星印 */
+  color: #1A1A1A !important;
+}
+
+.s-article-page .cute-html-content h3 {
+  border-bottom-color: rgba(26, 26, 26, 0.2) !important;
+}
+
+.s-article-page .cute-html-content blockquote {
+  background-color: rgba(26, 26, 26, 0.03) !important;
+  border-color: rgba(26, 26, 26, 0.1) !important;
+}
+
+.s-article-page .cute-html-content blockquote::before {
+  color: rgba(26, 26, 26, 0.1) !important;
+}
+
+.s-article-page .cute-html-content ul {
+  border-color: rgba(26, 26, 26, 0.1) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+}
+
+.s-article-page .cute-html-content li::before {
+  content: "・" !important; /* ハート♡の代わりに点 */
+  color: #1A1A1A !important;
+}
+
+.s-article-page .cute-html-content a {
+  background-color: rgba(26, 26, 26, 0.05) !important;
+  color: #1A1A1A !important;
+}
+.s-article-page .cute-html-content a:hover {
+  background-color: #1A1A1A !important;
+  color: #ffffff !important;
+}
+
+/* コラムディテールページの装飾 */
+.s-article-page .s-article-header-card {
+  border-color: rgba(26, 26, 26, 0.1) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03) !important;
+  background-color: #ffffff !important;
+}
+
+.s-article-page .s-content-card {
+  border-color: rgba(26, 26, 26, 0.1) !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03) !important;
+  background-color: #ffffff !important;
+}
+
+/* コラム内の見出し */
+.s-article-page .s-rich-text h2 {
+  font-family: var(--font-noto-serif), serif !important;
+  color: #1A1A1A !important;
+}
+
+/* 関連記事のハートやピンクを修正 */
+.s-article-page .text-primary\/30 {
+  color: rgba(26, 26, 26, 0.2) !important;
+}
+
+.s-article-page .group:hover .group-hover\:text-primary {
+  color: #1A1A1A !important;
+}
+
+/* 🌸 ランキングテーブル部分は触らない (元のピンクや独自のカラー定義を維持するために、変数やスタイルをリセット) */
+.s-article-page .s-table-wrap,
+.s-article-page .w-full.my-8.rounded-\[24px\] {
+  --background: #fff8f5 !important; 
+  --foreground: #5a4b49 !important; 
+  --primary: #ff8fa3 !important; 
+  --primary-foreground: #ffffff !important;
+  --muted: #a89f9e !important;
+  --card: rgba(255, 255, 255, 0.95) !important;
+  --card-border: rgba(255, 143, 163, 0.15) !important; 
+  --theme-shadow: rgba(255, 143, 163, 0.2) !important;
+  --theme-grad-1: rgba(255, 143, 163, 0.08) !important;
+  --theme-grad-2: rgba(255, 219, 143, 0.08) !important;
+
+  /* ランキングテーブル内のフォントは元のSans/Bodyに戻す */
+  font-family: var(--s-font-body), sans-serif !important;
+}
+
+/* ランキングテーブル内の見出しやテキスト、ボタンもSerifにならないように元のフォントに戻す */
+.s-article-page .s-table-wrap h3,
+.s-article-page .w-full.my-8.rounded-\[24px\] h3,
+.s-article-page .s-table-wrap button,
+.s-article-page .w-full.my-8.rounded-\[24px\] button,
+.s-article-page .s-table-wrap a,
+.s-article-page .w-full.my-8.rounded-\[24px\] a {
+  font-family: var(--s-font-body), sans-serif !important;
+}

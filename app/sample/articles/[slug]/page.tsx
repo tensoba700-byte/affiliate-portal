@@ -48,7 +48,7 @@ export default async function SampleArticleDetail({ params }: PageProps) {
     : 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80';
 
   return (
-    <div className="s-article-detail">
+    <div className="s-article-detail s-article-page">
 
       {/* Breadcrumb */}
       <nav className="s-breadcrumb" aria-label="パンくずリスト">
