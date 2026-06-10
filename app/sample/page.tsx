@@ -88,10 +88,10 @@ export default function SampleHome() {
               <span className="text-[9px] font-bold text-muted tracking-widest uppercase font-mono">EDITORIAL EDITION</span>
             </div>
             <h2 className="text-base md:text-xl font-black text-foreground leading-snug">
-              「夕方の毛穴に絶望したくない…！」大忙しオタクがガチで選ぶ本命コスメ
+              時間がない！でも妥協したくない！忙しい女子のための「ガチ本音」コスメ検証メディア
             </h2>
             <p className="text-muted text-xs font-bold leading-relaxed max-w-2xl">
-              日中の化粧直しはゼロ！毎日バタバタ大忙しな美容ライターのツキが、実生活で使い倒して「本当に崩れない」「時短で効く」と確信した神アイテムだけを厳選して本音レビューするよ！
+              仕事に趣味に毎日バタバタで、メイク直しをする暇なんて一切ないけれど、コスメへの愛だけは誰にも負けないツキが運営する「みっけ！(mikke!)」。リアルに使い倒して「本当に崩れない」「タイパ最強」と確信したアイテムだけを忖度なしで徹底比較するよ！あなたにぴったりの本命コスメをここで見つけてね！
             </p>
           </div>
         </div>
