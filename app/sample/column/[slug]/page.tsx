@@ -22,7 +22,6 @@ export default async function SampleColumnDetail({ params }: PageProps) {
     notFound();
   }
 
-  // Next Column logic
   const currentIndex = columnsData.findIndex(c => c.slug === slug);
   const nextColumn = columnsData[(currentIndex + 1) % columnsData.length];
 
@@ -45,7 +44,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
       <p>今回は、日中に化粧直しをする時間が一切ない大忙しな私が、実際に使い比べて見出した「崩れない下地」の本音の選び方をまとめたよ！</p>
       
       <h2>// 1. TゾーンとUゾーンで「役割を分ける」のが鉄則</h2>
-      <p>顔全体に同じ皮脂崩れ防止下地を塗って、カサカサに乾燥しちゃった経験ない？笑 脂っぽくなりやすいおでこや鼻先（Tゾーン）には皮脂吸着タイプを薄く伸ばし、乾燥しやすい目元や頬（Uゾーン）には高保湿の美容液下地を仕込むのが、実は一番崩れない方法んだよね。</p>
+      <p>顔全体に同じ皮脂崩れ防止下地を塗って、カサカサに乾燥しちゃった経験ない？笑 脂っぽくなりやすいおでこや鼻先（Tゾーン）には皮脂吸着タイプを薄く伸ばし、乾燥しやすい目元や頬（Uゾーン）には高保湿の美容液下地を仕込むのが、実は一番崩れない方法なんだよね。</p>
       
       <h2>// 2. 「毛穴の凹凸」を埋めるシリコン系は薄く叩き込む</h2>
       <p>毛穴をフラットに見せてくれるポアプライマーは便利だけど、塗りすぎると逆にファンデのヨレの原因になっちゃう。米粒半分くらいの量を指先にとって、毛穴が気になる部分にぽんぽんと優しく叩き込むように馴染ませるのがコツだよ！</p>
@@ -69,100 +68,91 @@ export default async function SampleColumnDetail({ params }: PageProps) {
   };
 
   return (
-    <div className="w-full pb-32 bg-background text-foreground min-h-screen relative overflow-x-hidden">
-      {/* Ambient decorative glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-b from-zinc-200/30 to-transparent pointer-events-none blur-3xl z-0" />
+    <div className="s-col-detail">
 
-      <div className="container mx-auto max-w-2xl px-4 pt-10 relative z-10">
-        
-        {/* Navigation Breadcrumbs */}
-        <nav className="text-[10px] font-bold mb-8 flex items-center justify-start gap-2 text-muted tracking-widest uppercase">
-          <Link href="/sample" className="hover:text-primary transition-colors">HOME</Link>
-          <span className="text-zinc-400">/</span>
-          <Link href="/sample/column" className="hover:text-primary transition-colors">JOURNAL</Link>
-          <span className="text-zinc-400">/</span>
-          <span className="text-foreground truncate max-w-[150px] md:max-w-none text-left" aria-current="page">
-            {column.category}
-          </span>
-        </nav>
+      {/* Breadcrumb */}
+      <nav className="s-breadcrumb">
+        <Link href="/sample">HOME</Link>
+        <span className="s-breadcrumb-sep">/</span>
+        <Link href="/sample/column">JOURNAL</Link>
+        <span className="s-breadcrumb-sep">/</span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 150 }} aria-current="page">
+          {column.category}
+        </span>
+      </nav>
 
-        {/* Column Header */}
-        <header className="bg-white rounded-2xl p-6 md:p-12 border border-card-border shadow-sm mb-8 text-center relative overflow-hidden">
-          <span className="text-[9px] font-black tracking-widest text-muted block mb-4 uppercase font-mono">
-            ✦ BEAUTY JOURNAL ESSAY
-          </span>
-          <h1 className="text-lg md:text-2xl font-black text-foreground leading-snug mb-6 tracking-tight">
-            {column.title}
-          </h1>
-          <div className="flex items-center justify-center gap-4 text-[10px] font-bold text-muted pt-4 border-t border-zinc-50">
-            <span>✍️ WRITTEN BY: ツキ</span>
-            <span>🗓 {column.date}</span>
-          </div>
-        </header>
+      {/* Column Header */}
+      <header className="s-article-header-card" style={{ textAlign: 'center' }}>
+        <div className="s-article-eyebrow" style={{ justifyContent: 'center' }}>
+          <span className="s-badge-primary">{column.category}</span>
+          <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--s-muted)' }}>BEAUTY JOURNAL ESSAY</span>
+        </div>
+        <h1 className="s-article-h1" style={{ textAlign: 'center' }}>{column.title}</h1>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, fontSize: 11, fontWeight: 600, color: 'var(--s-muted)', paddingTop: 16, borderTop: '1px solid var(--s-border-soft)' }}>
+          <span>✍️ WRITTEN BY: ツキ</span>
+          <span>🗓 {column.date}</span>
+        </div>
+      </header>
 
-        {/* Column Photo Area */}
-        <div 
-          className="w-full aspect-[21/10] rounded-2xl overflow-hidden border border-card-border shadow-sm mb-8 bg-cover bg-center"
-          style={{ backgroundImage: `url(${column.coverImage})` }}
-        />
+      {/* Cover Image */}
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: '21/9',
+          borderRadius: 'var(--s-radius-card)',
+          overflow: 'hidden',
+          backgroundImage: `url(${column.coverImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          border: '1px solid var(--s-border)',
+          marginBottom: 24,
+        }}
+      />
 
-        {/* Main Column Body */}
-        <article 
-          className="bg-white rounded-2xl p-6 md:p-12 border border-card-border shadow-sm mb-8 cute-html-content leading-relaxed"
+      {/* Content */}
+      <div className="s-content-card">
+        <article
+          className="s-rich-text"
           dangerouslySetInnerHTML={{ __html: columnContents[slug] || '' }}
         />
+      </div>
 
-        {/* Beauty Writer Profile Card (Persona Match) */}
-        <div className="bg-white rounded-2xl p-6 md:p-8 border border-card-border shadow-sm mb-8 flex flex-col sm:flex-row gap-5 items-center sm:items-start">
-          <div className="w-16 h-16 rounded-full bg-zinc-100 border border-zinc-200 flex-shrink-0 flex items-center justify-center text-3xl shadow-inner">
-            👩🏻‍💻
+      {/* Writer Profile */}
+      <div className="s-profile-card">
+        <div className="s-profile-avatar">👩🏻‍💻</div>
+        <div>
+          <div className="s-profile-name">
+            ツキ（みっけ！専属美容ライター）
+            <span className="s-profile-badge">ライター</span>
           </div>
-          <div className="text-center sm:text-left space-y-2">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 justify-center sm:justify-start">
-              <span className="text-sm font-black text-foreground">ツキ（みっけ！専属美容ライター）</span>
-              <span className="bg-zinc-100 text-zinc-800 text-[8px] font-black px-2 py-0.5 rounded-full w-fit mx-auto sm:mx-0">
-                ライター
-              </span>
-            </div>
-            <p className="text-xs text-muted leading-relaxed font-bold">
-              仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。実生活で使い倒した「時短」「夕方に崩れない」リアルな体験談をコラムでお届けします。
-            </p>
-          </div>
+          <p className="s-profile-desc">
+            仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。実生活で使い倒した「時短」「夕方に崩れない」リアルな体験談をコラムでお届けします。
+          </p>
         </div>
+      </div>
 
-        {/* Next Read Recommendation */}
-        <div className="bg-zinc-950 text-white rounded-2xl p-6 md:p-8 border border-zinc-900 shadow-md mb-8 flex flex-col md:flex-row items-center justify-between gap-6 transition-all duration-300 hover:bg-zinc-900">
-          <div className="flex-1 space-y-2">
-            <span className="inline-block bg-white/10 text-white px-2 py-0.5 rounded text-[8px] font-bold tracking-widest uppercase">
-              NEXT JOURNAL
-            </span>
-            <h3 className="text-sm md:text-base font-black leading-snug tracking-tight">
-              {nextColumn.title}
-            </h3>
-            <Link 
-              href={`/sample/column/${nextColumn.slug}`}
-              className="inline-flex items-center gap-1 text-xs font-black pt-2 text-white border-b border-white/30 hover:border-white transition-all"
-            >
-              コラムを読む →
-            </Link>
-          </div>
-          <div 
-            className="w-full md:w-24 aspect-video md:aspect-square bg-cover bg-center rounded-xl flex-shrink-0 border border-white/10"
-            style={{ backgroundImage: `url(${nextColumn.coverImage})` }}
-          />
-        </div>
-
-        {/* Back Link */}
-        <div className="text-center pt-4">
-          <Link 
-            href="/sample/column" 
-            className="inline-flex items-center gap-2 bg-white hover:bg-zinc-50 border border-card-border rounded-full px-8 py-3 text-xs font-black transition-all shadow-sm"
-          >
-            ← コラム一覧に戻る
+      {/* Next Column */}
+      <div className="s-next-card">
+        <div style={{ flex: 1 }}>
+          <div className="s-next-eyebrow">NEXT JOURNAL</div>
+          <h3 className="s-next-title">{nextColumn.title}</h3>
+          <Link href={`/sample/column/${nextColumn.slug}`} className="s-next-link">
+            コラムを読む →
           </Link>
         </div>
-
+        <div
+          className="s-next-thumb"
+          style={{ backgroundImage: `url(${nextColumn.coverImage})` }}
+        />
       </div>
+
+      {/* Back */}
+      <div style={{ textAlign: 'center', paddingTop: 8 }}>
+        <Link href="/sample/column" className="s-back-btn">
+          ← コラム一覧に戻る
+        </Link>
+      </div>
+
     </div>
   );
 }

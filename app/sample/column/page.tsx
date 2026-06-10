@@ -29,96 +29,78 @@ export const columnsData = [
 
 export default function SampleColumnList() {
   return (
-    <div className="w-full pb-32 pt-12 px-4 bg-background text-foreground min-h-screen relative overflow-x-hidden">
-      {/* Top ambient glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[400px] bg-gradient-to-b from-zinc-200/30 to-transparent pointer-events-none blur-3xl z-0" />
+    <div className="s-col-page">
 
-      <div className="container mx-auto max-w-4xl relative z-10">
-        
-        {/* Header Breadcrumbs & Title */}
-        <div className="mb-16 text-center">
-          <nav className="text-[10px] font-bold mb-6 flex items-center justify-center gap-2 text-muted tracking-widest uppercase">
-            <Link href="/sample" className="hover:text-primary transition-colors">HOME</Link>
-            <span className="text-zinc-400">/</span>
-            <span className="text-foreground">BEAUTY JOURNAL</span>
-          </nav>
-          
-          <h1 className="text-3xl md:text-5xl font-black tracking-[0.2em] text-foreground mb-6 font-mono select-none">
-            BEAUTY JOURNAL
-          </h1>
-          <p className="text-xs text-muted font-bold tracking-widest max-w-lg mx-auto leading-relaxed uppercase">
-            ESSAYS, TIPS & EXPERIENCES BY BEAUTY GEEKS
-          </p>
-          <div className="w-12 h-0.5 bg-zinc-950 mx-auto mt-6" />
-        </div>
-
-        {/* Featured Column (First Post) */}
-        {columnsData.length > 0 && (
-          <section className="mb-16">
-            <Link 
-              href={`/sample/column/${columnsData[0].slug}`}
-              className="group flex flex-col md:flex-row gap-8 bg-white border border-card-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-500"
-            >
-              <div 
-                className="w-full md:w-[450px] aspect-video md:aspect-[4/3] bg-cover bg-center rounded-xl flex-shrink-0 transition-transform duration-500 group-hover:scale-[1.01]"
-                style={{ backgroundImage: `url(${columnsData[0].coverImage})` }}
-              />
-              <div className="flex flex-col justify-between py-2 gap-4">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 text-[9px] font-black text-muted tracking-widest uppercase">
-                    <span className="bg-zinc-950 text-white px-2 py-0.5 rounded">{columnsData[0].category}</span>
-                    <span>{columnsData[0].date}</span>
-                  </div>
-                  <h2 className="text-lg md:text-2xl font-black text-foreground leading-snug group-hover:text-zinc-700 transition-colors">
-                    {columnsData[0].title}
-                  </h2>
-                  <p className="text-muted text-xs md:text-sm leading-relaxed font-bold">
-                    {columnsData[0].excerpt}
-                  </p>
-                </div>
-                <div className="text-[10px] font-black tracking-widest text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-4 md:pt-0">
-                  READ THE ESSAY <span className="text-xs">→</span>
-                </div>
-              </div>
-            </Link>
-          </section>
-        )}
-
-        {/* Column Grid (Remaining Posts) */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {columnsData.slice(1).map((col) => (
-            <Link
-              href={`/sample/column/${col.slug}`}
-              key={col.slug}
-              className="group flex flex-col bg-white border border-card-border rounded-2xl overflow-hidden hover:shadow-md shadow-sm transition-all duration-500 p-5"
-            >
-              <div 
-                className="w-full aspect-[16/10] bg-cover bg-center rounded-xl transition-transform duration-500 group-hover:scale-[1.01] mb-5"
-                style={{ backgroundImage: `url(${col.coverImage})` }}
-              />
-              
-              <div className="flex flex-col flex-1 justify-between gap-3">
-                <div className="space-y-2.5">
-                  <div className="flex justify-between items-center text-[9px] font-black text-muted tracking-widest uppercase">
-                    <span className="bg-zinc-100 text-zinc-800 px-2.5 py-0.5 rounded-full">{col.category}</span>
-                    <span>{col.date}</span>
-                  </div>
-                  <h3 className="text-base font-black text-foreground leading-snug group-hover:text-zinc-700 transition-colors line-clamp-2">
-                    {col.title}
-                  </h3>
-                  <p className="text-muted text-xs leading-relaxed font-bold line-clamp-2">
-                    {col.excerpt}
-                  </p>
-                </div>
-                <div className="text-[10px] font-black tracking-widest text-primary flex items-center gap-1 group-hover:translate-x-1 transition-transform pt-4">
-                  READ JOURNAL <span className="text-xs">→</span>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </section>
-
+      {/* Hero */}
+      <div className="s-col-hero">
+        <nav className="s-breadcrumb" style={{ justifyContent: 'center', marginBottom: 24 }}>
+          <Link href="/sample">HOME</Link>
+          <span className="s-breadcrumb-sep">/</span>
+          <span>BEAUTY JOURNAL</span>
+        </nav>
+        <p className="s-col-hero-kicker">Beauty Journal</p>
+        <h1 className="s-col-hero-title">Stories</h1>
+        <p className="s-col-hero-sub">ESSAYS, TIPS &amp; EXPERIENCES BY BEAUTY GEEKS</p>
+        <div className="s-col-hero-rule" />
       </div>
+
+      {/* Featured */}
+      {columnsData.length > 0 && (
+        <section className="s-col-featured">
+          <Link
+            href={`/sample/column/${columnsData[0].slug}`}
+            className="s-col-featured-card"
+          >
+            <div
+              className="s-col-featured-img"
+              style={{ backgroundImage: `url(${columnsData[0].coverImage})` }}
+            />
+            <div className="s-col-featured-body">
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <span className="s-column-cat">{columnsData[0].category}</span>
+                  <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--s-muted-2)' }}>{columnsData[0].date}</span>
+                </div>
+                <h2 className="s-col-featured-title">{columnsData[0].title}</h2>
+                <p className="s-col-featured-excerpt">{columnsData[0].excerpt}</p>
+              </div>
+              <div className="s-article-read-more">
+                READ THE ESSAY <span>→</span>
+              </div>
+            </div>
+          </Link>
+        </section>
+      )}
+
+      {/* Grid */}
+      <section className="s-col-grid">
+        {columnsData.slice(1).map((col) => (
+          <Link
+            href={`/sample/column/${col.slug}`}
+            key={col.slug}
+            className="s-col-grid-card"
+          >
+            <div
+              className="s-col-grid-img"
+              style={{ backgroundImage: `url(${col.coverImage})` }}
+            />
+            <div className="s-col-grid-body">
+              <div>
+                <span className="s-column-cat">{col.category}</span>
+                <h3 className="s-col-grid-title" style={{ marginTop: 8 }}>{col.title}</h3>
+                <p className="s-col-grid-excerpt">{col.excerpt}</p>
+              </div>
+              <div className="s-col-foot">
+                <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', color: 'var(--s-muted-2)' }}>{col.date}</span>
+                <div className="s-article-read-more" style={{ paddingTop: 0, borderTop: 'none', marginTop: 0 }}>
+                  READ <span>→</span>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </section>
+
     </div>
   );
 }
