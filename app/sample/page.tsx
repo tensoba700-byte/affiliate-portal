@@ -138,7 +138,7 @@ export default function SampleHome() {
               <div className="s-section-label">PICKS</div>
               <div className="s-section-sub">おすすめアイテム</div>
             </div>
-            <span className="s-section-link">LAB PICK</span>
+            <Link href="/sample/products" className="s-section-link">LAB PICK →</Link>
           </div>
 
           <div className="s-items-scroll">
@@ -192,7 +192,7 @@ export default function SampleHome() {
               <div className="s-section-label">LATEST VERIFICATIONS</div>
               <div className="s-section-sub">編集部が体を張って検証した本音レポート</div>
             </div>
-            <span className="s-section-link">NEW REPORTS</span>
+            <Link href="/sample/articles" className="s-section-link">NEW REPORTS →</Link>
           </div>
 
           <div className="s-article-grid">
