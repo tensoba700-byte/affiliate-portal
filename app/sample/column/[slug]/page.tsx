@@ -66,13 +66,6 @@ export default async function SampleColumnDetail({ params }: PageProps) {
     `
   };
 
-  // コラムのh2テキスト内の助詞（を・は・が・に・で・と・も・か）の直後に <wbr> タグを挿入
-  const rawHtml = columnContents[slug] || '';
-  const processedHtml = rawHtml.replace(/<h2>([\s\S]*?)<\/h2>/gi, (match, h2Content) => {
-    const replaced = h2Content.replace(/([をはがのにでともか])/g, '$1<wbr>');
-    return `<h2>${replaced}</h2>`;
-  });
-
   return (
     <div className="s-col-detail">
 
@@ -119,7 +112,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
       <div className="s-content-card">
         <article
           className="s-rich-text"
-          dangerouslySetInnerHTML={{ __html: processedHtml }}
+          dangerouslySetInnerHTML={{ __html: columnContents[slug] || '' }}
         />
       </div>
 
