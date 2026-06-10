@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Zen_Maru_Gothic, Noto_Sans_JP } from "next/font/google";
 import Link from "next/link";
-import ThemeSwitcher from "@/src/components/ThemeSwitcher";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
 import CookieConsent from "@/src/components/CookieConsent";
@@ -169,7 +168,6 @@ export default function RootLayout({
             </p>
           </div>
         </footer>
-        <ThemeSwitcher />
         <CookieConsent />
       </body>
     </html>
