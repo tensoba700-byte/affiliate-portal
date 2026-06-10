@@ -8,9 +8,11 @@ interface HomeClientProps {
   initialArticles: ArticleItem[];
   duoImageUrl?: string;
   mujiImageUrl?: string;
+  duoAmazonUrl?: string;
+  mujiAmazonUrl?: string;
 }
 
-export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl }: HomeClientProps) {
+export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl, duoAmazonUrl, mujiAmazonUrl }: HomeClientProps) {
   const images = [
     '/images/sample_hero_bg.png',
     '/images/hero_flatlay_marble.png',
@@ -81,7 +83,8 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl 
       type: 'BALM',
       articleSlug: '20260609-cleansing-balm',
       articleLabel: '最強クレンジングバーム7選',
-      imageUrl: duoImageUrl
+      imageUrl: duoImageUrl,
+      amazonUrl: duoAmazonUrl || '#'
     },
     {
       id: '2',
@@ -91,7 +94,8 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl 
       type: 'TONER',
       articleSlug: '20260608-toner',
       articleLabel: 'プチプラ実力派化粧水6選',
-      imageUrl: mujiImageUrl
+      imageUrl: mujiImageUrl,
+      amazonUrl: mujiAmazonUrl || '#'
     }
   ];
 
@@ -155,7 +159,15 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl 
 
           <div className="s-items-scroll">
             {recommendedItems.map((prod) => (
-              <div key={prod.id} className="s-item-card">
+              <div 
+                key={prod.id} 
+                className="s-item-card cursor-pointer"
+                onClick={() => {
+                  if (prod.amazonUrl && prod.amazonUrl !== '#') {
+                    window.open(prod.amazonUrl, '_blank', 'noopener,noreferrer,nofollow,sponsored');
+                  }
+                }}
+              >
                 <div className="s-item-img">
                   {prod.imageUrl ? (
                     <img 
@@ -200,6 +212,9 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl 
                       href={`/articles/${prod.articleSlug}`}
                       className="s-article-link-btn"
                       style={{ marginTop: 12 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
                     >
                       📄 この記事で紹介！
                     </Link>

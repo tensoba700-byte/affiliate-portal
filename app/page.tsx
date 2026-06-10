@@ -18,17 +18,25 @@ export default async function Home() {
     console.error("Failed to fetch articles:", error);
   }
 
-  // お勧め商品の本物画像をマークダウンから動的に取得
+  // お勧め商品の本物画像 & Amazon URLをマークダウンから動的に取得
   let duoImage = '';
   let mujiImage = '';
+  let duoAmazonUrl = '';
+  let mujiAmazonUrl = '';
   try {
     const balmArticle = await getArticleBySlug('20260609-cleansing-balm');
     const tonerArticle = await getArticleBySlug('20260608-toner');
 
-    duoImage = balmArticle?.rankings?.find(p => p.name.includes('DUO'))?.imageUrl || '';
-    mujiImage = tonerArticle?.rankings?.find(p => p.name.includes('無印良品'))?.imageUrl || '';
+    const duoProd = balmArticle?.rankings?.find(p => p.name.includes('DUO'));
+    const mujiProd = tonerArticle?.rankings?.find(p => p.name.includes('無印良品'));
+
+    duoImage = duoProd?.imageUrl || '';
+    duoAmazonUrl = duoProd?.amazon?.url || '';
+
+    mujiImage = mujiProd?.imageUrl || '';
+    mujiAmazonUrl = mujiProd?.amazon?.url || '';
   } catch (error) {
-    console.error("Failed to fetch recommended product images:", error);
+    console.error("Failed to fetch recommended product details:", error);
   }
 
   return (
@@ -36,6 +44,8 @@ export default async function Home() {
       initialArticles={recentArticles} 
       duoImageUrl={duoImage} 
       mujiImageUrl={mujiImage} 
+      duoAmazonUrl={duoAmazonUrl}
+      mujiAmazonUrl={mujiAmazonUrl}
     />
   );
 }
