@@ -197,7 +197,6 @@ body:has(.sample-wrapper) > div.fixed {
   line-height: 1.4;
   margin-bottom: 10px;
   letter-spacing: -0.015em;
-  word-break: keep-all;
   overflow-wrap: break-word;
 }
 
@@ -776,7 +775,6 @@ body:has(.sample-wrapper) > div.fixed {
   line-height: 1.4;
   letter-spacing: -0.02em;
   margin-bottom: 28px;
-  word-break: keep-all;
   overflow-wrap: break-word;
 }
 
@@ -1508,16 +1506,7 @@ body:has(.sample-wrapper) > div.fixed {
   }
 }
 
-/* 日本語テキストの改行・折り返しを最適化 */
-.s-hero-title,
-.s-article-title,
-.s-column-title,
-.s-article-h1,
-.s-col-featured-title,
-.s-col-grid-title,
-.s-next-title,
-.s-executive-summary p {
-  word-break: keep-all;
-  overflow-wrap: break-word;
+.s-inline-block {
+  display: inline-block;
 }
 

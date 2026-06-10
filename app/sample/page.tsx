@@ -74,8 +74,11 @@ export default function SampleHome() {
               <span className="s-badge-ghost">EDITORIAL EDITION</span>
             </div>
             <h1 className="s-hero-title">
-              時間がない！でも妥協したくない！<br className="s-pc-only" />
-              忙しい女子のための「ガチ本音」コスメ検証メディア
+              <span className="s-inline-block">時間がない！</span>
+              <span className="s-inline-block">でも妥協したくない！</span>
+              <br className="s-pc-only" />
+              <span className="s-inline-block">忙しい女子のための</span>
+              <span className="s-inline-block">「ガチ本音」コスメ検証メディア</span>
             </h1>
             <p className="s-hero-desc">
               仕事に趣味に毎日バタバタで、メイク直しをする暇なんて一切ないけれど、コスメへの愛だけは誰にも負けないツキが運営する「みっけ！」。リアルに使い倒して「本当に崩れない」「タイパ最強」と確信したアイテムだけを忖度なしで徹底比較するよ！
