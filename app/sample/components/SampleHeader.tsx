@@ -58,19 +58,35 @@ export default function SampleHeader() {
       {isMenuOpen && (
         <nav className="sample-mobile-nav">
           <div className="sample-mobile-nav-inner">
-            <Link href="/sample/articles" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
-              記事一覧
-            </Link>
-            <Link href="/sample/products" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
-              商品一覧
-            </Link>
-            <Link href="/sample/column" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
-              美容コラム
-            </Link>
+            <div className="sample-mobile-menu-section">
+              <Link href="/sample/articles" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
+                記事一覧
+              </Link>
+              <Link href="/sample/products" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
+                商品一覧
+              </Link>
+              <Link href="/sample/column" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
+                美容コラム
+              </Link>
+            </div>
+
+            <div className="sample-mobile-cat-section">
+              <div className="sample-mobile-cat-title">CATEGORIES</div>
+              <div className="sample-mobile-cat-list">
+                <Link href="/sample/products" className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                  美容・スキンケア
+                </Link>
+                <span className="sample-mobile-cat-item-coming">ガジェット</span>
+                <span className="sample-mobile-cat-item-coming">インテリア</span>
+                <span className="sample-mobile-cat-item-coming">生活雑貨</span>
+                <span className="sample-mobile-cat-item-coming">便利グッズ</span>
+              </div>
+            </div>
           </div>
         </nav>
       )}
     </header>
   );
 }
+
 

@@ -280,7 +280,7 @@ body:has(.sample-wrapper) > div.fixed {
   font-size: 10px;
   font-weight: 600;
   color: var(--s-muted-2);
-  padding: 5px 12px;
+  padding: 5px 6px;
   border: 1px dashed var(--s-border);
   border-radius: 8px;
   cursor: not-allowed;
@@ -1591,7 +1591,7 @@ body:has(.sample-wrapper) > div.fixed {
 
 .s-prod-tab {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 8px 8px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
@@ -2014,6 +2014,47 @@ body:has(.sample-wrapper) > div.fixed {
   }
   .sample-mobile-nav-item:hover {
     color: var(--s-ink);
+  }
+
+  .sample-mobile-menu-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sample-mobile-cat-section {
+    border-top: 1px solid var(--s-border);
+    padding-top: 16px;
+    margin-top: 8px;
+  }
+  .sample-mobile-cat-title {
+    font-family: var(--s-font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--s-muted-2);
+    margin-bottom: 12px;
+  }
+  .sample-mobile-cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sample-mobile-cat-item {
+    font-size: 13px;
+    font-weight: 700;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .sample-mobile-cat-item:hover {
+    color: var(--s-ink);
+  }
+  .sample-mobile-cat-item-coming {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--s-muted-2);
+    cursor: not-allowed;
+    opacity: 0.7;
   }
 }
 
