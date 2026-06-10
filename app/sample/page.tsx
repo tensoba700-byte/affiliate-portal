@@ -41,13 +41,15 @@ export default function SampleHome() {
       slug: 'night-pore-reset',
       title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
       date: '2026.06.09',
-      category: 'ESSAY'
+      category: 'ESSAY',
+      image: '/images/column_night_pore_reset.png'
     },
     {
       slug: 'honest-makeup-base',
       title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
       date: '2026.06.08',
-      category: 'BEAUTY TIPS'
+      category: 'BEAUTY TIPS',
+      image: '/images/column_makeup_base.png'
     }
   ];
 
@@ -227,6 +229,7 @@ export default function SampleHome() {
                 key={col.slug}
                 href={`/sample/column/${col.slug}`}
                 className="s-column-card"
+                style={{ backgroundImage: `url(${col.image})` }}
               >
                 <div style={{ flex: 1 }}>
                   <span className="s-column-cat">{col.category}</span>

@@ -584,10 +584,10 @@ body:has(.sample-wrapper) > div.fixed {
 }
 
 .s-column-card {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 20px;
-  background: var(--s-surface);
   border: 1px solid var(--s-border);
   border-radius: var(--s-radius-sm);
   padding: 20px;
@@ -595,10 +595,28 @@ body:has(.sample-wrapper) > div.fixed {
   color: inherit;
   transition: box-shadow 0.3s, transform 0.2s;
   box-shadow: var(--s-shadow-card);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+.s-column-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  z-index: 1;
+  transition: background 0.3s;
 }
 .s-column-card:hover {
   box-shadow: var(--s-shadow-hover);
   transform: translateX(4px);
+}
+.s-column-card:hover::before {
+  background: rgba(255, 255, 255, 0.5);
+}
+.s-column-card > * {
+  position: relative;
+  z-index: 2;
 }
 
 .s-column-cat {
