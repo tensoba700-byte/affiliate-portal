@@ -1,7 +1,22 @@
-import React from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function SampleHome() {
+  const images = [
+    '/images/sample_hero_bg.png',
+    '/images/hero_flatlay_marble.png',
+    '/images/hero_flatlay_linen.png',
+    '/images/hero_flatlay_lifestyle.png',
+    '/images/hero_flatlay_cream.png'
+  ];
+
+  const [heroBg, setHeroBg] = useState('/images/sample_hero_bg.png');
+
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * images.length);
+    setHeroBg(images[randomIndex]);
+  }, []);
   const latestArticles = [
     {
       slug: '20260609-cleansing-balm',
@@ -64,7 +79,7 @@ export default function SampleHome() {
         <div
           className="s-hero-image-wrap"
           style={{
-            backgroundImage: 'url("/images/sample_hero_bg.png")'
+            backgroundImage: `url("${heroBg}")`
           }}
         >
           <div className="s-hero-overlay" />
