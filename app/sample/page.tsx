@@ -64,7 +64,7 @@ export default function SampleHome() {
         <div
           className="s-hero-image-wrap"
           style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1200&q=80")'
+            backgroundImage: 'url("/images/sample_hero_bg.png")'
           }}
         >
           <div className="s-hero-overlay" />
