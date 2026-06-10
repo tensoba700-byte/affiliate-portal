@@ -278,48 +278,6 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl 
           </div>
         </section>
 
-        {/* ── Background Blend Demo ── */}
-        <section className="s-demo-box">
-          <div className="s-section-head" style={{ marginBottom: 0 }}>
-            <div>
-              <div className="s-section-label">BACKGROUND BLEND DEMO</div>
-              <div className="s-section-sub">ECサイトの白背景画像をグレー背景に溶け込ませるデモ</div>
-            </div>
-            <span className="s-section-link">LAB DEMO</span>
-          </div>
-
-          <div className="s-demo-grid">
-            <div className="s-demo-card">
-              <span className="s-demo-label s-demo-label-light">元の画像（白背景）</span>
-              <div className="s-demo-img-wrap" style={{ background: '#f5f5f4', border: '1px solid #e7e5e4' }}>
-                <img
-                  src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&q=80"
-                  alt="Original White Background Product"
-                  style={{ height: '100%', objectFit: 'contain' }}
-                />
-              </div>
-              <p className="s-demo-desc">ECサイトによくある典型的な白背景の商品画像</p>
-            </div>
-
-            <div className="s-demo-card">
-              <span className="s-demo-label s-demo-label-dark">CSS乗算後（グレーに馴染む）</span>
-              <div
-                className="s-demo-img-wrap"
-                style={{
-                  background: '#f4f4f5',
-                  backgroundImage: 'radial-gradient(circle, rgba(28,25,23,0.03) 0%, rgba(28,25,23,0.08) 100%)'
-                }}
-              >
-                <img
-                  src="https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?w=400&q=80"
-                  alt="Blended Product"
-                  style={{ height: '100%', objectFit: 'contain', mixBlendMode: 'multiply' }}
-                />
-              </div>
-              <p className="s-demo-desc">CSS乗算を使うと、白背景が消えてグレー背景に自然に馴染むよ！</p>
-            </div>
-          </div>
-        </section>
 
       </div>
     </div>
