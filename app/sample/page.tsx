@@ -189,10 +189,13 @@ export default function SampleHome() {
                 href={`/sample/articles/${article.slug}`}
                 className="s-article-card"
               >
-                <div
-                  className="s-article-thumb"
-                  style={{ backgroundImage: `url(${article.image})` }}
-                >
+                <div className="s-article-thumb">
+                  <img 
+                    src={article.image} 
+                    alt={article.title} 
+                    className="s-article-img"
+                    loading="lazy"
+                  />
                   <span className="s-article-thumb-badge">NEW REPORT</span>
                 </div>
                 <div className="s-article-body">
