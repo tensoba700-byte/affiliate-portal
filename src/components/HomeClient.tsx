@@ -136,11 +136,11 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl,
           </div>
           <span className="s-nav-divider">|</span>
           <span className="s-nav-tag">CATEGORY:</span>
-          <span className="s-nav-coming">美容・スキンケア</span>
-          <span className="s-nav-coming">ガジェット</span>
-          <span className="s-nav-coming">インテリア</span>
-          <span className="s-nav-coming">生活雑貨</span>
-          <span className="s-nav-coming">便利グッズ</span>
+          <Link href={`/search?category=${encodeURIComponent('美容・スキンケア')}`} className="s-cat-btn">美容・スキンケア</Link>
+          <Link href={`/search?category=${encodeURIComponent('ガジェット')}`} className="s-cat-btn">ガジェット</Link>
+          <Link href={`/search?category=${encodeURIComponent('インテリア')}`} className="s-cat-btn">インテリア</Link>
+          <Link href={`/search?category=${encodeURIComponent('生活雑貨')}`} className="s-cat-btn">生活雑貨</Link>
+          <Link href={`/search?category=${encodeURIComponent('便利グッズ')}`} className="s-cat-btn">便利グッズ</Link>
         </div>
       </nav>
 

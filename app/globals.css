@@ -754,6 +754,27 @@ body:has(.sample-wrapper) > div.fixed {
   letter-spacing: 0.02em;
 }
 
+.s-cat-btn {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--s-muted);
+  padding: 5px 10px;
+  border: 1px solid var(--s-border);
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  background: var(--s-bg);
+  transition: all 0.2s;
+  display: inline-block;
+}
+.s-cat-btn:hover {
+  background: var(--s-surface-2);
+  border-color: var(--s-ink);
+  color: var(--s-ink);
+}
+
+
 /* Main content container */
 .s-main {
   max-width: 1024px;
