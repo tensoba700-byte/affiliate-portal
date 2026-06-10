@@ -804,6 +804,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     amazon_product_name = ""
     if clean_asin:
         details["amazon_url"] = f"https://www.amazon.co.jp/dp/{clean_asin}?tag=mikkestyle-22"
+        # ユーザー要求: ASINがある商品は必ず m.media-amazon.com の画像URLを使用する
+        details["image_url"] = f"https://m.media-amazon.com/images/I/{clean_asin}.jpg"
         try:
             dp_url = f"https://www.amazon.co.jp/dp/{clean_asin}"
             res = requests.get(dp_url, headers=browser_h, timeout=10)
@@ -818,9 +820,7 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
                     price_val = price_match.group(1) or price_match.group(2)
                     details["amazon_price"] = re.sub(r'[^\d]', '', price_val) if price_val else "なし"
                 
-                img_match = re.search(r'"landingImage"\s*:\s*\{\s*"([^"]+)"|id="landingImage"[^>]*src="([^"]+)"', res.text)
-                if img_match:
-                    details["image_url"] = img_match.group(1) or img_match.group(2)
+                # 画像のスクレイピングは無効化（m.media-amazon.comのURLを優先）
         except Exception:
             pass
 
@@ -1227,12 +1227,13 @@ def main():
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
                 
-                # 画像取得：1.楽天API 2.Amazon ASINから生成 3.どちらも不可ならエラー
+                # 画像取得：ASINがあれば必ずAmazon画像、なければ楽天APIにフォールバック
                 image = p.get("image_url")
+                asin_val = p.get("asin", "").strip()
+                if asin_val:
+                    image = amazon_image_from_asin(asin_val)
                 if not image:
                     image = fetch_rakuten_image(p["name"], p.get("jan"))
-                if not image:
-                    image = amazon_image_from_asin(p.get("asin"))
                 if not image:
                     raise Exception(f"image_url missing: {p['name']}")
                 p["image_url"] = image
@@ -1290,9 +1291,12 @@ def main():
                 
                 # 最も確実な製品画像を details からマージして上書きする
                 if details.get("image_url"):
-                    # Unsplash のプレースホルダー画像や、404 の可能性のある ASIN 画像でなければ採用
-                    if not details["image_url"].startswith("https://images.unsplash.com") and "m.media-amazon.com" not in details["image_url"]:
-                        p["image_url"] = details["image_url"]
+                    # Unsplash のプレースホルダー画像でなければ採用。
+                    # ASINがある商品は必ず m.media-amazon.com の画像を採用する。
+                    # ASINがない（または image_url に m.media-amazon.com が含まれていない）かつ Unsplash でない楽天画像をマージ
+                    if not details["image_url"].startswith("https://images.unsplash.com"):
+                        if p.get("asin", "").strip() or "m.media-amazon.com" not in details["image_url"]:
+                            p["image_url"] = details["image_url"]
                     
             # 成功時のデータ処理
             if "source_urls" in data and data["source_urls"]:
