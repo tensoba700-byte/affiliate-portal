@@ -37,8 +37,24 @@ export default function SampleHome() {
   ];
 
   const recommendedItems = [
-    { id: '1', name: '無印良品 クレンジングバーム', price: '¥990', rating: '4.8', type: 'BALM' },
-    { id: '2', name: '無印良品 敏感肌用化粧水', price: '¥1,290', rating: '4.7', type: 'TONER' }
+    { 
+      id: '1', 
+      name: 'DUO ザ クレンジングバーム', 
+      price: '¥3,960', 
+      rating: '4.8', 
+      type: 'BALM',
+      articleSlug: '20260609-cleansing-balm',
+      articleLabel: '最強クレンジングバーム7選'
+    },
+    { 
+      id: '2', 
+      name: '無印良品 敏感肌用化粧水', 
+      price: '¥1,290', 
+      rating: '4.7', 
+      type: 'TONER',
+      articleSlug: '20260608-toner',
+      articleLabel: 'プチプラ実力派化粧水6選'
+    }
   ];
 
   return (
@@ -132,6 +148,14 @@ export default function SampleHome() {
                     <span className="text-foreground">{prod.price}</span>
                     <span className="text-muted flex items-center gap-0.5">⭐ {prod.rating}</span>
                   </div>
+                  {prod.articleSlug && (
+                    <Link 
+                      href={`/sample/articles/${prod.articleSlug}`}
+                      className="mt-3.5 block text-[9px] font-black text-center text-primary bg-zinc-50 hover:bg-zinc-100 border border-card-border py-2 rounded-lg transition-all hover:scale-[1.01]"
+                    >
+                      📄 この記事で紹介！
+                    </Link>
+                  )}
                 </div>
               </div>
             ))}
