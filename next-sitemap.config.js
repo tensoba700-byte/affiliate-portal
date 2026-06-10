@@ -3,9 +3,10 @@ module.exports = {
   siteUrl: 'https://www.mikke-style.com',
   generateRobotsTxt: true,
   robotsTxtOptions: {
-    additionalSitemaps: [
-      'https://www.mikke-style.com/feed.xml',
-    ],
+    transformRobotsTxt: async (config, robotsTxt) => {
+      // Append feed.xml Sitemap declaration only inside robots.txt
+      return robotsTxt + '\nSitemap: https://www.mikke-style.com/feed.xml';
+    },
   },
   sitemapSize: 7000,
   outDir: 'public',
