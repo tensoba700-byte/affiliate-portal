@@ -13,9 +13,10 @@ export default function SampleHeader() {
           <Link href="/sample" className="sample-logo">
             mikke!
           </Link>
-          <nav style={{ display: 'flex', gap: 16 }}>
-            <Link href="/sample/products" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', color: 'var(--s-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>Products</Link>
-            <Link href="/sample/column" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', color: 'var(--s-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>Journal</Link>
+          <nav style={{ display: 'flex', gap: 14 }}>
+            <Link href="/sample/articles" style={{ fontSize: 10, fontWeight: 800, color: 'var(--s-ink)', textDecoration: 'none' }}>記事一覧</Link>
+            <Link href="/sample/products" style={{ fontSize: 10, fontWeight: 800, color: 'var(--s-ink)', textDecoration: 'none' }}>商品一覧</Link>
+            <Link href="/sample/column" style={{ fontSize: 10, fontWeight: 800, color: 'var(--s-ink)', textDecoration: 'none' }}>美容コラム</Link>
           </nav>
         </div>
 

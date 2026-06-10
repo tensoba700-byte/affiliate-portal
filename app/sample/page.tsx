@@ -114,7 +114,8 @@ export default function SampleHome() {
         <div className="s-cat-nav-inner">
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <Link href="/sample" className="s-nav-link-active">ホーム</Link>
-            <Link href="/sample/products" className="s-nav-link">検証コスメ</Link>
+            <Link href="/sample/articles" className="s-nav-link">記事一覧</Link>
+            <Link href="/sample/products" className="s-nav-link">商品一覧</Link>
             <Link href="/sample/column" className="s-nav-link">美容コラム</Link>
           </div>
           <span className="s-nav-divider">|</span>
