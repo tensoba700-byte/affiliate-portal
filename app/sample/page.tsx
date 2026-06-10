@@ -32,7 +32,7 @@ export default function SampleHome() {
       title: '夕方の毛穴に絶望したくない！大忙し美容オタクが本音で選ぶ最強クレンジングバーム7選',
       excerpt: '仕事に趣味に大忙しで日中の化粧直しはゼロ！メイクも毛穴汚れも一気にリセットできる最強のクレンジングバームを本音レビュー！',
       date: '2026.06.09',
-      category: '毛穴・くすみリセット',
+      category: '美容・スキンケア',
       image: '/eyecatch/20260609-cleansing-balm-sample.png'
     },
     {
@@ -40,7 +40,7 @@ export default function SampleHome() {
       title: '砂漠肌をもちもちに！夕方まで乾燥知らずのプチプラ実力派化粧水6選',
       excerpt: '冷房や乾燥でカサカサになりがちなお肌に、たっぷり惜しみなく使えるプチプラなのにデパコス級のしっとり感を得られる本命化粧水。',
       date: '2026.06.08',
-      category: 'プチプラ実力派',
+      category: '美容・スキンケア',
       image: '/eyecatch/20260608-toner.png'
     }
   ];
@@ -118,7 +118,7 @@ export default function SampleHome() {
           </div>
           <span className="s-nav-divider">|</span>
           <span className="s-nav-tag">CATEGORY:</span>
-          <span className="s-nav-coming">美容</span>
+          <span className="s-nav-coming">美容・スキンケア</span>
           <span className="s-nav-coming">ガジェット</span>
           <span className="s-nav-coming">インテリア</span>
           <span className="s-nav-coming">生活雑貨</span>
