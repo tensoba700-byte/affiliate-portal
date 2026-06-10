@@ -24,7 +24,7 @@ export default function SampleHome() {
       excerpt: '仕事に趣味に大忙しで日中の化粧直しはゼロ！メイクも毛穴汚れも一気にリセットできる最強のクレンジングバームを本音レビュー！',
       date: '2026.06.09',
       category: '毛穴・くすみリセット',
-      image: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80'
+      image: '/eyecatch/20260609-cleansing-balm-sample.png'
     },
     {
       slug: '20260608-toner',
@@ -32,7 +32,7 @@ export default function SampleHome() {
       excerpt: '冷房や乾燥でカサカサになりがちなお肌に、たっぷり惜しみなく使えるプチプラなのにデパコス級のしっとり感を得られる本命化粧水。',
       date: '2026.06.08',
       category: 'プチプラ実力派',
-      image: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&q=80'
+      image: '/eyecatch/20260608-toner.png'
     }
   ];
 
