@@ -12,7 +12,7 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16 animate-fade-in-up">
       <header className="text-center mb-12">
-        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black mb-4">
+        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-[4px] text-xs font-black mb-4">
           Contact
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">
@@ -21,7 +21,7 @@ export default function ContactPage() {
         <p className="text-sm font-bold text-muted">ご意見・ご感想・お仕事の依頼はこちらから</p>
       </header>
 
-      <div className="bg-white rounded-[2rem] p-8 md:p-12 cute-shadow border border-card-border">
+      <div className="bg-white rounded-[8px] p-8 md:p-12 cute-shadow border border-card-border">
         
         <form className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -35,7 +35,7 @@ export default function ContactPage() {
                 name="name"
                 required
                 placeholder="田中 太郎"
-                className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-full px-6 py-3 text-sm font-bold transition-all"
+                className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-[4px] px-6 py-3 text-sm font-bold transition-all"
               />
             </div>
             <div>
@@ -48,7 +48,7 @@ export default function ContactPage() {
                 name="email"
                 required
                 placeholder="example@mail.com"
-                className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-full px-6 py-3 text-sm font-bold transition-all"
+                className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-[4px] px-6 py-3 text-sm font-bold transition-all"
               />
             </div>
           </div>
@@ -62,7 +62,7 @@ export default function ContactPage() {
               id="subject"
               name="subject"
               placeholder="お仕事のご相談 など"
-              className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-full px-6 py-3 text-sm font-bold transition-all"
+              className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-[4px] px-6 py-3 text-sm font-bold transition-all"
             />
           </div>
 
@@ -76,14 +76,14 @@ export default function ContactPage() {
               required
               rows={6}
               placeholder="こちらに内容を入力してください..."
-              className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-3xl px-6 py-4 text-sm font-bold transition-all resize-none"
+              className="w-full bg-primary/5 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none rounded-[4px] px-6 py-4 text-sm font-bold transition-all resize-none"
             ></textarea>
           </div>
 
           <div className="pt-4">
             <button
               type="submit"
-              className="w-full md:w-auto md:px-12 bg-primary text-white text-sm font-black py-4 rounded-full shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+              className="w-full md:w-auto md:px-12 bg-primary text-white text-sm font-black py-4 rounded-[4px] shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
             >
               送信内容を確認する
             </button>

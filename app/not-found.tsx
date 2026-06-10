@@ -20,13 +20,13 @@ export default function NotFound() {
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         <Link 
           href="/" 
-          className="px-10 py-4 rounded-full bg-primary text-white font-black text-sm hover:bg-primary/90 transition-all duration-300 shadow-lg hover:cute-shadow hover:-translate-y-1"
+          className="px-10 py-4 rounded-[4px] bg-primary text-white font-black text-sm hover:bg-primary/90 transition-all duration-300 shadow-lg hover:cute-shadow hover:-translate-y-1"
         >
           ホームへもどる 🍓
         </Link>
         <Link 
           href="/articles" 
-          className="px-10 py-4 rounded-full bg-white border-2 border-primary/10 text-primary font-black text-sm hover:border-primary transition-all duration-300"
+          className="px-10 py-4 rounded-[4px] bg-white border-2 border-primary/10 text-primary font-black text-sm hover:border-primary transition-all duration-300"
         >
           記事一覧を見る
         </Link>

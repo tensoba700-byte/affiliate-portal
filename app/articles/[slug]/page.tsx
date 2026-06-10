@@ -140,10 +140,10 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
           </nav>
           
           {/* 🌸 Cute Article Hero */}
-          <header className="bg-white rounded-[2rem] p-6 md:p-10 cute-shadow border border-card-border mb-8 text-center relative overflow-hidden">
+          <header className="bg-white rounded-[8px] p-6 md:p-10 cute-shadow border border-card-border mb-8 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-[100px] pointer-events-none"></div>
             
-            <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black mb-6">
+            <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-[4px] text-xs font-black mb-6">
               レビュー
             </div>
             
@@ -206,14 +206,14 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             </time>
             
             {article.excerpt && (
-              <p className="text-sm md:text-base font-bold text-foreground bg-background rounded-2xl p-4 inline-block text-left">
+              <p className="text-sm md:text-base font-bold text-foreground bg-background rounded-[4px] p-4 inline-block text-left">
                 💡 {article.excerpt}
               </p>
             )}
           </header>
 
           {/* 📝 Article Content Area */}
-          <div className="bg-white rounded-[2rem] p-6 md:p-10 cute-shadow border border-card-border mb-12">
+          <div className="bg-white rounded-[8px] p-6 md:p-10 cute-shadow border border-card-border mb-12">
 
             {/* 🏆 Ranking Table */}
             {article.rankings.length > 0 && (
@@ -270,9 +270,9 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                   <Link 
                     key={rel.slug} 
                     href={`/articles/${rel.slug}`}
-                    className="group bg-white rounded-3xl p-3 cute-shadow border border-card-border hover:-translate-y-1 transition-all duration-300"
+                    className="group bg-white rounded-[8px] p-3 cute-shadow border border-card-border hover:-translate-y-1 transition-all duration-300"
                   >
-                    <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-3 bg-primary/5 flex items-center justify-center">
+                    <div className="aspect-[16/9] rounded-[4px] overflow-hidden mb-3 bg-primary/5 flex items-center justify-center">
                       {rel.coverImage ? (
                         <img src={rel.coverImage} alt={rel.title} loading="lazy" className="max-w-full max-h-full w-full h-full object-contain group-hover:scale-102 transition-transform duration-500" />
                       ) : (

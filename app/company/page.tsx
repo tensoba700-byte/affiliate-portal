@@ -12,7 +12,7 @@ export default function CompanyPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16 animate-fade-in-up">
       <header className="text-center mb-12">
-        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black mb-4">
+        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-[4px] text-xs font-black mb-4">
           Publisher
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">
@@ -21,7 +21,7 @@ export default function CompanyPage() {
         <p className="text-sm font-bold text-muted">「みっけ！」を作っている人たち</p>
       </header>
 
-      <div className="bg-white rounded-[2rem] p-8 md:p-12 cute-shadow border border-card-border">
+      <div className="bg-white rounded-[8px] p-8 md:p-12 cute-shadow border border-card-border">
         
         <div className="space-y-0 divide-y divide-primary/10">
           
@@ -58,7 +58,7 @@ export default function CompanyPage() {
 
         </div>
 
-        <div className="mt-12 bg-primary/5 rounded-3xl p-6 md:p-8 text-center">
+        <div className="mt-12 bg-primary/5 rounded-[4px] p-6 md:p-8 text-center">
           <h3 className="text-lg font-black text-primary mb-4">MIKKE! のミッション</h3>
           <p className="text-sm font-bold text-foreground/80 leading-relaxed italic">
             「探していた『好き』に、もっとワクワクを。」<br />

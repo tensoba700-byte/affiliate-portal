@@ -97,7 +97,7 @@ export const AdBanner: React.FC<{ type: AdType }> = ({ type }) => {
         <span className="w-full text-left text-[10px] text-muted font-bold mb-1 ml-1 opacity-60">PR</span>
         <div 
           ref={containerRef}
-          className="flex justify-center items-center overflow-visible rounded-xl"
+          className="flex justify-center items-center overflow-visible rounded-[4px]"
         />
       </div>
     </div>

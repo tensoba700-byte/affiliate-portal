@@ -12,7 +12,7 @@ export default function TermsPage() {
   return (
     <div className="container mx-auto max-w-4xl px-4 py-16 animate-fade-in-up">
       <header className="text-center mb-12">
-        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-black mb-4">
+        <div className="inline-block bg-primary/10 text-primary px-4 py-1.5 rounded-[4px] text-xs font-black mb-4">
           Legal
         </div>
         <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4">
@@ -21,7 +21,7 @@ export default function TermsPage() {
         <p className="text-sm font-bold text-muted">本サイトをご利用いただく上でのルール</p>
       </header>
 
-      <div className="bg-white rounded-[2rem] p-8 md:p-12 cute-shadow border border-card-border space-y-10 text-sm md:text-base leading-relaxed text-foreground/80">
+      <div className="bg-white rounded-[8px] p-8 md:p-12 cute-shadow border border-card-border space-y-10 text-sm md:text-base leading-relaxed text-foreground/80">
         
         <section>
           <h2 className="text-xl font-black text-foreground mb-4 flex items-center gap-2">

@@ -20,7 +20,7 @@ export default function SearchBar() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="なにをお探しですか？" 
-        className="w-full bg-white border-2 border-primary/20 hover:border-primary/40 focus:border-primary rounded-full py-2.5 pl-5 pr-10 text-sm focus:outline-none transition-all duration-300 font-bold text-foreground placeholder-muted"
+        className="w-full bg-white border-2 border-primary/20 hover:border-primary/40 focus:border-primary rounded-[4px] py-2.5 pl-5 pr-10 text-sm focus:outline-none transition-all duration-300 font-bold text-foreground placeholder-muted"
       />
       <button 
         type="submit" 

@@ -93,7 +93,7 @@ export default async function SearchPage({
               <Link
                 key={cat}
                 href={`/search?category=${encodeURIComponent(cat)}`}
-                className={`px-5 py-2 rounded-full text-xs font-black transition-all border ${
+                className={`px-5 py-2 rounded-[4px] text-xs font-black transition-all border ${
                   cat === category
                     ? 'bg-primary text-white border-primary shadow-md'
                     : 'bg-white text-muted border-card-border hover:border-primary hover:text-primary'
@@ -112,10 +112,10 @@ export default async function SearchPage({
               <Link
                 href={`/articles/${article.slug}`}
                 key={article.id}
-                className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border animate-fade-in-up"
+                className="group flex flex-col bg-white rounded-[8px] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border animate-fade-in-up"
                 style={{ animationDelay: `${(i % 3) * 100}ms` }}
               >
-                <div className="aspect-video w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
+                <div className="aspect-video w-full rounded-[4px] bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
                   {article.coverImage ? (
                     // @ts-ignore
                     <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
@@ -125,7 +125,7 @@ export default async function SearchPage({
                     </div>
                   )}
                   {article.category && (
-                    <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-full text-[10px] font-black text-primary shadow-sm border border-primary/10">
+                    <div className="absolute top-3 left-3 bg-white px-3 py-1 rounded-[4px] text-[10px] font-black text-primary shadow-sm border border-primary/10">
                       {article.category}
                     </div>
                   )}
@@ -148,7 +148,7 @@ export default async function SearchPage({
             ))}
           </div>
         ) : (
-          <div className="text-center py-20 bg-white rounded-3xl border border-card-border cute-shadow max-w-xl mx-auto">
+          <div className="text-center py-20 bg-white rounded-[4px] border border-card-border cute-shadow max-w-xl mx-auto">
             <span className="text-5xl mb-4 block">💦</span>
             <p className="text-xl text-foreground font-black mb-3">
               {isCategory ? 'この カテゴリーはまだ記事がありません' : 'ごめんなさい！みつかりませんでした'}
@@ -159,10 +159,10 @@ export default async function SearchPage({
                 : `「${rawQuery}」に一致する記事はありませんでした。別のキーワードでお試しください。`}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/articles" className="inline-block px-10 py-3 rounded-full bg-primary/10 text-primary font-black text-sm hover:bg-primary hover:text-white transition-all duration-300">
+              <Link href="/articles" className="inline-block px-10 py-3 rounded-[4px] bg-primary/10 text-primary font-black text-sm hover:bg-primary hover:text-white transition-all duration-300">
                 すべての記事一覧
               </Link>
-              <Link href="/" className="inline-block px-10 py-3 rounded-full bg-white border border-card-border text-muted font-black text-sm hover:border-primary hover:text-primary transition-all duration-300">
+              <Link href="/" className="inline-block px-10 py-3 rounded-[4px] bg-white border border-card-border text-muted font-black text-sm hover:border-primary hover:text-primary transition-all duration-300">
                 トップページへ
               </Link>
             </div>

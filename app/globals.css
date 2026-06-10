@@ -345,7 +345,7 @@ body {
   font-size: 14px;
   min-height: 48px;
   padding: 10px 16px;
-  border-radius: 10px;
+  border-radius: 4px;
   transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   cursor: pointer;
 }
@@ -387,11 +387,11 @@ body {
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.25);
-  border-radius: 5px;
+  border-radius: 4px;
   padding: 3px;
   flex-shrink: 0;
 }
-.btn-icon img { border-radius: 2px; display: block; }
+.btn-icon img { border-radius: 4px; display: block; }
 /* Text stack — label + price */
 .btn-text-stack {
   display: flex;
@@ -410,7 +410,7 @@ body {
 /* Comparison Table */
 .comparison-table-wrap {
   margin-bottom: 2rem;
-  border-radius: 16px;
+  border-radius: 4px;
   overflow: hidden;
   border: 1.5px solid #F8D7E3;
   box-shadow: 0 4px 16px rgba(224,106,140,0.07);
@@ -449,7 +449,7 @@ body {
 
 /* Product Image Styling */
 .product-image-container {
-  @apply w-full flex justify-center my-8 rounded-3xl overflow-hidden border-4 border-white shadow-xl bg-white;
+  @apply w-full flex justify-center my-8 rounded-[4px] overflow-hidden border-4 border-white shadow-xl bg-white;
   max-height: 400px;
 }
 .product-image {
@@ -490,8 +490,8 @@ body {
   --s-accent-bg:    rgba(201, 168, 122, 0.08);
 
   --s-gradient-hero: linear-gradient(135deg, #1C1917 0%, #3C302A 100%);
-  --s-radius-card:  20px;
-  --s-radius-sm:    12px;
+  --s-radius-card:  8px;
+  --s-radius-sm:    4px;
   --s-shadow-card:  0 2px 24px rgba(28, 25, 23, 0.06), 0 1px 4px rgba(28, 25, 23, 0.04);
   --s-shadow-hover: 0 8px 40px rgba(28, 25, 23, 0.1), 0 2px 8px rgba(28, 25, 23, 0.06);
   --s-font-body:    'DM Sans', system-ui, sans-serif;
@@ -706,7 +706,7 @@ body:has(.sample-wrapper) > div.fixed {
   background: var(--s-ink);
   color: #fff;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 4px;
   text-decoration: none;
   transition: opacity 0.2s;
   letter-spacing: 0.02em;
@@ -719,7 +719,7 @@ body:has(.sample-wrapper) > div.fixed {
   color: var(--s-muted);
   text-decoration: none;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: background 0.2s, color 0.2s;
   letter-spacing: 0.02em;
 }
@@ -749,7 +749,7 @@ body:has(.sample-wrapper) > div.fixed {
   color: var(--s-muted-2);
   padding: 5px 6px;
   border: 1px dashed var(--s-border);
-  border-radius: 8px;
+  border-radius: 4px;
   cursor: not-allowed;
   letter-spacing: 0.02em;
 }
@@ -849,7 +849,7 @@ body:has(.sample-wrapper) > div.fixed {
 .s-item-img {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 12px;
+  border-radius: 4px;
   background: var(--s-surface-2);
   display: flex;
   align-items: center;
@@ -912,7 +912,7 @@ body:has(.sample-wrapper) > div.fixed {
   color: var(--s-accent-dark);
   background: var(--s-accent-bg);
   border: 1px solid rgba(201, 168, 122, 0.2);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 8px;
   text-decoration: none;
   transition: background 0.2s, color 0.2s;
@@ -1095,7 +1095,7 @@ body:has(.sample-wrapper) > div.fixed {
   background: var(--s-ink);
   color: #fff;
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: 4px;
   display: inline-block;
   margin-bottom: 6px;
 }
@@ -1175,7 +1175,7 @@ body:has(.sample-wrapper) > div.fixed {
 .s-demo-img-wrap {
   width: 100%;
   height: 180px;
-  border-radius: 10px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1327,7 +1327,7 @@ body:has(.sample-wrapper) > div.fixed {
   background: var(--s-accent-bg);
   border: 1px solid rgba(201, 168, 122, 0.15);
   border-left: 3px solid var(--s-accent);
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 4px 4px 0;
   padding: 20px 24px;
   position: relative;
 }
@@ -1343,7 +1343,7 @@ body:has(.sample-wrapper) > div.fixed {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 3px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 .s-executive-summary p {
   font-size: 13px;
@@ -1405,7 +1405,7 @@ body:has(.sample-wrapper) > div.fixed {
   background: var(--s-surface-2);
   color: var(--s-ink-2);
   padding: 2px 8px;
-  border-radius: 20px;
+  border-radius: 4px;
 }
 .s-profile-desc {
   font-size: 12px;
@@ -1473,7 +1473,7 @@ body:has(.sample-wrapper) > div.fixed {
 .s-next-thumb {
   width: 100%;
   aspect-ratio: 16/9;
-  border-radius: 12px;
+  border-radius: 4px;
   background-size: cover;
   background-position: center;
   flex-shrink: 0;
@@ -1490,7 +1490,7 @@ body:has(.sample-wrapper) > div.fixed {
   gap: 8px;
   background: var(--s-surface);
   border: 1px solid var(--s-border);
-  border-radius: 40px;
+  border-radius: 4px;
   padding: 12px 28px;
   font-size: 12px;
   font-weight: 700;
@@ -1748,7 +1748,7 @@ body:has(.sample-wrapper) > div.fixed {
 .s-rich-text ul {
   background: var(--s-surface-2);
   border: 1px solid var(--s-border-soft);
-  border-radius: 14px;
+  border-radius: 4px;
   padding: 20px 24px;
   list-style: none;
   margin-bottom: 1.6em;
@@ -1808,7 +1808,7 @@ body:has(.sample-wrapper) > div.fixed {
   color: var(--s-muted) !important;
   border-color: var(--s-border) !important;
   box-shadow: none !important;
-  border-radius: 8px !important;
+  border-radius: 4px !important;
 }
 
 /* Active tab */
@@ -1818,7 +1818,7 @@ body:has(.sample-wrapper) > div.fixed {
   color: #fff !important;
   border-color: var(--s-ink) !important;
   box-shadow: 0 4px 12px rgba(28, 25, 23, 0.15) !important;
-  border-radius: 8px !important;
+  border-radius: 4px !important;
 }
 
 /* Dividers */
@@ -1879,7 +1879,7 @@ body:has(.sample-wrapper) > div.fixed {
   background: var(--s-ink) !important;
   color: #fff !important;
   border-color: var(--s-border) !important;
-  border-radius: 10px !important;
+  border-radius: 4px !important;
   transition: background 0.2s !important;
 }
 .s-table-wrap a[style*="background"]:hover {
@@ -2092,7 +2092,7 @@ body:has(.sample-wrapper) > div.fixed {
 .s-prod-sort-btn {
   display: inline-block;
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid var(--s-border);
   font-size: 11px;
   font-weight: 700;
@@ -2264,7 +2264,7 @@ body:has(.sample-wrapper) > div.fixed {
   justify-content: center;
   gap: 6px;
   padding: 10px 0;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 11px;
   font-weight: 700;
   text-decoration: none;
@@ -2292,7 +2292,7 @@ body:has(.sample-wrapper) > div.fixed {
   display: block;
   text-align: center;
   padding: 10px 0;
-  border-radius: 8px;
+  border-radius: 4px;
   background: var(--s-bg);
   color: var(--s-ink);
   font-size: 11px;

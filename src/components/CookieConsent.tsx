@@ -21,7 +21,7 @@ export default function CookieConsent() {
 
   return (
     <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-8 md:max-w-md z-[100] animate-fade-in-up">
-      <div className="bg-white rounded-[2rem] p-6 cute-shadow border-2 border-primary/20 flex flex-col gap-4 relative overflow-hidden">
+      <div className="bg-white rounded-[4px] p-6 cute-shadow border-2 border-primary/20 flex flex-col gap-4 relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute -top-4 -right-4 w-12 h-12 bg-primary/10 rounded-full"></div>
         
@@ -37,7 +37,7 @@ export default function CookieConsent() {
         
         <button
           onClick={handleAccept}
-          className="w-full bg-primary text-white text-xs font-black py-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
+          className="w-full bg-primary text-white text-xs font-black py-3 rounded-[4px] hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
         >
           OK、わかった！
         </button>

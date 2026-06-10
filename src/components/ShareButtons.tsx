@@ -60,7 +60,7 @@ export default function ShareButtons({ url, title, isGadget }: Props) {
             href={btn.share(url, title, isGadget)}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 hover:-translate-y-1 transition-all font-black text-white text-sm shadow-sm"
+            className="w-10 h-10 rounded-[4px] flex items-center justify-center hover:opacity-80 hover:-translate-y-1 transition-all font-black text-white text-sm shadow-sm"
             style={{ background: btn.color }}
             title={btn.label}
           >
