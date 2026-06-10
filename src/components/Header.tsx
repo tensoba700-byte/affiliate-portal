@@ -8,13 +8,28 @@ import SearchBar from "@/src/components/SearchBar";
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   if (pathname?.startsWith('/sample')) {
     return null;
   }
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+    if (!isMenuOpen) {
+      setIsSearchOpen(false);
+    }
+  };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+    if (!isSearchOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   return (
-    <header className="sample-header">
+    <header className="sample-header relative">
       <div className="sample-header-inner">
         {/* Left: tagline */}
         <span className="sample-header-tagline">本音コスメ検証メディア</span>
@@ -38,10 +53,23 @@ export default function Header() {
             <SearchBar />
           </div>
 
+          {/* Mobile Search Toggle Button */}
+          <button 
+            className="block md:hidden sample-icon-btn"
+            aria-label="検索を開く"
+            onClick={toggleSearch}
+            aria-expanded={isSearchOpen}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+
           <button 
             className="sample-menu-toggle" 
             aria-label="メニューを開閉"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            onClick={toggleMenu}
             aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? (
@@ -60,14 +88,31 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Search Bar */}
-      <div className="block md:hidden px-4 pb-3" style={{ background: 'rgba(250, 250, 248, 0.92)' }}>
-        <SearchBar />
-      </div>
+      {/* Mobile Search Overlay inside Header */}
+      {isSearchOpen && (
+        <div 
+          className="absolute inset-0 flex items-center px-4 gap-3 z-50 animate-fade-in-up" 
+          style={{ background: 'var(--s-bg)', borderBottom: '1px solid var(--s-border)' }}
+        >
+          <div className="flex-1">
+            <SearchBar />
+          </div>
+          <button
+            className="sample-icon-btn flex-shrink-0"
+            onClick={() => setIsSearchOpen(false)}
+            aria-label="検索を閉じる"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      )}
 
       {/* Mobile Dropdown Menu */}
       {isMenuOpen && (
-        <nav className="sample-mobile-nav" style={{ top: '102px' }}>
+        <nav className="sample-mobile-nav" style={{ top: '61px' }}>
           <div className="sample-mobile-nav-inner">
             <div className="sample-mobile-menu-section">
               <Link href="/articles" className="sample-mobile-nav-item" onClick={() => setIsMenuOpen(false)}>
