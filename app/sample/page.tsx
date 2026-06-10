@@ -59,14 +59,6 @@ export default function SampleHome() {
 
   return (
     <div className="flex flex-col items-center w-full pb-32 bg-background text-foreground min-h-screen relative overflow-x-hidden">
-      {/* Force clean-science theme dynamically */}
-      <script dangerouslySetInnerHTML={{
-        __html: `
-          document.documentElement.setAttribute('data-theme', 'clean-science');
-          document.documentElement.setAttribute('data-font', 'sans');
-        `
-      }} />
-
       {/* Top ambient decorative glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[450px] bg-gradient-to-b from-zinc-200/40 via-zinc-100/10 to-transparent pointer-events-none blur-3xl z-0" />
 

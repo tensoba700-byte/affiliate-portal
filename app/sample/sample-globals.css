@@ -373,3 +373,347 @@ html[data-font="serif"] body.is-sample-route {
   border-color: rgba(24, 24, 27, 0.04) !important;
   color: #71717a !important;
 }
+
+/* =========================================
+   🎨 KOREAN CAFE THEME ROOT VARIABLES & OVERRIDES
+   ========================================= */
+.korean-cafe-theme-wrapper {
+  --background: #FAF6F0 !important; /* 温かみのあるアイボリー・ベージュ */
+  --foreground: #4A3B32 !important; /* コーヒーブラウン */
+  --primary: #A08C7D !important; /* ラテベージュ・ブラウン */
+  --primary-foreground: #ffffff !important;
+  --muted: #8C7A6B !important; /* モカ */
+  --card: #ffffff !important;
+  --card-border: rgba(74, 59, 50, 0.08) !important;
+  --theme-shadow: rgba(74, 59, 50, 0.04) !important;
+  --theme-grad-1: rgba(160, 140, 125, 0.04) !important;
+  --theme-grad-2: rgba(160, 140, 125, 0.02) !important;
+}
+
+/* Header style for Korean Cafe */
+.korean-cafe-theme-wrapper header {
+  background-color: #FAF6F0 !important;
+  border-bottom: 1px solid rgba(74, 59, 50, 0.08) !important;
+}
+
+/* Body override when active */
+body.is-sample-route.korean-cafe-theme {
+  background-color: #FAF6F0 !important;
+  background-image: radial-gradient(circle at 80% 10%, rgba(160, 140, 125, 0.06) 0%, transparent 40%),
+                    radial-gradient(circle at 10% 90%, rgba(160, 140, 125, 0.03) 0%, transparent 40%) !important;
+  color: #4A3B32 !important;
+  font-family: var(--font-zen-maru), "Zen Maru Gothic", sans-serif !important;
+}
+
+/* Rounded corners overrides (Cozy Rounding) */
+.korean-cafe-theme-wrapper .rounded-\[2rem\] {
+  border-radius: 28px !important;
+}
+.korean-cafe-theme-wrapper .rounded-2xl {
+  border-radius: 24px !important;
+}
+.korean-cafe-theme-wrapper .rounded-xl {
+  border-radius: 18px !important;
+}
+.korean-cafe-theme-wrapper .rounded-lg {
+  border-radius: 14px !important;
+}
+
+/* Card overrides for Korean Cafe */
+.korean-cafe-theme-wrapper .bg-white {
+  background-color: #ffffff !important;
+  border-color: rgba(74, 59, 50, 0.08) !important;
+}
+
+.korean-cafe-theme-wrapper .cute-shadow,
+.korean-cafe-theme-wrapper .shadow-sm,
+.korean-cafe-theme-wrapper .shadow-md,
+.korean-cafe-theme-wrapper .shadow-lg,
+.korean-cafe-theme-wrapper .shadow-xl {
+  box-shadow: 0 10px 30px rgba(74, 59, 50, 0.03), 0 4px 12px rgba(74, 59, 50, 0.01) !important;
+}
+
+.korean-cafe-theme-wrapper .border-card-border,
+.korean-cafe-theme-wrapper .border-zinc-200,
+.korean-cafe-theme-wrapper .border-zinc-100 {
+  border-color: rgba(74, 59, 50, 0.08) !important;
+}
+
+/* Category navigation for Korean Cafe */
+.korean-cafe-theme-wrapper .bg-zinc-950 {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+}
+
+.korean-cafe-theme-wrapper .cursor-not-allowed {
+  background-color: rgba(160, 140, 125, 0.03) !important;
+  border-color: rgba(160, 140, 125, 0.06) !important;
+  color: var(--muted) !important;
+}
+
+/* Hero Banner Overlay Panel for Korean Cafe */
+.korean-cafe-theme-wrapper .bg-zinc-950.text-white.bg-zinc-950 {
+  background-color: var(--primary) !important;
+}
+
+.korean-cafe-theme-wrapper .text-muted {
+  color: var(--muted) !important;
+}
+
+/* Ambient glow overrides */
+.korean-cafe-theme-wrapper .from-zinc-200\/40,
+.korean-cafe-theme-wrapper .from-zinc-200\/30 {
+  --tw-gradient-from: rgba(160, 140, 125, 0.05) var(--tw-gradient-from-position) !important;
+}
+
+/* --- Affiliate Buttons for Korean Cafe --- */
+.korean-cafe-theme-wrapper .btn-amazon,
+.korean-cafe-theme-wrapper .btn-rakuten,
+.korean-cafe-theme-wrapper .btn-yahoo {
+  background: #ffffff !important;
+  color: var(--foreground) !important;
+  border: 1.5px solid var(--primary) !important;
+  box-shadow: 0 4px 12px rgba(74, 59, 50, 0.03) !important;
+}
+
+.korean-cafe-theme-wrapper .btn-amazon:hover,
+.korean-cafe-theme-wrapper .btn-rakuten:hover,
+.korean-cafe-theme-wrapper .btn-yahoo:hover {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(74, 59, 50, 0.08) !important;
+}
+
+.korean-cafe-theme-wrapper .btn-icon {
+  background: rgba(74, 59, 50, 0.04) !important;
+  filter: sepia(0.3) contrast(0.95) !important;
+}
+
+/* Recommended Item tag/badge */
+.korean-cafe-theme-wrapper .inline-flex.bg-rose-50.text-rose-600 {
+  background-color: rgba(160, 140, 125, 0.05) !important;
+  color: var(--foreground) !important;
+  border-color: rgba(160, 140, 125, 0.1) !important;
+}
+
+.korean-cafe-theme-wrapper .inline-flex.bg-rose-50.text-rose-600 span {
+  color: var(--foreground) !important;
+}
+
+/* --- Premium Typography for Korean Cafe --- */
+.korean-cafe-theme-wrapper .cute-html-content p {
+  font-size: 14.5px !important;
+  line-height: 2.0 !important;
+  letter-spacing: 0.03em !important;
+  color: #5c4a3e !important;
+  margin-bottom: 1.75rem !important;
+  text-align: justify !important;
+}
+
+.korean-cafe-theme-wrapper .cute-html-content .editorial-lead {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  line-height: 2.05 !important;
+  color: var(--foreground) !important;
+  margin-bottom: 2.5rem !important;
+  border-left: 2px solid var(--primary) !important;
+  padding-left: 1rem !important;
+}
+
+.korean-cafe-theme-wrapper .cute-html-content h2 {
+  font-size: 18.5px !important;
+  font-weight: 850 !important;
+  letter-spacing: 0.03em !important;
+  margin-top: 3.5rem !important;
+  margin-bottom: 1.5rem !important;
+  border-bottom: 2px dashed rgba(160, 140, 125, 0.2) !important;
+  padding-bottom: 0.75rem !important;
+  color: var(--foreground) !important;
+}
+
+.korean-cafe-theme-wrapper .cute-html-content h3 {
+  font-size: 15.5px !important;
+  font-weight: 850 !important;
+  margin-top: 2.25rem !important;
+  margin-bottom: 1rem !important;
+  border-left: 3px solid var(--primary) !important;
+  padding-left: 0.75rem !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  color: var(--foreground) !important;
+}
+
+.korean-cafe-theme-wrapper .cute-html-content ul {
+  background: rgba(160, 140, 125, 0.03) !important;
+  border: 1px solid rgba(160, 140, 125, 0.08) !important;
+  border-radius: 18px !important;
+  padding: 20px !important;
+  box-shadow: none !important;
+}
+
+.korean-cafe-theme-wrapper .cute-html-content li::before {
+  content: "☕" !important;
+  color: var(--primary) !important;
+}
+
+/* --- Cafe Table & Ranking Table Overrides --- */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper {
+  border-color: rgba(160, 140, 125, 0.12) !important;
+  box-shadow: 0 10px 30px rgba(74, 59, 50, 0.02) !important;
+  border-radius: 24px !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper > div {
+  border-color: rgba(160, 140, 125, 0.12) !important;
+  box-shadow: 0 4px 20px -4px rgba(74, 59, 50, 0.03) !important;
+  border-radius: 24px !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background"] {
+  background: #ffffff !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="linear-gradient(135deg, #FFF0F5, #FFE4E1)"] {
+  background: rgba(160, 140, 125, 0.04) !important;
+  color: var(--foreground) !important;
+  border-bottom-color: rgba(160, 140, 125, 0.1) !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="linear-gradient(135deg, #FFF0F5, #FFE4E1)"] span {
+  color: var(--foreground) !important;
+}
+
+/* Tabs container */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background: rgb(255, 251, 253)"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background: #FFFBFD"] {
+  background: #ffffff !important;
+  border-bottom-color: rgba(160, 140, 125, 0.1) !important;
+}
+
+/* Tab buttons */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper button {
+  border-radius: 10px !important;
+}
+
+/* Inactive Tab Button */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper button[style*="background: rgb(250, 240, 244)"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper button[style*="background: #FAF0F4"] {
+  background: rgba(160, 140, 125, 0.03) !important;
+  color: var(--muted) !important;
+  border-color: rgba(160, 140, 125, 0.06) !important;
+  box-shadow: none !important;
+}
+
+/* Active Tab Button */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper button[style*="background: rgb(224, 106, 140)"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper button[style*="background: #e06a8c"] {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 12px rgba(160, 140, 125, 0.15) !important;
+}
+
+/* Divide-y container border */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper .divide-y,
+.korean-cafe-theme-wrapper .clean-science-table-wrapper .divide-y > div {
+  border-color: rgba(160, 140, 125, 0.08) !important;
+}
+
+/* Product list item */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper .divide-y > div:hover {
+  background-color: rgba(160, 140, 125, 0.01) !important;
+}
+
+/* Rank Badge top 3 */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background: linear-gradient(135deg, rgb(255, 215, 0)"] {
+  box-shadow: 0 3px 10px rgba(160, 140, 125, 0.05) !important;
+  border-radius: 10px !important;
+}
+
+/* Rank Badge non top 3 */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background: rgb(250, 240, 244)"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="background: #FAF0F4"] {
+  background: rgba(160, 140, 125, 0.05) !important;
+  color: var(--foreground) !important;
+  border-color: rgba(160, 140, 125, 0.08) !important;
+  border-radius: 10px !important;
+}
+
+/* Score rating badge border and text colors */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[class*="border-pink-200"] {
+  border-color: rgba(160, 140, 125, 0.1) !important;
+  background-color: #ffffff !important;
+  border-radius: 10px !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper span[class*="text-pink-500"] {
+  color: var(--foreground) !important;
+}
+
+/* Spec tags */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper span[class*="bg-pink-50/30"] {
+  background-color: rgba(160, 140, 125, 0.04) !important;
+  color: #5c4a3e !important;
+  border-color: rgba(160, 140, 125, 0.06) !important;
+  border-radius: 6px !important;
+}
+
+/* Image container */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[class*="border-pink-100"] {
+  border-color: rgba(160, 140, 125, 0.06) !important;
+  box-shadow: 0 4px 12px rgba(160, 140, 125, 0.02) !important;
+  border-radius: 14px !important;
+}
+
+/* Description border */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper p[class*="border-pink-200"] {
+  border-left-color: var(--primary) !important;
+}
+
+/* Pros/Cons Box grid */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[class*="bg-pink-50/10"] {
+  background-color: rgba(160, 140, 125, 0.02) !important;
+  border-color: rgba(160, 140, 125, 0.04) !important;
+  border-radius: 14px !important;
+}
+
+/* Buy buttons in table */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  border-radius: 10px !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"]:hover {
+  background: var(--muted) !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[style*="background: rgba(255, 255, 255, 0.2)"] {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] img {
+  filter: sepia(0.3) contrast(0.95) brightness(2) !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span {
+  color: #ffffff !important;
+}
+
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-pink-500"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-rose-500"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-emerald-500"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-amber-500"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-red-500"],
+.korean-cafe-theme-wrapper .clean-science-table-wrapper a[style*="background"] span[class*="text-orange-500"] {
+  color: #ffffff !important;
+}
+
+/* Footer note */
+.korean-cafe-theme-wrapper .clean-science-table-wrapper div[style*="footerBg"] {
+  background: rgba(160, 140, 125, 0.03) !important;
+  color: var(--muted) !important;
+  border-top-color: rgba(160, 140, 125, 0.08) !important;
+}
+

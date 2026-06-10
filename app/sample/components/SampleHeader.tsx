@@ -1,21 +1,44 @@
 import React from 'react';
 import Link from 'next/link';
 
-export default function SampleHeader() {
+interface SampleHeaderProps {
+  currentTheme?: 'clean-science' | 'korean-cafe';
+  onToggleTheme?: () => void;
+}
+
+export default function SampleHeader({ currentTheme, onToggleTheme }: SampleHeaderProps) {
   return (
     <header className="w-full bg-white border-b border-card-border sticky top-0 z-50 transition-all duration-300">
       <div className="container mx-auto max-w-4xl px-4 h-14 flex items-center justify-between">
-        {/* Left Menu Button (Minimal) */}
-        <button className="text-foreground p-1 hover:opacity-75 transition-opacity" aria-label="メニュー">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" y1="12" x2="20" y2="12" />
-            <line x1="4" y1="6" x2="20" y2="6" />
-            <line x1="4" y1="18" x2="20" y2="18" />
-          </svg>
-        </button>
+        {/* Left Area - Theme Toggle Button */}
+        <div className="flex items-center gap-2">
+          {onToggleTheme && (
+            <button 
+              onClick={onToggleTheme}
+              className="px-3 py-1.5 rounded-full text-[9px] font-black tracking-wider border border-card-border hover:bg-zinc-50 transition-all uppercase cursor-pointer flex items-center gap-1 active:scale-95"
+            >
+              {currentTheme === 'korean-cafe' ? (
+                <>
+                  <span className="text-[11px]">☕</span>
+                  <span>Cafe Style</span>
+                </>
+              ) : (
+                <>
+                  <span className="text-[11px]">🔬</span>
+                  <span>Science Style</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
 
         {/* Center Logo */}
-        <Link href="/sample" className="text-xl font-black tracking-widest text-foreground font-mono">
+        <Link 
+          href="/sample" 
+          className={`text-xl font-black tracking-widest text-foreground transition-all duration-500 ${
+            currentTheme === 'korean-cafe' ? 'font-serif lowercase normal-case tracking-normal' : 'font-mono uppercase'
+          }`}
+        >
           mikke!
         </Link>
 
@@ -36,3 +59,4 @@ export default function SampleHeader() {
     </header>
   );
 }
+
