@@ -7,7 +7,7 @@ export const columnsData = [
     excerpt: '日中は忙しすぎてメイク直しをする暇なんて1秒もない！そんな大忙しな大人のために、お風呂前にサッとできる、その日の汚れを完全に溜め込まない極上スキンケアメソッド。',
     date: '2026.06.09',
     category: 'ESSAY & TIPS',
-    coverImage: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80'
+    coverImage: '/images/column_night_pore_reset.png'
   },
   {
     slug: 'honest-makeup-base',
@@ -15,7 +15,7 @@ export const columnsData = [
     excerpt: '「キープ力抜群！」と謳う下地はたくさんあるけれど、本当に夕方までテカらず、ヨレない本命下地を見分けるための成分とテクスチャーのチェックリスト。',
     date: '2026.06.08',
     category: 'BEAUTY CHECKLIST',
-    coverImage: 'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=600&q=80'
+    coverImage: '/images/column_makeup_base.png'
   },
   {
     slug: 'morning-three-minute-glow',
