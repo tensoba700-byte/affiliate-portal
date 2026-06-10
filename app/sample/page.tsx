@@ -135,8 +135,8 @@ export default function SampleHome() {
         <section>
           <div className="s-section-head">
             <div>
-              <div className="s-section-label">RECOMMENDED ITEMS</div>
-              <div className="s-section-sub">注目のガチ検証・高スコア品</div>
+              <div className="s-section-label">PICKS</div>
+              <div className="s-section-sub">おすすめアイテム</div>
             </div>
             <span className="s-section-link">LAB PICK</span>
           </div>
