@@ -1506,7 +1506,6 @@ body:has(.sample-wrapper) > div.fixed {
   .s-hero-panel {
     position: relative;
     padding: 28px 20px;
-    background: linear-gradient(to top, rgba(28,25,23,0.92) 0%, rgba(28,25,23,0.4) 100%);
   }
   .s-hero-desc {
     font-size: 11px;
