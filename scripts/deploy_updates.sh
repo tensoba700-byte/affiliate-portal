@@ -9,6 +9,10 @@ source /Users/tsukika/.gemini/antigravity/scratch/discord-bot/venv/bin/activate
 echo "--- Running Auto Publish Batch ---"
 python3 scripts/auto_publish_batch.py
 
+# 1.5. Update internal links
+echo "--- Updating Internal Links ---"
+python3 scripts/add_internal_links.py
+
 # 2. Build for production (ensures content is picked up and no errors)
 echo "--- Building Next.js Site ---"
 npm run build
