@@ -2,15 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
-interface ArticleItem {
-  id: string;
-  slug: string;
-  title: string;
-  coverImage?: string;
-  publishedAt?: string;
-  excerpt?: string;
-}
+import { ArticleItem } from '@/src/lib/api';
 
 interface HomeClientProps {
   initialArticles: ArticleItem[];
