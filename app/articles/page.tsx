@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'すべての記事 | みっけ！',
@@ -18,68 +18,65 @@ export default async function ArticlesPage() {
   }
 
   return (
-    <div className="flex flex-col items-center w-full pb-32 pt-10 px-4 overflow-hidden">
-      <div className="container mx-auto max-w-5xl animate-fade-in-up">
-        
-        {/* Header Breadcrumbs & Title */}
-        <div className="mb-12 text-center">
-          <nav className="text-[10px] sm:text-xs text-muted font-bold mb-4 flex items-center justify-center gap-2">
-            <Link href="/" className="hover:text-primary transition-colors">ホーム</Link>
-            <span className="text-primary/30">&gt;</span>
-            <span className="text-foreground">すべての記事</span>
-          </nav>
-          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-4 flex items-center justify-center gap-2">
-            <span className="text-primary">💐</span> 記事一覧
-          </h1>
-          <p className="text-sm text-muted font-bold">
-            気になるアイテムの記事をみつけてね！
-          </p>
-        </div>
+    <div className="s-prod-page">
+      {/* Breadcrumbs */}
+      <nav className="s-breadcrumb" style={{ marginBottom: 24, justifyContent: 'center' }}>
+        <Link href="/">HOME</Link>
+        <span className="s-breadcrumb-sep">/</span>
+        <span aria-current="page">VERIFIED REPORTS</span>
+      </nav>
 
-        {articles.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-            {articles.map((article, i) => (
-              <Link 
-                href={`/articles/${article.slug}`} 
-                key={article.id}
-                className="group flex flex-col bg-white rounded-[2rem] p-3 cute-shadow hover:shadow-xl transition-all duration-500 hover:-translate-y-2 border border-card-border animate-fade-in-up"
-                style={{ animationDelay: `${(i % 3) * 100}ms` }}
+      {/* Header */}
+      <header className="s-prod-header">
+        <h1 className="s-prod-title">Verified Reports</h1>
+        <p className="s-prod-subtitle">ガチ検証レポート記事一覧</p>
+      </header>
+
+      {/* Articles Grid */}
+      {articles.length > 0 ? (
+        <div className="s-article-grid">
+          {articles.map((article) => {
+            let dateStr = '2026.06.09';
+            if (article.publishedAt) {
+              const d = new Date(article.publishedAt);
+              if (!isNaN(d.getTime())) {
+                dateStr = d.toLocaleDateString('ja-JP').replace(/\//g, '.');
+              }
+            }
+
+            return (
+              <Link
+                key={article.slug}
+                href={`/articles/${article.slug}`}
+                className="s-article-card"
               >
-                <div className="aspect-video w-full rounded-3xl bg-gray-50 relative overflow-hidden mb-4 flex items-center justify-center">
-                  {article.coverImage ? (
-                    // @ts-ignore
-                    <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30 cursor-pointer">
-                       <span className="text-3xl">🎀</span>
-                    </div>
-                  )}
+                <div className="s-article-thumb">
+                  <img 
+                    src={article.coverImage || '/eyecatch/20260609-cleansing-balm-sample.png'} 
+                    alt={article.title} 
+                    className="s-article-img"
+                    loading="lazy"
+                  />
+                  <span className="s-article-thumb-badge">NEW REPORT</span>
                 </div>
-                <div className="flex flex-col flex-1 px-3 pb-2 text-center">
-                  <p className="text-[10px] font-bold text-primary mb-2">
-                    {(() => {
-                      const d = new Date(article.publishedAt || "");
-                      return isNaN(d.getTime()) ? '' : d.toLocaleDateString('ja-JP');
-                    })()}
-                  </p>
-                  <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                    {article.title}
-                  </h2>
-                  <p className="text-muted text-xs line-clamp-2 mt-auto leading-relaxed font-bold">
-                    {article.excerpt || "くわしく見る！"}
-                  </p>
+                <div className="s-article-body">
+                  <span className="s-article-date">{dateStr}</span>
+                  <h3 className="s-article-title">{article.title}</h3>
+                  <p className="s-article-excerpt">{article.excerpt || '大人気コスメを本音でガチ検証レビュー！メイク落ちや使用感を徹底的に解説するよ。'}</p>
+                  <div className="s-article-read-more">
+                    READ REPORT <span>→</span>
+                  </div>
                 </div>
               </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-20 bg-white rounded-3xl border border-card-border cute-shadow">
-            <span className="text-5xl mb-4 block">🥺</span>
-            <p className="text-lg text-foreground font-black mb-2">まだ記事がありません</p>
-            <p className="text-muted font-bold text-sm">Discordでかわいい記事を生成してね！</p>
-          </div>
-        )}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--s-muted-2)', fontWeight: 'bold' }}>
+          まだ記事がありません。
+        </div>
+      )}
     </div>
   );
 }
+

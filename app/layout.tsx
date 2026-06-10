@@ -140,24 +140,28 @@ export default function RootLayout({
         </main>
 
         {/* Footer */}
-        <footer className="mt-auto border-t-2 border-primary/10 bg-white/50 pt-16 pb-8">
-           <div className="container mx-auto px-6 flex flex-col items-center">
-             <Link href="/" className="text-3xl font-black text-primary mb-6">
-              みっけ！
+        <footer className="sample-footer">
+          <div className="sample-footer-inner">
+            <Link href="/" className="sample-footer-logo">
+              mikke!
             </Link>
-            <p className="text-sm font-bold text-muted mb-8 text-center">
-              あなたの「好き」がきっと見つかる。<br />
-              とっておきのおすすめ情報を毎日お届けします。
+            <p className="sample-footer-desc">
+              コスメオタク美容ライターが、忙しい大人のために送る本音の検証コスメポータル。本当に崩れない・荒れない実力派だけを徹底レビュー。
             </p>
-            <nav className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-bold text-muted mb-12">
-              <Link href="/company" className="hover:text-primary transition-colors">運営会社</Link>
-              <Link href="/terms" className="hover:text-primary transition-colors">利用規約</Link>
-              <Link href="/privacy" className="hover:text-primary transition-colors">プライバシーポリシー</Link>
-              <Link href="/contact" className="hover:text-primary transition-colors">お問い合わせ</Link>
+            <nav className="sample-footer-nav">
+              <Link href="/">HOME</Link>
+              <span>|</span>
+              <Link href="/company">ABOUT</Link>
+              <span>|</span>
+              <Link href="/terms">TERMS</Link>
+              <span>|</span>
+              <Link href="/privacy">PRIVACY</Link>
+              <span>|</span>
+              <Link href="/contact">CONTACT</Link>
             </nav>
-            <div className="text-[10px] text-muted/60 font-bold tracking-wider">
+            <p className="sample-footer-copy">
               &copy; {new Date().getFullYear()} MIKKE! ALL RIGHTS RESERVED.
-            </div>
+            </p>
           </div>
         </footer>
         <ThemeSwitcher />
