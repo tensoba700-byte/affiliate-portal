@@ -74,7 +74,7 @@ export default function SampleHome() {
               <span className="s-badge-ghost">EDITORIAL EDITION</span>
             </div>
             <h1 className="s-hero-title">
-              時間がない！でも妥協したくない！<br />
+              時間がない！でも妥協したくない！<br className="s-pc-only" />
               忙しい女子のための「ガチ本音」コスメ検証メディア
             </h1>
             <p className="s-hero-desc">

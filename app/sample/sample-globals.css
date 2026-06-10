@@ -191,12 +191,14 @@ body:has(.sample-wrapper) > div.fixed {
 
 .s-hero-title {
   font-family: var(--s-font-body);
-  font-size: clamp(16px, 2.5vw, 22px);
+  font-size: clamp(20px, 4.5vw, 36px);
   font-weight: 800;
   color: #fff;
-  line-height: 1.45;
+  line-height: 1.4;
   margin-bottom: 10px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .s-hero-desc {
@@ -221,6 +223,7 @@ body:has(.sample-wrapper) > div.fixed {
   border-radius: var(--s-radius-sm);
   padding: 12px 20px;
   display: flex;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 16px;
   overflow-x: auto;
@@ -711,8 +714,9 @@ body:has(.sample-wrapper) > div.fixed {
 
 .s-breadcrumb {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px 8px;
   font-family: var(--s-font-mono);
   font-size: 9px;
   font-weight: 700;
@@ -766,12 +770,14 @@ body:has(.sample-wrapper) > div.fixed {
 
 .s-article-h1 {
   font-family: var(--s-font-body);
-  font-size: clamp(20px, 3vw, 28px);
+  font-size: clamp(20px, 4vw, 32px);
   font-weight: 800;
   color: var(--s-ink);
   line-height: 1.4;
   letter-spacing: -0.02em;
   margin-bottom: 28px;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 .s-article-meta {
@@ -1466,8 +1472,23 @@ body:has(.sample-wrapper) > div.fixed {
    📱 MOBILE
    ============================================= */
 @media (max-width: 640px) {
-  .s-hero-image-wrap { height: 300px; }
-  .s-hero-panel { padding: 20px; }
+  .s-hero-image-wrap {
+    height: auto;
+    min-height: 380px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .s-hero-panel {
+    position: relative;
+    padding: 28px 20px;
+    background: linear-gradient(to top, rgba(28,25,23,0.92) 0%, rgba(28,25,23,0.4) 100%);
+  }
+  .s-hero-desc {
+    font-size: 11px;
+    line-height: 1.65;
+    margin-top: 8px;
+  }
   .sample-header-tagline { display: none; }
   .s-article-detail,
   .s-col-page,
@@ -1476,3 +1497,27 @@ body:has(.sample-wrapper) > div.fixed {
   .s-content-card { padding: 20px; }
   .s-rich-text { font-size: 14px; }
 }
+
+/* PCのみ改行用クラス */
+.s-pc-only {
+  display: none;
+}
+@media (min-width: 768px) {
+  .s-pc-only {
+    display: inline;
+  }
+}
+
+/* 日本語テキストの改行・折り返しを最適化 */
+.s-hero-title,
+.s-article-title,
+.s-column-title,
+.s-article-h1,
+.s-col-featured-title,
+.s-col-grid-title,
+.s-next-title,
+.s-executive-summary p {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
