@@ -595,16 +595,16 @@ body:has(.sample-wrapper) > div.fixed {
 /* Hero Banner */
 .s-hero {
   width: 100%;
-  max-width: 1024px;
-  margin: 32px auto 0;
-  padding: 0 24px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
 }
 
 .s-hero-image-wrap {
   position: relative;
   width: 100%;
   height: 380px;
-  border-radius: var(--s-radius-card);
+  border-radius: 0;
   overflow: hidden;
   background-size: cover;
   background-position: center;
