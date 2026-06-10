@@ -92,10 +92,11 @@ export default function SampleHome() {
             <Link href="/sample/column" className="s-nav-link">美容コラム</Link>
           </div>
           <span className="s-nav-divider">|</span>
-          <span className="s-nav-tag">VERIFICATIONS:</span>
-          <span className="s-nav-coming">アイテム別</span>
-          <span className="s-nav-coming">お悩み別</span>
-          <span className="s-nav-coming">プチプラ実力派</span>
+          <span className="s-nav-tag">CATEGORY:</span>
+          <span className="s-nav-coming">美容ガジェット</span>
+          <span className="s-nav-coming">インテリア</span>
+          <span className="s-nav-coming">生活雑貨</span>
+          <span className="s-nav-coming">便利グッズ</span>
         </div>
       </nav>
 
