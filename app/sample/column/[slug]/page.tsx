@@ -24,7 +24,6 @@ export default async function SampleColumnDetail({ params }: PageProps) {
 
   const currentIndex = columnsData.findIndex(c => c.slug === slug);
   const nextColumn = columnsData[(currentIndex + 1) % columnsData.length];
-
   const columnContents: Record<string, string> = {
     'night-pore-reset': `
       <p class="editorial-lead">ねえ、毎日仕事や家事、趣味でバタバタ大忙しで、夜にふと鏡を見て「毛穴が目立ってる…」って絶望したことない？笑</p>
@@ -66,6 +65,13 @@ export default async function SampleColumnDetail({ params }: PageProps) {
       <p>保湿しすぎて顔がベタベタのままメイクに入ると、ファンデがヨレる原因に。スキンケアが終わったら、ティッシュを顔に乗せて軽く手のひらで押さえ、表面に残った余分な油分だけをオフしてね。このひと手間で、夕方まで崩れない極上の土台が完成するよ！</p>
     `
   };
+
+  // コラムのh2テキスト内の助詞（を・は・が・に・で・と・も・か）の直後に <wbr> タグを挿入
+  const rawHtml = columnContents[slug] || '';
+  const processedHtml = rawHtml.replace(/<h2>([\s\S]*?)<\/h2>/gi, (match, h2Content) => {
+    const replaced = h2Content.replace(/([をはがのにでともか])/g, '$1<wbr>');
+    return `<h2>${replaced}</h2>`;
+  });
 
   return (
     <div className="s-col-detail">
@@ -113,7 +119,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
       <div className="s-content-card">
         <article
           className="s-rich-text"
-          dangerouslySetInnerHTML={{ __html: columnContents[slug] || '' }}
+          dangerouslySetInnerHTML={{ __html: processedHtml }}
         />
       </div>
 
