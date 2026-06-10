@@ -129,13 +129,21 @@ export default function Header() {
             <div className="sample-mobile-cat-section">
               <div className="sample-mobile-cat-title">CATEGORIES</div>
               <div className="sample-mobile-cat-list">
-                <Link href="/products" className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                <Link href={`/search?category=${encodeURIComponent('美容・スキンケア')}`} className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
                   美容・スキンケア
                 </Link>
-                <span className="sample-mobile-cat-item-coming">ガジェット</span>
-                <span className="sample-mobile-cat-item-coming">インテリア</span>
-                <span className="sample-mobile-cat-item-coming">生活雑貨</span>
-                <span className="sample-mobile-cat-item-coming">便利グッズ</span>
+                <Link href={`/search?category=${encodeURIComponent('ガジェット')}`} className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                  ガジェット
+                </Link>
+                <Link href={`/search?category=${encodeURIComponent('インテリア')}`} className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                  インテリア
+                </Link>
+                <Link href={`/search?category=${encodeURIComponent('生活雑貨')}`} className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                  生活雑貨
+                </Link>
+                <Link href={`/search?category=${encodeURIComponent('便利グッズ')}`} className="sample-mobile-cat-item" onClick={() => setIsMenuOpen(false)}>
+                  便利グッズ
+                </Link>
               </div>
             </div>
           </div>
