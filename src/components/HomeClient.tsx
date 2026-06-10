@@ -38,7 +38,7 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl,
   }, []);
 
   // 本物の最新記事データをサンプルカードのフォーマットにマッピング
-  const latestArticles = initialArticles.map((article) => {
+  const latestArticles = initialArticles.slice(0, 3).map((article) => {
     let dateStr = '2026.06.09';
     if (article.publishedAt) {
       const d = new Date(article.publishedAt);
