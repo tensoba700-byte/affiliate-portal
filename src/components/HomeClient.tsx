@@ -6,9 +6,11 @@ import { ArticleItem } from '@/src/lib/api';
 
 interface HomeClientProps {
   initialArticles: ArticleItem[];
+  duoImageUrl?: string;
+  mujiImageUrl?: string;
 }
 
-export default function HomeClient({ initialArticles }: HomeClientProps) {
+export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl }: HomeClientProps) {
   const images = [
     '/images/sample_hero_bg.png',
     '/images/hero_flatlay_marble.png',
@@ -78,7 +80,8 @@ export default function HomeClient({ initialArticles }: HomeClientProps) {
       rating: '4.8',
       type: 'BALM',
       articleSlug: '20260609-cleansing-balm',
-      articleLabel: '最強クレンジングバーム7選'
+      articleLabel: '最強クレンジングバーム7選',
+      imageUrl: duoImageUrl
     },
     {
       id: '2',
@@ -87,7 +90,8 @@ export default function HomeClient({ initialArticles }: HomeClientProps) {
       rating: '4.7',
       type: 'TONER',
       articleSlug: '20260608-toner',
-      articleLabel: 'プチプラ実力派化粧水6選'
+      articleLabel: 'プチプラ実力派化粧水6選',
+      imageUrl: mujiImageUrl
     }
   ];
 
@@ -153,23 +157,37 @@ export default function HomeClient({ initialArticles }: HomeClientProps) {
             {recommendedItems.map((prod) => (
               <div key={prod.id} className="s-item-card">
                 <div className="s-item-img">
-                  <div style={{
-                    width: 40, height: 72,
-                    border: '1px solid #d6d3d1',
-                    borderRadius: 6,
-                    background: '#fafaf8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}>
+                  {prod.imageUrl ? (
+                    <img 
+                      src={prod.imageUrl} 
+                      alt={prod.name} 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'contain',
+                        mixBlendMode: 'multiply'
+                      }} 
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
                     <div style={{
-                      position: 'absolute', top: -5, left: '50%', transform: 'translateX(-50%)',
-                      width: 18, height: 8,
-                      background: '#1C1917', borderRadius: 3
-                    }} />
-                    <span className="s-item-type" style={{ writingMode: 'vertical-rl' }}>{prod.type}</span>
-                  </div>
+                      width: 40, height: 72,
+                      border: '1px solid #d6d3d1',
+                      borderRadius: 6,
+                      background: '#fafaf8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                    }}>
+                      <div style={{
+                        position: 'absolute', top: -5, left: '50%', transform: 'translateX(-50%)',
+                        width: 18, height: 8,
+                        background: '#1C1917', borderRadius: 3
+                      }} />
+                      <span className="s-item-type" style={{ writingMode: 'vertical-rl' }}>{prod.type}</span>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <p className="s-item-name">{prod.name}</p>
