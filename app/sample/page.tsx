@@ -11,11 +11,20 @@ export default function SampleHome() {
     '/images/hero_flatlay_cream.png'
   ];
 
+  const copies = [
+    'お気に入りを、みっけ。',
+    'お気に入りを、mikke!'
+  ];
+
   const [heroBg, setHeroBg] = useState('/images/sample_hero_bg.png');
+  const [heroTitle, setHeroTitle] = useState('お気に入りを、みっけ。');
 
   useEffect(() => {
     const randomIndex = Math.floor(Math.random() * images.length);
     setHeroBg(images[randomIndex]);
+
+    const randomCopyIndex = Math.floor(Math.random() * copies.length);
+    setHeroTitle(copies[randomCopyIndex]);
   }, []);
   const latestArticles = [
     {
@@ -91,7 +100,7 @@ export default function SampleHome() {
               <span className="s-badge-ghost">EDITORIAL EDITION</span>
             </div>
             <h1 className="s-hero-title">
-              お気に入りを、みっけ。
+              {heroTitle}
             </h1>
             <p className="s-hero-desc">
               美容・ガジェット・インテリア。暮らしをちょっとよくするアイテムを
