@@ -10,9 +10,31 @@ interface HomeClientProps {
   mujiImageUrl?: string;
   duoAmazonUrl?: string;
   mujiAmazonUrl?: string;
+  duoSlug?: string;
+  mujiSlug?: string;
+  duoTitle?: string;
+  mujiTitle?: string;
+  duoPrice?: string;
+  mujiPrice?: string;
+  duoRating?: string;
+  mujiRating?: string;
 }
 
-export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl, duoAmazonUrl, mujiAmazonUrl }: HomeClientProps) {
+export default function HomeClient({
+  initialArticles,
+  duoImageUrl,
+  mujiImageUrl,
+  duoAmazonUrl,
+  mujiAmazonUrl,
+  duoSlug,
+  mujiSlug,
+  duoTitle,
+  mujiTitle,
+  duoPrice,
+  mujiPrice,
+  duoRating,
+  mujiRating,
+}: HomeClientProps) {
   const images = [
     '/images/sample_hero_bg.png',
     '/images/hero_flatlay_marble.png',
@@ -78,22 +100,22 @@ export default function HomeClient({ initialArticles, duoImageUrl, mujiImageUrl,
     {
       id: '1',
       name: 'DUO ザ クレンジングバーム',
-      price: '¥3,960',
-      rating: '4.8',
+      price: duoPrice || '¥3,960',
+      rating: duoRating || '4.8',
       type: 'BALM',
-      articleSlug: '20260609-cleansing-balm',
-      articleLabel: '最強クレンジングバーム7選',
+      articleSlug: duoSlug || '20260609-cleansing-balm',
+      articleLabel: duoTitle || '最強クレンジングバーム7選',
       imageUrl: duoImageUrl,
       amazonUrl: duoAmazonUrl || '#'
     },
     {
       id: '2',
       name: '無印良品 敏感肌用化粧水',
-      price: '¥1,290',
-      rating: '4.7',
+      price: mujiPrice || '¥1,290',
+      rating: mujiRating || '4.7',
       type: 'TONER',
-      articleSlug: '20260608-toner',
-      articleLabel: 'プチプラ実力派化粧水6選',
+      articleSlug: mujiSlug || '20260608-toner',
+      articleLabel: mujiTitle || 'プチプラ実力派化粧水6選',
       imageUrl: mujiImageUrl,
       amazonUrl: mujiAmazonUrl || '#'
     }
