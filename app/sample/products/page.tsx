@@ -93,13 +93,13 @@ export default async function SampleProductsPage({ searchParams }: PageProps) {
             href={`/sample/products?category=balm&sort=${currentSort}`} 
             className={`s-prod-tab ${currentCategory === 'balm' ? 's-prod-tab-active' : ''}`}
           >
-            🧴 クレンジングバーム ({balmProducts.length})
+            クレンジングバーム ({balmProducts.length})
           </Link>
           <Link 
             href={`/sample/products?category=toner&sort=${currentSort}`} 
             className={`s-prod-tab ${currentCategory === 'toner' ? 's-prod-tab-active' : ''}`}
           >
-            💧 化粧水 ({tonerProducts.length})
+            化粧水 ({tonerProducts.length})
           </Link>
         </div>
 
