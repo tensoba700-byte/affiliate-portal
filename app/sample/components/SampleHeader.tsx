@@ -8,10 +8,16 @@ export default function SampleHeader() {
         {/* Left: tagline */}
         <span className="sample-header-tagline">本音コスメ検証メディア</span>
 
-        {/* Center Logo */}
-        <Link href="/sample" className="sample-logo">
-          mikke!
-        </Link>
+        {/* Center Logo & Nav */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+          <Link href="/sample" className="sample-logo">
+            mikke!
+          </Link>
+          <nav style={{ display: 'flex', gap: 16 }}>
+            <Link href="/sample/products" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', color: 'var(--s-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>Products</Link>
+            <Link href="/sample/column" style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.06em', color: 'var(--s-ink)', textDecoration: 'none', textTransform: 'uppercase' }}>Journal</Link>
+          </nav>
+        </div>
 
         {/* Right Icons */}
         <div className="sample-header-actions">
