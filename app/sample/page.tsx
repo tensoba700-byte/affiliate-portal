@@ -93,7 +93,8 @@ export default function SampleHome() {
           </div>
           <span className="s-nav-divider">|</span>
           <span className="s-nav-tag">CATEGORY:</span>
-          <span className="s-nav-coming">美容ガジェット</span>
+          <span className="s-nav-coming">美容</span>
+          <span className="s-nav-coming">ガジェット</span>
           <span className="s-nav-coming">インテリア</span>
           <span className="s-nav-coming">生活雑貨</span>
           <span className="s-nav-coming">便利グッズ</span>
