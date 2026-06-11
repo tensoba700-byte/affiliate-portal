@@ -3199,13 +3199,13 @@ body:has(.sample-wrapper) > div.fixed {
 /* Description border */
 .s-article-page p.border-pink-200,
 .s-article-page p.border-l-2 {
-  border-color: #DDDDD9 !important;
-  border-left-color: #DDDDD9 !important;
+  border-color: #DDDDDD !important;
+  border-left-color: #DDDDDD !important;
 }
 
 /* Product/Article title left border override */
 .s-article-page .cute-html-content h3 {
-  border-left-color: #DDDDD9 !important;
+  border-left-color: #DDDDDD !important;
 }
 
 /* Pros/Cons box border & background */
