@@ -32,47 +32,57 @@ export function getPlaceholderImage(slug: string): string {
 }
 
 export async function getAllColumns(): Promise<ColumnItem[]> {
-  if (!fs.existsSync(columnsDirectory)) {
+  try {
+    if (!fs.existsSync(columnsDirectory)) {
+      return [];
+    }
+    const fileNames = fs.readdirSync(columnsDirectory);
+    const now = new Date();
+
+    const columns = await Promise.all(
+      fileNames
+        .filter((fn) => fn.endsWith('.md'))
+        .map(async (fn) => {
+          try {
+            const slug = fn.replace(/\.md$/, '');
+            return await getColumnBySlug(slug);
+          } catch (e) {
+            console.error(`Error parsing column ${fn}:`, e);
+            return null;
+          }
+        })
+    );
+
+    const validColumns = columns.filter((c): c is ColumnItem => c !== null);
+
+    // 公開日時フィルタ適用
+    const publishedColumns = validColumns.filter((c) => {
+      if (!c.publishDate) return true;
+      try {
+        let pubStr = c.publishDate.trim();
+        if (/^\d{4}-\d{2}-\d{2}$/.test(pubStr)) {
+          pubStr = `${pubStr}T07:00:00+09:00`;
+        } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/.test(pubStr)) {
+          pubStr = `${pubStr.replace(' ', 'T')}:00+09:00`;
+        } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(pubStr)) {
+          pubStr = `${pubStr.replace(' ', 'T')}+09:00`;
+        }
+        const pubDate = new Date(pubStr);
+        if (isNaN(pubDate.getTime())) return true;
+        return pubDate <= now;
+      } catch (e) {
+        return true;
+      }
+    });
+
+    // 新しい順（日付降順）にソート
+    return publishedColumns.sort((a, b) => {
+      return b.publishDate.localeCompare(a.publishDate);
+    });
+  } catch (error) {
+    console.error("Error in getAllColumns:", error);
     return [];
   }
-  const fileNames = fs.readdirSync(columnsDirectory);
-  const now = new Date();
-
-  const columns = await Promise.all(
-    fileNames
-      .filter((fn) => fn.endsWith('.md'))
-      .map(async (fn) => {
-        const slug = fn.replace(/\.md$/, '');
-        return await getColumnBySlug(slug);
-      })
-  );
-
-  const validColumns = columns.filter((c): c is ColumnItem => c !== null);
-
-  // 公開日時フィルタ適用
-  const publishedColumns = validColumns.filter((c) => {
-    if (!c.publishDate) return true;
-    try {
-      let pubStr = c.publishDate.trim();
-      if (/^\d{4}-\d{2}-\d{2}$/.test(pubStr)) {
-        pubStr = `${pubStr}T07:00:00+09:00`;
-      } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/.test(pubStr)) {
-        pubStr = `${pubStr.replace(' ', 'T')}:00+09:00`;
-      } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(pubStr)) {
-        pubStr = `${pubStr.replace(' ', 'T')}+09:00`;
-      }
-      const pubDate = new Date(pubStr);
-      if (isNaN(pubDate.getTime())) return true;
-      return pubDate <= now;
-    } catch (e) {
-      return true;
-    }
-  });
-
-  // 新しい順（日付降順）にソート
-  return publishedColumns.sort((a, b) => {
-    return b.publishDate.localeCompare(a.publishDate);
-  });
 }
 
 export async function getColumnBySlug(slug: string): Promise<ColumnItem | null> {
