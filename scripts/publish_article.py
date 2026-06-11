@@ -208,15 +208,15 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     line_count = display_title.count("<br />") + 1
     font_size = "85px" if line_count >= 3 else ("110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "85px")
     
-    css = f"""@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800;900&display=swap');
+    css = f"""@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #fff; }}
-body {{ font-family: 'M PLUS Rounded 1c', sans-serif; display: flex; align-items: center; justify-content: center; position: relative; }}
+html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #F7F7F5; }}
+body {{ font-family: 'Noto Serif JP', serif; display: flex; align-items: center; justify-content: center; position: relative; }}
 .g {{ display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); width: 1200px; height: 630px; padding: 20px; gap: 20px; }}
 .pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
 .pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
 .to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
-.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.3; text-align: center; width: 100%; padding: 0 60px; text-shadow: 0 0 20px #fff, 0 0 20px #fff, 0 0 20px #fff; word-break: keep-all; }}
+.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.3; text-align: center; width: auto; max-width: 90%; padding: 40px 60px; background-color: rgba(255, 255, 255, 0.5); border-radius: 8px; word-break: keep-all; }}
 """
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
