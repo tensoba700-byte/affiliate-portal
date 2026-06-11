@@ -3174,11 +3174,17 @@ body:has(.sample-wrapper) > div.fixed {
 .s-article-page div[class*="absolute bottom-[-6px]"] {
   border-radius: 4px !important;
   border-color: #DDDDD9 !important;
-  background-color: #FFFFFF !important;
+  background-color: #EFEFED !important;
+  background: #EFEFED !important;
   box-shadow: none !important;
 }
 .s-article-page div[class*="absolute bottom-[-6px]"] span[class*="text-pink-500"] {
   color: #1A1A1A !important;
+}
+
+/* Hide star ratings in RankingTable */
+.s-article-page span.text-xs.leading-none.flex.gap-0.5.justify-center {
+  display: none !important;
 }
 
 /* Features tags */
@@ -3191,9 +3197,15 @@ body:has(.sample-wrapper) > div.fixed {
 }
 
 /* Description border */
-.s-article-page p[class*="border-pink-200"],
-.s-article-page p[class*="border-l-2"] {
+.s-article-page p.border-pink-200,
+.s-article-page p.border-l-2 {
   border-color: #DDDDD9 !important;
+  border-left-color: #DDDDD9 !important;
+}
+
+/* Product/Article title left border override */
+.s-article-page .cute-html-content h3 {
+  border-left-color: #DDDDD9 !important;
 }
 
 /* Pros/Cons box border & background */
