@@ -22,9 +22,13 @@ def validate():
     # JSON全体の文字列を取得して一括チェック
     json_str = json.dumps(data, ensure_ascii=False)
     
-    # 1. 日本語破損表現の検出
+    # 1. 日本語破損表現・不自然な日本語の検出
     if " of " in json_str:
         errors.append("日本語破損表現である ' of ' が検出されました。")
+        
+    unnatural_nda_matches = re.findall(r"[一-龠ァ-ヶa-zA-Z0-9々ヶ]んだ", json_str)
+    if unnatural_nda_matches:
+        errors.append(f"不自然な日本語表現（名詞などの直後に直接 'んだ' が接続）が検出されました: {unnatural_nda_matches}")
         
     # 2. アフィリエイト関連リンク・プレースホルダーの検出
     affiliate_patterns = [

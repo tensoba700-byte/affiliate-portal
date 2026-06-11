@@ -125,7 +125,7 @@ export default async function SampleColumnDetail({ params }: PageProps) {
             <span className="s-profile-badge">ライター</span>
           </div>
           <p className="s-profile-desc">
-            仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。実生活で使い倒した「時短」「夕方に崩れない」リアルな体験談をコラムでお届けします。
+            仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。コスメ好きライターが調べ尽くした情報をお届けします。
           </p>
         </div>
       </div>

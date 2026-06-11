@@ -195,7 +195,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
             <span className="s-profile-badge">ライター</span>
           </div>
           <p className="s-profile-desc">
-            仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。実生活で使い倒した「時短」「夕方に崩れない」リアルな体験談をコラムでお届けします。
+            仕事も趣味も毎日バタバタ大忙しで、日中に化粧直しをする暇なんて全くないけれど、コスメへの愛だけは誰にも負けない20代後半の等身大オタク。コスメ好きライターが調べ尽くした情報をお届けします。
           </p>
         </div>
       </div>
@@ -215,6 +215,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
                   dateStr = d.toLocaleDateString('ja-JP').replace(/\//g, '.');
                 }
               }
+              const cleanTitle = article.title.replace(/<br\s*\/?>/gi, ' ');
               return (
                 <Link
                   key={article.slug}
@@ -224,7 +225,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
                   <div className="s-article-thumb">
                     <img
                       src={article.coverImage || '/eyecatch/20260609-cleansing-balm-sample.png'}
-                      alt={article.title}
+                      alt={cleanTitle}
                       className="s-article-img"
                       loading="lazy"
                     />
@@ -232,7 +233,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
                   </div>
                   <div className="s-article-body">
                     <span className="s-article-date">{dateStr}</span>
-                    <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: article.title }} />
+                    <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: cleanTitle }} />
                     <p className="s-article-excerpt">{article.excerpt || '大人気コスメを本音でガチ検証レビュー！メイク落ちや使用感を徹底的に解説するよ。'}</p>
                     <div className="s-article-read-more">
                       READ REPORT <span>→</span>
