@@ -76,7 +76,7 @@ export default function HomeClient({
     };
   });
 
-  const latestColumns = initialColumns && initialColumns.length > 0
+  const latestColumns = Array.isArray(initialColumns) && initialColumns.length > 0
     ? initialColumns.map((col) => {
         let dateStr = '2026.06.12';
         if (col.publishDate) {

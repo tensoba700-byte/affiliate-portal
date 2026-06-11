@@ -14,7 +14,8 @@ export const metadata = {
 export default async function ColumnListPage() {
   let columns: ColumnItem[] = [];
   try {
-    columns = await getAllColumns();
+    const allCols = await getAllColumns();
+    columns = Array.isArray(allCols) ? allCols : [];
   } catch (e) {
     console.error("Failed to load columns:", e);
   }
@@ -71,7 +72,7 @@ export default async function ColumnListPage() {
         </section>
       ) : (
         <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--s-muted-2)', fontWeight: 'bold' }}>
-          現在、公開中のコラムはありません。
+          現在コラムはありません
         </div>
       )}
 
