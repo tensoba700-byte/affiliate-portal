@@ -15,6 +15,7 @@
     "title": "カサつく夜に、うるおいのベールを。【乾燥肌を防ぐ正しい保湿とスキンケアの知識】",
     "category": "skincare",
     "publish_date": "2026-06-12 07:00:00",
+    "eyecatch": "/column-images/col-dry-skin-care.png",
     "description": "カサつきやゴワつきが気になる乾燥肌の原因と、潤いに満ちた健やかな美肌をキープするための正しい洗顔・保湿方法を徹底解説。今日から実践できるスキンケア知識をお届けします。"
   },
   "content": {
@@ -61,6 +62,9 @@
   - 投稿スケジュール用の公開日時（`YYYY-MM-DD HH:mm:ss`）。
 * **`description`** (必須・文字列)
   - 記事のメタディスクリプション。**80〜150文字**を目安とする。
+* **`eyecatch`** (任意・文字列)
+  - 記事ごとの自動生成アイキャッチ画像のパス。
+  - 例: `/column-images/col-dry-skin-care.png`
 
 ### 2. `content` オブジェクト (必須)
 * **`lead`** (必須・文字列)

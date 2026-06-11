@@ -57,6 +57,7 @@ def run_publish():
     category = meta.get("category")
     publish_date = meta.get("publish_date")
     description = meta.get("description")
+    eyecatch = meta.get("eyecatch")
     
     lead = content.get("lead", "")
     sections = content.get("sections", [])
@@ -70,6 +71,8 @@ def run_publish():
     markdown_lines.append(f'description: "{description}"')
     markdown_lines.append(f'category: "{category}"')
     markdown_lines.append(f'publishDate: "{publish_date}"')
+    if eyecatch:
+        markdown_lines.append(f'eyecatch: "{eyecatch}"')
     markdown_lines.append("---")
     markdown_lines.append("")
     markdown_lines.append(lead)
