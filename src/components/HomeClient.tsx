@@ -257,7 +257,7 @@ export default function HomeClient({
             <Link href="/articles" className="s-section-link">NEW REPORTS →</Link>
           </div>
 
-          <div className="s-article-grid">
+          <div className="s-article-grid s-home-full-width-grid">
             {latestArticles.map((article) => (
               <Link
                 key={article.slug}
@@ -296,7 +296,7 @@ export default function HomeClient({
             <Link href="/column" className="s-section-link">VIEW JOURNAL →</Link>
           </div>
 
-          <div className="s-column-list">
+          <div className="s-column-list s-home-full-width-list">
             {latestColumns.map((col) => (
               <Link
                 key={col.slug}

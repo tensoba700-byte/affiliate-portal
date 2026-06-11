@@ -136,6 +136,7 @@ body {
                     radial-gradient(circle at 10% 90%, var(--theme-grad-2) 0%, transparent 40%);
   background-attachment: fixed;
   transition: background-color 0.5s ease, color 0.5s ease;
+  overflow-x: hidden;
 }
 
 @keyframes fade-in-up {
@@ -2811,4 +2812,71 @@ body:has(.sample-wrapper) > div.fixed {
   background-color: #1A1A1A !important;
   color: #ffffff !important;
 }
+
+/* =========================================
+   📺 HOMEPAGE FULL-WIDTH CARDS LAYOUT
+   ========================================= */
+.s-home-full-width-grid {
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .s-home-full-width-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+.s-home-full-width-grid .s-article-card {
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid var(--s-border) !important;
+  border-top: 1px solid var(--s-border) !important;
+}
+
+.s-home-full-width-grid .s-article-card:hover {
+  transform: none !important;
+  background: var(--s-surface-2) !important;
+}
+
+.s-home-full-width-list {
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  padding: 0 !important;
+}
+
+.s-home-full-width-list .s-column-card {
+  border-left: none !important;
+  border-right: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 24px 24px !important;
+  margin: 0 !important;
+  border-top: 1px solid var(--s-border) !important;
+  border-bottom: 1px solid var(--s-border) !important;
+}
+
+.s-home-full-width-list .s-column-card:hover {
+  transform: none !important;
+  opacity: 0.9 !important;
+  background-color: var(--s-surface-2) !important;
+}
+
 
