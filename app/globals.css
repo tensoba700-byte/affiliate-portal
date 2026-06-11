@@ -2713,3 +2713,102 @@ body:has(.sample-wrapper) > div.fixed {
 .s-article-page .w-full.my-8.rounded-\[24px\] a {
   font-family: var(--s-font-body), sans-serif !important;
 }
+
+/* =========================================
+   🖤 CATEGORY PAGE BLACK/MONO THEME
+   ========================================= */
+.s-category-page {
+  /* 変数のオーバーライド */
+  --background: #F7F7F5 !important;
+  --foreground: #1A1A1A !important;
+  --muted: #888888 !important;
+  --muted-2: #888888 !important;
+  --primary: #1A1A1A !important;
+  --primary-foreground: #ffffff !important;
+  --card: #ffffff !important;
+  --card-border: rgba(26, 26, 26, 0.1) !important;
+  --theme-shadow: rgba(0, 0, 0, 0.03) !important;
+  --theme-grad-1: transparent !important;
+  --theme-grad-2: transparent !important;
+
+  /* Noto Sans JP を適用 */
+  font-family: var(--font-noto-sans), sans-serif !important;
+  background-color: #F7F7F5 !important;
+  color: #1A1A1A !important;
+}
+
+/* テキスト色の強制上書き */
+.s-category-page,
+.s-category-page h1,
+.s-category-page h2,
+.s-category-page h3,
+.s-category-page p,
+.s-category-page span,
+.s-category-page a {
+  color: #1A1A1A !important;
+  font-family: var(--font-noto-sans), sans-serif !important;
+}
+
+.s-category-page .text-muted,
+.s-category-page .text-muted-foreground {
+  color: #888888 !important;
+}
+
+/* ピンク系の背景や境界線、テキストを修正 */
+.s-category-page .text-primary {
+  color: #1A1A1A !important;
+}
+
+.s-category-page .bg-primary {
+  background-color: #1A1A1A !important;
+  color: #ffffff !important;
+}
+
+.s-category-page .bg-primary\/10 {
+  background-color: rgba(26, 26, 26, 0.08) !important;
+}
+
+.s-category-page .border-primary\/10 {
+  border-color: rgba(26, 26, 26, 0.1) !important;
+}
+
+.s-category-page .bg-primary\/5 {
+  background-color: rgba(26, 26, 26, 0.04) !important;
+}
+
+/* カードのホバー効果や影 */
+.s-category-page .cute-shadow {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02) !important;
+  border-color: rgba(26, 26, 26, 0.08) !important;
+}
+
+.s-category-page .cute-shadow:hover {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(26, 26, 26, 0.15) !important;
+}
+
+/* カテゴリーPillsのスタイル調整 */
+.s-category-page .border-card-border {
+  border-color: rgba(26, 26, 26, 0.1) !important;
+}
+
+.s-category-page a.bg-primary {
+  background-color: #1A1A1A !important;
+  border-color: #1A1A1A !important;
+  color: #ffffff !important;
+}
+
+.s-category-page a:not(.bg-primary):hover {
+  border-color: #1A1A1A !important;
+  color: #1A1A1A !important;
+}
+
+.s-category-page .inline-block.px-10.py-3.bg-primary\/10 {
+  background-color: rgba(26, 26, 26, 0.08) !important;
+  color: #1A1A1A !important;
+}
+.s-category-page .inline-block.px-10.py-3.bg-primary\/10:hover {
+  background-color: #1A1A1A !important;
+  color: #ffffff !important;
+}
+

@@ -60,7 +60,7 @@ export default async function SearchPage({
   const emoji = isCategory ? (CATEGORY_EMOJIS[category] || '💐') : '🔍';
 
   return (
-    <div className="flex flex-col items-center w-full pb-32 pt-10 px-4 overflow-hidden min-h-[70vh]">
+    <div className="flex flex-col items-center w-full pb-32 pt-10 px-4 overflow-hidden min-h-[70vh] s-category-page">
       <div className="container mx-auto max-w-5xl animate-fade-in-up">
 
         {/* Header */}
@@ -78,7 +78,6 @@ export default async function SearchPage({
           </nav>
 
           <h1 className="text-2xl md:text-3xl font-black text-foreground mb-4 flex items-center justify-center gap-2">
-            <span className="text-primary">{emoji}</span>
             {pageTitle}
           </h1>
           <p className="text-sm text-muted font-bold">
@@ -99,7 +98,7 @@ export default async function SearchPage({
                     : 'bg-white text-muted border-card-border hover:border-primary hover:text-primary'
                 }`}
               >
-                {CATEGORY_EMOJIS[cat] || ''} {cat}
+                {cat}
               </Link>
             ))}
           </div>
@@ -121,7 +120,7 @@ export default async function SearchPage({
                     <img src={article.coverImage} alt={article.title} className="object-contain max-w-full max-h-full w-full h-full transform transition-transform duration-700 group-hover:scale-102" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-primary/5 text-primary/30 cursor-pointer">
-                      <span className="text-3xl">🎀</span>
+                      <span className="text-xs font-bold text-muted">NO IMAGE</span>
                     </div>
                   )}
                   {article.category && (
@@ -149,7 +148,6 @@ export default async function SearchPage({
           </div>
         ) : (
           <div className="text-center py-20 bg-white rounded-[4px] border border-card-border cute-shadow max-w-xl mx-auto">
-            <span className="text-5xl mb-4 block">💦</span>
             <p className="text-xl text-foreground font-black mb-3">
               {isCategory ? 'この カテゴリーはまだ記事がありません' : 'ごめんなさい！みつかりませんでした'}
             </p>
