@@ -2046,8 +2046,11 @@ body:has(.sample-wrapper) > div.fixed {
 }
 
 /* Description border */
-.s-table-wrap p[class*="border-pink-200"] {
-  border-left-color: var(--s-accent) !important;
+.s-table-wrap p[class*="border-pink-200"],
+.s-table-wrap p.border-pink-200,
+.s-table-wrap p.border-l-2 {
+  border-left-color: #DDDDDD !important;
+  border-color: #DDDDDD !important;
 }
 
 /* Pros/cons box */
@@ -3341,6 +3344,12 @@ body:has(.sample-wrapper) > div.fixed {
 .s-article-page a[href*="rakuten.co.jp"] span.rounded-md,
 .s-article-page a[href*="rakuten.co.jp"] span.rounded-lg {
   background-color: #BF0000 !important;
+}
+
+/* Hide crown emoji inside article h3 headings */
+.s-article-page .cute-html-content h3::first-letter {
+  font-size: 0 !important;
+  display: none !important;
 }
 
 
