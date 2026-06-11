@@ -350,7 +350,9 @@ body {
   transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   cursor: pointer;
 }
-.btn-amazon, .btn-rakuten {
+.btn-amazon, .btn-rakuten,
+.s-article-page .cute-html-content .btn-amazon,
+.s-article-page .cute-html-content .btn-rakuten {
   flex: 1 1 auto !important;
   min-width: 140px;
   max-width: 400px !important;
@@ -367,6 +369,7 @@ body {
   cursor: pointer !important;
   color: #1A1A1A !important;
   box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 @media (max-width: 640px) {
   .btn-yahoo {
@@ -375,7 +378,9 @@ body {
     font-size: 15px !important;
     padding: 12px 20px !important;
   }
-  .btn-amazon, .btn-rakuten {
+  .btn-amazon, .btn-rakuten,
+  .s-article-page .cute-html-content .btn-amazon,
+  .s-article-page .cute-html-content .btn-rakuten {
     flex: 1 1 100% !important;
     max-width: 400px !important;
     margin: 0 auto !important;
@@ -388,15 +393,24 @@ body {
   transform: translateY(-2px) !important;
   box-shadow: 0 8px 22px rgba(0,0,0,0.18) !important;
 }
-.btn-amazon:hover, .btn-rakuten:hover {
+.btn-amazon:hover, .btn-rakuten:hover,
+.s-article-page .cute-html-content .btn-amazon:hover,
+.s-article-page .cute-html-content .btn-rakuten:hover {
   background: #EFEFEA !important;
   border-color: #CCCCCC !important;
+  color: #1A1A1A !important;
   transform: none !important;
   box-shadow: none !important;
 }
-.btn-amazon:active, .btn-rakuten:active {
-  background-color: inherit !important;
-  color: inherit !important;
+.btn-amazon:active, .btn-rakuten:active,
+.s-article-page .cute-html-content .btn-amazon:active,
+.s-article-page .cute-html-content .btn-rakuten:active {
+  background: #F7F7F5 !important;
+  border-color: #DDDDD9 !important;
+  color: #1A1A1A !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: none !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 .s-buy-button:active {
