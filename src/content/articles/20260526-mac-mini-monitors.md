@@ -1,5 +1,5 @@
 ---
-title: "デスクに広がる、新たな視界を。【Mac miniと調和するモニター選び6選】"
+title: "デスクに広がる、<br>新たな視界を。【Mac miniと調和するモニター選び6選】"
 coverImage: "/eyecatch/20260526-mac-mini-monitors.png"
 excerpt: "コンパクトでパワフルなMac miniの魅力を最大限に引き出す、高画質な外部モニターを徹底比較レビュー！"
 publishDate: "2026-05-26"
