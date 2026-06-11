@@ -174,7 +174,7 @@ export default function HomeClient({
                 className="s-item-card cursor-pointer"
                 onClick={() => {
                   if (prod.amazonUrl && prod.amazonUrl !== '#') {
-                    window.open(prod.amazonUrl, '_blank', 'noopener,noreferrer,nofollow,sponsored');
+                    window.location.href = prod.amazonUrl;
                   }
                 }}
               >
