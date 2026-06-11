@@ -333,7 +333,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
 }
-.btn-amazon, .btn-rakuten, .btn-yahoo {
+.btn-yahoo {
   flex: 1 1 auto;
   min-width: 140px;
   max-width: 210px;
@@ -350,31 +350,75 @@ body {
   transition: filter 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   cursor: pointer;
 }
+.btn-amazon, .btn-rakuten {
+  flex: 1 1 auto;
+  min-width: 140px;
+  max-width: 210px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 14px 18px;
+  border: 1px solid #DDDDD9;
+  background: #F7F7F5;
+  border-radius: 0px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  color: #1A1A1A;
+}
 @media (max-width: 640px) {
-  .btn-amazon, .btn-rakuten, .btn-yahoo {
+  .btn-yahoo {
     flex: 1 1 100%;
     max-width: 100%;
     font-size: 15px;
     padding: 12px 20px;
   }
+  .btn-amazon, .btn-rakuten {
+    flex: 1 1 100%;
+    max-width: 100%;
+    font-size: 15px;
+  }
 }
 /* Hover — brighten then darken */
-.btn-amazon:hover, .btn-rakuten:hover, .btn-yahoo:hover {
+.btn-yahoo:hover {
   filter: brightness(0.88);
   transform: translateY(-2px);
   box-shadow: 0 8px 22px rgba(0,0,0,0.18);
 }
+.btn-amazon:hover, .btn-rakuten:hover {
+  background: #EFEFEA;
+  border-color: #CCCCCC;
+}
 /* Amazon — オレンジ・ダーク文字 */
-.btn-amazon {
-  background: #FF9900;
-  color: #111111;
-  box-shadow: 0 4px 14px rgba(255, 153, 0, 0.38);
+.btn-amazon .btn-label {
+  color: #1A1A1A;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-amazon .btn-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #FF9900;
+  margin-right: 8px;
 }
 /* 楽天 — 深い赤 */
-.btn-rakuten {
-  background: #BF0000;
-  color: #FFFFFF;
-  box-shadow: 0 4px 14px rgba(191, 0, 0, 0.32);
+.btn-rakuten .btn-label {
+  color: #1A1A1A;
+  display: inline-flex;
+  align-items: center;
+}
+.btn-rakuten .btn-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #BF0000;
+  margin-right: 8px;
 }
 /* Yahoo! — 明るい赤 */
 .btn-yahoo {
@@ -393,6 +437,9 @@ body {
   flex-shrink: 0;
 }
 .btn-icon img { border-radius: 4px; display: block; }
+.btn-amazon .btn-icon, .btn-rakuten .btn-icon {
+  display: none;
+}
 /* Text stack — label + price */
 .btn-text-stack {
   display: flex;
@@ -400,12 +447,26 @@ body {
   gap: 1px;
   text-align: left;
 }
+.btn-amazon .btn-text-stack, .btn-rakuten .btn-text-stack {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+}
 .btn-label { font-weight: 700; line-height: 1.2; }
 .btn-price {
   font-size: 11px;
   font-weight: 700;
   opacity: 0.88;
   line-height: 1.2;
+}
+.btn-amazon .btn-price, .btn-rakuten .btn-price {
+  color: #888888;
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 1;
 }
 
 /* Comparison Table */
