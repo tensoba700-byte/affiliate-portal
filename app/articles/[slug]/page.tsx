@@ -209,7 +209,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             {article.rankings.length > 0 && (
               <RankingTable
                 products={article.rankings}
-                title={`${article.title} ランキング`}
+                title={`${article.title.replace(/<br\s*\/?>/gi, ' ')} ランキング`}
               />
             )}
 

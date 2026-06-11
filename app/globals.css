@@ -3126,8 +3126,8 @@ body:has(.sample-wrapper) > div.fixed {
   color: #FFFFFF !important;
   box-shadow: none !important;
 }
-/* Hide emojis inside tab buttons */
-.s-article-page button[class*="active:scale-98"] > span:first-child {
+/* Hide crown emoji inside the first tab button */
+.s-article-page button[class*="active:scale-98"]:first-child > span:first-child {
   font-size: 0 !important;
   display: none !important;
 }

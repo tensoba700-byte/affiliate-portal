@@ -450,6 +450,7 @@ def get_notion_data(article_title: str):
         
         raw_name = p.get("name", "")
         clean_name = re.sub(r'\s+', ' ', raw_name).strip()
+        clean_name = re.sub(r'<br\s*/?>', ' ', clean_name, flags=re.IGNORECASE)
         
         item_id = p.get("id") or f"stockpile_{i + 1}"
         
@@ -599,7 +600,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
 
     for i, p in enumerate(data.get("products", [])):
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
-        display_name = truncate_product_name(p['name'])
+        prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)
+        display_name = truncate_product_name(prod_name)
         
         markdown += f"### 👑 第{i+1}位: {display_name}\n"
         markdown += f"[総合評価: {scores[i]}]\n\n"
@@ -632,7 +634,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     
     comparison_table = "## 📊 比較表\n\n| 順位 | 商品名 | 価格 | 特徴 |\n| :---: | :--- | :---: | :--- |\n"
     for idx, p in enumerate(data.get("products", [])):
-        name_short = truncate_product_name(p['name'])
+        prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)
+        name_short = truncate_product_name(prod_name)
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
         price = "なし"
         if notion_p:
