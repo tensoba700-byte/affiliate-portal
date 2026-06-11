@@ -1,5 +1,6 @@
 import React from 'react';
 import { getAllArticles, getArticleBySlug, ArticleItem } from '@/src/lib/api';
+import { getAllColumns, ColumnItem } from '@/src/lib/columns';
 import HomeClient from '@/src/components/HomeClient';
 import type { Metadata } from 'next';
 
@@ -26,10 +27,18 @@ export interface PickItem {
 export default async function Home() {
   let recentArticles: ArticleItem[] = [];
   let picks: PickItem[] = [];
+  let recentColumns: ColumnItem[] = [];
 
   try {
     const articles = await getAllArticles();
     recentArticles = articles.slice(0, 6);
+
+    try {
+      const cols = await getAllColumns();
+      recentColumns = cols.slice(0, 3);
+    } catch (colError) {
+      console.error("Failed to fetch columns:", colError);
+    }
 
     // rankingsが存在する最新の最大4記事を取得
     // 全件チェックを避けるため、チェック対象は最新の8件までとする
@@ -89,6 +98,7 @@ export default async function Home() {
     <HomeClient 
       initialArticles={recentArticles} 
       picks={picks}
+      initialColumns={recentColumns}
     />
   );
 }

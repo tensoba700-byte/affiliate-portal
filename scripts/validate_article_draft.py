@@ -109,7 +109,11 @@ def validate():
                     errors.append(f"ui.faq[{idx}].question is empty or missing")
                 if not a or not isinstance(a, str) or not a.strip():
                     errors.append(f"ui.faq[{idx}].answer is empty or missing")
-                    
+    # 5. Text corruption check
+    json_str = json.dumps(data, ensure_ascii=False)
+    if " of " in json_str:
+        errors.append("日本語破損表現の ' of ' が検出されました")
+
     if errors:
         print("Validation FAILED with the following errors:")
         for err in errors:

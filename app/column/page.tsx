@@ -1,33 +1,24 @@
 import Link from 'next/link';
+import { getAllColumns, ColumnItem } from '@/src/lib/columns';
 
-export const columnsData = [
-  {
-    slug: 'night-pore-reset',
-    title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
-    excerpt: '日中は忙しすぎてメイク直しをする暇なんて1秒もない！そんな大忙しな大人のために、お風呂前にサッとできる、その日の汚れを完全に溜め込まない極上スキンケアメソッド。',
-    date: '2026.06.09',
-    category: 'ESSAY & TIPS',
-    coverImage: '/images/column_night_pore_reset.png'
+export const revalidate = 3600; // Revalidate cache hourly (ISR)
+
+export const metadata = {
+  title: '美容コラム | みっけ！',
+  description: '美容オタクの専属ライターが綴る、夕方ににじまない・時短でお肌をいたわる美容エッセイ・スキンケア知識コラム一覧。',
+  alternates: {
+    canonical: '/column',
   },
-  {
-    slug: 'honest-makeup-base',
-    title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
-    excerpt: '「キープ力抜群！」と謳う下地はたくさんあるけれど、本当に夕方までテカらず、ヨレない本命下地を見分けるための成分とテクスチャー of チェックリスト。',
-    date: '2026.06.08',
-    category: 'BEAUTY CHECKLIST',
-    coverImage: '/images/column_makeup_base.png'
-  },
-  {
-    slug: 'morning-three-minute-glow',
-    title: '忙しい朝 of 3分間で透明感を引き出す、プチプラを賢く使った時短保湿術',
-    excerpt: '1分1秒が惜しい朝のバタバタタイムに、プチプラシートマスクと乳液の組み合わせだけで、夕方まで乾燥知らずのもちもち肌を作るオタクの裏ワザを大公開！',
-    date: '2026.06.05',
-    category: 'MORNING ROUTINE',
-    coverImage: 'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=600&q=80'
+};
+
+export default async function ColumnListPage() {
+  let columns: ColumnItem[] = [];
+  try {
+    columns = await getAllColumns();
+  } catch (e) {
+    console.error("Failed to load columns:", e);
   }
-];
 
-export default function ColumnListPage() {
   return (
     <div className="s-col-page">
       {/* Hero */}
@@ -43,62 +34,83 @@ export default function ColumnListPage() {
         <div className="s-col-hero-rule" />
       </div>
 
-      {/* Featured */}
-      {columnsData.length > 0 && (
+      {/* Featured Column (First item) */}
+      {columns.length > 0 ? (
         <section className="s-col-featured">
-          <Link
-            href={`/column/${columnsData[0].slug}`}
-            className="s-col-featured-card"
-          >
-            <div
-              className="s-col-featured-img"
-              style={{ backgroundImage: `url(${columnsData[0].coverImage})` }}
-            />
-            <div className="s-col-featured-body">
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                  <span className="s-column-cat">{columnsData[0].category}</span>
-                  <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--s-muted-2)' }}>{columnsData[0].date}</span>
+          {(() => {
+            const featured = columns[0];
+            let dateStr = '2026.06.12';
+            if (featured.publishDate) {
+              dateStr = featured.publishDate.split(' ')[0].replace(/-/g, '.');
+            }
+            return (
+              <Link
+                href={`/column/${featured.slug}`}
+                className="s-col-featured-card"
+              >
+                <div
+                  className="s-col-featured-img"
+                  style={{ backgroundImage: `url(${featured.coverImage})` }}
+                />
+                <div className="s-col-featured-body">
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                      <span className="s-column-cat">{featured.category}</span>
+                      <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.1em', color: 'var(--s-muted-2)' }}>{dateStr}</span>
+                    </div>
+                    <h2 className="s-col-featured-title">{featured.title}</h2>
+                    <p className="s-col-featured-excerpt">{featured.description}</p>
+                  </div>
+                  <div className="s-article-read-more">
+                    READ THE ESSAY <span>→</span>
+                  </div>
                 </div>
-                <h2 className="s-col-featured-title">{columnsData[0].title}</h2>
-                <p className="s-col-featured-excerpt">{columnsData[0].excerpt}</p>
-              </div>
-              <div className="s-article-read-more">
-                READ THE ESSAY <span>→</span>
-              </div>
-            </div>
-          </Link>
+              </Link>
+            );
+          })()}
         </section>
+      ) : (
+        <div style={{ textAlign: 'center', padding: '48px 0', color: 'var(--s-muted-2)', fontWeight: 'bold' }}>
+          現在、公開中のコラムはありません。
+        </div>
       )}
 
-      {/* Grid */}
-      <section className="s-col-grid">
-        {columnsData.slice(1).map((col) => (
-          <Link
-            href={`/column/${col.slug}`}
-            key={col.slug}
-            className="s-col-grid-card"
-          >
-            <div
-              className="s-col-grid-img"
-              style={{ backgroundImage: `url(${col.coverImage})` }}
-            />
-            <div className="s-col-grid-body">
-              <div>
-                <span className="s-column-cat">{col.category}</span>
-                <h3 className="s-col-grid-title" style={{ marginTop: 8 }}>{col.title}</h3>
-                <p className="s-col-grid-excerpt">{col.excerpt}</p>
-              </div>
-              <div className="s-col-foot">
-                <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', color: 'var(--s-muted-2)' }}>{col.date}</span>
-                <div className="s-article-read-more" style={{ paddingTop: 0, borderTop: 'none', marginTop: 0 }}>
-                  READ <span>→</span>
+      {/* Column Grid (Items after the first) */}
+      {columns.length > 1 && (
+        <section className="s-col-grid">
+          {columns.slice(1).map((col) => {
+            let dateStr = '2026.06.12';
+            if (col.publishDate) {
+              dateStr = col.publishDate.split(' ')[0].replace(/-/g, '.');
+            }
+            return (
+              <Link
+                href={`/column/${col.slug}`}
+                key={col.slug}
+                className="s-col-grid-card"
+              >
+                <div
+                  className="s-col-grid-img"
+                  style={{ backgroundImage: `url(${col.coverImage})` }}
+                />
+                <div className="s-col-grid-body">
+                  <div>
+                    <span className="s-column-cat">{col.category}</span>
+                    <h3 className="s-col-grid-title" style={{ marginTop: 8 }}>{col.title}</h3>
+                    <p className="s-col-grid-excerpt">{col.description}</p>
+                  </div>
+                  <div className="s-col-foot">
+                    <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', color: 'var(--s-muted-2)' }}>{dateStr}</span>
+                    <div className="s-article-read-more" style={{ paddingTop: 0, borderTop: 'none', marginTop: 0 }}>
+                      READ <span>→</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </section>
+              </Link>
+            );
+          })}
+        </section>
+      )}
     </div>
   );
 }

@@ -17,11 +17,20 @@ interface HomeClientProps {
     imageUrl: string;
     amazonUrl: string;
   }[];
+  initialColumns?: {
+    slug: string;
+    title: string;
+    description: string;
+    category: string;
+    publishDate: string;
+    coverImage: string;
+  }[];
 }
 
 export default function HomeClient({
   initialArticles,
   picks = [],
+  initialColumns = [],
 }: HomeClientProps) {
   const images = [
     '/images/sample_hero_bg.png',
@@ -67,22 +76,36 @@ export default function HomeClient({
     };
   });
 
-  const latestColumns = [
-    {
-      slug: 'night-pore-reset',
-      title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
-      date: '2026.06.09',
-      category: 'ESSAY',
-      image: '/images/column_night_pore_reset.png'
-    },
-    {
-      slug: 'honest-makeup-base',
-      title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
-      date: '2026.06.08',
-      category: 'BEAUTY TIPS',
-      image: '/images/column_makeup_base.png'
-    }
-  ];
+  const latestColumns = initialColumns && initialColumns.length > 0
+    ? initialColumns.map((col) => {
+        let dateStr = '2026.06.12';
+        if (col.publishDate) {
+          dateStr = col.publishDate.split(' ')[0].replace(/-/g, '.');
+        }
+        return {
+          slug: col.slug,
+          title: col.title,
+          date: dateStr,
+          category: col.category,
+          image: col.coverImage
+        };
+      })
+    : [
+        {
+          slug: 'night-pore-reset',
+          title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
+          date: '2026.06.09',
+          category: 'ESSAY',
+          image: '/images/column_night_pore_reset.png'
+        },
+        {
+          slug: 'honest-makeup-base',
+          title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
+          date: '2026.06.08',
+          category: 'BEAUTY TIPS',
+          image: '/images/column_makeup_base.png'
+        }
+      ];
 
   const recommendedItems = picks && picks.length > 0 ? picks : [
     {
