@@ -395,12 +395,8 @@ body {
   box-shadow: none !important;
 }
 .btn-amazon:active, .btn-rakuten:active {
-  background: #F7F7F5 !important;
-  border-color: #DDDDD9 !important;
-  color: #1A1A1A !important;
-  transform: none !important;
-  box-shadow: none !important;
-  filter: none !important;
+  background-color: inherit !important;
+  color: inherit !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 .s-buy-button:active {
