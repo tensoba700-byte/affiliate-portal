@@ -3253,6 +3253,25 @@ body:has(.sample-wrapper) > div.fixed {
   transition: background-color 0.1s ease, border-color 0.1s ease !important;
 }
 
+/* Container override: force stack vertically on all devices (mobile & desktop) */
+.s-article-page div[class*="my-8 rounded-"] div[class*="grid-cols-3"] {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  gap: 8px !important;
+  width: 100% !important;
+}
+
+/* Force same width and centering for all buy buttons in RankingTable */
+.s-article-page a[href*="amazon.co.jp"],
+.s-article-page a[href*="rakuten.co.jp"],
+.s-article-page a[href*="yahoo.co.jp"],
+.s-article-page a[href*="shopping.yahoo.co.jp"] {
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+}
+
 /* Hover & Active states */
 .s-article-page a[href*="amazon.co.jp"]:hover,
 .s-article-page a[href*="rakuten.co.jp"]:hover {
