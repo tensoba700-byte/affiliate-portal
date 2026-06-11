@@ -1,5 +1,5 @@
 import React from 'react';
-import { getAllArticles, ArticleItem } from '@/src/lib/api';
+import { getAllArticles, getArticleBySlug, ArticleItem } from '@/src/lib/api';
 import HomeClient from '@/src/components/HomeClient';
 import type { Metadata } from 'next';
 
@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     canonical: '/',
   },
 };
+
+export const revalidate = 3600; // ISR cache revalidation hourly
 
 export interface PickItem {
   id: string;
@@ -30,7 +32,16 @@ export default async function Home() {
     recentArticles = articles.slice(0, 6);
 
     // rankingsが存在する最新の最大4記事を取得
-    const targetArticles = articles.filter(a => a.rankings && a.rankings.length > 0).slice(0, 4);
+    // 全件チェックを避けるため、チェック対象は最新の8件までとする
+    const targetArticles: ArticleItem[] = [];
+    const maxSearchCount = Math.min(articles.length, 8);
+    for (let i = 0; i < maxSearchCount; i++) {
+      if (targetArticles.length >= 4) break;
+      const detail = await getArticleBySlug(articles[i].slug);
+      if (detail && detail.rankings && detail.rankings.length > 0) {
+        targetArticles.push(detail);
+      }
+    }
 
     picks = targetArticles.map((article, index) => {
       const firstProd = article.rankings.find(p => p.rank === 1) || article.rankings[0];
