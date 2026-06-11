@@ -365,7 +365,7 @@ body {
   border: 1px solid #DDDDD9 !important;
   background: #F7F7F5 !important;
   border-radius: 0px !important;
-  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+  transition: background-color 0.1s ease, border-color 0.1s ease !important;
   cursor: pointer !important;
   color: #1A1A1A !important;
   box-shadow: none !important;
@@ -405,12 +405,13 @@ body {
 .btn-amazon:active, .btn-rakuten:active,
 .s-article-page .cute-html-content .btn-amazon:active,
 .s-article-page .cute-html-content .btn-rakuten:active {
-  background: #F7F7F5 !important;
+  background: #ffffff !important;
   border-color: #DDDDD9 !important;
   color: #1A1A1A !important;
   transform: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   filter: none !important;
+  transition: background-color 0.1s ease !important;
   -webkit-tap-highlight-color: transparent !important;
 }
 .s-buy-button:active {
