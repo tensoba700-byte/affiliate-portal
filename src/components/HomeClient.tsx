@@ -91,24 +91,7 @@ export default function HomeClient({
           link: `/column/${col.slug}`
         };
       })
-    : [
-        {
-          slug: 'night-pore-reset',
-          title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
-          date: '2026.06.09',
-          category: 'ESSAY',
-          image: '/images/column_night_pore_reset.png',
-          link: '/column'
-        },
-        {
-          slug: 'honest-makeup-base',
-          title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
-          date: '2026.06.08',
-          category: 'BEAUTY TIPS',
-          image: '/images/column_makeup_base.png',
-          link: '/column'
-        }
-      ];
+    : [];
 
   const recommendedItems = picks && picks.length > 0 ? picks : [
     {
@@ -301,33 +284,35 @@ export default function HomeClient({
         </section>
 
         {/* ── Beauty Column ── */}
-        <section>
-          <div className="s-section-head">
-            <div>
-              <div className="s-section-label">BEAUTY COLUMN</div>
-              <div className="s-section-sub">美容オタクライターが綴るお肌のエッセイ</div>
+        {latestColumns.length > 0 && (
+          <section>
+            <div className="s-section-head">
+              <div>
+                <div className="s-section-label">BEAUTY COLUMN</div>
+                <div className="s-section-sub">美容オたクライターが綴るお肌のエッセイ</div>
+              </div>
+              <Link href="/column" className="s-section-link">VIEW JOURNAL →</Link>
             </div>
-            <Link href="/column" className="s-section-link">VIEW JOURNAL →</Link>
-          </div>
 
-          <div className="s-column-list s-home-full-width-list">
-            {latestColumns.map((col) => (
-              <Link
-                key={col.slug}
-                href={col.link}
-                className="s-column-card"
-                style={{ backgroundImage: `url(${col.image})` }}
-              >
-                <div style={{ flex: 1 }}>
-                  <span className="s-column-cat">{col.category}</span>
-                  <p className="s-column-title">{col.title}</p>
-                </div>
-                <span className="s-column-date">{col.date}</span>
-                <span className="s-column-arrow">→</span>
-              </Link>
-            ))}
-          </div>
-        </section>
+            <div className="s-column-list s-home-full-width-list">
+              {latestColumns.map((col) => (
+                <Link
+                  key={col.slug}
+                  href={col.link}
+                  className="s-column-card"
+                  style={{ backgroundImage: `url(${col.image})` }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <span className="s-column-cat">{col.category}</span>
+                    <p className="s-column-title">{col.title}</p>
+                  </div>
+                  <span className="s-column-date">{col.date}</span>
+                  <span className="s-column-arrow">→</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
 
       </div>
