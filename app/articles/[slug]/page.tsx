@@ -166,31 +166,21 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                     
                     return (
                       <>
-                        <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-3 leading-normal">
-                          {mainTitle}
-                        </span>
-                        <span className="block text-sm md:text-base lg:text-lg text-foreground/75 mb-1 font-bold leading-normal">
-                          {subPart1}
-                        </span>
-                        <span className="block text-lg md:text-xl lg:text-2xl font-black text-primary">
-                          {subPart2}
-                        </span>
+                        <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-3 leading-normal" dangerouslySetInnerHTML={{ __html: mainTitle }} />
+                        <span className="block text-sm md:text-base lg:text-lg text-foreground/75 mb-1 font-bold leading-normal" dangerouslySetInnerHTML={{ __html: subPart1 }} />
+                        <span className="block text-lg md:text-xl lg:text-2xl font-black text-primary" dangerouslySetInnerHTML={{ __html: subPart2 }} />
                       </>
                     );
                   }
                   
                   return (
                     <>
-                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-2">
-                        {mainTitle}
-                      </span>
-                      <span className="block text-lg md:text-xl lg:text-2xl font-bold text-primary">
-                        {subTitleRaw}
-                      </span>
+                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-2" dangerouslySetInnerHTML={{ __html: mainTitle }} />
+                      <span className="block text-lg md:text-xl lg:text-2xl font-bold text-primary" dangerouslySetInnerHTML={{ __html: subTitleRaw }} />
                     </>
                   );
                 }
-                return <span className="text-xl md:text-2xl lg:text-3xl font-black">{article.title}</span>;
+                return <span className="text-xl md:text-2xl lg:text-3xl font-black" dangerouslySetInnerHTML={{ __html: article.title }} />;
               })()}
             </h1>
             
@@ -279,9 +269,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                         <div className="w-full h-full flex items-center justify-center text-2xl">🎀</div>
                       )}
                     </div>
-                    <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                      {rel.title}
-                    </h3>
+                    <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug" dangerouslySetInnerHTML={{ __html: rel.title }} />
                   </Link>
                 ))}
               </div>

@@ -61,7 +61,7 @@ export default async function ArticlesPage() {
                 </div>
                 <div className="s-article-body">
                   <span className="s-article-date">{dateStr}</span>
-                  <h3 className="s-article-title">{article.title}</h3>
+                  <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: article.title }} />
                   <p className="s-article-excerpt">{article.excerpt || '大人気コスメを本音でガチ検証レビュー！メイク落ちや使用感を徹底的に解説するよ。'}</p>
                   <div className="s-article-read-more">
                     READ REPORT <span>→</span>

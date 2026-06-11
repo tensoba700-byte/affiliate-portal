@@ -56,7 +56,7 @@ export default async function SampleArticlesPage() {
                   return isNaN(d.getTime()) ? '2026.06.09' : d.toLocaleDateString('ja-JP').replace(/\//g, '.');
                 })()}
               </span>
-              <h3 className="s-article-title">{article.title}</h3>
+              <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: article.title }} />
               <p className="s-article-excerpt">{article.excerpt}</p>
               <div className="s-article-read-more">
                 READ REPORT <span>→</span>

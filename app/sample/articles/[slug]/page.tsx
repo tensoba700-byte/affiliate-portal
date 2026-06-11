@@ -56,9 +56,7 @@ export default async function SampleArticleDetail({ params }: PageProps) {
         <span className="s-breadcrumb-sep">/</span>
         <span>VERIFICATION REPORT</span>
         <span className="s-breadcrumb-sep">/</span>
-        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }} aria-current="page">
-          {article.title}
-        </span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 180 }} aria-current="page" dangerouslySetInnerHTML={{ __html: article.title }} />
       </nav>
 
       {/* Eyecatch */}
@@ -73,7 +71,7 @@ export default async function SampleArticleDetail({ params }: PageProps) {
           <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--s-muted)' }}>LAB REPORT</span>
         </div>
 
-        <h1 className="s-article-h1">{article.title}</h1>
+        <h1 className="s-article-h1" dangerouslySetInnerHTML={{ __html: article.title }} />
 
         <div className="s-article-meta">
           <div className="s-author-chip">

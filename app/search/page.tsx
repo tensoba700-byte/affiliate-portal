@@ -136,9 +136,7 @@ export default async function SearchPage({
                       return isNaN(d.getTime()) ? '' : d.toLocaleDateString('ja-JP');
                     })()}
                   </p>
-                  <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                    {article.title}
-                  </h2>
+                  <h2 className="article-title text-base font-black text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2" dangerouslySetInnerHTML={{ __html: article.title }} />
                   <p className="text-muted text-xs line-clamp-2 mt-auto leading-relaxed font-bold">
                     {article.excerpt || 'くわしく見る！'}
                   </p>

@@ -213,7 +213,7 @@ export default function SampleHome() {
                 </div>
                 <div className="s-article-body">
                   <span className="s-article-date">{article.date}</span>
-                  <h3 className="s-article-title">{article.title}</h3>
+                  <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: article.title }} />
                   <p className="s-article-excerpt">{article.excerpt}</p>
                   <div className="s-article-read-more">
                     READ REPORT <span>→</span>
