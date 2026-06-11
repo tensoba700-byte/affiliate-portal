@@ -3073,5 +3073,170 @@ body:has(.sample-wrapper) > div.fixed {
   margin-bottom: 0 !important;
 }
 
+/* =========================================
+   🏆 RANKING TABLE CUSTOM OVERRIDES
+   ========================================= */
+
+/* 1. Main container background & border reset */
+.s-article-page div[class*="my-8 rounded-"] {
+  border-radius: 4px !important;
+  border-color: #DDDDD9 !important;
+  background-color: #F7F7F5 !important;
+  box-shadow: none !important;
+}
+
+/* Header background & text color reset (remove pink) */
+.s-article-page div[class*="my-8 rounded-"] > div:first-child[style*="background:"] {
+  background-color: #F7F7F5 !important;
+  color: #1A1A1A !important;
+  border-color: #DDDDD9 !important;
+}
+
+/* Hide emoji inside the header */
+.s-article-page div[class*="my-8 rounded-"] > div:first-child span::first-letter {
+  font-size: 0 !important;
+  display: none !important;
+}
+
+/* Tab container background reset */
+.s-article-page div[class*="my-8 rounded-"] > div:nth-child(2) {
+  background-color: #F7F7F5 !important;
+  border-color: #DDDDD9 !important;
+}
+
+/* 2. Tab Buttons (おすすめ順・コスパ順・人気順) base style */
+.s-article-page button[class*="active:scale-98"] {
+  background: #F7F7F5 !important;
+  border-color: #DDDDD9 !important;
+  border-radius: 4px !important;
+  color: #1A1A1A !important;
+  box-shadow: none !important;
+}
+/* Active Tab styling override */
+.s-article-page button[class*="active:scale-98"][style*="255, 255, 255"],
+.s-article-page button[class*="active:scale-98"][style*="#FFFFFF"],
+.s-article-page button[class*="active:scale-98"][style*="#ffffff"] {
+  background: #1A1A1A !important;
+  border-color: #1A1A1A !important;
+  color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+/* Hide emojis inside tab buttons */
+.s-article-page button[class*="active:scale-98"] > span:first-child {
+  font-size: 0 !important;
+  display: none !important;
+}
+
+/* 3. divide-y product rows list */
+.s-article-page .divide-y {
+  border-color: #DDDDD9 !important;
+}
+.s-article-page .divide-y > div {
+  border-color: #DDDDD9 !important;
+  background-color: #F7F7F5 !important;
+  border-radius: 0 !important;
+}
+
+/* 4. Rank Badge overrides */
+/* Non-top3 badges */
+.s-article-page .divide-y > div > div > div > div:first-child {
+  background: #F7F7F5 !important;
+  color: #1A1A1A !important;
+  border-color: #DDDDD9 !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+}
+/* Top 3 rank badges (1st/2nd/3rd) override */
+.s-article-page .divide-y > div > div > div > .group-hover\:scale-110 {
+  background: #1A1A1A !important;
+  color: #FFFFFF !important;
+  border-color: #DDDDD9 !important;
+  box-shadow: none !important;
+  border-radius: 4px !important;
+}
+
+/* 5. Product Image wrapper */
+.s-article-page div[class*="rounded-[16px]"],
+.s-article-page div[class*="rounded-[20px]"] {
+  border-radius: 4px !important;
+  border-color: #DDDDD9 !important;
+  box-shadow: none !important;
+  background-color: #FFFFFF !important;
+}
+.s-article-page div[class*="rounded-[16px]"] img,
+.s-article-page div[class*="rounded-[20px]"] img {
+  border-radius: 4px !important;
+}
+
+/* SCORE badge overlay on mobile images */
+.s-article-page div[class*="absolute bottom-[-6px]"] {
+  border-radius: 4px !important;
+  border-color: #DDDDD9 !important;
+  background-color: #FFFFFF !important;
+  box-shadow: none !important;
+}
+.s-article-page div[class*="absolute bottom-[-6px]"] span[class*="text-pink-500"] {
+  color: #1A1A1A !important;
+}
+
+/* Features tags */
+.s-article-page span[class*="bg-pink-50"] {
+  background-color: #EFEFED !important;
+  color: #1A1A1A !important;
+  border-color: #DDDDD9 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+}
+
+/* Description border */
+.s-article-page p[class*="border-pink-200"],
+.s-article-page p[class*="border-l-2"] {
+  border-color: #DDDDD9 !important;
+}
+
+/* Pros/Cons box border & background */
+.s-article-page div[class*="bg-pink-50/10"] {
+  background-color: #EFEFED !important;
+  border-color: #DDDDD9 !important;
+  border-radius: 4px !important;
+}
+
+/* Pros/Cons labels */
+.s-article-page span.text-emerald-600,
+.s-article-page span.text-amber-600 {
+  background-color: #EFEFED !important;
+  color: #1A1A1A !important;
+  border-color: #DDDDD9 !important;
+  border-radius: 4px !important;
+}
+/* Hide emojis inside pros/cons labels */
+.s-article-page span[class*="text-emerald-600"]::first-letter,
+.s-article-page span[class*="text-amber-600"]::first-letter {
+  font-size: 0 !important;
+  display: none !important;
+}
+/* Pros/Cons checkmark colors */
+.s-article-page span[class*="text-emerald-500"],
+.s-article-page span[class*="text-amber-500"] {
+  color: #1A1A1A !important;
+}
+
+/* Score right-column separator border */
+.s-article-page div[class*="md:border-pink-50"] {
+  border-color: #DDDDD9 !important;
+}
+
+/* Table header color overrides */
+.s-article-page th {
+  border-color: #DDDDD9 !important;
+  background-color: #F7F7F5 !important;
+  color: #1A1A1A !important;
+}
+.s-article-page td {
+  border-color: #DDDDD9 !important;
+  background-color: #F7F7F5 !important;
+  color: #1A1A1A !important;
+}
+
 
 
