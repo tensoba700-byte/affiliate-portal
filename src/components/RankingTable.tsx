@@ -119,7 +119,7 @@ function BuyButton({
       href={url || "#"}
       target="_blank"
       rel="noopener noreferrer nofollow sponsored"
-      className="s-buy-button flex items-center justify-center md:justify-between gap-1.5 md:gap-3 px-1.5 md:px-4 py-2 md:py-2.5 font-black transition-all duration-300 rounded-xl shadow-sm hover:shadow-md border border-black/5 flex-1 md:flex-initial"
+      className="flex items-center justify-center md:justify-between gap-1.5 md:gap-3 px-1.5 md:px-4 py-2 md:py-2.5 font-black transition-all duration-300 rounded-xl active:scale-95 shadow-sm hover:shadow-md border border-black/5 flex-1 md:flex-initial"
       style={{
         background: hovered ? hoverBg : bg,
         color: textColor,
@@ -139,7 +139,7 @@ function BuyButton({
         <span className="flex flex-col leading-tight text-left">
           <span className="md:hidden font-black text-[10px] tracking-tight">{shortLabel}</span>
           {price && <span className="md:hidden text-[9px] font-bold opacity-90 leading-none">{price}</span>}
-          <span className="hidden md:inline font-black text-[11px]">{label === 'Amazon' ? 'Amazon で購入' : `${label}で購入`}</span>
+          <span className="hidden md:inline font-black text-[11px]">{label}で探す</span>
           {price && <span className="hidden md:inline text-[11px] font-black tracking-wider">{price}</span>}
         </span>
       </div>

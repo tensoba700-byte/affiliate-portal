@@ -412,6 +412,7 @@ body {
   color: #1A1A1A;
   display: inline-flex;
   align-items: center;
+  font-size: 0 !important;
 }
 .btn-amazon .btn-label::before {
   content: "";
@@ -422,11 +423,21 @@ body {
   background-color: #FF9900;
   margin-right: 8px;
 }
+.btn-amazon .btn-label::after {
+  content: "Amazon で購入" !important;
+  font-size: 14px !important;
+}
+@media (max-width: 640px) {
+  .btn-amazon .btn-label::after {
+    font-size: 15px !important;
+  }
+}
 /* 楽天 — 深い赤 */
 .btn-rakuten .btn-label {
   color: #1A1A1A;
   display: inline-flex;
   align-items: center;
+  font-size: 0 !important;
 }
 .btn-rakuten .btn-label::before {
   content: "";
@@ -436,6 +447,15 @@ body {
   border-radius: 50%;
   background-color: #BF0000;
   margin-right: 8px;
+}
+.btn-rakuten .btn-label::after {
+  content: "楽天市場で購入" !important;
+  font-size: 14px !important;
+}
+@media (max-width: 640px) {
+  .btn-rakuten .btn-label::after {
+    font-size: 15px !important;
+  }
 }
 /* Yahoo! — 明るい赤 */
 .btn-yahoo {
@@ -484,6 +504,32 @@ body {
   font-size: 11px;
   font-weight: 700;
   opacity: 1;
+}
+
+/* Overrides for RankingTable buttons and active/tap scale effects */
+.s-article-page a[href*="amazon.co.jp"] span.hidden.md\:inline {
+  font-size: 0 !important;
+}
+.s-article-page a[href*="amazon.co.jp"] span.hidden.md\:inline::after {
+  content: "Amazon で購入" !important;
+  font-size: 11px !important;
+}
+.s-article-page a[href*="rakuten.co.jp"] span.hidden.md\:inline {
+  font-size: 0 !important;
+}
+.s-article-page a[href*="rakuten.co.jp"] span.hidden.md\:inline::after {
+  content: "楽天市場で購入" !important;
+  font-size: 11px !important;
+}
+.s-article-page a[href*="amazon.co.jp"]:active,
+.s-article-page a[href*="rakuten.co.jp"]:active,
+.s-article-page a[href*="yahoo.co.jp"]:active,
+.s-article-page a[href*="shopping.yahoo.co.jp"]:active {
+  transform: none !important;
+  background-color: inherit !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  -webkit-tap-highlight-color: transparent !important;
 }
 
 /* Comparison Table */
