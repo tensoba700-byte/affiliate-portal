@@ -997,27 +997,34 @@ body:has(.sample-wrapper) > div.fixed {
 }
 .s-section-link:hover { color: var(--s-ink); }
 
-/* Recommended Items Horizontal Scroll */
+/* Recommended Items Horizontal Scroll & Grid */
 .s-items-scroll {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   overflow-x: auto;
   padding-bottom: 8px;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding: 0 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
 }
 .s-items-scroll::-webkit-scrollbar { display: none; }
 
 .s-item-card {
   flex-shrink: 0;
-  width: 180px;
+  width: 42%;
+  scroll-snap-align: start;
   background: var(--s-surface);
   border: 1px solid var(--s-border);
   border-radius: var(--s-radius-card);
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   box-shadow: var(--s-shadow-card);
   transition: box-shadow 0.3s, transform 0.3s;
   text-decoration: none;
@@ -1030,7 +1037,7 @@ body:has(.sample-wrapper) > div.fixed {
 
 .s-item-img {
   width: 100%;
-  aspect-ratio: 1;
+  height: 90px;
   border-radius: 4px;
   background: var(--s-surface-2);
   display: flex;
@@ -1038,6 +1045,38 @@ body:has(.sample-wrapper) > div.fixed {
   justify-content: center;
   overflow: hidden;
   border: 1px solid var(--s-border-soft);
+}
+
+@media (max-width: 767px) {
+  .s-item-meta {
+    padding-top: 6px !important;
+  }
+  .s-article-link-btn {
+    padding: 6px 8px !important;
+  }
+}
+
+/* PC layout (Desktop override) */
+@media (min-width: 768px) {
+  .s-items-scroll {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 16px !important;
+    overflow-x: visible !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    scroll-snap-type: none !important;
+  }
+  .s-item-card {
+    width: 100% !important;
+    padding: 16px !important;
+    gap: 12px !important;
+  }
+  .s-item-img {
+    height: 110px !important;
+  }
 }
 
 .s-item-type {

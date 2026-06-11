@@ -6,34 +6,22 @@ import { ArticleItem } from '@/src/lib/api';
 
 interface HomeClientProps {
   initialArticles: ArticleItem[];
-  duoImageUrl?: string;
-  mujiImageUrl?: string;
-  duoAmazonUrl?: string;
-  mujiAmazonUrl?: string;
-  duoSlug?: string;
-  mujiSlug?: string;
-  duoTitle?: string;
-  mujiTitle?: string;
-  duoPrice?: string;
-  mujiPrice?: string;
-  duoRating?: string;
-  mujiRating?: string;
+  picks?: {
+    id: string;
+    name: string;
+    price: string;
+    rating: string;
+    type: string;
+    articleSlug: string;
+    articleLabel: string;
+    imageUrl: string;
+    amazonUrl: string;
+  }[];
 }
 
 export default function HomeClient({
   initialArticles,
-  duoImageUrl,
-  mujiImageUrl,
-  duoAmazonUrl,
-  mujiAmazonUrl,
-  duoSlug,
-  mujiSlug,
-  duoTitle,
-  mujiTitle,
-  duoPrice,
-  mujiPrice,
-  duoRating,
-  mujiRating,
+  picks = [],
 }: HomeClientProps) {
   const images = [
     '/images/sample_hero_bg.png',
@@ -96,28 +84,28 @@ export default function HomeClient({
     }
   ];
 
-  const recommendedItems = [
+  const recommendedItems = picks && picks.length > 0 ? picks : [
     {
       id: '1',
       name: 'DUO ザ クレンジングバーム',
-      price: duoPrice || '¥3,960',
-      rating: duoRating || '4.8',
+      price: '¥3,960',
+      rating: '4.8',
       type: 'BALM',
-      articleSlug: duoSlug || '20260609-cleansing-balm',
-      articleLabel: duoTitle || '最強クレンジングバーム7選',
-      imageUrl: duoImageUrl,
-      amazonUrl: duoAmazonUrl || '#'
+      articleSlug: '20260609-cleansing-balm',
+      articleLabel: '夕方の毛穴に絶望したくない！大忙し美容オタクが本音で選ぶ最強クレンジングバーム7選',
+      imageUrl: '',
+      amazonUrl: 'https://www.amazon.co.jp/dp/B079M3JNZB?tag=mikkestyle-22'
     },
     {
       id: '2',
       name: '無印良品 敏感肌用化粧水',
-      price: mujiPrice || '¥1,290',
-      rating: mujiRating || '4.7',
+      price: '¥1,290',
+      rating: '4.7',
       type: 'TONER',
-      articleSlug: mujiSlug || '20260608-toner',
-      articleLabel: mujiTitle || 'プチプラ実力派化粧水6選',
-      imageUrl: mujiImageUrl,
-      amazonUrl: mujiAmazonUrl || '#'
+      articleSlug: '20260608-toner',
+      articleLabel: '砂漠肌をもちもちに！夕方まで乾燥知らずのプチプラ実力派化粧水6選',
+      imageUrl: '',
+      amazonUrl: 'https://www.amazon.co.jp/dp/B0CKWMLH9B?tag=mikkestyle-22'
     }
   ];
 
