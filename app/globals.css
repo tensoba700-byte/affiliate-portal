@@ -3087,9 +3087,10 @@ body:has(.sample-wrapper) > div.fixed {
 
 /* Header background & text color reset (remove pink) */
 .s-article-page div[class*="my-8 rounded-"] > div:first-child[style*="background:"] {
+  background: #F7F7F5 !important;
   background-color: #F7F7F5 !important;
   color: #1A1A1A !important;
-  border-color: #DDDDD9 !important;
+  border-bottom: 2px solid #DDDDD9 !important;
 }
 
 /* Hide emoji inside the header */
@@ -3100,8 +3101,9 @@ body:has(.sample-wrapper) > div.fixed {
 
 /* Tab container background reset */
 .s-article-page div[class*="my-8 rounded-"] > div:nth-child(2) {
+  background: #F7F7F5 !important;
   background-color: #F7F7F5 !important;
-  border-color: #DDDDD9 !important;
+  border-bottom: 1.5px solid #DDDDD9 !important;
 }
 
 /* 2. Tab Buttons (おすすめ順・コスパ順・人気順) base style */
@@ -3210,8 +3212,8 @@ body:has(.sample-wrapper) > div.fixed {
   border-radius: 4px !important;
 }
 /* Hide emojis inside pros/cons labels */
-.s-article-page span[class*="text-emerald-600"]::first-letter,
-.s-article-page span[class*="text-amber-600"]::first-letter {
+.s-article-page span.text-emerald-600::first-letter,
+.s-article-page span.text-amber-600::first-letter {
   font-size: 0 !important;
   display: none !important;
 }
@@ -3236,6 +3238,78 @@ body:has(.sample-wrapper) > div.fixed {
   border-color: #DDDDD9 !important;
   background-color: #F7F7F5 !important;
   color: #1A1A1A !important;
+}
+
+/* 6. Amazon & Rakuten Buy Buttons override styling in RankingTable */
+.s-article-page a[href*="amazon.co.jp"],
+.s-article-page a[href*="rakuten.co.jp"] {
+  background-color: #F7F7F5 !important;
+  background: #F7F7F5 !important;
+  border: 1px solid #DDDDD9 !important;
+  border-radius: 4px !important;
+  color: #1A1A1A !important;
+  box-shadow: none !important;
+  transform: none !important;
+  transition: background-color 0.1s ease, border-color 0.1s ease !important;
+}
+
+/* Hover & Active states */
+.s-article-page a[href*="amazon.co.jp"]:hover,
+.s-article-page a[href*="rakuten.co.jp"]:hover {
+  background-color: #EFEFEA !important;
+  background: #EFEFEA !important;
+  border-color: #CCCCCC !important;
+  color: #1A1A1A !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.s-article-page a[href*="amazon.co.jp"]:active,
+.s-article-page a[href*="rakuten.co.jp"]:active {
+  background-color: #ffffff !important;
+  background: #ffffff !important;
+  border-color: #DDDDD9 !important;
+  color: #1A1A1A !important;
+  transform: none !important;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.9), 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  filter: none !important;
+}
+
+/* Hide arrow SVG icon inside the button */
+.s-article-page a[href*="amazon.co.jp"] svg,
+.s-article-page a[href*="rakuten.co.jp"] svg {
+  display: none !important;
+}
+
+/* Dots: replace favicon with color dots */
+.s-article-page a[href*="amazon.co.jp"] img,
+.s-article-page a[href*="rakuten.co.jp"] img {
+  display: none !important;
+}
+
+.s-article-page a[href*="amazon.co.jp"] span.rounded-md,
+.s-article-page a[href*="amazon.co.jp"] span.rounded-lg,
+.s-article-page a[href*="rakuten.co.jp"] span.rounded-md,
+.s-article-page a[href*="rakuten.co.jp"] span.rounded-lg {
+  background-color: transparent !important;
+  background: transparent !important;
+  padding: 0 !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  display: inline-block !important;
+  flex-shrink: 0 !important;
+  margin-right: 2px !important;
+}
+
+.s-article-page a[href*="amazon.co.jp"] span.rounded-md,
+.s-article-page a[href*="amazon.co.jp"] span.rounded-lg {
+  background-color: #FF9900 !important;
+}
+
+.s-article-page a[href*="rakuten.co.jp"] span.rounded-md,
+.s-article-page a[href*="rakuten.co.jp"] span.rounded-lg {
+  background-color: #BF0000 !important;
 }
 
 
