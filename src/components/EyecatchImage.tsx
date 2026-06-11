@@ -38,14 +38,12 @@ export function EyecatchImage({ slug, alt }: { slug: string; alt: string }) {
 
   return (
     <div
-      style={{ borderRadius: '16px', overflow: 'hidden', marginBottom: '24px', aspectRatio: '1200 / 630', width: '100%' }}
-      className="w-full"
+      className="w-full s-eyecatch-full-width"
     >
       <img
         src={imgSrc}
         alt={`${alt} アイキャッチ画像`}
         loading="eager"
-        style={{ aspectRatio: '1200 / 630', objectFit: 'cover', width: '100%', height: '100%' }}
         className="w-full block"
         onError={handleError}
       />

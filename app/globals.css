@@ -2940,4 +2940,39 @@ body:has(.sample-wrapper) > div.fixed {
   background-color: var(--s-surface-2) !important;
 }
 
+/* =========================================
+   📺 ARTICLE EYECATCH FULL-WIDTH LAYOUT
+   ========================================= */
+.s-eyecatch-full-width {
+  width: 100vw !important;
+  position: relative !important;
+  left: 50% !important;
+  right: 50% !important;
+  margin-left: -50vw !important;
+  margin-right: -50vw !important;
+  border-radius: 0px !important;
+  overflow: hidden !important;
+  margin-bottom: 32px !important;
+  aspect-ratio: 1200 / 630 !important;
+}
+
+.s-eyecatch-full-width img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  aspect-ratio: 1200 / 630 !important;
+  display: block !important;
+}
+
+/* Sample Page Wrapper Reset to allow breakout */
+.s-article-page .s-eyecatch-wrap {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  margin-bottom: 0 !important;
+}
+
+
 
