@@ -206,9 +206,9 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     
     display_title = format_eyecatch_title(title)
     line_count = display_title.count("<br />") + 1
-    font_size = "85px" if line_count >= 3 else ("110px" if len(title) <= 15 else "90px" if len(title) <= 22 else "85px")
+    font_size = "60px" if line_count >= 3 else ("80px" if len(title) <= 15 else "68px" if len(title) <= 22 else "60px")
     
-    css = f"""@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&display=swap');
+    css = f"""@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700&display=swap');
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 html, body {{ width: 1200px; height: 630px; overflow: hidden; background: #F7F7F5; }}
 body {{ font-family: 'Noto Serif JP', serif; display: flex; align-items: center; justify-content: center; position: relative; }}
@@ -216,7 +216,7 @@ body {{ font-family: 'Noto Serif JP', serif; display: flex; align-items: center;
 .pw {{ width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }}
 .pi {{ max-width: 360px; max-height: 280px; object-fit: contain; mix-blend-mode: multiply; }}
 .to {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 100; pointer-events: none; }}
-.ti {{ font-size: {font_size}; font-weight: 900; color: #000; line-height: 1.3; text-align: center; width: auto; max-width: 90%; padding: 40px 60px; background-color: rgba(255, 255, 255, 0.5); border-radius: 8px; word-break: keep-all; }}
+.ti {{ font-size: {font_size}; font-weight: 500; color: #000; line-height: 1.3; text-align: center; width: auto; max-width: 90%; padding: 30px 45px; background-color: rgba(255, 255, 255, 0.5); border-radius: 8px; word-break: keep-all; }}
 """
     html = f"""<!DOCTYPE html>
 <html lang="ja"><head><meta charset="UTF-8" /><style>{css}</style></head><body>
