@@ -3185,11 +3185,6 @@ body:has(.sample-wrapper) > div.fixed {
   color: #1A1A1A !important;
 }
 
-/* Hide star ratings in RankingTable */
-.s-article-page span.text-xs.leading-none.flex.gap-0.5.justify-center {
-  display: none !important;
-}
-
 /* Features tags */
 .s-article-page span[class*="bg-pink-50"] {
   background-color: #EFEFED !important;
