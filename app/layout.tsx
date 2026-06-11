@@ -4,6 +4,7 @@ import Link from "next/link";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
 import CookieConsent from "@/src/components/CookieConsent";
+import ScrollToTop from "@/src/components/ScrollToTop";
 import Script from "next/script";
 import "./globals.css";
 
@@ -135,6 +136,7 @@ export default function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground transition-colors duration-500">
+        <ScrollToTop />
         
         {/* Navigation Bar - Cute Glassmorphism */}
         <Header />
