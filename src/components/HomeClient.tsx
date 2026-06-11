@@ -87,7 +87,8 @@ export default function HomeClient({
           title: col.title,
           date: dateStr,
           category: col.category,
-          image: col.coverImage
+          image: col.coverImage,
+          link: `/column/${col.slug}`
         };
       })
     : [
@@ -96,14 +97,16 @@ export default function HomeClient({
           title: '仕事帰りの10分でできる！夕方の毛穴に絶望しないための夜のリセット習慣',
           date: '2026.06.09',
           category: 'ESSAY',
-          image: '/images/column_night_pore_reset.png'
+          image: '/images/column_night_pore_reset.png',
+          link: '/column'
         },
         {
           slug: 'honest-makeup-base',
           title: 'コスメオタク美容ライターの本音。本当に「夕方ににじまない」メイク下地の選び方',
           date: '2026.06.08',
           category: 'BEAUTY TIPS',
-          image: '/images/column_makeup_base.png'
+          image: '/images/column_makeup_base.png',
+          link: '/column'
         }
       ];
 
@@ -311,7 +314,7 @@ export default function HomeClient({
             {latestColumns.map((col) => (
               <Link
                 key={col.slug}
-                href={`/column/${col.slug}`}
+                href={col.link}
                 className="s-column-card"
                 style={{ backgroundImage: `url(${col.image})` }}
               >
