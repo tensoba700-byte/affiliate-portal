@@ -351,45 +351,48 @@ body {
   cursor: pointer;
 }
 .btn-amazon, .btn-rakuten {
-  flex: 1 1 auto;
+  flex: 1 1 auto !important;
   min-width: 140px;
-  max-width: 400px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-decoration: none;
-  font-size: 14px;
-  padding: 14px 18px;
-  border: 1px solid #DDDDD9;
-  background: #F7F7F5;
-  border-radius: 0px;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-  cursor: pointer;
-  color: #1A1A1A;
+  max-width: 400px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-decoration: none !important;
+  font-size: 14px !important;
+  padding: 14px 18px !important;
+  border: 1px solid #DDDDD9 !important;
+  background: #F7F7F5 !important;
+  border-radius: 0px !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+  cursor: pointer !important;
+  color: #1A1A1A !important;
+  box-shadow: none !important;
 }
 @media (max-width: 640px) {
   .btn-yahoo {
-    flex: 1 1 100%;
-    max-width: 100%;
-    font-size: 15px;
-    padding: 12px 20px;
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    font-size: 15px !important;
+    padding: 12px 20px !important;
   }
   .btn-amazon, .btn-rakuten {
-    flex: 1 1 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    font-size: 15px;
+    flex: 1 1 100% !important;
+    max-width: 400px !important;
+    margin: 0 auto !important;
+    font-size: 15px !important;
   }
 }
 /* Hover — brighten then darken */
 .btn-yahoo:hover {
-  filter: brightness(0.88);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.18);
+  filter: brightness(0.88) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.18) !important;
 }
 .btn-amazon:hover, .btn-rakuten:hover {
-  background: #EFEFEA;
-  border-color: #CCCCCC;
+  background: #EFEFEA !important;
+  border-color: #CCCCCC !important;
+  transform: none !important;
+  box-shadow: none !important;
 }
 .btn-amazon:active, .btn-rakuten:active {
   background: #F7F7F5 !important;
@@ -409,23 +412,34 @@ body {
 }
 /* Amazon — オレンジ・ダーク文字 */
 .btn-amazon .btn-label {
-  color: #1A1A1A;
-  display: inline-flex;
-  align-items: center;
-  font-size: 0 !important;
+  color: #1A1A1A !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  visibility: hidden !important;
+  position: relative !important;
 }
 .btn-amazon .btn-label::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #FF9900;
-  margin-right: 8px;
+  content: "" !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: #FF9900 !important;
+  margin-right: 8px !important;
+  flex-shrink: 0 !important;
 }
 .btn-amazon .btn-label::after {
   content: "Amazon で購入" !important;
+  visibility: visible !important;
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  white-space: nowrap !important;
   font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1A1A1A !important;
 }
 @media (max-width: 640px) {
   .btn-amazon .btn-label::after {
@@ -434,23 +448,34 @@ body {
 }
 /* 楽天 — 深い赤 */
 .btn-rakuten .btn-label {
-  color: #1A1A1A;
-  display: inline-flex;
-  align-items: center;
-  font-size: 0 !important;
+  color: #1A1A1A !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  visibility: hidden !important;
+  position: relative !important;
 }
 .btn-rakuten .btn-label::before {
-  content: "";
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #BF0000;
-  margin-right: 8px;
+  content: "" !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background-color: #BF0000 !important;
+  margin-right: 8px !important;
+  flex-shrink: 0 !important;
 }
 .btn-rakuten .btn-label::after {
   content: "楽天市場で購入" !important;
+  visibility: visible !important;
+  position: absolute !important;
+  left: 14px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  white-space: nowrap !important;
   font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #1A1A1A !important;
 }
 @media (max-width: 640px) {
   .btn-rakuten .btn-label::after {
