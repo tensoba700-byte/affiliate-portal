@@ -621,3 +621,385 @@ I0613 07:19:53.138063 9871436 ev_poll_posix.cc:593] FD from fork parent still in
 I0613 07:19:53.138094 9871436 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
 ⏳ GitHubへのデプロイを実行中...
 I0613 07:19:53.146879 9871464 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356486 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356674 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356692 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356711 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356722 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356738 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356753 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356796 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356810 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356831 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356843 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356907 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356923 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356932 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356944 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356957 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356966 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356978 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.356989 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357000 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357013 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357023 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357035 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357045 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357054 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357067 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357082 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357096 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357106 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357118 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357129 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357142 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357153 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357213 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357225 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357234 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357244 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357254 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357263 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357272 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357288 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357303 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357318 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357331 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:19:53.357355 9871501 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+[main 4ae3223] Publish プチプラの洗顔料 article via pipeline
+ 22 files changed, 3418 insertions(+), 2139 deletions(-)
+ create mode 100644 public/eyecatch/20260614-affordable-cleanser.html
+ create mode 100644 scratch/article_pipeline.err
+ create mode 100644 scratch/article_pipeline.log
+ create mode 100644 scratch/article_pipeline_run.log
+ create mode 100644 scratch/column_pipeline.err
+ create mode 100644 scratch/column_pipeline.log
+ delete mode 100644 scratch/extract_test_all_about.txt
+ delete mode 100644 scratch/extract_test_maquia.txt
+ delete mode 100644 scratch/extract_test_mery.txt
+ create mode 100644 scratch/list_unprocessed.py
+ delete mode 100644 scratch/test_llm.py
+ delete mode 100644 scratch/test_split_llm.py
+ create mode 100644 scripts/cron_article_pipeline.py
+ create mode 100644 scripts/cron_article_pipeline_master.lock
+ create mode 100644 scripts/cron_article_pipeline_master.py
+ create mode 100644 scripts/prepare_stockpile_master.lock
+ create mode 100755 scripts/prepare_stockpile_master.py
+ create mode 100644 src/content/articles/20260614-affordable-cleanser.md
+I0613 07:19:53.647160 9871532 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+To https://github.com/tensoba700-byte/affiliate-portal.git
+   a24f9e2..4ae3223  main -> main
+✅ GitHubデプロイ完了。
+
+==================== [3/6] ピーリング美容液のおすすめ人気ランキング ====================
+ページID: 37dddb45-8772-810c-89e2-ca7b52fd3517
+競合URL: https://my-best.com/20174
+I0613 07:19:55.558072 9871584 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+🔍 Notionから特定の商品ページ（ID: 37dddb45-8772-810c-89e2-ca7b52fd3517）を直接取得中...
+🚀 ターゲット発見！
+  タイトル(仮): ピーリング美容液のおすすめ人気ランキング
+  競合URL: https://my-best.com/20174
+  カテゴリ: 美容・スキンケア
+⏳ 競合ページのHTMLをダウンロード＆解析中...
+🎉 成功！ 34 個の商品を検出しました。
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/api_core/_python_version_support.py:242: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/scripts/prepare_stockpile_master.py:1074: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+🔄 Gemini Flash 事実抽出を実行中 (試行 1/3)...
+⚠️ Warning: product 'dプログラム カンダンバリア エッセンス' has no facts. Adding dummy fact.
+✅ バリデーション成功！
+============================================================
+🔥 事実抽出とデータの保存が完了しました！
+💾 データファイル保存場所: /Users/tsukika/Desktop/affiliate-portal/scripts/stockpile_data.json
+============================================================
+
+【Gemini レスポンス例】
+{
+  "category": "美容・スキンケア",
+  "selection_points": [
+    "成分",
+    "肌質",
+    "テクスチャ",
+    "使用目的"
+  ],
+  "source_urls": [],
+  "products": [
+    {
+      "name": "タカミスキンピール",
+      "jan": "4571205850623",
+      "asin": "B01GTWEIWI",
+      "recommended_for": [],
+      "facts": [
+        "角質層ケア美容液",
+        "スポイトに目安量ラインあり"
+      ]
+    },
+    {
+      "name": "HAKU メラノフォーカス IV",
+      "jan": "4909978224479",
+      "asin": "B0DRP7V4PJ",
+      "recommended_for": [],
+      "facts": [
+        "グリチルリチン酸ジカリウム配合",
+        "m-トラネキサム酸配合",
+        "4MSK配合",
+        "薬用美白美容液"
+      ]
+    },
+    {
+      "name": "ANUA アゼライン酸3+アゼライン酸15インテンスカーミングセラム",
+      "jan": "",
+      "asin": "B0FJ23C8XY",
+      "recommended_for": [
+        "混合肌",
+        "オイリー肌",
+        "ゆらぎ肌"
+      ],
+      "facts": [
+        "アゼライン酸配合",
+        "ツボクサエキス配合"
+      ]
+    },
+    {
+      "name": "numbuzin 5番 白玉グルタチオンＣ美容液",
+      "jan": "0691266759780",
+      "asin": "B0C61FD7P9",
+      "recommended_for": [],
+      "facts": [
+        "グルタチオン配合",
+        "ビタミン成分配合",
+        "トラネキサム酸配合",
+        "ナイアシンアミド配合"
+      ]
+    },
+    {
+      "name": "ジーン リポピール",
+      "jan": "4595555552013",
+      "asin": "B0DTK9NS8C",
+      "recommended_for": [
+        "敏感肌"
+      ],
+      "facts": [
+        "AHA配合",
+        "BHA配合",
+        "PHA配合",
+        "グルタチオン配合",
+        "CICA配合",
+        "ヒアルロン酸Na配合",
+        "水溶性コラーゲン配合"
+      ]
+    },
+    {
+      "name": "KATAN Cica ダーマヒットセラム5",
+      "jan": "4589505172369",
+      "asin": "B0DG5PCJTP",
+      "recommended_for": [],
+      "facts": [
+        "5種のヒアルロン酸配合",
+        "5種のコラーゲン配合",
+        "導入美容液として使用可能"
+      ]
+    },
+    {
+      "name": "無印良品 高濃度美容液 セラミド配合",
+      "jan": "",
+      "asin": "B0DGDF1RDS",
+      "recommended_for": [
+        "敏感肌"
+      ],
+      "facts": [
+        "セラミド2％配合",
+        "無香料",
+        "無着色",
+        "アルコールフリー"
+      ]
+    },
+    {
+      "name": "コスメデコルテ リポソーム アドバンスト リペアセラム",
+      "jan": "0785731693843",
+      "asin": "B0GPVLFVFR",
+      "recommended_for": [],
+      "facts": [
+        "多重層バイオリポソーム配合",
+        "導入美容液"
+      ]
+    },
+    {
+      "name": "VT COSMETICS レチAリードルS 100",
+      "jan": "8803463007713",
+      "asin": "B0D9VRXTYJ",
+      "recommended_for": [],
+      "facts": [
+        "美容鍼配合"
+      ]
+    },
+    {
+      "name": "SK-II ジェノプティクス インフィニットオーラ エッセンス",
+      "jan": "4979006116434",
+      "asin": "B0DZCR9BMG",
+      "recommended_for": [
+        "敏感肌"
+      ],
+      "facts": [
+        "薬用美白美容液"
+      ]
+    },
+    {
+      "name": "ASTALIFT ジェリー アクアリスタ",
+      "jan": "4547410396348",
+      "asin": "B0D3FWW46",
+      "recommended_for": [],
+      "facts": [
+        "Wヒト型ナノセラミド配合"
+      ]
+    },
+    {
+      "name": "ポーラ リンクルショット メディカル セラム N",
+      "jan": "4953923308509",
+      "asin": "B08PCLLHBL",
+      "recommended_for": [],
+      "facts": [
+        "ニールワン配合",
+        "医薬部外品"
+      ]
+    },
+    {
+      "name": "LA ROCHE POSAY エファクラ ピールケア セラム",
+      "jan": "3337875735698",
+      "asin": "B09SX9DN4T",
+      "recommended_for": [
+        "敏感肌"
+      ],
+      "facts": [
+        "トリアシッドコンプレックス配合",
+        "ナイアシンアミド配合",
+        "ターマルウォーター配合"
+      ]
+    },
+    {
+      "name": "ＭＤカプセルセラム ビタミンC美容液",
+      "jan": "4595643434030",
+      "asin": "B0CG5BN68L",
+      "recommended_for": [],
+      "facts": [
+        "ビタミンC配合",
+        "ビタミンC誘導体配合",
+        "ナイアシンアミド配合",
+        "CICA配合"
+      ]
+    },
+    {
+      "name": "シンエイ そのまま！卵殻膜エキス",
+      "jan": "4571128832577",
+      "asin": "B096Z1Y8R7",
+      "recommended_for": [],
+      "facts": [
+        "加水分解卵殻膜配合",
+        "パラベンフリー",
+        "アルコールフリー",
+        "無着色",
+        "無香料"
+      ]
+    },
+    {
+      "name": "菊正宗 日本酒の美容液",
+      "jan": "4971650800776",
+      "asin": "B01DOV7Z0Y",
+      "recommended_for": [],
+      "facts": [
+        "アミノ酸配合",
+        "セラミド配合",
+        "ビタミンC誘導体配合",
+        "内容量150ml"
+      ]
+    },
+    {
+      "name": "花王 ソフィーナ iP 水光ピーリング泡セラム",
+      "jan": "4901301449634",
+      "asin": "B0F28G7GRT",
+      "recommended_for": [],
+      "facts": [
+        "炭酸泡美容液",
+        "ふきとり美容液"
+      ]
+    },
+    {
+      "name": "ONE BY KOSE セラム ヴェール",
+      "jan": "4971710288605",
+      "asin": "B08CXXWM7X",
+      "recommended_for": [],
+      "facts": [
+        "ライスパワーNo.11配合"
+      ]
+    },
+    {
+      "name": "ラフラ・ジャパン 原液ピーリング液",
+      "jan": "4528620210501",
+      "asin": "B07XMF3ZZ8",
+      "recommended_for": [],
+      "facts": [
+        "AHA配合",
+        "発酵AHA配合",
+        "セラミド配合",
+        "ふき取り化粧水"
+      ]
+    },
+    {
+      "name": "dプログラム カンダンバリア エッセンス",
+      "jan": "4514254958148",
+      "asin": "B07XD45WD7",
+      "recommended_for": [],
+      "facts": []
+    }
+  ]
+}
+
+【バリデーション結果】
+・categoryが空でない: OK
+・productsが1件以上 (件数: 20): OK
+・各商品のfactsが最低1件以上: OK
+・スキーマにないキーを出力しない: OK
+・本文が保存されていないことの確認: OK (本文系フィールドは一切含まれていません)
+・stockpile_data.jsonの総サイズ: 31.28 KB
+・products件数: 20 件
+✅ データ収集完了。
+小カテゴリ名: ピーリング美容液
+⏳ article_draft.json を執筆中...
+⚠️ バリデーション失敗。自己修復リトライ 1/5...
+✅ バリデーション成功！
+割り当て公開日時: 2026-06-14 19:00
+スラグ: 20260614-peeling-serum
+⏳ 記事をパブリッシュ（publish_article.py 実行）中...
+I0613 07:21:40.772006 9873184 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+🚀 Processing: ピーリング美容液
+📖 Loaded local stockpile data for article: 'ピーリング美容液'
+validation passed
+⚠️  eyecatch stderr: ❌ Eyecatch generation failed: Some images failed to load or are blank (404/CORS/error):
+- https://m.media-amazon.com/images/I/B01GTWEIWI.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0DRP7V4PJ.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0FJ23C8XY.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0C61FD7P9.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0DTK9NS8C.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0DG5PCJTP.jpg (blank/404)
+
+✅ パブリッシュ完了: 20260614-peeling-serum.md
+I0613 07:21:45.093275 9873497 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.104082 9873525 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+⏳ GitHubへのデプロイを実行中...
+I0613 07:21:45.112030 9873557 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
