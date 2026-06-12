@@ -468,9 +468,10 @@ def verify_title_match(target_title: str, candidate_title: str) -> bool:
     if not words:
         return True
         
-    match_count = sum(1 for w in words if w.lower() in candidate_title.lower())
+    clean_candidate = re.sub(r'[\s\u3000]', '', candidate_title.lower())
+    match_count = sum(1 for w in words if re.sub(r'[\s\u3000]', '', w.lower()) in clean_candidate)
     match_rate = match_count / len(words)
-    return match_rate >= 0.4
+    return match_rate >= 0.3
 
 def remove_rakuten_params(url: str) -> str:
     """楽天アフィリエイトURLから m パラメータと rafcid パラメータを完全に削除します。"""
@@ -606,7 +607,8 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
         return f"https://ck.jp.ap.valuecommerce.com/servlet/referral?sid={yahoo_sid}&pid={yahoo_pid}&vc_url={encoded_target}"
 
 def generate_search_keywords(name: str) -> list:
-    s = re.sub(r'[\uff5c\uff0f|/：:;；,，.．_＿\-ー─\(\)（）]', ' ', name)
+    s = name.replace("BEYONDNILE", "BEYOND NILE")
+    s = re.sub(r'[\uff5c\uff0f|/：:;；,，.．_＿\-ー─\(\)（）]', ' ', s)
     s = re.sub(r'([a-z])([A-Z])', r'\1 \2', s)
     s = re.sub(r'([a-zA-Z0-9]+)([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)', r'\1 \2', s)
     s = re.sub(r'([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)([a-zA-Z0-9]+)', r'\1 \2', s)
@@ -618,7 +620,7 @@ def generate_search_keywords(name: str) -> list:
     keywords = []
     
     # 1. 英語(ストップワード除外) + 日本語特徴語 を最優先
-    stop_words = {"the", "founders", "brand", "official", "co", "ltd", "inc", "japan", "公式", "ブランド", "日本"}
+    stop_words = {"the", "founders", "brand", "official", "co", "ltd", "inc", "japan", "公式", "ブランド", "日本", "aiロボティクス", "ai", "beyond"}
     filtered_words = [w for w in words if w.lower() not in stop_words]
     
     eng_words = [w for w in filtered_words if re.match(r'^[a-zA-Z0-9]+$', w)]
@@ -816,8 +818,6 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     amazon_product_name = ""
     if clean_asin:
         details["amazon_url"] = f"https://www.amazon.co.jp/dp/{clean_asin}?tag=mikkestyle-22"
-        # ユーザー要求: ASINがある商品は必ず m.media-amazon.com の画像URLを使用する
-        details["image_url"] = f"https://m.media-amazon.com/images/I/{clean_asin}.jpg"
         try:
             dp_url = f"https://www.amazon.co.jp/dp/{clean_asin}"
             res = requests.get(dp_url, headers=browser_h, timeout=10)
@@ -849,39 +849,53 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     rakuten_access_key = os.getenv("RAKUTEN_ACCESS_KEY")
     rakuten_affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID")
     if rakuten_app_id:
-        search_kw = jan_code.strip() if jan_code and jan_code.strip() else (generate_search_keywords(query)[0] if generate_search_keywords(query) else query)
-        try:
-            endpoints = [
-                ("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170426", {"applicationId": rakuten_app_id, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20}),
-                ("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", {"applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20})
-            ]
-            rak_headers = {
-                "Referer": "https://www.mikke-style.com",
-                "Origin": "https://www.mikke-style.com"
-            }
-            for endpoint_url, params in endpoints:
-                if not params.get("applicationId"):
-                    continue
-                res = requests.get(endpoint_url, params=params, headers=rak_headers, timeout=10)
-                if res.status_code == 200:
-                    items = res.json().get("Items", [])
-                    for item_wrapper in items:
-                        item = item_wrapper.get("Item", {})
-                        item_title = item.get("itemName", "")
-                        if verify_title_match(amazon_product_name or query, item_title):
-                            details["rakuten_price"] = str(item.get("itemPrice", ""))
-                            raw_rak_url = item.get("affiliateUrl") or item.get("itemUrl") or ""
-                            details["rakuten_url"] = remove_rakuten_params(raw_rak_url)
-                            details["rakuten_name"] = item_title
-                            if not details["image_url"]:
-                                img_url = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
-                                if img_url:
-                                    details["image_url"] = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
+        rak_headers = {
+            "Referer": "https://www.mikke-style.com",
+            "Origin": "https://www.mikke-style.com"
+        }
+        keywords_to_try = []
+        if jan_code and jan_code.strip():
+            keywords_to_try.append(jan_code.strip())
+        name_kws = generate_search_keywords(query)
+        if name_kws:
+            keywords_to_try.extend(name_kws)
+        else:
+            keywords_to_try.append(query)
+            
+        for search_kw in keywords_to_try:
+            try:
+                endpoints = [
+                    ("https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170426", {"applicationId": rakuten_app_id, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20}),
+                    ("https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601", {"applicationId": rakuten_app_id, "accessKey": rakuten_access_key, "affiliateId": rakuten_affiliate_id, "keyword": search_kw, "format": "json", "hits": 20})
+                ]
+                for endpoint_url, params in endpoints:
+                    if not params.get("applicationId"):
+                        continue
+                    res = requests.get(endpoint_url, params=params, headers=rak_headers, timeout=10)
+                    if res.status_code == 200:
+                        items = res.json().get("Items", [])
+                        for item_wrapper in items:
+                            item = item_wrapper.get("Item", {})
+                            item_title = item.get("itemName", "")
+                            target_t = query
+                            if amazon_product_name and amazon_product_name != "なし":
+                                target_t = amazon_product_name
+                            if verify_title_match(target_t, item_title):
+                                details["rakuten_price"] = str(item.get("itemPrice", ""))
+                                raw_rak_url = item.get("affiliateUrl") or item.get("itemUrl") or ""
+                                details["rakuten_url"] = remove_rakuten_params(raw_rak_url)
+                                details["rakuten_name"] = item_title
+                                if not details["image_url"]:
+                                    img_url = item.get("mediumImageUrls", [{}])[0].get("imageUrl") or ""
+                                    if img_url:
+                                        details["image_url"] = re.sub(r'\?_ex=\d+x\d+', '?_ex=640x640', img_url)
+                                break
+                        if details["rakuten_url"]:
                             break
-                    if details["rakuten_url"]:
-                        break
-        except Exception:
-            pass
+                if details["rakuten_url"]:
+                    break
+            except Exception:
+                pass
 
     if not details["rakuten_url"] and scraped_urls and scraped_urls.get("rakuten"):
         details["rakuten_url"] = clean_and_convert_scraped_url(scraped_urls["rakuten"], "rakuten")
@@ -895,7 +909,7 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     details["yahoo_url"] = ""
 
     if not details["image_url"]:
-        details["image_url"] = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
+        raise ValueError(f"❌ 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIから取得できませんでした。")
     return details
 
 def extract_mybest_ranking(html: str, url: str) -> list:
@@ -1315,12 +1329,7 @@ def main():
                 
                 # 最も確実な製品画像を details からマージして上書きする
                 if details.get("image_url"):
-                    # Unsplash のプレースホルダー画像でなければ採用。
-                    # ASINがある商品は必ず m.media-amazon.com の画像を採用する。
-                    # ASINがない（または image_url に m.media-amazon.com が含まれていない）かつ Unsplash でない楽天画像をマージ
-                    if not details["image_url"].startswith("https://images.unsplash.com"):
-                        if p.get("asin", "").strip() or "m.media-amazon.com" not in details["image_url"]:
-                            p["image_url"] = details["image_url"]
+                    p["image_url"] = details["image_url"]
                     
             # 成功時のデータ処理
             if "source_urls" in data and data["source_urls"]:

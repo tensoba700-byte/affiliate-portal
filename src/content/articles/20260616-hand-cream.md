@@ -14,8 +14,7 @@ category: "美容・スキンケア"
 ### 👑 第1位: ユースキン製薬ユースキンhana ｜ ユースキン ハナ ハンドクリーム ユズａ
 [総合評価: 4.88]
 
-IMAGE: https://m.media-amazon.com/images/I/B01HSVEF36.jpg
-AMAZON_PRICE: 400
+IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/rakuten24/cabinet/100/532100.jpg?_ex=640x640
 RAKUTEN_PRICE: 1577
 ASIN: https://www.amazon.co.jp/dp/B01HSVEF36?tag=mikkestyle-22
 RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00r136m.xpsek508.g00r136m.xpselc81/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frakuten24%2F532100%2F
@@ -40,8 +39,7 @@ RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00r136m.xpsek508.g00r136m.xpselc81/?p
 ### 👑 第2位: コーセーINFINITY ｜ ビューティハンドセラム リンクル＆ブライト
 [総合評価: 4.75]
 
-IMAGE: https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500
-AMAZON_PRICE: 2380
+IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/hb-navi/cabinet/kose/4971710584097.jpg?_ex=640x640
 RAKUTEN_PRICE: 1760
 RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00pyi8m.xpsek66e.g00pyi8m.xpself8b/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fhb-navi%2F002-0584097%2F
 
@@ -66,11 +64,10 @@ RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00pyi8m.xpsek66e.g00pyi8m.xpself8b/?p
 ### 👑 第3位: ファイントゥデイ尿素10%クリーム
 [総合評価: 4.62]
 
-IMAGE: https://m.media-amazon.com/images/I/B0010MH3Q6.jpg
-AMAZON_PRICE: 1550
-RAKUTEN_PRICE: 953
+IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/gsk-prime/cabinet/prime/08584083/kzft-216-0.jpg?_ex=640x640
+RAKUTEN_PRICE: 1679
 ASIN: https://www.amazon.co.jp/dp/B0010MH3Q6?tag=mikkestyle-22
-RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00tpuim.xpsekd88.g00tpuim.xpsel041/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fgsk-prime%2Fkzft-216%2F
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00tpuim.xpsekd88.g00tpuim.xpsel041/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fgsk-prime%2Fkzft-217%2F
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -93,9 +90,9 @@ RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00tpuim.xpsekd88.g00tpuim.xpsel041/?p
 
 | 順位 | 商品名 | 価格 | 特徴 |
 | :---: | :--- | :---: | :--- |
-| 第1位 | ユースキン製薬ユースキンhana ｜ ユースキン ハナ ハンドクリーム ユズａ | ¥400 | ユースキン製薬の「ユースキン ハナ ハンドクリーム ユズａ」は、毎日のハンドケア... |
-| 第2位 | コーセーINFINITY ｜ ビューティハンドセラム リンクル＆ブライト | ¥2,380 | コーセーのINFINITY「ビューティハンドセラム リンクル＆ブライト」は、手肌... |
-| 第3位 | ファイントゥデイ尿素10%クリーム | ¥1,550 | ファイントゥデイの「尿素10%クリーム」は、手足の荒れやカサつきをどうにかしたい... |
+| 第1位 | ユースキン製薬ユースキンhana ｜ ユースキン ハナ ハンドクリーム ユズａ | オープン価格 | ユースキン製薬の「ユースキン ハナ ハンドクリーム ユズａ」は、毎日のハンドケア... |
+| 第2位 | コーセーINFINITY ｜ ビューティハンドセラム リンクル＆ブライト | オープン価格 | コーセーのINFINITY「ビューティハンドセラム リンクル＆ブライト」は、手肌... |
+| 第3位 | ファイントゥデイ尿素10%クリーム | オープン価格 | ファイントゥデイの「尿素10%クリーム」は、手足の荒れやカサつきをどうにかしたい... |
 
 ## ❓ よくある質問（FAQ）
 

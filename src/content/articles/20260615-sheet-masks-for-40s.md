@@ -14,10 +14,6 @@ category: "美容・スキンケア"
 ### 👑 第1位: AiロボティクスYunth ｜ VC シートマスク
 [総合評価: 4.88]
 
-IMAGE: https://m.media-amazon.com/images/I/B0GVGYFXDF.jpg
-AMAZON_PRICE: 1760
-ASIN: https://www.amazon.co.jp/dp/B0GVGYFXDF?tag=mikkestyle-22
-RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fsearch.rakuten.co.jp%2Fsearch%2Fmall%2FYunth%2BVC%2B%25E3%2582%25B7%25E3%2583%25BC%25E3%2583%2588%25E3%2583%259E%25E3%2582%25B9%25E3%2582%25AF
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -40,11 +36,6 @@ AiロボティクスYunthのVCシートマスクは、日々のスキンケア�
 ### 👑 第2位: The FoundersAnua ｜ PDRN100ヒアルロン酸セラムマスクパック
 [総合評価: 4.75]
 
-IMAGE: https://m.media-amazon.com/images/I/B0DSFSFN6P.jpg
-AMAZON_PRICE: 880
-RAKUTEN_PRICE: 1200
-ASIN: https://www.amazon.co.jp/dp/B0DSFSFN6P?tag=mikkestyle-22
-RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00tygvm.xpsek7a9.g00tygvm.xpsele8a/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Frenew-beauty%2Fanua45%2F
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -66,10 +57,6 @@ PDRN、ヒアルロン酸、コラーゲンを配合
 ### 👑 第3位: ロート製薬メラノCC ｜ メラノCC+ AZmask
 [総合評価: 4.62]
 
-IMAGE: https://m.media-amazon.com/images/I/B0GCJ9G5DQ.jpg
-AMAZON_PRICE: 880
-ASIN: https://www.amazon.co.jp/dp/B0GCJ9G5DQ?tag=mikkestyle-22
-RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/?pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Fda953669bdb12404eda9978a008e3ff6
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -92,9 +79,9 @@ RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec
 
 | 順位 | 商品名 | 価格 | 特徴 |
 | :---: | :--- | :---: | :--- |
-| 第1位 | AiロボティクスYunth ｜ VC シートマスク | ¥1,760 | AiロボティクスYunthのVCシートマスクは、日々のスキンケアを格上げしたいと... |
-| 第2位 | The FoundersAnua ｜ PDRN100ヒアルロン酸セラムマスクパック | ¥880 | The FoundersAnuaのPDRN100ヒアルロン酸セラムマスクパックは... |
-| 第3位 | ロート製薬メラノCC ｜ メラノCC+ AZmask | ¥880 | ロート製薬メラノCCのメラノCC+ AZmaskは、肌の調子を整えたいという願い... |
+| 第1位 | AiロボティクスYunth ｜ VC シートマスク | オープン価格 | AiロボティクスYunthのVCシートマスクは、日々のスキンケアを格上げしたいと... |
+| 第2位 | The FoundersAnua ｜ PDRN100ヒアルロン酸セラムマスクパック | オープン価格 | The FoundersAnuaのPDRN100ヒアルロン酸セラムマスクパックは... |
+| 第3位 | ロート製薬メラノCC ｜ メラノCC+ AZmask | オープン価格 | ロート製薬メラノCCのメラノCC+ AZmaskは、肌の調子を整えたいという願い... |
 
 ## ❓ よくある質問（FAQ）
 

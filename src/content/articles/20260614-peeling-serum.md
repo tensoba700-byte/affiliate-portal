@@ -14,7 +14,7 @@ category: "美容・スキンケア"
 ### 👑 第1位: タカミスキンピール
 [総合評価: 4.88]
 
-IMAGE: https://m.media-amazon.com/images/I/B01GTWEIWI.jpg
+IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/takami-labo/cabinet/prd/r-s009/imgrc0115058669.jpg?_ex=640x640
 RAKUTEN_PRICE: 5720
 ASIN: https://www.amazon.co.jp/dp/B01GTWEIWI?tag=mikkestyle-22
 RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00q04mm.xpsek9b3.g00q04mm.xpsel25a/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Ftakami-labo%2Fr-s009%2F
@@ -60,10 +60,10 @@ LA ROCHE POSAY エファクラ ピールケア セラムは、敏感肌の方で
 ### 👑 第3位: ジーン リポピール
 [総合評価: 4.62]
 
-IMAGE: https://m.media-amazon.com/images/I/B0DTK9NS8C.jpg
-AMAZON_PRICE: 2480
+IMAGE: https://thumbnail.image.rakuten.co.jp/@0_mall/cosmecomonline/cabinet/item-img221/item_1000206778_1.jpg?_ex=640x640
+RAKUTEN_PRICE: 2480
 ASIN: https://www.amazon.co.jp/dp/B0DTK9NS8C?tag=mikkestyle-22
-RAKUTEN: https://hb.afl.rakuten.co.jp/ichiba/52aa350c.c59bcb5a.52aa350d.c841a8ec/mybest_0_0_presses_20174_90-22&pc=https%3A%2F%2Fproduct.rakuten.co.jp%2Fproduct%2F-%2Fdcfe00a92bc4f882b6a46fc9d18e0e43
+RAKUTEN: https://hb.afl.rakuten.co.jp/hgc/g00qawwm.xpseke51.g00qawwm.xpsel220/?pc=https%3A%2F%2Fitem.rakuten.co.jp%2Fcosmecomonline%2F1000206778%2F
 
 [AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]
 
@@ -88,7 +88,7 @@ CICAやヒアルロン酸など保湿成分も充実している
 | :---: | :--- | :---: | :--- |
 | 第1位 | タカミスキンピール | オープン価格 | タカミスキンピールは、角質層の健やかなリズムに着目して開発された角質ケア美容液だ... |
 | 第2位 | LA ROCHE POSAY エファクラ ピールケア セラム | オープン価格 | LA ROCHE POSAY エファクラ ピールケア セラムは、敏感肌の方でも毎... |
-| 第3位 | ジーン リポピール | ¥2,480 | ジーン リポピールは、AHA・BHA・PHAといった複数の角質ケア成分を贅沢に組... |
+| 第3位 | ジーン リポピール | オープン価格 | ジーン リポピールは、AHA・BHA・PHAといった複数の角質ケア成分を贅沢に組... |
 
 ## ❓ よくある質問（FAQ）
 
