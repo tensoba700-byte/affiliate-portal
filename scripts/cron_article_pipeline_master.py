@@ -234,6 +234,21 @@ def add_url_to_notion(name: str, url: str):
     res = requests.post("https://api.notion.com/v1/pages", headers=NOTION_HEADERS, json=payload, timeout=10)
     return res.status_code == 200
 
+def update_page_status(page_id: str, status_name: str):
+    """Notionの特定ページのステータスプロパティを更新します。"""
+    url = f"https://api.notion.com/v1/pages/{page_id}"
+    payload = {
+        "properties": {
+            "Status": {
+                "status": {"name": status_name}
+            }
+        }
+    }
+    try:
+        requests.patch(url, headers=NOTION_HEADERS, json=payload, timeout=10)
+    except Exception as e:
+        print(f"⚠️ ステータス更新エラー: {e}")
+
 def get_unprocessed_notion_pages(limit=3):
     url = f"https://api.notion.com/v1/databases/{DATABASE_ID}/query"
     payload = {
@@ -549,6 +564,7 @@ def main():
         )
         if res.returncode != 0:
             print(f"❌ prepare_stockpile.py が異常終了しました。このページをスキップします。")
+            update_page_status(page_id, "未処理")
             continue
             
         print("✅ データ収集完了。")
@@ -557,6 +573,7 @@ def main():
         stockpile_path = os.path.join(project_root, "scripts", "stockpile_data.json")
         if not os.path.exists(stockpile_path):
             print(f"❌ stockpile_data.json が見つかりません。スキップします。")
+            update_page_status(page_id, "未処理")
             continue
             
         with open(stockpile_path, "r", encoding="utf-8") as f:
@@ -578,6 +595,7 @@ def main():
             draft_str = generate_article_draft(category_name, json.dumps(stockpile_data, ensure_ascii=False))
         except Exception as e:
             print(f"❌ ドラフト生成失敗: {e}")
+            update_page_status(page_id, "未処理")
             continue
             
         # 3. validate_article_draft.py でチェックと自己修復
@@ -596,6 +614,7 @@ def main():
         if not is_ok:
             print(f"❌ 5回自己修復を試みましたがバリデーションを通過できませんでした。原因を報告してスキップします。")
             print(f"【最終エラーメッセージ】:\n{err_msg}")
+            update_page_status(page_id, "未処理")
             continue
             
         print("✅ バリデーション成功！")
@@ -637,6 +656,7 @@ def main():
         )
         if res.returncode == 0:
             print(f"✅ パブリッシュ完了: {full_slug}.md")
+            update_page_status(page_id, "完了")
             
             # クリーンアップ (古い一時JSONファイルを削除)
             subprocess.run(["rm", "-f", os.path.join(project_root, "scripts", "extracted_data_temp.json")])
@@ -650,6 +670,7 @@ def main():
             print("✅ GitHubデプロイ完了。")
         else:
             print(f"❌ パブリッシュ失敗")
+            update_page_status(page_id, "未処理")
             
     print("\n🎉 パイプラインの全処理が完了しました。")
 
