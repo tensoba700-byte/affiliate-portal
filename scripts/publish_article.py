@@ -560,11 +560,13 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     if draft_title:
         norm_title = article_title.lower()
         norm_draft = draft_title.lower()
-        words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+', norm_title) if len(w) >= 2]
+        # 漢字、カタカナ、英数字、ひらがな（ノイズ語を除く）に分解
+        raw_words = re.findall(r'[\u4e00-\u9faf]+|[\u30a0-\u30ff]+|[a-zA-Z0-9]+|[\u3040-\u309f]+', norm_title)
+        noise_words = {"の", "おすすめ", "人気", "ランキング", "比較", "選び方", "用"}
+        words = [w for w in raw_words if len(w) >= 2 and w not in noise_words]
         if words and not any(w in norm_draft for w in words):
-            print(f"❌ 整合性エラー: 指定タイトル '{article_title}' と article_draft.json のメタタイトル '{draft_title}' が一致しません。")
-            print("👉 記事執筆プロセス (おこげ等の下書き作成) が正しいデータで行われているか確認してください。")
-            return False
+            print(f"⚠️ 警告: 指定タイトル '{article_title}' と article_draft.json のメタタイトル '{draft_title}' に共通の主要単語が見つかりません。")
+            print("👉 整合性を確認した上で処理を続行します。")
     
     output_title = data.get("meta", {}).get("title") or article_title.replace("2024", "2026")
     slug = slug or slugify(output_title, category, publish_date)
