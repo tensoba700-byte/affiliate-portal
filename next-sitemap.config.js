@@ -9,6 +9,7 @@ module.exports = {
     },
   },
   sitemapSize: 7000,
+  exclude: ['/sample', '/sample/*'],
   outDir: 'public',
   // Percent-encode and NFC normalize all paths generated in the sitemap to prevent invalid XML or duplicate issues
   transform: async (config, path) => {

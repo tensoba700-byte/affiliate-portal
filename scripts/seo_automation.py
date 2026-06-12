@@ -221,7 +221,7 @@ def main():
             with open(SITEMAP_PATH, "r", encoding="utf-8") as f:
                 content = f.read()
             matches = re.findall(r"<loc>(https?://[^<]+)</loc>", content)
-            urls = [m.strip() for m in matches if "/articles/" in m]
+            urls = [m.strip() for m in matches if ("/articles/" in m or "/column/" in m) and "/sample/" not in m]
         except Exception as e:
             print(f"❌ Failed to parse sitemap: {e}")
             
