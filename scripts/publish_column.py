@@ -82,6 +82,10 @@ def run_publish():
         markdown_lines.append(f"## {sec.get('heading')}")
         markdown_lines.append(sec.get('body', ''))
         markdown_lines.append("")
+        point = sec.get('point')
+        if point:
+            markdown_lines.append(f'<div class="column-point">{point}</div>')
+            markdown_lines.append("")
         
     if faq:
         markdown_lines.append("## ❓ よくある質問（FAQ）")

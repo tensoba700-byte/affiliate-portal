@@ -114,10 +114,14 @@ def validate():
                     continue
                 heading = sec.get("heading")
                 body = sec.get("body")
+                point = sec.get("point")
                 if not heading or not isinstance(heading, str) or not heading.strip():
                     errors.append(f"content.sections[{idx}].heading must exist and not be empty")
                 if not body or not isinstance(body, str) or not body.strip():
                     errors.append(f"content.sections[{idx}].body must exist and not be empty")
+                if point is not None:
+                    if not isinstance(point, str) or not point.strip():
+                        errors.append(f"content.sections[{idx}].point must be a non-empty string if present")
 
         # faq (任意)
         faq = content.get("faq")
