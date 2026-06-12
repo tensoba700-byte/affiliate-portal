@@ -1003,3 +1003,526 @@ I0613 07:21:45.093275 9873497 ev_poll_posix.cc:593] FD from fork parent still in
 I0613 07:21:45.104082 9873525 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
 ⏳ GitHubへのデプロイを実行中...
 I0613 07:21:45.112030 9873557 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264580 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264760 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264777 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264788 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264797 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264805 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264817 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264827 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264838 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264848 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264857 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264869 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264879 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264891 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264900 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264911 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264920 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264929 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.264943 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265060 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265166 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265197 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265246 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265353 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265377 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265390 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265405 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265420 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265435 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265453 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265468 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265481 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265493 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265513 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265533 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265548 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265563 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265578 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265598 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265614 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265629 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265644 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265660 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265675 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265695 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265716 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265738 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265754 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.265776 9873590 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+[main 4c5004d] Publish ピーリング美容液 article via pipeline
+ 5 files changed, 902 insertions(+), 367 deletions(-)
+ create mode 100644 public/eyecatch/20260614-peeling-serum.html
+ create mode 100644 src/content/articles/20260614-peeling-serum.md
+I0613 07:21:45.407151 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407412 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407438 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407456 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407555 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407583 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407601 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407619 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407651 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407682 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407701 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407725 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407745 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407770 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407794 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407823 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407844 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407868 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407890 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407920 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407939 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407957 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407975 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.407999 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408018 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408040 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408060 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408089 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408108 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408126 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408143 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408173 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408195 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408212 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408236 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408287 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408325 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408343 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408361 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:45.408379 9873618 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+To https://github.com/tensoba700-byte/affiliate-portal.git
+   4ae3223..4c5004d  main -> main
+✅ GitHubデプロイ完了。
+
+==================== [4/6] 40代向けシートマスクのおすすめ人気ランキング ====================
+ページID: 37dddb45-8772-8172-81ea-f04de250b9c7
+競合URL: https://my-best.com/15522
+I0613 07:21:46.949945 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950169 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950198 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950220 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950246 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950283 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950442 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950571 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950591 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950605 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950619 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950633 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950657 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950672 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950686 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950700 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950719 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950736 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950753 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:21:46.950771 9873669 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+🔍 Notionから特定の商品ページ（ID: 37dddb45-8772-8172-81ea-f04de250b9c7）を直接取得中...
+🚀 ターゲット発見！
+  タイトル(仮): 40代向けシートマスクのおすすめ人気ランキング
+  競合URL: https://my-best.com/15522
+  カテゴリ: 美容・スキンケア
+⏳ 競合ページのHTMLをダウンロード＆解析中...
+🎉 成功！ 37 個の商品を検出しました。
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/api_core/_python_version_support.py:242: FutureWarning: You are using a non-supported Python version (3.9.6). Google will not post any further updates to google.api_core supporting this Python version. Please upgrade to the latest Python version, or at least Python 3.10, and then update google.api_core.
+  warnings.warn(message, FutureWarning)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/auth/__init__.py:54: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/google/oauth2/__init__.py:40: FutureWarning: You are using a Python version 3.9 past its end of life. Google will update google-auth with critical bug fixes on a best-effort basis, but not with any other fixes or features. Please upgrade your Python version, and then update google-auth.
+  warnings.warn(eol_message.format("3.9"), FutureWarning)
+/Users/tsukika/Desktop/affiliate-portal/scripts/prepare_stockpile_master.py:1074: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+🔄 Gemini Flash 事実抽出を実行中 (試行 1/3)...
+🔍 'コーセーDECORTÉ WHITELOGIST ｜ インテンシブ ブライトニングマスク' の検索用キーワード候補: ['WHITELOGIST コ', 'WHITELOGIST セ', 'コ セ DECORTÉ', 'コ セ', 'コ セ DECORTÉ WHITELOGIST']
+⚠️ Warning: image_url missing for 'コーセーDECORTÉ WHITELOGIST ｜ インテンシブ ブライトニングマスク'. Fallback to placeholder.
+✅ バリデーション成功！
+============================================================
+🔥 事実抽出とデータの保存が完了しました！
+💾 データファイル保存場所: /Users/tsukika/Desktop/affiliate-portal/scripts/stockpile_data.json
+============================================================
+
+【Gemini レスポンス例】
+{
+  "category": "美容・スキンケア",
+  "selection_points": [
+    "保湿力",
+    "成分構成",
+    "シートの肌あたり",
+    "フィット感"
+  ],
+  "source_urls": [],
+  "products": [
+    {
+      "name": "AiロボティクスYunth ｜ VC シートマスク",
+      "jan": "4580785296516",
+      "asin": "B0GVGYFXDF",
+      "recommended_for": [
+        "乾燥肌",
+        "敏感肌"
+      ],
+      "facts": [
+        "整肌成分としてビタミンBとビタミンCを配合",
+        "敏感肌にとって刺激になりうる成分は含まれていない"
+      ]
+    },
+    {
+      "name": "The FoundersAnua ｜ PDRN100ヒアルロン酸セラムマスクパック",
+      "jan": "8809640738012",
+      "asin": "B0DSFSFN6P",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてPDRN、ヒアルロン酸、加水分解コラーゲンを配合",
+        "整肌成分としてビタミン、セラミドを配合",
+        "肌荒れ防止成分としてアラントインを配合",
+        "敏感肌に刺激となりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "ロート製薬メラノCC ｜ メラノCC+ AZmask",
+      "jan": "4987241203208",
+      "asin": "B0GCJ9G5DQ",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてビタミンBとビタミンCを配合",
+        "肌荒れ防止成分としてグリチルリチン酸2Kを配合",
+        "敏感肌にとって刺激になりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "I-neYOLU SKIN ｜ オーバーナイト ハイドラシートマスク　クリア",
+      "jan": "4571607695280",
+      "asin": "B0FTS3KYQL",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてツボクサ葉エキス、茎エキス、ティーツリー葉油を配合",
+        "肌荒れ防止成分としてグリチルリチン酸2Kを配合",
+        "敏感肌にとって刺激になりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "I-neYOLU SKIN ｜ オーバーナイト ハイドラシートマスク モイスト",
+      "jan": "4571607695273",
+      "asin": "B0FTR838Y6",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "保湿成分としてアセチルヒアルロン酸Na、PDRN、ヒト型セラミドを配合",
+        "敏感肌に刺激となりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "PharmaResearchREJURAN ｜ マスク",
+      "jan": "8806121402554",
+      "asin": "B0CX1B1TZZ",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてナイアシンアミド、パンテノールを配合",
+        "敏感肌にとって刺激になりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "CJ OLIVE YOUNGBIOHEAL BOH ｜ プロバイオダーム 3Dリフティングクリームマスク",
+      "jan": "8800316291930",
+      "asin": "B0FYFJ9GV9",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分として乳酸桿菌発酵液、フルクトオリゴ糖、フルクタン、イヌリン、パンテノール、ベタイン、β-グルカンを配合",
+        "敏感肌に刺激となりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "王子ネピアネピア 鼻セレブSKINLISM ｜ 美容液マスク すこやか肌うさぎ",
+      "jan": "4901121669861",
+      "asin": "",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてナイアシンアミドを配合",
+        "肌荒れ防止成分としてカンゾウ根エキス、アラントインを配合",
+        "敏感肌にとって刺激になりうる成分は含まれていない"
+      ]
+    },
+    {
+      "name": "TorridenビタC ブライトニングマスク",
+      "jan": "8809784602361",
+      "asin": "B0D9V2WNMJ",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてナイアシンアミド、ビタミンC誘導体、セラミドを配合"
+      ]
+    },
+    {
+      "name": "コーセーDECORTÉ WHITELOGIST ｜ インテンシブ ブライトニングマスク",
+      "jan": "4971710621679",
+      "asin": "",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "美白有効成分としてコウジ酸を配合",
+        "整肌成分としてビタミンBを配合",
+        "肌荒れ防止成分としてグリチルリチン酸ジカリウムを配合",
+        "敏感肌に不向きな成分が含まれている"
+      ]
+    },
+    {
+      "name": "マルマンH＆BPureal ｜ クリアリポエッセンスマスク",
+      "jan": "4970458724093",
+      "asin": "B0GR9K6HW2",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてセラミド、ビタミンBを配合",
+        "肌荒れ防止成分として植物エキス、アラントイン、グリチルリチン酸2Kを配合",
+        "敏感肌にとって不向きな成分が含まれている"
+      ]
+    },
+    {
+      "name": "Torridenセルメイジング ポアパーフェクティングコラーゲンマスク",
+      "jan": "8809784606185",
+      "asin": "",
+      "recommended_for": [
+        "乾燥肌"
+      ],
+      "facts": [
+        "整肌成分としてビタミンBを配合",
+        "肌荒れ防止成分としてアラントインを配合",
+        "敏感肌にとって刺激になりうる成分は含まれていない"
+      ]
+    },
+    {
+      "name": "FourcompanyAbib ｜ シートマスクパック アクアフィット",
+      "jan": "8809030733375",
+      "asin": "B0838SVXS2",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてセラミドNPを配合",
+        "敏感肌にとって刺激になりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "セキドMEDIHEAL ｜ N.M.F APマスク JEX",
+      "jan": "4589780051045",
+      "asin": "B0BNJC4WWQ",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてアミノ酸、セラミド、ビタミンを配合",
+        "敏感肌の刺激になり得る成分が含まれている"
+      ]
+    },
+    {
+      "name": "The FoundersAnua ｜ ビタミン10ポアストリクスセラムマスクパック",
+      "jan": "8800307371450",
+      "asin": "B0FKSHPP2V",
+      "recommended_for": [
+        "脂性肌"
+      ],
+      "facts": [
+        "整肌成分としてナイアシンアミド、パンテノールを配合",
+        "敏感肌の人には刺激となりうる成分が含まれている"
+      ]
+    },
+    {
+      "name": "アモーレパシフィックジャパンINNISFREE ｜ レチノール PDRN アドバンスド マスク",
+      "jan": "8800294990672",
+      "asin": "",
+      "recommended_for": [],
+      "facts": [
+        "保湿成分としてPDRNを配合",
+        "肌荒れ防止成分としてアラントインを配合"
+      ]
+    },
+    {
+      "name": "VT COSMETICSVT CICAデイリースージングマスク",
+      "jan": "8809559627490",
+      "asin": "B083X5R6VR",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてグリシン、セリン、パンテノールを配合",
+        "敏感肌の刺激になり得る成分が含まれている"
+      ]
+    },
+    {
+      "name": "第一三共ヘルスケアTRANSINO ｜ トランシーノ 薬用 ブライトニングフェイシャルマスク",
+      "jan": "4987107676719",
+      "asin": "B0H3NDPHPR",
+      "recommended_for": [],
+      "facts": [
+        "美白有効成分としてトラネキサム酸を配合",
+        "肌荒れ防止有効成分としてグリチルリチン酸2Kを配合",
+        "敏感肌にとって刺激になりうる成分は含まれていない"
+      ]
+    },
+    {
+      "name": "VT COSMETICSリードルS AZケア マスク",
+      "jan": "8803463011512",
+      "asin": "B0F43R1P4D",
+      "recommended_for": [],
+      "facts": [
+        "整肌成分としてアゼライン酸、パンテノールを配合",
+        "肌荒れ防止成分としてアラントイン、グリチルリチン酸2Kを配合",
+        "敏感肌にとって刺激になりうる成分が含まれている"
+      ]
+    }
+  ]
+}
+
+【バリデーション結果】
+・categoryが空でない: OK
+・productsが1件以上 (件数: 19): OK
+・各商品のfactsが最低1件以上: OK
+・スキーマにないキーを出力しない: OK
+・本文が保存されていないことの確認: OK (本文系フィールドは一切含まれていません)
+・stockpile_data.jsonの総サイズ: 36.41 KB
+・products件数: 19 件
+✅ データ収集完了。
+小カテゴリ名: 40代向けシートマスク
+⏳ article_draft.json を執筆中...
+I0613 07:23:17.431075 9874802 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(11, generation: 1)
+⚠️ バリデーション失敗。自己修復リトライ 1/5...
+✅ バリデーション成功！
+割り当て公開日時: 2026-06-15 07:00
+スラグ: 20260615-sheet-masks-for-40s
+⏳ 記事をパブリッシュ（publish_article.py 実行）中...
+I0613 07:23:36.067659 9875147 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+/Users/tsukika/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+🚀 Processing: 40代向けシートマスク
+📖 Loaded local stockpile data for article: '40代向けシートマスク'
+validation passed
+⚠️  eyecatch stderr: ❌ Eyecatch generation failed: Some images failed to load or are blank (404/CORS/error):
+- https://m.media-amazon.com/images/I/B0GVGYFXDF.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0DSFSFN6P.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0GCJ9G5DQ.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0FTS3KYQL.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0FTR838Y6.jpg (blank/404)
+- https://m.media-amazon.com/images/I/B0CX1B1TZZ.jpg (blank/404)
+
+✅ パブリッシュ完了: 20260615-sheet-masks-for-40s.md
+I0613 07:23:40.927872 9875451 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939261 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939504 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939523 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939556 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939610 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939625 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939636 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939647 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939657 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939672 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939684 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939695 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939708 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939722 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939741 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939757 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939774 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939788 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939810 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939827 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939837 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939854 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939868 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939884 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939897 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939918 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939935 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939946 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939962 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939977 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.939990 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940006 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940017 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940027 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940040 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940053 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940070 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940118 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940131 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940143 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.940157 9875484 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+⏳ GitHubへのデプロイを実行中...
+I0613 07:23:40.949016 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949204 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949247 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949320 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949333 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949345 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949364 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949384 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949399 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949418 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949442 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949459 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949504 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949635 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949683 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949703 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949716 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949729 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949744 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949758 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949769 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949779 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949793 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949804 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949816 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949831 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949846 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949856 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949872 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949887 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949902 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949912 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949979 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.949996 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950008 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950018 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950033 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950045 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950055 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950065 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950075 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950085 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950095 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950105 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950120 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950141 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950155 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950166 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950176 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950186 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950196 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950210 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950229 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950246 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950262 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950287 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950300 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950311 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950325 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
+I0613 07:23:40.950340 9875509 ev_poll_posix.cc:593] FD from fork parent still in poll list: fd(13, generation: 1)
