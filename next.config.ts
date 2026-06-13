@@ -61,57 +61,57 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/articles/20260427-2026年片付け上手になれる見せる収納隠す収納おす',
-        destination: '/articles/20260529-aroma-diffusers',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260429-思考が加速する机の話在宅ワーカーのデスク文具6選',
-        destination: '/articles/20260531-umbrellas',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260428-肌に正直なものだけを乾燥肌敏感肌のスキンケアアイテ',
-        destination: '/articles/20260529-hair-dryers',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260503-深い眠りには静かな準備がある睡眠の質を高める寝室入',
-        destination: '/articles/20260530-frying-pans',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260428-台所に手間をかけない道具を共働き家庭の時短キッチン',
-        destination: '/articles/20260530-frying-pans',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260525-灯を落としてから肌と向き合う夜就寝前ナイトケアコス',
-        destination: '/articles/20260529-hair-dryers',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260502-家をもっと賢くするスマートホームデバイス6選',
-        destination: '/articles/20260530-keyboards',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260524-肌は夜に育てる30代から始めるメンズスキンケア夜ル',
-        destination: '/articles/20260529-hair-dryers',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260518-体を動かすのが楽しくなってきたフィットネスボディケ',
-        destination: '/articles/20260515-寝室の空気を香りから設計する夜インテリアフレグラン',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260522-音で彩る自分だけの朝ポータブルスピーカーbluet',
-        destination: '/articles/20260517-音で変わる朝のリズムノイズキャンセリングイヤホン-',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260508-書くことがもっと好きになるこだわりデスク文具6選',
-        destination: '/articles/20260530-frying-pans',
+        destination: '/articles',
         permanent: true,
       },
       {
@@ -121,17 +121,17 @@ const nextConfig: NextConfig = {
       },
       {
         source: '/articles/20260512-湯船でほどける夜に疲れた日の入浴グッズバスケア6選',
-        destination: '/articles/20260515-寝室の空気を香りから設計する夜インテリアフレグラン',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260502-料理人が静かに選ぶ本物の道具燕三条関産の本格キッチ',
-        destination: '/articles/20260530-frying-pans',
+        destination: '/articles',
         permanent: true,
       },
       {
         source: '/articles/20260430-在宅ワークの肩こりに本気の回答を筋膜ケアボディリカ',
-        destination: '/articles/20260531-umbrellas',
+        destination: '/articles',
         permanent: true,
       },
 
