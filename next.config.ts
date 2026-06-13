@@ -5,6 +5,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/articles/20260601-eyeliner-comparison',
+        destination: '/articles/20260603-eyeliner-comparison',
+        permanent: true,
+      },
+      {
         source: '/articles/20260526-mac-mini-monitor-selection',
         destination: '/articles/20260526-mac-mini-monitors',
         permanent: true,

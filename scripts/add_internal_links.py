@@ -71,6 +71,7 @@ def add_internal_links():
         # Strip existing related articles blocks from body to avoid duplicates
         body_clean = re.sub(r"\n+---\n+## 🌈 あわせて見たい関連記事\n+[\s\S]*?$", "", art["body"])
         body_clean = re.sub(r"\n+---\n+## 関連記事\n+[\s\S]*?$", "", body_clean)
+        body_clean = re.sub(r"\n+## あわせて見たい記事\n+(?:- \[.*?\]\(.*?\)\n*)+", "", body_clean)
         
         body_clean = body_clean.strip()
         new_body = body_clean + rel_block
