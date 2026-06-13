@@ -1,8 +1,85 @@
-import { getArticleBySlug } from '@/src/lib/api';
+import { getAllArticles, getArticleBySlug } from '@/src/lib/api';
 import Link from 'next/link';
+
+export const revalidate = 3600; // ISR cache revalidation hourly
 
 interface PageProps {
   searchParams: Promise<{ category?: string; sort?: string }>;
+}
+
+const categoryMap: { [key: string]: { key: string; name: string; emoji: string } } = {
+  balm: { key: 'balm', name: 'クレンジングバーム', emoji: '🧴' },
+  toner: { key: 'toner', name: '化粧水', emoji: '💧' },
+  oil: { key: 'oil', name: 'クレンジングオイル', emoji: '🧪' },
+  gel: { key: 'gel', name: 'クレンジングジェル', emoji: '🧼' },
+  booster: { key: 'booster', name: '導入美容液', emoji: '🧪' },
+  lip: { key: 'lip', name: 'リップ美容液', emoji: '💄' },
+  cream: { key: 'cream', name: '保湿クリーム', emoji: '🧴' },
+  emulsion: { key: 'emulsion', name: '乳液', emoji: '🧴' },
+  mask: { key: 'mask', name: 'フェイスパック', emoji: '🎭' },
+  cleanser: { key: 'cleanser', name: '洗顔料', emoji: '🧼' },
+  sunscreen: { key: 'sunscreen', name: '日焼け止め', emoji: '☀️' },
+  serum: { key: 'serum', name: '美容液', emoji: '🧪' },
+  shampoo: { key: 'shampoo', name: 'シャンプー', emoji: '🧴' },
+  hair: { key: 'hair', name: 'ヘアケア', emoji: '💇' },
+  eyeliner: { key: 'eyeliner', name: 'アイライナー', emoji: '👁️' },
+  handcream: { key: 'handcream', name: 'ハンドクリーム', emoji: '🖐️' },
+};
+
+function detectCategory(slug: string, title: string) {
+  const s = slug.toLowerCase();
+  const t = title.toLowerCase();
+  
+  if (s.includes('cleansing-balm') || t.includes('クレンジングバーム')) {
+    return categoryMap.balm;
+  }
+  if (s.includes('toner') || t.includes('化粧水')) {
+    return categoryMap.toner;
+  }
+  if (s.includes('cleansing-oil') || t.includes('クレンジングオイル')) {
+    return categoryMap.oil;
+  }
+  if (s.includes('cleansing-gel') || t.includes('クレンジングジェル')) {
+    return categoryMap.gel;
+  }
+  if (s.includes('booster') || t.includes('導入美容液') || t.includes('ブースター')) {
+    return categoryMap.booster;
+  }
+  if (s.includes('lip-serum') || t.includes('リップ美容液')) {
+    return categoryMap.lip;
+  }
+  if (s.includes('face-cream') || t.includes('保湿クリーム') || t.includes('フェイスクリーム')) {
+    return categoryMap.cream;
+  }
+  if (s.includes('emulsion') || t.includes('乳液')) {
+    return categoryMap.emulsion;
+  }
+  if (s.includes('face-mask') || s.includes('sheet-mask') || s.includes('daily-pack') || t.includes('フェイスパック') || t.includes('シートマスク') || t.includes('パック')) {
+    return categoryMap.mask;
+  }
+  if (s.includes('cleanser') || s.includes('face-wash') || t.includes('洗顔')) {
+    return categoryMap.cleanser;
+  }
+  if (s.includes('sunscreen') || t.includes('日焼け止め')) {
+    return categoryMap.sunscreen;
+  }
+  if (s.includes('serum') || t.includes('美容液')) {
+    return categoryMap.serum;
+  }
+  if (s.includes('shampoo') || t.includes('シャンプー')) {
+    return categoryMap.shampoo;
+  }
+  if (s.includes('hair') || t.includes('ヘアケア') || t.includes('トリートメント')) {
+    return categoryMap.hair;
+  }
+  if (s.includes('eyeliner') || t.includes('アイライナー')) {
+    return categoryMap.eyeliner;
+  }
+  if (s.includes('hand-cream') || t.includes('ハンドクリーム')) {
+    return categoryMap.handcream;
+  }
+  
+  return { key: 'other', name: 'その他', emoji: '🛍️' };
 }
 
 export default async function ProductsPage({ searchParams }: PageProps) {
@@ -10,37 +87,68 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const currentCategory = resolvedParams.category || 'all';
   const currentSort = resolvedParams.sort || 'score';
 
-  // 1. マークダウンから直接データを取得
-  const balmArticle = await getArticleBySlug('20260609-cleansing-balm');
-  const tonerArticle = await getArticleBySlug('20260608-toner');
-
-  // カテゴリ分けと元記事へのリンク情報をマッピング
-  const balmProducts = balmArticle 
-    ? balmArticle.rankings.map(p => ({ 
-        ...p, 
-        categoryKey: 'balm', 
-        categoryName: 'クレンジングバーム', 
-        articleSlug: '20260609-cleansing-balm' 
-      })) 
-    : [];
+  // 1. 公開済みの全記事から商品を動的に集約
+  const allArticles = await getAllArticles();
   
-  const tonerProducts = tonerArticle 
-    ? tonerArticle.rankings.map(p => ({ 
-        ...p, 
-        categoryKey: 'toner', 
-        categoryName: '化粧水', 
-        articleSlug: '20260608-toner' 
-      })) 
-    : [];
+  // 各記事を個別に詳細ロードしてランキング（商品）を抽出
+  const articlesWithDetails = await Promise.all(
+    allArticles.map(async (art) => {
+      try {
+        const detail = await getArticleBySlug(art.slug);
+        return detail;
+      } catch (err) {
+        console.error(`Failed to load article detail for ${art.slug}:`, err);
+        return null;
+      }
+    })
+  );
 
-  let products = [...balmProducts, ...tonerProducts];
+  const activeArticles = articlesWithDetails.filter((art): art is NonNullable<typeof art> => {
+    return art !== null && art.rankings && art.rankings.length > 0;
+  });
 
-  // 2. フィルタリング
+  const allProducts = activeArticles.flatMap(article => {
+    const cat = detectCategory(article.slug, article.title);
+    return article.rankings.map(p => ({
+      ...p,
+      categoryKey: cat.key,
+      categoryName: cat.name,
+      articleSlug: article.slug,
+    }));
+  });
+
+  // 2. カテゴリごとの件数を集計してタブ用に動的生成
+  const categoryCounts: { [key: string]: { name: string; count: number } } = {};
+  allProducts.forEach(p => {
+    if (!categoryCounts[p.categoryKey]) {
+      categoryCounts[p.categoryKey] = { name: p.categoryName, count: 0 };
+    }
+    categoryCounts[p.categoryKey].count += 1;
+  });
+
+  const categoryKeysOrder = Object.keys(categoryMap);
+  const categories = Object.keys(categoryCounts)
+    .map(key => ({
+      key,
+      name: categoryCounts[key].name,
+      count: categoryCounts[key].count,
+    }))
+    .sort((a, b) => {
+      const idxA = categoryKeysOrder.indexOf(a.key);
+      const idxB = categoryKeysOrder.indexOf(b.key);
+      const valA = idxA === -1 ? 999 : idxA;
+      const valB = idxB === -1 ? 999 : idxB;
+      return valA - valB;
+    });
+
+  let products = [...allProducts];
+
+  // 3. フィルタリング
   if (currentCategory !== 'all') {
     products = products.filter(p => p.categoryKey === currentCategory);
   }
 
-  // 3. ソート
+  // 4. ソート
   if (currentSort === 'score') {
     products.sort((a, b) => b.score - a.score);
   } else if (currentSort === 'price_asc') {
@@ -57,7 +165,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   }
 
   const getCategoryEmoji = (key: string) => {
-    return key === 'balm' ? '🧴' : '💧';
+    return categoryMap[key]?.emoji || '🛍️';
   };
 
   return (
@@ -83,20 +191,17 @@ export default async function ProductsPage({ searchParams }: PageProps) {
             href={`/products?category=all&sort=${currentSort}`} 
             className={`s-prod-tab ${currentCategory === 'all' ? 's-prod-tab-active' : ''}`}
           >
-            すべて ({balmProducts.length + tonerProducts.length})
+            すべて ({allProducts.length})
           </Link>
-          <Link 
-            href={`/products?category=balm&sort=${currentSort}`} 
-            className={`s-prod-tab ${currentCategory === 'balm' ? 's-prod-tab-active' : ''}`}
-          >
-            クレンジングバーム ({balmProducts.length})
-          </Link>
-          <Link 
-            href={`/products?category=toner&sort=${currentSort}`} 
-            className={`s-prod-tab ${currentCategory === 'toner' ? 's-prod-tab-active' : ''}`}
-          >
-            化粧水 ({tonerProducts.length})
-          </Link>
+          {categories.map(cat => (
+            <Link 
+              key={cat.key}
+              href={`/products?category=${cat.key}&sort=${currentSort}`} 
+              className={`s-prod-tab ${currentCategory === cat.key ? 's-prod-tab-active' : ''}`}
+            >
+              {cat.name} ({cat.count})
+            </Link>
+          ))}
         </div>
 
         {/* Sort selector */}
