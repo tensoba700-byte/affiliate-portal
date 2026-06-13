@@ -1,6 +1,8 @@
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'すべての記事 | みっけ！',
   description: '最新の商品比較・おすすめ記事の一覧です。',

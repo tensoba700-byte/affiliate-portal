@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getAllColumns, ColumnItem } from '@/src/lib/columns';
 
-export const revalidate = 3600; // Revalidate cache hourly (ISR)
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: '美容コラム | みっけ！',

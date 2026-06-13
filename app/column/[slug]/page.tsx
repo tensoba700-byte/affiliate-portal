@@ -4,7 +4,7 @@ import { getColumnBySlug, getAllColumns } from '@/src/lib/columns';
 import { getArticleBySlug } from '@/src/lib/api';
 import type { Metadata } from 'next';
 
-export const revalidate = 3600; // Revalidate cache hourly (ISR)
+export const dynamic = 'force-dynamic';
 
 export async function generateStaticParams() {
   const columns = await getAllColumns();

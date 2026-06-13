@@ -7,6 +7,8 @@ import ShareButtons from '@/src/components/ShareButtons';
 import { EyecatchImage } from '@/src/components/EyecatchImage';
 import { AdBanner } from '@/src/components/AdBanner';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
   try {
     const articles = await getAllArticles();
