@@ -1,9 +1,21 @@
 import type { NextConfig } from "next";
 
+// 日本語文字を含むパスをパーセントエンコードする関数（NFC正規化も行う）
+const encodePath = (p: string) => {
+  return p.normalize('NFC').split('/').map(seg => {
+    // コロンで始まる Next.js パラメータや、* などのワイルドカードはエンコードしない
+    if (seg.startsWith(':') || seg.includes('*')) return seg;
+    return seg.split('').map(c => {
+      if (/[\w\-._~]/.test(c)) return c;
+      return encodeURIComponent(c);
+    }).join('');
+  }).join('/');
+};
+
 const nextConfig: NextConfig = {
   /* config options here */
   async redirects() {
-    return [
+    const rawRedirects = [
       {
         source: '/articles/20260601-eyeliner-comparison',
         destination: '/articles/20260603-eyeliner-comparison',
@@ -54,7 +66,7 @@ const nextConfig: NextConfig = {
         destination: '/articles/20260429-明日の朝が変わる夜の髪時間ヘアトリートメントナイト',
         permanent: true,
       },
-    {
+      {
         source: '/articles/20260520-夜空の下へ持ち出したいアウトドアキャンプギア6選',
         destination: '/articles/20260519-焚き火の前の静かな時間アウトドアギア-精鋭6選',
         permanent: true,
@@ -134,8 +146,13 @@ const nextConfig: NextConfig = {
         destination: '/articles',
         permanent: true,
       },
-
     ];
+
+    return rawRedirects.map(r => ({
+      ...r,
+      source: encodePath(r.source),
+      destination: encodePath(r.destination),
+    }));
   },
 };
 
