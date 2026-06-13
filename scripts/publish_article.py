@@ -204,7 +204,7 @@ def generate_eyecatch_html(slug: str, title: str, category: str, image_urls: lis
     for _ in range(max(0, 6 - target_count)):
         imgs_html += '<div class="pw"></div>\n'
     
-    display_title = format_eyecatch_title(title)
+    display_title = format_eyecatch_title(title.replace("<br>", "").replace("<br/>", "").replace("<br />", ""))
     line_count = display_title.count("<br />") + 1
     font_size = "60px" if line_count >= 3 else ("80px" if len(title) <= 15 else "68px" if len(title) <= 22 else "60px")
     

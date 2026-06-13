@@ -31,7 +31,7 @@ async function generateFeed() {
       const description = article.excerpt || '';
       
       rssXml += `    <item>
-      <title><![CDATA[${article.title}]]></title>
+      <title><![CDATA[${article.title.replace(/<br\s*\/?>/gi, '')}]]></title>
       <link>${articleUrl}</link>
       <guid>${articleUrl}</guid>
       <pubDate>${pubDate}</pubDate>

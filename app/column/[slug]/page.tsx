@@ -36,8 +36,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
+  const cleanTitle = column.title.replace(/<br\s*\/?>/gi, '');
+
   return {
-    title: column.title,
+    title: cleanTitle,
     description: column.description,
     alternates: {
       canonical: `/column/${column.slug}`,
@@ -92,11 +94,13 @@ export default async function ColumnDetailPage({ params }: PageProps) {
     formattedDate = cleanDate.replace(/-/g, '.');
   }
 
+  const cleanColumnTitle = column.title.replace(/<br\s*\/?>/gi, '');
+
   // JSON-LD 構造化データ
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
-    'headline': column.title,
+    'headline': cleanColumnTitle,
     'description': column.description,
     'image': [column.coverImage.startsWith('/') ? `https://www.mikke-style.com${column.coverImage}` : column.coverImage],
     'datePublished': column.publishDate ? new Date(column.publishDate.replace(' ', 'T') + '+09:00').toISOString() : new Date().toISOString(),
@@ -139,7 +143,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
           <span className="s-badge-primary">{column.category}</span>
           <span style={{ fontFamily: 'var(--s-font-mono)', fontSize: 9, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--s-muted)' }}>BEAUTY JOURNAL ESSAY</span>
         </div>
-        <h1 className="s-article-h1" style={{ textAlign: 'center', fontFamily: 'var(--font-noto-serif), serif' }}>{column.title}</h1>
+        <h1 className="s-article-h1" style={{ textAlign: 'center', fontFamily: 'var(--font-noto-serif), serif', textWrap: 'balance' }}>{cleanColumnTitle}</h1>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 20, fontSize: 11, fontWeight: 600, color: 'var(--s-muted)', paddingTop: 16, borderTop: '1px solid var(--s-border-soft)' }}>
           <span>✍️ WRITTEN BY: ツキ</span>
           <span>🗓 {formattedDate}</span>
@@ -215,7 +219,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
                   dateStr = d.toLocaleDateString('ja-JP').replace(/\//g, '.');
                 }
               }
-              const cleanTitle = article.title.replace(/<br\s*\/?>/gi, ' ');
+              const cleanTitle = article.title.replace(/<br\s*\/?>/gi, '');
               return (
                 <Link
                   key={article.slug}
@@ -233,7 +237,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
                   </div>
                   <div className="s-article-body">
                     <span className="s-article-date">{dateStr}</span>
-                    <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: cleanTitle }} />
+                    <h3 className="s-article-title">{cleanTitle}</h3>
                     <p className="s-article-excerpt">{article.excerpt || '大人気コスメを本音でガチ検証レビュー！メイク落ちや使用感を徹底的に解説するよ。'}</p>
                     <div className="s-article-read-more">
                       READ REPORT <span>→</span>
@@ -251,7 +255,7 @@ export default async function ColumnDetailPage({ params }: PageProps) {
         <div className="s-next-card">
           <div style={{ flex: 1 }}>
             <div className="s-next-eyebrow">NEXT JOURNAL</div>
-            <h3 className="s-next-title">{nextColumn.title}</h3>
+            <h3 className="s-next-title">{nextColumn.title.replace(/<br\s*\/?>/gi, '')}</h3>
             <Link href={`/column/${nextColumn.slug}`} className="s-next-link">
               コラムを読む →
             </Link>

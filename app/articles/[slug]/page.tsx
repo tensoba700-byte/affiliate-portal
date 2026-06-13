@@ -23,16 +23,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const article = await getArticleBySlug(slug);
   if (!article) return { title: 'Not Found' };
   
+  const cleanTitle = article.title.replace(/<br\s*\/?>/gi, '');
   const ogImage = article.coverImage || '/og-image.png';
 
   return {
-    title: article.title,
-    description: article.excerpt || `徹底比較！ ${article.title} のおすすめ情報`,
+    title: cleanTitle,
+    description: article.excerpt || `徹底比較！ ${cleanTitle} のおすすめ情報`,
     alternates: {
       canonical: `/articles/${slug}`,
     },
     openGraph: {
-      title: article.title,
+      title: cleanTitle,
       description: article.excerpt,
       url: `https://www.mikke-style.com/articles/${slug}`,
       type: 'article',
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.title,
+      title: cleanTitle,
       description: article.excerpt,
       images: [ogImage],
     },
@@ -61,6 +62,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
     notFound();
   }
 
+  const cleanTitle = article.title.replace(/<br\s*\/?>/gi, '');
   const relatedArticles = await getRelatedArticles(slug, article.category || "");
 
   // Structured Data (JSON-LD)
@@ -68,7 +70,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
     {
       '@context': 'https://schema.org',
       '@type': 'Article',
-      headline: article.title,
+      headline: cleanTitle,
       description: article.excerpt,
       image: article.coverImage,
       datePublished: article.publishedAt,
@@ -83,7 +85,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
     jsonLdList.push({
       '@context': 'https://schema.org',
       '@type': 'ItemList',
-      name: `${article.title} ランキング`,
+      name: `${cleanTitle} ランキング`,
       itemListElement: article.rankings.map((prod: any, index: number) => ({
         '@type': 'ListItem',
         position: index + 1,
@@ -121,7 +123,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
         <div className="container mx-auto max-w-3xl px-4 pt-8">
 
           {/* アイキャッチ画像 — 記事最上部・フル幅 */}
-          <EyecatchImage slug={slug} alt={article.title} />
+          <EyecatchImage slug={slug} alt={cleanTitle} />
 
           {/* 広告①〜④をランダム表示 */}
           <AdBanner type="small" />
@@ -149,7 +151,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             
             <h1 className="article-title leading-snug mb-2 text-foreground flex flex-col items-center">
               {(() => {
-                const parts = article.title.split(/(?=【)/);
+                const parts = cleanTitle.split(/(?=【)/);
                 if (parts.length > 1) {
                   const mainTitle = parts[0].trim();
                   const subTitleRaw = parts[1].trim();
@@ -166,21 +168,21 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                     
                     return (
                       <>
-                        <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-3 leading-normal" dangerouslySetInnerHTML={{ __html: mainTitle }} />
-                        <span className="block text-sm md:text-base lg:text-lg text-foreground/75 mb-1 font-bold leading-normal" dangerouslySetInnerHTML={{ __html: subPart1 }} />
-                        <span className="block text-lg md:text-xl lg:text-2xl font-black text-primary" dangerouslySetInnerHTML={{ __html: subPart2 }} />
+                        <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-3 leading-normal">{mainTitle}</span>
+                        <span className="block text-sm md:text-base lg:text-lg text-foreground/75 mb-1 font-bold leading-normal">{subPart1}</span>
+                        <span className="block text-lg md:text-xl lg:text-2xl font-black text-primary">{subPart2}</span>
                       </>
                     );
                   }
                   
                   return (
                     <>
-                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-2" dangerouslySetInnerHTML={{ __html: mainTitle }} />
-                      <span className="block text-lg md:text-xl lg:text-2xl font-bold text-primary" dangerouslySetInnerHTML={{ __html: subTitleRaw }} />
+                      <span className="block text-xl md:text-2xl lg:text-3xl font-black text-foreground mb-2">{mainTitle}</span>
+                      <span className="block text-lg md:text-xl lg:text-2xl font-bold text-primary">{subTitleRaw}</span>
                     </>
                   );
                 }
-                return <span className="text-xl md:text-2xl lg:text-3xl font-black" dangerouslySetInnerHTML={{ __html: article.title }} />;
+                return <span className="text-xl md:text-2xl lg:text-3xl font-black">{cleanTitle}</span>;
               })()}
             </h1>
             
@@ -209,7 +211,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             {article.rankings.length > 0 && (
               <RankingTable
                 products={article.rankings}
-                title={`${article.title.replace(/<br\s*\/?>/gi, ' ')} ランキング`}
+                title={`${cleanTitle} ランキング`}
               />
             )}
 
@@ -241,8 +243,8 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             {/* Share Section */}
             <ShareButtons
               url={`https://www.mikke-style.com/articles/${article.slug}`}
-              title={article.title}
-              isGadget={article.title.includes('ガジェット') || article.slug.includes('ガジェット')}
+              title={cleanTitle}
+              isGadget={cleanTitle.includes('ガジェット') || article.slug.includes('ガジェット')}
             />
           </div>
 
@@ -256,22 +258,25 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
                 <span className="text-primary">🌈</span> あわせて見たい記事
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {relatedArticles.map((rel) => (
-                  <Link 
-                    key={rel.slug} 
-                    href={`/articles/${rel.slug}`}
-                    className="group bg-white rounded-[8px] p-3 cute-shadow border border-card-border hover:-translate-y-1 transition-all duration-300"
-                  >
-                    <div className="aspect-[16/9] rounded-[4px] overflow-hidden mb-3 bg-primary/5 flex items-center justify-center">
-                      {rel.coverImage ? (
-                        <img src={rel.coverImage} alt={rel.title} loading="lazy" className="max-w-full max-h-full w-full h-full object-contain group-hover:scale-102 transition-transform duration-500" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">🎀</div>
-                      )}
-                    </div>
-                    <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug" dangerouslySetInnerHTML={{ __html: rel.title }} />
-                  </Link>
-                ))}
+                {relatedArticles.map((rel) => {
+                  const cleanRelTitle = rel.title.replace(/<br\s*\/?>/gi, '');
+                  return (
+                    <Link 
+                      key={rel.slug} 
+                      href={`/articles/${rel.slug}`}
+                      className="group bg-white rounded-[8px] p-3 cute-shadow border border-card-border hover:-translate-y-1 transition-all duration-300"
+                    >
+                      <div className="aspect-[16/9] rounded-[4px] overflow-hidden mb-3 bg-primary/5 flex items-center justify-center">
+                        {rel.coverImage ? (
+                          <img src={rel.coverImage} alt={cleanRelTitle} loading="lazy" className="max-w-full max-h-full w-full h-full object-contain group-hover:scale-102 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-2xl">🎀</div>
+                        )}
+                      </div>
+                      <h3 className="text-sm font-black text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">{cleanRelTitle}</h3>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
           )}

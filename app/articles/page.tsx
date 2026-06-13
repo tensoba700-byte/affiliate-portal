@@ -44,6 +44,7 @@ export default async function ArticlesPage() {
               }
             }
 
+            const cleanTitle = article.title.replace(/<br\s*\/?>/gi, '');
             return (
               <Link
                 key={article.slug}
@@ -53,7 +54,7 @@ export default async function ArticlesPage() {
                 <div className="s-article-thumb">
                   <img 
                     src={article.coverImage || '/eyecatch/20260609-cleansing-balm-sample.png'} 
-                    alt={article.title} 
+                    alt={cleanTitle} 
                     className="s-article-img"
                     loading="lazy"
                   />
@@ -61,7 +62,7 @@ export default async function ArticlesPage() {
                 </div>
                 <div className="s-article-body">
                   <span className="s-article-date">{dateStr}</span>
-                  <h3 className="s-article-title" dangerouslySetInnerHTML={{ __html: article.title }} />
+                  <h3 className="s-article-title">{cleanTitle}</h3>
                   <p className="s-article-excerpt">{article.excerpt || '大人気コスメを本音でガチ検証レビュー！メイク落ちや使用感を徹底的に解説するよ。'}</p>
                   <div className="s-article-read-more">
                     READ REPORT <span>→</span>
