@@ -104,7 +104,7 @@ def fill_react_textarea(page, selector, value):
     """
     return page.evaluate(js_code, {"selector": selector, "value": value})
 
-def post_to_note(file_path):
+def post_to_note(file_path, dry_run=False):
     """note.com へ記事を投稿する。"""
     meta, body = parse_markdown(file_path)
     if not meta or not body:
@@ -128,7 +128,8 @@ def post_to_note(file_path):
         return False
         
     post_intro = f"{summary}\n\n▼続きはこちらから読めるよ\n"
-    post_url = f"https://www.mikke-style.com/column/{slug}"
+    import time
+    post_url = f"https://www.mikke-style.com/column/{slug}?t={int(time.time())}"
     
     # 環境変数の読み込み
     email = os.getenv("NOTE_EMAIL")
@@ -230,20 +231,49 @@ def post_to_note(file_path):
                 
             # 「下書き保存」をクリックして確実に同期させる
             print("Clicking '下書き保存' for synchronization...")
-            page.locator('button:has-text("下書き保存")').click()
+            page.locator('button:has-text("下書き保存"), button:has-text("一時保存")').click()
             page.wait_for_timeout(4000)  # 保存のネットワークリクエスト完了を待つ
             
+            if dry_run:
+                print("ℹ️ Dry-run mode enabled. Exiting before publishing.")
+                browser.close()
+                return True
+                
             print("Clicking '公開に進む'...")
             page.locator('button:has-text("公開に進む")').click()
             
             # 投稿確認ポップアップが表示されるのを待つ
             print("Waiting for publishing settings screen...")
-            page.wait_for_selector('button:has-text("投稿する")', timeout=15000)
+            page.wait_for_selector('button:has-text("投稿する"), button:has-text("更新する")', timeout=15000)
             page.wait_for_timeout(2000)
             
+            # ハッシュタグの自動付与
+            category = meta.get("category", "")
+            tags_to_add = ["みっけ", "みっけ編集部"]
+            if category == "haircare":
+                tags_to_add.extend(["ヘアケア", "コスメ", "美容"])
+            else:
+                tags_to_add.extend(["スキンケア", "コスメ", "美容"])
+                
+            print(f"Adding hashtags: {tags_to_add}")
+            try:
+                for tag in tags_to_add:
+                    tag_input = page.locator('input[placeholder*="ハッシュタグを追加"]')
+                    if tag_input.count() > 0 and tag_input.first.is_visible():
+                        tag_input.first.focus()
+                        tag_input.first.fill(tag)
+                        page.wait_for_timeout(500)
+                        tag_input.first.press("Enter")
+                        page.wait_for_timeout(1000)
+                        print(f"Added hashtag: {tag}")
+                    else:
+                        print(f"⚠️ Hashtag input is not visible for tag: {tag}")
+            except Exception as tag_err:
+                print(f"⚠️ Failed to add hashtags: {tag_err}")
+            
             # 実際に投稿する
-            print("Clicking '投稿する'...")
-            page.locator('button:has-text("投稿する")').click()
+            print("Clicking '投稿する' / '更新する'...")
+            page.locator('button:has-text("投稿する"), button:has-text("更新する")').first.click()
             
             print("Waiting for publication to complete...")
             # 投稿完了後、リダイレクトを待つ
@@ -275,6 +305,7 @@ def post_to_note(file_path):
 def main():
     parser = argparse.ArgumentParser(description="Auto post columns to note.com")
     parser.add_argument("--file", help="Path to specific column markdown file to post")
+    parser.add_argument("--dry-run", action="store_true", help="Only save as draft and exit without publishing")
     args = parser.parse_args()
     
     target_file = None
@@ -289,7 +320,7 @@ def main():
         print("No target file to process. Exiting.")
         sys.exit(0)
         
-    success = post_to_note(target_file)
+    success = post_to_note(target_file, dry_run=args.dry_run)
     if success:
         print("🎉 Note posting script completed successfully.")
         sys.exit(0)
