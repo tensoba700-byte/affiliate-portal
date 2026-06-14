@@ -37,12 +37,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   const cleanTitle = column.title.replace(/<br\s*\/?>/gi, '');
+  const imageUrl = column.coverImage.startsWith('/') 
+    ? `https://www.mikke-style.com${column.coverImage}` 
+    : column.coverImage;
 
   return {
     title: cleanTitle,
     description: column.description,
     alternates: {
       canonical: `/column/${column.slug}`,
+    },
+    openGraph: {
+      title: cleanTitle,
+      description: column.description,
+      url: `https://www.mikke-style.com/column/${column.slug}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: cleanTitle,
+        },
+      ],
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: cleanTitle,
+      description: column.description,
+      images: [imageUrl],
     },
   };
 }
