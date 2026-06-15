@@ -126,8 +126,6 @@ function BuyButton({
         minHeight: '36px',
         fontSize: '11px',
         textDecoration: 'none',
-        transform: hovered ? 'translateY(-2px) scale(1.03)' : 'translateY(0) scale(1)',
-        boxShadow: hovered ? '0 8px 20px rgba(0,0,0,0.12)' : '0 2px 4px rgba(0,0,0,0.05)',
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
