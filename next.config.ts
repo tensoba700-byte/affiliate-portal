@@ -14,6 +14,34 @@ const encodePath = (p: string) => {
 
 const nextConfig: NextConfig = {
   /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'thumbnail.image.rakuten.co.jp',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.r10s.jp',
+      },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.my-best.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'michill.jp',
+      },
+      {
+        protocol: 'https',
+        hostname: 'allabout.co.jp',
+      },
+    ],
+  },
   async redirects() {
     const rawRedirects = [
       {
