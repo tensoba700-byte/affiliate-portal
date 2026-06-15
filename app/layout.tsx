@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Serif_JP, Noto_Sans_JP } from "next/font/google";
+import { Noto_Serif_JP, Noto_Sans_JP, Cormorant_Garamond, DM_Sans, DM_Serif_Display, Space_Mono } from "next/font/google";
 import Link from "next/link";
 import Header from "@/src/components/Header";
 import SearchBar from "@/src/components/SearchBar";
@@ -20,6 +20,36 @@ const notoSans = Noto_Sans_JP({
   variable: "--font-noto-sans",
   subsets: ["latin"],
   display: "swap",
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  weight: ['400', '600', '700'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-cormorant-garamond',
+  display: 'swap',
+});
+
+const dmSans = DM_Sans({
+  weight: ['300', '400', '500', '600', '700', '800'],
+  subsets: ['latin'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+});
+
+const dmSerifDisplay = DM_Serif_Display({
+  weight: ['400'],
+  style: ['normal', 'italic'],
+  subsets: ['latin'],
+  variable: '--font-dm-serif-display',
+  display: 'swap',
+});
+
+const spaceMono = Space_Mono({
+  weight: ['400', '700'],
+  subsets: ['latin'],
+  variable: '--font-space-mono',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -64,12 +94,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ja" className={`${notoSerif.variable} ${notoSans.variable} h-full antialiased`} data-theme="peach" data-font="sans">
+    <html lang="ja" className={`${notoSerif.variable} ${notoSans.variable} ${cormorantGaramond.variable} ${dmSans.variable} ${dmSerifDisplay.variable} ${spaceMono.variable} h-full antialiased`} data-theme="peach" data-font="sans">
       <head>
-        {/* Google Fonts */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
         {/* Google Analytics 4 */}
         <Script

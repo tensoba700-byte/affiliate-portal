@@ -655,10 +655,10 @@ body {
   --s-radius-sm:    4px;
   --s-shadow-card:  0 2px 24px rgba(28, 25, 23, 0.06), 0 1px 4px rgba(28, 25, 23, 0.04);
   --s-shadow-hover: 0 8px 40px rgba(28, 25, 23, 0.1), 0 2px 8px rgba(28, 25, 23, 0.06);
-  --s-font-body:    'DM Sans', system-ui, sans-serif;
-  --s-font-serif:   'Cormorant Garamond', 'Noto Serif JP', serif;
-  --s-font-display: 'DM Serif Display', serif;
-  --s-font-mono:    'Space Mono', monospace;
+  --s-font-body:    var(--font-dm-sans), system-ui, sans-serif;
+  --s-font-serif:   var(--font-cormorant-garamond), var(--font-noto-serif), serif;
+  --s-font-display: var(--font-dm-serif-display), serif;
+  --s-font-mono:    var(--font-space-mono), monospace;
 }
 
 /* --- Wrapper Base --- */
