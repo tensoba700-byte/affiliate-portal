@@ -3431,5 +3431,49 @@ body:has(.sample-wrapper) > div.fixed {
   display: none !important;
 }
 
+/* =========================================
+   🎈 PAGINATION STYLES
+   ========================================= */
+.s-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 48px;
+  margin-bottom: 24px;
+}
 
+.s-pagination-btn, .s-pagination-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  border-radius: 9999px;
+  background: var(--s-surface, #ffffff);
+  border: 1px solid var(--s-border, rgba(30, 25, 20, 0.08));
+  color: var(--s-ink, #1c1917);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
 
+.s-pagination-num {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+}
+
+.s-pagination-btn:hover, .s-pagination-num:hover {
+  background: var(--s-surface-2, #f5f4f1);
+  border-color: var(--s-accent, #c9a87a);
+  transform: translateY(-1px);
+}
+
+.s-pagination-num-active {
+  background: var(--s-accent, #c9a87a) !important;
+  color: var(--s-surface, #ffffff) !important;
+  border-color: var(--s-accent, #c9a87a) !important;
+  box-shadow: 0 4px 12px rgba(201, 168, 122, 0.25) !important;
+}

@@ -5,7 +5,7 @@ import Image from 'next/image';
 export const revalidate = 3600; // ISR cache revalidation hourly
 
 interface PageProps {
-  searchParams: Promise<{ category?: string; sort?: string }>;
+  searchParams: Promise<{ category?: string; sort?: string; page?: string }>;
 }
 
 const categoryMap: { [key: string]: { key: string; name: string; emoji: string } } = {
@@ -87,6 +87,8 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const resolvedParams = await searchParams;
   const currentCategory = resolvedParams.category || 'all';
   const currentSort = resolvedParams.sort || 'score';
+  const currentPage = parseInt(resolvedParams.page || '1', 10);
+  const limit = 24; // 1ページあたり24商品
 
   // 1. 公開済みの全記事から商品を動的に集約
   const allArticles = await getAllArticles();
@@ -165,6 +167,12 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     });
   }
 
+  // 5. ページネーション
+  const totalProducts = products.length;
+  const totalPages = Math.ceil(totalProducts / limit);
+  const page = Math.max(1, Math.min(currentPage, totalPages || 1));
+  const pagedProducts = products.slice((page - 1) * limit, page * limit);
+
   const getCategoryEmoji = (key: string) => {
     return categoryMap[key]?.emoji || '🛍️';
   };
@@ -227,7 +235,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
 
       {/* Products Grid */}
       <div className="s-prod-grid">
-        {products.map((prod) => {
+        {pagedProducts.map((prod) => {
           const mainPrice = prod.rakuten?.price || prod.amazon?.price || '価格を見る';
           return (
             <div key={`${prod.categoryKey}-${prod.rank}-${prod.name}`} className="s-prod-card">
@@ -321,6 +329,40 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           );
         })}
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="s-pagination">
+          {page > 1 && (
+            <Link 
+              href={`/products?category=${currentCategory}&sort=${currentSort}&page=${page - 1}`} 
+              className="s-pagination-btn"
+            >
+              &larr; 前へ
+            </Link>
+          )}
+          {Array.from({ length: totalPages }).map((_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <Link
+                key={pageNum}
+                href={`/products?category=${currentCategory}&sort=${currentSort}&page=${pageNum}`}
+                className={`s-pagination-num ${page === pageNum ? 's-pagination-num-active' : ''}`}
+              >
+                {pageNum}
+              </Link>
+            );
+          })}
+          {page < totalPages && (
+            <Link 
+              href={`/products?category=${currentCategory}&sort=${currentSort}&page=${page + 1}`} 
+              className="s-pagination-btn"
+            >
+              次へ &rarr;
+            </Link>
+          )}
+        </div>
+      )}
     </div>
   );
 }
