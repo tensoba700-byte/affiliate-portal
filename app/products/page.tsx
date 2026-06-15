@@ -1,5 +1,6 @@
 import { getAllArticles, getArticleBySlug } from '@/src/lib/api';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const revalidate = 3600; // ISR cache revalidation hourly
 
@@ -240,7 +241,14 @@ export default async function ProductsPage({ searchParams }: PageProps) {
               {/* Product Image */}
               <div className="s-prod-img-box">
                 {prod.imageUrl ? (
-                  <img src={prod.imageUrl} alt={prod.name} className="s-prod-img" referrerPolicy="no-referrer" />
+                  <Image
+                    src={prod.imageUrl}
+                    alt={prod.name}
+                    width={200}
+                    height={200}
+                    className="s-prod-img"
+                    referrerPolicy="no-referrer"
+                  />
                 ) : (
                   <span style={{ fontSize: '32px' }}>🛍️</span>
                 )}
@@ -275,7 +283,6 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                 <span className="s-prod-price-val">{mainPrice}</span>
               </div>
 
-              {/* Action Buttons */}
               <div className="s-prod-buttons">
                 <a 
                   href={prod.amazon?.url || '#'} 
@@ -283,7 +290,13 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   rel="noopener noreferrer nofollow sponsored" 
                   className="s-prod-btn-amz"
                 >
-                  <img src="https://www.amazon.co.jp/favicon.ico" className="s-prod-btn-icon" alt="" /> Amazon
+                  <Image
+                    src="https://www.amazon.co.jp/favicon.ico"
+                    className="s-prod-btn-icon"
+                    alt=""
+                    width={16}
+                    height={16}
+                  /> Amazon
                 </a>
                 <a 
                   href={prod.rakuten?.url || '#'} 
@@ -291,7 +304,13 @@ export default async function ProductsPage({ searchParams }: PageProps) {
                   rel="noopener noreferrer nofollow sponsored" 
                   className="s-prod-btn-rak"
                 >
-                  <img src="https://www.rakuten.co.jp/favicon.ico" className="s-prod-btn-icon" alt="" /> 楽天市場
+                  <Image
+                    src="https://www.rakuten.co.jp/favicon.ico"
+                    className="s-prod-btn-icon"
+                    alt=""
+                    width={16}
+                    height={16}
+                  /> 楽天市場
                 </a>
               </div>
 
