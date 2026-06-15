@@ -50,13 +50,38 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/articles/20260523-2026年最新絶対に焼けたくない人のための日焼け止めおすすめ-fix',
+        destination: '/articles/20260523-2026年最新日焼け止めおすすめ人気ランキング絶対に焼かない',
+        permanent: true,
+      },
+      {
         source: '/articles/20260524-毎日のバスタイムに上質な潤いを美容と節水を叶えるシャワーヘッ',
-        destination: '/articles/20260524-2026年最新シャワーヘッドおすすめ人気ランキング美容節水水',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/articles/20260524-毎日のバスタイムに上質な潤いを美容と節水を叶えるシャワーヘッ-fix',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/articles/20260524-2026年最新シャワーヘッドおすすめ人気ランキング美容節水水',
+        destination: '/',
         permanent: true,
       },
       {
         source: '/articles/20260528-frying-pans',
-        destination: '/articles/20260530-frying-pans',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/articles/20260528-frying-pans-fix',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/articles/20260530-frying-pans',
+        destination: '/',
         permanent: true,
       },
       {
