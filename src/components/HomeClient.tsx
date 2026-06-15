@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArticleItem } from '@/src/lib/api';
 
 interface HomeClientProps {
@@ -189,12 +190,12 @@ export default function HomeClient({
               >
                 <div className="s-item-img">
                   {prod.imageUrl ? (
-                    <img 
+                    <Image 
                       src={prod.imageUrl} 
                       alt={prod.name} 
+                      width={160}
+                      height={160}
                       style={{ 
-                        width: '100%', 
-                        height: '100%', 
                         objectFit: 'contain',
                         mixBlendMode: 'multiply'
                       }} 
@@ -262,11 +263,12 @@ export default function HomeClient({
                 className="s-article-card"
               >
                 <div className="s-article-thumb">
-                  <img 
+                  <Image 
                     src={article.image} 
-                    alt={article.title} 
+                    alt={article.title.replace(/<br\s*\/?>/gi, '')} 
                     className="s-article-img"
-                    loading="lazy"
+                    width={380}
+                    height={240}
                   />
                   <span className="s-article-thumb-badge">NEW REPORT</span>
                 </div>

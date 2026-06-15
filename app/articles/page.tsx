@@ -1,5 +1,6 @@
 import { getAllArticles, ArticleItem } from '@/src/lib/api';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
@@ -54,11 +55,12 @@ export default async function ArticlesPage() {
                 className="s-article-card"
               >
                 <div className="s-article-thumb">
-                  <img 
+                  <Image 
                     src={article.coverImage || '/eyecatch/20260609-cleansing-balm-sample.png'} 
                     alt={cleanTitle} 
                     className="s-article-img"
-                    loading="lazy"
+                    width={380}
+                    height={240}
                   />
                   <span className="s-article-thumb-badge">NEW REPORT</span>
                 </div>
