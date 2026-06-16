@@ -87,23 +87,7 @@ function RankBadge({ rank }: { rank: number }) {
   );
 }
 
-/** 星マーク */
-function Stars({ score }: { score: number }) {
-  const full  = Math.floor(score);
-  const half  = score % 1 >= 0.4;
-  const empty = 5 - full - (half ? 1 : 0);
-  return (
-    <span className="text-xs leading-none flex gap-0.5 justify-center">
-      {"★".repeat(full).split("").map((s, i) => (
-        <span key={`f-${i}`} style={{ color: "#FFB300" }} className="drop-shadow-[0_1px_1px_rgba(255,179,0,0.2)]">★</span>
-      ))}
-      {half && <span style={{ color: "#FFB300" }} className="drop-shadow-[0_1px_1px_rgba(255,179,0,0.2)]">½</span>}
-      {"☆".repeat(empty).split("").map((s, i) => (
-        <span key={`e-${i}`} style={{ color: "#E0E0E0" }}>★</span>
-      ))}
-    </span>
-  );
-}
+
 
 /** 購入ボタン */
 function BuyButton({
@@ -379,7 +363,6 @@ export default function RankingTable({ products, title }: Props) {
                     <span className="text-2xl font-black tracking-tight" style={{ color: C.scoreColor }}>{p.score.toFixed(2)}</span>
                     <span className="text-[9px] font-black text-gray-400">/ 5.0</span>
                   </div>
-                  <Stars score={p.score} />
                 </div>
 
                 {/* 購入アフィリエイトボタングループ - スマホ横並び3等分 / PC縦積み */}
