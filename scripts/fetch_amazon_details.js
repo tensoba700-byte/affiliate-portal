@@ -41,7 +41,11 @@ const puppeteer = require('puppeteer');
           }
         }
       }
-      return { title, price };
+
+      const imgEl = document.querySelector('#landingImage') || document.querySelector('#imgBlkFront') || document.querySelector('#mainImageContainer img');
+      const imageUrl = imgEl ? (imgEl.getAttribute('data-old-hires') || imgEl.getAttribute('src') || '') : '';
+
+      return { title, price, imageUrl };
     });
     
     console.log(JSON.stringify(data));
