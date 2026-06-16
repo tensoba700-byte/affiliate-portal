@@ -153,32 +153,55 @@ def post_to_note(file_path, dry_run=False):
     print(f"URL: {post_url}")
     print(f"----------------------")
     
+    state_path = os.path.join(project_root, "scratch", "state.json")
+    
     with sync_playwright() as p:
         print("Launching browser...")
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-        )
+        
+        # Load existing state.json if available
+        if os.path.exists(state_path):
+            print(f"Loading existing session from {state_path}...")
+            context = browser.new_context(
+                storage_state=state_path,
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+        else:
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+            )
+            
         page = context.new_page()
         
         try:
-            print("Logging in to note.com...")
-            page.goto("https://note.com/login")
-            page.wait_for_timeout(3000)
-            
-            page.fill('input[placeholder*="mail@example.com"]', email)
-            page.fill('input[type="password"]', password)
-            page.locator('button:has-text("ログイン")').click()
-            page.wait_for_timeout(5000)
-            
-            if "login" in page.url:
-                print("❌ Login failed. Still on the login page.")
-                browser.close()
-                return False
-                
+            # Check if we need to log in
             print("Navigating to new note editor...")
             page.goto("https://note.com/notes/new")
-            page.wait_for_timeout(5000)
+            page.wait_for_timeout(3000)
+            
+            if "login" in page.url:
+                print("Session expired or not logged in. Logging in to note.com...")
+                page.goto("https://note.com/login")
+                page.wait_for_timeout(3000)
+                
+                page.fill('input[placeholder*="mail@example.com"]', email)
+                page.fill('input[type="password"]', password)
+                page.locator('button:has-text("ログイン")').click()
+                page.wait_for_timeout(5000)
+                
+                if "login" in page.url:
+                    print("❌ Login failed. Still on the login page.")
+                    browser.close()
+                    return False
+                
+                # Save new session state
+                os.makedirs(os.path.dirname(state_path), exist_ok=True)
+                context.storage_state(path=state_path)
+                print(f"🎉 Saved new session state to {state_path}")
+                
+                # Go back to editor page
+                page.goto("https://note.com/notes/new")
+                page.wait_for_timeout(5000)
             
             # タイトルの入力
             print("Typing title...")
