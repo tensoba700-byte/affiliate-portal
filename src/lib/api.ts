@@ -109,7 +109,7 @@ export function parseRankingsFromMarkdown(raw: string): Product[] {
     const rank = parseInt(rankMatch[1], 10);
     if (rank > 7) continue; // allow up to 7
     const name = rankMatch[2].replace(/\*\*/g, '').trim();
-    const ratingMatch = section.match(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)\]/);
+    const ratingMatch = section.match(/\[(?:RATING|総合評価)[：:]\s*([0-9.]+)/);
     const score = ratingMatch ? parseFloat(ratingMatch[1]) : 4.0;
     const q = encodeURIComponent(name);
     const product: Product = {

@@ -359,6 +359,7 @@ FAQテンプレート:
 
 【提供された商品事実データ (stockpile_data.json)】
 このデータに基づいて各商品の特徴を執筆し、嘘の事実やスペックは創作しないでください。
+提供された商品データ（最大6件）のすべてについて、順位順（第1位から第N位まで）に沿って漏れなくproducts配列に出力してください。途中で商品の執筆を打ち切ることは絶対に禁止します。
 {stockpile_data_str}
 
 【出力フォーマット】
@@ -592,7 +593,10 @@ def main():
         # 2. article_draft.json を直接執筆
         print("⏳ article_draft.json を執筆中...")
         try:
-            draft_str = generate_article_draft(category_name, json.dumps(stockpile_data, ensure_ascii=False))
+            import copy
+            temp_stockpile = copy.deepcopy(stockpile_data)
+            temp_stockpile["products"] = temp_stockpile.get("products", [])[:6]
+            draft_str = generate_article_draft(category_name, json.dumps(temp_stockpile, ensure_ascii=False))
         except Exception as e:
             print(f"❌ ドラフト生成失敗: {e}")
             update_page_status(page_id, "未処理")

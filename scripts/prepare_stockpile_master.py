@@ -777,6 +777,37 @@ def amazon_image_from_asin(asin):
         return None
     return f"https://m.media-amazon.com/images/I/{asin}.jpg"
 
+def fetch_amazon_details_puppeteer(asin: str) -> dict:
+    """Puppeteerを使用してAmazonの個別商品ページから価格とタイトルを取得します。"""
+    import subprocess
+    import json
+    
+    if not asin:
+        return {"price": "", "title": ""}
+        
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    js_path = os.path.join(script_dir, "fetch_amazon_details.js")
+    
+    try:
+        res = subprocess.run(
+            ["node", js_path, asin],
+            capture_output=True, text=True, timeout=45,
+            cwd=os.path.dirname(script_dir)
+        )
+        if res.returncode == 0:
+            out = res.stdout.strip()
+            lines = out.split('\n')
+            for line in reversed(lines):
+                if line.strip().startswith('{') and line.strip().endswith('}'):
+                    data = json.loads(line.strip())
+                    if "error" not in data:
+                        return data
+                    break
+    except Exception as e:
+        print(f"⚠️ Puppeteer Amazon fetch failed: {e}")
+            
+    return {"price": "", "title": ""}
+
 def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scraped_urls: dict = None):
     """Amazon, Yahoo, 楽天のAPIやスクレイピングから製品情報を取得します。"""
     details = {
@@ -828,6 +859,7 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     amazon_product_name = ""
     if clean_asin:
         details["amazon_url"] = f"https://www.amazon.co.jp/dp/{clean_asin}?tag=mikkestyle-22"
+        # 1. まず通常の requests.get を試みる
         try:
             dp_url = f"https://www.amazon.co.jp/dp/{clean_asin}"
             res = requests.get(dp_url, headers=browser_h, timeout=10)
@@ -841,10 +873,20 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
                 if price_match:
                     price_val = price_match.group(1) or price_match.group(2)
                     details["amazon_price"] = re.sub(r'[^\d]', '', price_val) if price_val else "なし"
-                
-                # 画像のスクレイピングは無効化（m.media-amazon.comのURLを優先）
         except Exception:
             pass
+
+        # 2. 通常の取得がブロックされて失敗した場合、Puppeteerでフォールバック
+        if not amazon_product_name or details["amazon_price"] == "なし":
+            print(f"🔍 Amazon価格/タイトルの取得に失敗（ブロックの可能性）。Puppeteerで再試行します (ASIN: {clean_asin})...")
+            p_data = fetch_amazon_details_puppeteer(clean_asin)
+            if p_data.get("price"):
+                details["amazon_price"] = re.sub(r'[^\d]', '', p_data["price"])
+                print(f"💰 Puppeteer価格取得成功: ¥{details['amazon_price']}")
+            if p_data.get("title"):
+                amazon_product_name = p_data["title"]
+                details["amazon_name"] = amazon_product_name
+                print(f"📦 Puppeteerタイトル取得成功: {amazon_product_name[:30]}...")
 
     if not details["amazon_url"] and scraped_urls and scraped_urls.get("amazon"):
         details["amazon_url"] = clean_and_convert_scraped_url(scraped_urls["amazon"], "amazon")
