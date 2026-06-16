@@ -1,13 +1,17 @@
-import { getAllArticles } from './src/lib/api';
+import { getArticleBySlug } from './src/lib/api';
 
 async function main() {
   try {
-    console.log("Fetching all articles...");
-    const articles = await getAllArticles();
-    console.log(`Fetched ${articles.length} articles.`);
-    for (let i = 0; i < Math.min(10, articles.length); i++) {
-      const a = articles[i];
-      console.log(`[${i}] Title: "${a.title}" | Slug: "${a.slug}" | PublishedAt: "${a.publishedAt}"`);
+    console.log("Fetching test article (booster)...");
+    const article = await getArticleBySlug("20260618-affordable-booster");
+    if (!article) {
+      console.log("Article not found!");
+      return;
+    }
+    console.log(`Title: "${article.title}"`);
+    console.log(`Rankings length: ${article.rankings.length}`);
+    for (const r of article.rankings) {
+      console.log(`Rank: ${r.rank} | Name: "${r.name}" | Score: ${r.score}`);
     }
   } catch (err) {
     console.error("CRASHED:", err);
