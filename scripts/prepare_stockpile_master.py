@@ -219,8 +219,12 @@ const puppeteer = require('puppeteer');
                   const name = prod.name || li.name || "";
                   const gtin = prod.gtin || "";
                   const asin = prod.asin || "";
+                  let rating = "";
+                  if (prod.aggregateRating && prod.aggregateRating.ratingValue) {
+                    rating = String(prod.aggregateRating.ratingValue);
+                  }
                   if (name) {
-                    jsonLdProducts[cleanName(name)] = { gtin, asin };
+                    jsonLdProducts[cleanName(name)] = { gtin, asin, rating };
                   }
                 });
               }
@@ -300,6 +304,7 @@ const puppeteer = require('puppeteer');
         if (description && !description.includes('商品...') && !description.includes('徹底比較') && description !== 'EMPTY') {
           let jan_code = "";
           let asin = "";
+          let rating = "";
           const normName = cleanName(name);
           let match = jsonLdProducts[normName];
           if (!match) {
@@ -309,6 +314,7 @@ const puppeteer = require('puppeteer');
           if (match) {
             jan_code = match.gtin || "";
             asin = match.asin || "";
+            rating = match.rating || "";
           }
           
           let scraped_image = "";
@@ -386,6 +392,7 @@ const puppeteer = require('puppeteer');
             jan_code,
             asin,
             description,
+            rating: rating || "",
             scraped_image: scraped_image || "",
             amazon_scraped_url: amazon_scraped_url || "",
             rakuten_scraped_url: rakuten_scraped_url || "",
@@ -1022,6 +1029,7 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                                 rating_val = ""
                                 if "aggregateRating" in prod and isinstance(prod["aggregateRating"], dict):
                                     rating_val = str(prod["aggregateRating"].get("ratingValue") or "")
+                                print(f"DEBUG: Scraped {name} (rating: {rating_val})")
                                 products.append({
                                     "rank": rank,
                                     "name": name,
@@ -1336,10 +1344,15 @@ def main():
                 # ratingの引き継ぎ
                 r_val = ""
                 ep_clean = clean_name_local(p.get("name", ""))
+                matched = False
                 for orig_p in products:
                     if clean_name_local(orig_p.get("name", "")) == ep_clean:
                         r_val = orig_p.get("rating") or ""
+                        print(f"DEBUG: Matched {p.get('name')} -> rating: {r_val}")
+                        matched = True
                         break
+                if not matched:
+                    print(f"DEBUG: Match failed for {p.get('name')} (clean: {ep_clean})")
                 p["rating"] = r_val
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
@@ -1445,6 +1458,7 @@ def main():
                         "name": p.get("name", ""),
                         "jan": p.get("jan_code", ""),
                         "asin": p.get("asin", ""),
+                        "rating": p.get("rating", ""),
                         "recommended_for": [],
                         "facts": []
                     })
