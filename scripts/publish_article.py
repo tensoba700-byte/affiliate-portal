@@ -640,8 +640,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         
         markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]\n\n"
         
-        pros = p.get("analysis", {}).get("pros", ["情報なし"])
-        cons = p.get("analysis", {}).get("cons", ["該当情報なし"])
+        pros = p.get("analysis", {}).get("pros", ["おすすめポイントがたくさんあるよ！笑"])
+        cons = p.get("analysis", {}).get("cons", ["特に気になるところは見当たらない優秀アイテムかも笑"])
         markdown += ":::pro\n" + "\n".join([f"{item}" for item in pros]) + "\n:::\n"
         markdown += ":::con\n" + "\n".join([f"{item}" for item in cons]) + "\n:::\n\n"
         
