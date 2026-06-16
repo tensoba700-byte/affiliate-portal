@@ -1018,12 +1018,16 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                                 asin = prod.get("asin") or ""
                                 desc = prod.get("description") or prod.get("reviewBody") or ""
                                 
+                                rating_val = ""
+                                if "aggregateRating" in prod and isinstance(prod["aggregateRating"], dict):
+                                    rating_val = str(prod["aggregateRating"].get("ratingValue") or "")
                                 products.append({
                                     "rank": rank,
                                     "name": name,
                                     "jan_code": gtin,
                                     "asin": asin,
-                                    "description": desc
+                                    "description": desc,
+                                    "rating": rating_val
                                 })
                             
                             if products:
@@ -1052,7 +1056,8 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                     "name": name,
                     "jan_code": "",
                     "asin": "",
-                    "description": ""
+                    "description": "",
+                    "rating": ""
                 })
         products.sort(key=lambda x: x["rank"])
         
@@ -1315,7 +1320,7 @@ def main():
 
             for p in data["products"]:
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1326,6 +1331,15 @@ def main():
                     p["jan"] = ""
                 if "asin" not in p:
                     p["asin"] = ""
+                
+                # ratingの引き継ぎ
+                r_val = ""
+                ep_clean = clean_name_local(p.get("name", ""))
+                for orig_p in products:
+                    if clean_name_local(orig_p.get("name", "")) == ep_clean:
+                        r_val = orig_p.get("rating") or ""
+                        break
+                p["rating"] = r_val
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
                 
@@ -1475,7 +1489,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
