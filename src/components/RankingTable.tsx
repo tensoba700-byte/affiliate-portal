@@ -95,8 +95,8 @@ function BuyButton({
 }: {
   label: string; price: string; url: string; bg: string; textColor?: string; iconUrl: string; hoverBg: string; shortLabel: string;
 }) {
-  if (!url && !price) return null;
   const [hovered, setHovered] = useState(false);
+  if (!url && !price) return null;
 
   return (
     <a
