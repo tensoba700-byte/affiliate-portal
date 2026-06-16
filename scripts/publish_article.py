@@ -635,8 +635,6 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
                 url = notion_p.get(f'{platform}_url')
                 if url: markdown += f"{key.upper()}: {url}\n"
         
-        markdown += f"\n[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]\n\n"
-
         formatted_desc = p.get('description', '').replace('\\n', '\n\n')
         markdown += f"{formatted_desc}\n\n"
         

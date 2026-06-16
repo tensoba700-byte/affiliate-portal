@@ -223,8 +223,18 @@ const puppeteer = require('puppeteer');
                   if (prod.aggregateRating && prod.aggregateRating.ratingValue) {
                     rating = String(prod.aggregateRating.ratingValue);
                   }
+                  let price = "";
+                  if (prod.offers) {
+                    if (Array.isArray(prod.offers.offers)) {
+                      price = String(prod.offers.offers[0].price || prod.offers.lowPrice || "");
+                    } else if (prod.offers.price) {
+                      price = String(prod.offers.price);
+                    } else if (prod.offers.lowPrice) {
+                      price = String(prod.offers.lowPrice);
+                    }
+                  }
                   if (name) {
-                    jsonLdProducts[cleanName(name)] = { gtin, asin, rating };
+                    jsonLdProducts[cleanName(name)] = { gtin, asin, rating, price };
                   }
                 });
               }
@@ -305,6 +315,7 @@ const puppeteer = require('puppeteer');
           let jan_code = "";
           let asin = "";
           let rating = "";
+          let mybest_price = "";
           const normName = cleanName(name);
           let match = jsonLdProducts[normName];
           if (!match) {
@@ -315,6 +326,7 @@ const puppeteer = require('puppeteer');
             jan_code = match.gtin || "";
             asin = match.asin || "";
             rating = match.rating || "";
+            mybest_price = match.price || "";
           }
           
           let scraped_image = "";
@@ -393,6 +405,7 @@ const puppeteer = require('puppeteer');
             asin,
             description,
             rating: rating || "",
+            mybest_price: mybest_price || "",
             scraped_image: scraped_image || "",
             amazon_scraped_url: amazon_scraped_url || "",
             rakuten_scraped_url: rakuten_scraped_url || "",
@@ -795,9 +808,21 @@ def fetch_amazon_details_puppeteer(asin: str) -> dict:
     script_dir = os.path.dirname(os.path.abspath(__file__))
     js_path = os.path.join(script_dir, "fetch_amazon_details.js")
     
+    # Node.js absolute paths lookup
+    node_path = "node"
+    possible_paths = [
+        "/Users/tsukika/.nvm/versions/node/v24.14.1/bin/node",
+        "/usr/local/bin/node",
+        "/opt/homebrew/bin/node"
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            node_path = path
+            break
+            
     try:
         res = subprocess.run(
-            ["node", js_path, asin],
+            [node_path, js_path, asin],
             capture_output=True, text=True, timeout=45,
             cwd=os.path.dirname(script_dir)
         )
@@ -1317,18 +1342,21 @@ def main():
                         scraped_yahoo_map[p_clean] = original_p.get("yahoo_scraped_url")
 
             for p in data["products"]:
-                # ratingの取得
+                # ratingとmybest_priceの取得
                 rating_val = ""
+                mybest_price_val = ""
                 p_clean = clean_name_local(p.get("name", ""))
                 for orig_p in products:
                     orig_clean = clean_name_local(orig_p.get("name", ""))
                     if orig_clean and (orig_clean in p_clean or p_clean in orig_clean):
                         rating_val = orig_p.get("rating") or ""
+                        mybest_price_val = orig_p.get("mybest_price") or ""
                         break
                 p["rating"] = rating_val
+                p["mybest_price"] = mybest_price_val
 
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating", "mybest_price"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1391,6 +1419,13 @@ def main():
                         "yahoo": orig_p.get("yahoo_scraped_url", "")
                     }
                     details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
+                    
+                    # API価格取得失敗時のフォールバック処理
+                    if (not details.get("amazon_price") or details["amazon_price"] == "なし") and p.get("mybest_price"):
+                        details["amazon_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
+                    if (not details.get("rakuten_price") or details["rakuten_price"] == "なし") and p.get("mybest_price"):
+                        details["rakuten_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
+                        
                     p["resolved_details"] = details
                     # アフィリエイトID適用済みのリンクをルートにも代入
                     if details.get("rakuten_url"):
@@ -1399,6 +1434,12 @@ def main():
                         p["yahoo_url"] = details["yahoo_url"]
                 else:
                     details = p["resolved_details"]
+                    # 既存の価格がなしの場合もフォールバック
+                    if (not details.get("amazon_price") or details["amazon_price"] == "なし") and p.get("mybest_price"):
+                        details["amazon_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
+                    if (not details.get("rakuten_price") or details["rakuten_price"] == "なし") and p.get("mybest_price"):
+                        details["rakuten_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
+                        
                     # すでに resolved_details がある場合もルートに適用
                     if details.get("rakuten_url"):
                         p["rakuten_url"] = details["rakuten_url"]
@@ -1488,7 +1529,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating", "mybest_price"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
