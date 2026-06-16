@@ -1014,6 +1014,7 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                                 if not isinstance(prod, dict):
                                     continue
                                 name = prod.get("name") or li.get("name") or ""
+                                name = re.sub(r'\s+', ' ', name).strip()
                                 gtin = prod.get("gtin") or ""
                                 asin = prod.get("asin") or ""
                                 desc = prod.get("description") or prod.get("reviewBody") or ""
@@ -1303,9 +1304,9 @@ def main():
             if not data.get("products") or len(data["products"]) == 0:
                 raise ValueError("Validation failed: products list is empty")
                 
-            # Puppeteer画像・URLマッピング用準備
             def clean_name_local(s):
-                return s.lower().replace(" ", "").replace("　", "").strip()
+                import re
+                return re.sub(r'[\s\u3000]', '', s).lower().strip()
             
             scraped_rakuten_map = {}
             scraped_yahoo_map = {}
