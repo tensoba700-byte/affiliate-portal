@@ -545,21 +545,7 @@ body {
   opacity: 1;
 }
 
-/* Overrides for RankingTable buttons and active/tap scale effects */
-.s-article-page a[href*="amazon.co.jp"] span.hidden.md\:inline {
-  font-size: 0 !important;
-}
-.s-article-page a[href*="amazon.co.jp"] span.hidden.md\:inline::after {
-  content: "Amazon で購入" !important;
-  font-size: 11px !important;
-}
-.s-article-page a[href*="rakuten.co.jp"] span.hidden.md\:inline {
-  font-size: 0 !important;
-}
-.s-article-page a[href*="rakuten.co.jp"] span.hidden.md\:inline::after {
-  content: "楽天市場で購入" !important;
-  font-size: 11px !important;
-}
+
 .s-article-page a[href*="amazon.co.jp"]:active,
 .s-article-page a[href*="rakuten.co.jp"]:active,
 .s-article-page a[href*="yahoo.co.jp"]:active,
