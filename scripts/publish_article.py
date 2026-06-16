@@ -510,7 +510,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
     if not products: return False
-    products = products[:6]
+
     category = category or products[0].get("category", "ガジェット")
     
     ALLOWED_CATEGORIES = ["インテリア", "生活雑貨", "便利グッズ", "ガジェット", "美容・スキンケア"]
@@ -720,8 +720,17 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     path = f"src/content/articles/{slug}.md"
     with open(path, 'w', encoding='utf-8') as f: f.write(markdown)
     
-    image_urls = [p['image_url'] for p in products if p.get('image_url')]
+    image_urls = []
+    for p in data.get("products", []):
+        p_name_clean = re.sub(r'[\s\u3000]', '', p['name']).lower()
+        for x in products:
+            x_name_clean = re.sub(r'[\s\u3000]', '', x['name']).lower()
+            if x_name_clean in p_name_clean or p_name_clean in x_name_clean:
+                if x.get('image_url'):
+                    image_urls.append(x['image_url'])
+                break
     generate_eyecatch_html(slug, output_title, category, image_urls, get_seasonal_catch_copy(category))
+
     take_eyecatch_screenshot(slug)
     return True
 
