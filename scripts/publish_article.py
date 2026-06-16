@@ -601,7 +601,13 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     markdown += f"## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data.get("ui", {}).get("points", [])]) + "</ul>\n\n"
 
     for i, p in enumerate(data.get("products", [])):
-        notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
+        p_name_clean = re.sub(r'[\s\u3000]', '', p['name']).lower()
+        notion_p = None
+        for x in products:
+            x_name_clean = re.sub(r'[\s\u3000]', '', x['name']).lower()
+            if x_name_clean in p_name_clean or p_name_clean in x_name_clean:
+                notion_p = x
+                break
         prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)
         display_name = truncate_product_name(prod_name)
         
@@ -648,7 +654,13 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     for idx, p in enumerate(data.get("products", [])):
         prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)
         name_short = truncate_product_name(prod_name)
-        notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
+        p_name_clean = re.sub(r'[\s\u3000]', '', p['name']).lower()
+        notion_p = None
+        for x in products:
+            x_name_clean = re.sub(r'[\s\u3000]', '', x['name']).lower()
+            if x_name_clean in p_name_clean or p_name_clean in x_name_clean:
+                notion_p = x
+                break
         price = "なし"
         if notion_p:
             amazon_p = notion_p.get("amazon_price")
