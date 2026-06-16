@@ -11,6 +11,7 @@ import requests
 import urllib.parse
 import re
 import time
+import unicodedata
 from dotenv import load_dotenv
 
 # プロジェクトルートのパスを追加
@@ -445,7 +446,8 @@ const puppeteer = require('puppeteer');
 
 def extract_capacity(title: str) -> str:
     """容量（ml, gなど）を抽出します。タイトルマッチングの精度向上用。"""
-    m = re.search(r'(\d+(?:ml|g|kg|L|枚|回分|本|個|oz))', title, re.IGNORECASE)
+    normalized_title = unicodedata.normalize('NFKC', title)
+    m = re.search(r'(\d+(?:ml|g|kg|L|枚|回分|本|個|oz))', normalized_title, re.IGNORECASE)
     return m.group(1).lower() if m else ""
 
 def verify_title_match(target_title: str, candidate_title: str) -> bool:
@@ -453,22 +455,25 @@ def verify_title_match(target_title: str, candidate_title: str) -> bool:
     if not target_title or not candidate_title:
         return True
     
+    target_norm = unicodedata.normalize('NFKC', target_title)
+    candidate_norm = unicodedata.normalize('NFKC', candidate_title)
+    
     # 容量のチェック
-    cap1 = extract_capacity(target_title)
-    cap2 = extract_capacity(candidate_title)
+    cap1 = extract_capacity(target_norm)
+    cap2 = extract_capacity(candidate_norm)
     if cap1 and cap2 and cap1 != cap2:
         return False  # 容量が明示的に異なる場合は不一致
         
     # キーワードの一致度
-    clean1 = re.sub(r'[\(\)（）\[\]【】\-\s]', '', target_title.lower())
-    clean2 = re.sub(r'[\(\)（）\[\]【】\-\s]', '', candidate_title.lower())
+    clean1 = re.sub(r'[\(\)（）\[\]【】\-\s]', '', target_norm.lower())
+    clean2 = re.sub(r'[\(\)（）\[\]【】\-\s]', '', candidate_norm.lower())
     
     # 共通キーワードのチェック
-    words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]', target_title) if len(w) >= 2]
+    words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]', target_norm) if len(w) >= 2]
     if not words:
         return True
         
-    clean_candidate = re.sub(r'[\s\u3000]', '', candidate_title.lower())
+    clean_candidate = re.sub(r'[\s\u3000]', '', candidate_norm.lower())
     match_count = sum(1 for w in words if re.sub(r'[\s\u3000]', '', w.lower()) in clean_candidate)
     match_rate = match_count / len(words)
     return match_rate >= 0.3
@@ -608,7 +613,8 @@ def clean_and_convert_scraped_url(scraped_url: str, mall: str) -> str:
 
 def generate_search_keywords(name: str) -> list:
     s = name.replace("BEYONDNILE", "BEYOND NILE")
-    s = re.sub(r'[\uff5c\uff0f|/：:;；,，.．_＿\-ー─\(\)（）]', ' ', s)
+    s = s.replace("YOUNGBIOHEAL", "YOUNG BIOHEAL")
+    s = re.sub(r'[\uff5c\uff0f|/：:;；,，.．_＿\-─\(\)（）]', ' ', s)
     s = re.sub(r'([a-z])([A-Z])', r'\1 \2', s)
     s = re.sub(r'([a-zA-Z0-9]+)([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)', r'\1 \2', s)
     s = re.sub(r'([\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+)([a-zA-Z0-9]+)', r'\1 \2', s)
@@ -620,11 +626,11 @@ def generate_search_keywords(name: str) -> list:
     keywords = []
     
     # 1. 英語(ストップワード除外) + 日本語特徴語 を最優先
-    stop_words = {"the", "founders", "brand", "official", "co", "ltd", "inc", "japan", "公式", "ブランド", "日本", "aiロボティクス", "ai", "beyond"}
+    stop_words = {"the", "founders", "brand", "official", "co", "ltd", "inc", "japan", "公式", "ブランド", "日本", "aiロボティクス", "ai", "beyond", "cj", "olive", "young"}
     filtered_words = [w for w in words if w.lower() not in stop_words]
     
-    eng_words = [w for w in filtered_words if re.match(r'^[a-zA-Z0-9]+$', w)]
-    jp_words = [w for w in filtered_words if not re.match(r'^[a-zA-Z0-9]+$', w)]
+    eng_words = [w for w in filtered_words if re.match(r'^[a-zA-Z0-9]+$', w) and len(w) >= 2]
+    jp_words = [w for w in filtered_words if not re.match(r'^[a-zA-Z0-9]+$', w) and len(w) >= 2]
     
     if eng_words and jp_words:
         keywords.append(f"{eng_words[0]} {jp_words[0]}")
@@ -632,9 +638,11 @@ def generate_search_keywords(name: str) -> list:
             keywords.append(f"{eng_words[0]} {jp_words[1]}")
             
     if filtered_words:
-        keywords.append(" ".join(filtered_words[:3]))
-        if len(filtered_words) >= 2:
-            keywords.append(" ".join(filtered_words[:2]))
+        clean_filtered = [w for w in filtered_words if len(w) >= 2]
+        if clean_filtered:
+            keywords.append(" ".join(clean_filtered[:3]))
+            if len(clean_filtered) >= 2:
+                keywords.append(" ".join(clean_filtered[:2]))
             
     keywords.append(" ".join(words[:4]))
     if len(words) >= 2:
@@ -646,9 +654,11 @@ def generate_search_keywords(name: str) -> list:
     unique_keywords = []
     for kw in keywords:
         kw_clean = " ".join(kw.split())
-        if kw_clean and kw_clean not in seen:
-            seen.add(kw_clean)
-            unique_keywords.append(kw_clean)
+        parts = kw_clean.split()
+        if all(len(p) >= 2 for p in parts):
+            if kw_clean and kw_clean not in seen:
+                seen.add(kw_clean)
+                unique_keywords.append(kw_clean)
             
     return unique_keywords
 
@@ -880,7 +890,9 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
                             target_t = query
                             if amazon_product_name and amazon_product_name != "なし":
                                 target_t = amazon_product_name
-                            if verify_title_match(target_t, item_title):
+                            
+                            is_jan_search = (jan_code and search_kw == jan_code.strip())
+                            if is_jan_search or verify_title_match(target_t, item_title):
                                 details["rakuten_price"] = str(item.get("itemPrice", ""))
                                 raw_rak_url = item.get("affiliateUrl") or item.get("itemUrl") or ""
                                 details["rakuten_url"] = remove_rakuten_params(raw_rak_url)

@@ -472,6 +472,7 @@ def get_notion_data(article_title: str):
         yahoo_url = mapped_p.get("resolved_details", {}).get("yahoo_url") or mapped_p.get("yahoo_url") or ""
         yahoo_url = clean_yahoo_url(yahoo_url, clean_name)
         
+        resolved_details = mapped_p.get("resolved_details", {})
         products.append({
             "id": item_id,
             "name": clean_name,
@@ -479,12 +480,13 @@ def get_notion_data(article_title: str):
             "amazon_url": amazon_url,
             "rakuten_url": rakuten_url,
             "yahoo_url": yahoo_url,
-            "amazon_price": str(resolved.get("amazon_price", "なし")),
-            "rakuten_price": str(resolved.get("rakuten_price", "なし")),
+            "amazon_price": str(resolved_details.get("amazon_price", resolved.get("amazon_price", "なし"))),
+            "rakuten_price": str(resolved_details.get("rakuten_price", resolved.get("rakuten_price", "なし"))),
             "yahoo_price": "なし",
             "category": category,
             "facts": p.get("facts", []),
-            "recommended_for": p.get("recommended_for", [])
+            "recommended_for": p.get("recommended_for", []),
+            "rating": mapped_p.get("rating") or ""
         })
     return products
 
@@ -598,15 +600,23 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
 
     markdown += f"## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data.get("ui", {}).get("points", [])]) + "</ul>\n\n"
 
-    scores = ["4.88", "4.75", "4.62", "4.51", "4.42", "4.33"]
-
     for i, p in enumerate(data.get("products", [])):
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
         prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)
         display_name = truncate_product_name(prod_name)
         
         markdown += f"### 👑 第{i+1}位: {display_name}\n"
-        markdown += f"[総合評価: {scores[i]}]\n\n"
+        
+        rating = notion_p.get("rating") if notion_p else ""
+        if rating:
+            try:
+                rating_val = float(rating)
+                star_count = round(rating_val)
+                star_count = max(0, min(5, star_count))
+                stars = "★" * star_count + "☆" * (5 - star_count)
+                markdown += f"[総合評価: {rating} / 5.0 {stars}]\n\n"
+            except ValueError:
+                markdown += f"[総合評価: {rating}]\n\n"
         
         if notion_p and notion_p['image_url']: 
             markdown += f"IMAGE: {notion_p['image_url']}\n"
@@ -641,7 +651,12 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         notion_p = next((x for x in products if x['name'].lower() in p['name'].lower() or p['name'].lower() in x['name'].lower()), None)
         price = "なし"
         if notion_p:
-            price = notion_p.get("amazon_price") or notion_p.get("rakuten_price") or "なし"
+            amazon_p = notion_p.get("amazon_price")
+            rakuten_p = notion_p.get("rakuten_price")
+            if amazon_p and amazon_p != "none" and amazon_p != "なし":
+                price = amazon_p
+            elif rakuten_p and rakuten_p != "none" and rakuten_p != "なし":
+                price = rakuten_p
         if price and price != "なし":
             price_formatted = f"¥{int(price):,}" if price.isdigit() else price
         else:
