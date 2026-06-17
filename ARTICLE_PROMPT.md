@@ -18,7 +18,7 @@ single_product_article：FAQ最大2問
 - 新しい観点を追加しない
 
 ## 商品説明
-- factsのみ使用・200〜400文字・商品名を1回以上含める
+- factsのみ使用・1000文字以上・商品名を1回以上含める
 
 ## Pros
 - factsから直接言える内容のみ・2〜3項目・1項目1文
@@ -56,7 +56,7 @@ single_product_article：FAQ最大2問
   "products": [
     {
       "name": "商品名",
-      "description": "200〜400文字の商品説明",
+      "description": "1000文字以上の詳細な商品説明",
       "analysis": {
         "pros": ["メリット1", "メリット2"],
         "cons": ["デメリット1"],
