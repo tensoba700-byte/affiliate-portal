@@ -640,8 +640,8 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         
         markdown += f"[AMAZON_LINK_HERE] [RAKUTEN_LINK_HERE]\n\n"
         
-        pros = p.get("analysis", {}).get("pros", ["おすすめポイントがたくさんあるよ！笑"])
-        cons = p.get("analysis", {}).get("cons", ["特に気になるところは見当たらない優秀アイテムだよ"])
+        pros = p.get("analysis", {}).get("pros", [])
+        cons = p.get("analysis", {}).get("cons", [])
         markdown += ":::pro\n" + "\n".join([f"{item}" for item in pros]) + "\n:::\n"
         markdown += ":::con\n" + "\n".join([f"{item}" for item in cons]) + "\n:::\n\n"
         
@@ -670,7 +670,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         if price and price != "なし":
             price_formatted = f"¥{int(price):,}" if price.isdigit() else price
         else:
-            price_formatted = "オープン価格"
+            price_formatted = "ー"
         desc = p.get('description', '')
         feature = desc[:40] + "..." if len(desc) > 40 else desc
         comparison_table += f"| 第{idx+1}位 | {name_short} | {price_formatted} | {feature} |\n"
@@ -686,28 +686,11 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
             if q and a:
                 faq_section += f"### {q}\n{a}\n\n"
     else:
-        faq_templates = {
-            "植物育成": [
-                ("Q. 24時間つけっぱなしにするべきですか？", "A. いいえ、植物にも休眠（夜の時間）が必要です。通常は1日8〜12時間程度の照射が理想的で、タイマー機能などを活用して夜間は消灯することをおすすめします。"),
-                ("Q. LEDライトと太陽光ではどちらが効果的ですか？", "A. 太陽光がベストですが、日当たりの悪い室内では植物育成用LEDライトが非常に有効です。光合成に必要な赤・青の特定の波長を強化しているため、室内でも十分に育てることができます。"),
-                ("Q. ライトと植物の距離はどのくらい離せばいいですか？", "A. 製品の光量にもよりますが、一般的には15cm〜30cm程度離して設置します。近づけすぎると葉焼けの原因になり、遠すぎると効果が薄れるため、植物の様子を見ながら調整してください。")
-            ],
-            "水草": [
-                ("Q. 24時間点灯しておく必要がありますか？", "A. いいえ、1日8時間から10時間程度の点灯が目安です。点灯時間が長すぎるとコケの大量発生の原因になるため、市販のタイマー等で規則正しく管理するのが理想的です。"),
-                ("Q. 赤色や青色のLEDは必要ですか？", "A. はい、赤色の光は水草の光合成を促し、青色の光は茎や葉を太く育てる効果があります。フルスペクトルやこれら2色が強化されたライトを選ぶと失敗がありません。"),
-                ("Q. 熱帯魚用の通常のライトでも水草は育ちますか？", "A. 陰性植物（アヌビアスなど）であれば通常のライトでも育ちますが、陽性水草（ヘアーグラスや有茎草など）を美しく育てるには、光量が強い専用の「水草育成LEDライト」が必要です。")
-            ],
-            "default": [
-                ("Q. 購入後の保証期間はどのくらいですか？", "A. 一般的なメーカー製品では、購入日から1年間の動作保証がついているものがほとんどです。購入時の領収書や保証書は大切に保管してください。"),
-                ("Q. 日常のお手入れで気をつけるべき点は何ですか？", "A. 湿気やほこりがたまると火災や故障の原因になります。定期的に電源プラグを抜き、乾いた柔らかい布で本体の汚れを拭き取ってください。"),
-                ("Q. 電気代はどのくらいかかりますか？", "A. LED製品は非常に省エネ設計です。例えば消費電力10W of ライトを1日10時間点灯した場合、1ヶ月の電気代は約90円程度と極めてリーズナブルです。")
-            ]
-        }
-        faq_items = faq_templates["default"]
-        for k, v in faq_templates.items():
-            if k in output_title:
-                faq_items = v
-                break
+        faq_items = [
+            ("Q. 購入後の保証期間はどのくらいですか？", "A. 一般的なメーカー製品では、購入日から1年間の動作保証がついているものがほとんどです。購入時の領収書や保証書は大切に保管してください。"),
+            ("Q. 日常のお手入れで気をつけるべき点は何ですか？", "A. 湿気やほこりがたまると火災や故障の原因になります。定期的に電源プラグを抜き、乾いた柔らかい布で本体の汚れを拭き取ってください。"),
+            ("Q. 電気代はどのくらいかかりますか？", "A. LED製品は非常に省エネ設計です。例えば消費電力10Wのライトを1日10時間点灯した場合、1ヶ月の電気代は約90円程度と極めてリーズナブルです。")
+        ]
         for q, a in faq_items:
             faq_section += f"### {q}\n{a}\n\n"
         
