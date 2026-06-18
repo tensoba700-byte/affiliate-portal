@@ -1,6 +1,26 @@
 import json
 import os
+import re
 import sys
+
+FORBIDDEN_WORDS = [
+    "最強", "神", "圧倒的", "超おすすめ",
+    "おすすめ", "ぴったり", "最適", "心強い", "頼もしい",
+    "納得", "魅力", "味方", "パートナー", "相棒",
+]
+
+COLLOQUIAL_PATTERNS = ["だよ", "だね", "んだ"]
+
+NO_INFO_PHRASES = ["該当情報なし"]
+
+
+def find_repeated_substrings(text, min_len=8, min_count=3):
+    counts = {}
+    for i in range(len(text) - min_len + 1):
+        sub = text[i:i + min_len]
+        counts[sub] = counts.get(sub, 0) + 1
+    return [s for s, c in counts.items() if c >= min_count]
+
 
 def validate():
     draft_path = "article_draft.json"
@@ -74,7 +94,11 @@ def validate():
                 errors.append(f"products[{idx}].name is missing or empty")
             else:
                 names.append(name.strip())
-                
+
+            description = p.get("description", "")
+            if isinstance(description, str) and len(description) > 400:
+                errors.append(f"products[{idx}].description exceeds 400 chars (current: {len(description)} chars)")
+
             analysis = p.get("analysis", {})
             if not isinstance(analysis, dict):
                 errors.append(f"products[{idx}].analysis must be an object")
@@ -83,7 +107,13 @@ def validate():
                     val = analysis.get(key)
                     if val is None or not isinstance(val, list):
                         errors.append(f"products[{idx}].analysis.{key} must be an array (null not allowed)")
-                        
+
+                cons = analysis.get("cons")
+                if isinstance(cons, list):
+                    for c in cons:
+                        if isinstance(c, str) and any(phrase in c for phrase in NO_INFO_PHRASES):
+                            errors.append(f"products[{idx}].analysis.cons contains forbidden phrase '該当情報なし'")
+
         if len(names) != len(set(names)):
             errors.append("products name duplicate detected")
             
@@ -113,6 +143,52 @@ def validate():
     json_str = json.dumps(data, ensure_ascii=False)
     if " of " in json_str:
         errors.append("日本語破損表現の ' of ' が検出されました")
+
+    # 6. Collect all human-written text for word/phrase/structure checks
+    text_fields = []
+    if isinstance(meta, dict):
+        text_fields.append(meta.get("title", "") or "")
+        text_fields.append(meta.get("excerpt", "") or "")
+    if isinstance(content, dict):
+        text_fields.append(content.get("intro", "") or "")
+        text_fields.append(content.get("summary", "") or "")
+    if isinstance(products, list):
+        for p in products:
+            if not isinstance(p, dict):
+                continue
+            text_fields.append(p.get("description", "") or "")
+            analysis = p.get("analysis", {})
+            if isinstance(analysis, dict):
+                for key in ["pros", "cons", "recommended_for"]:
+                    val = analysis.get(key)
+                    if isinstance(val, list):
+                        text_fields.extend(v for v in val if isinstance(v, str))
+    if isinstance(ui, dict):
+        for point in ui.get("points", []) or []:
+            if isinstance(point, str):
+                text_fields.append(point)
+        for item in ui.get("faq", []) or []:
+            if isinstance(item, dict):
+                text_fields.append(item.get("question", "") or "")
+                text_fields.append(item.get("answer", "") or "")
+
+    full_text = "".join(text_fields)
+
+    # 7. Forbidden words
+    for word in FORBIDDEN_WORDS:
+        if word in full_text:
+            errors.append(f"禁止語 '{word}' が検出されました")
+
+    # 8. Colloquial endings
+    for pattern in COLLOQUIAL_PATTERNS:
+        if pattern in full_text:
+            errors.append(f"口語表現 '{pattern}' が検出されました")
+
+    # 9. Repeated substrings (8+ chars repeated 3+ times across the article)
+    repeated = find_repeated_substrings(full_text, min_len=8, min_count=3)
+    if repeated:
+        sample = repeated[0]
+        errors.append(f"8文字以上の文字列が3回以上重複しています（例: '{sample}'）")
 
     if errors:
         print("Validation FAILED with the following errors:")
