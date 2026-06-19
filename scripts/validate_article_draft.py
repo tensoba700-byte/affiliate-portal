@@ -141,7 +141,7 @@ def validate():
                     errors.append(f"ui.faq[{idx}].answer is empty or missing")
     # 5. Text corruption check
     json_str = json.dumps(data, ensure_ascii=False)
-    if " of " in json_str:
+    if re.search(r'[\s　]of[\s　]', json_str):
         errors.append("日本語破損表現の ' of ' が検出されました")
 
     # 6. Collect all human-written text for word/phrase/structure checks
