@@ -190,6 +190,10 @@ def validate():
         sample = repeated[0]
         errors.append(f"8文字以上の文字列が3回以上重複しています（例: '{sample}'）")
 
+    # 10. Tone variety check
+    if not any(marker in full_text for marker in ["かも", "てね", "！"]):
+        errors.append("語尾が単調です。「かも」「てね」「！」のいずれかを最低1回は使ってください")
+
     if errors:
         print("Validation FAILED with the following errors:")
         for err in errors:
