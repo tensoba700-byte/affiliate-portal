@@ -223,18 +223,8 @@ const puppeteer = require('puppeteer');
                   if (prod.aggregateRating && prod.aggregateRating.ratingValue) {
                     rating = String(prod.aggregateRating.ratingValue);
                   }
-                  let price = "";
-                  if (prod.offers) {
-                    if (Array.isArray(prod.offers.offers)) {
-                      price = String(prod.offers.offers[0].price || prod.offers.lowPrice || "");
-                    } else if (prod.offers.price) {
-                      price = String(prod.offers.price);
-                    } else if (prod.offers.lowPrice) {
-                      price = String(prod.offers.lowPrice);
-                    }
-                  }
                   if (name) {
-                    jsonLdProducts[cleanName(name)] = { gtin, asin, rating, price };
+                    jsonLdProducts[cleanName(name)] = { gtin, asin, rating };
                   }
                 });
               }
@@ -315,7 +305,6 @@ const puppeteer = require('puppeteer');
           let jan_code = "";
           let asin = "";
           let rating = "";
-          let mybest_price = "";
           const normName = cleanName(name);
           let match = jsonLdProducts[normName];
           if (!match) {
@@ -326,7 +315,6 @@ const puppeteer = require('puppeteer');
             jan_code = match.gtin || "";
             asin = match.asin || "";
             rating = match.rating || "";
-            mybest_price = match.price || "";
           }
           
           let scraped_image = "";
@@ -405,7 +393,6 @@ const puppeteer = require('puppeteer');
             asin,
             description,
             rating: rating || "",
-            mybest_price: mybest_price || "",
             scraped_image: scraped_image || "",
             amazon_scraped_url: amazon_scraped_url || "",
             rakuten_scraped_url: rakuten_scraped_url || "",
@@ -803,26 +790,14 @@ def fetch_amazon_details_puppeteer(asin: str) -> dict:
     import json
     
     if not asin:
-        return {"price": "", "title": ""}
+        return {"price": "", "title": "", "imageUrl": ""}
         
     script_dir = os.path.dirname(os.path.abspath(__file__))
     js_path = os.path.join(script_dir, "fetch_amazon_details.js")
     
-    # Node.js absolute paths lookup
-    node_path = "node"
-    possible_paths = [
-        "/Users/tsukika/.nvm/versions/node/v24.14.1/bin/node",
-        "/usr/local/bin/node",
-        "/opt/homebrew/bin/node"
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            node_path = path
-            break
-            
     try:
         res = subprocess.run(
-            [node_path, js_path, asin],
+            ["node", js_path, asin],
             capture_output=True, text=True, timeout=45,
             cwd=os.path.dirname(script_dir)
         )
@@ -838,7 +813,7 @@ def fetch_amazon_details_puppeteer(asin: str) -> dict:
     except Exception as e:
         print(f"⚠️ Puppeteer Amazon fetch failed: {e}")
             
-    return {"price": "", "title": ""}
+    return {"price": "", "title": "", "imageUrl": ""}
 
 def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scraped_urls: dict = None):
     """Amazon, Yahoo, 楽天のAPIやスクレイピングから製品情報を取得します。"""
@@ -905,12 +880,19 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
                 if price_match:
                     price_val = price_match.group(1) or price_match.group(2)
                     details["amazon_price"] = re.sub(r'[^\d]', '', price_val) if price_val else "なし"
+                
+                # 画像URLの取得
+                img_match = re.search(r'data-old-hires="([^"]+)"|id="landingImage"[^>]*src="([^"]+)"|<div id="imgTagWrapperId"[^>]*>\s*<img[^>]*src="([^"]+)"', res.text, re.DOTALL)
+                if img_match:
+                    img_url = img_match.group(1) or img_match.group(2) or img_match.group(3)
+                    if img_url:
+                        details["image_url"] = img_url.strip()
         except Exception:
             pass
 
         # 2. 通常の取得がブロックされて失敗した場合、Puppeteerでフォールバック
-        if not amazon_product_name or details["amazon_price"] == "なし":
-            print(f"🔍 Amazon価格/タイトルの取得に失敗（ブロックの可能性）。Puppeteerで再試行します (ASIN: {clean_asin})...")
+        if not amazon_product_name or details["amazon_price"] == "none" or details["amazon_price"] == "なし" or not details["image_url"]:
+            print(f"🔍 Amazon価格/タイトル/画像の取得に失敗（ブロックの可能性）。Puppeteerで再試行します (ASIN: {clean_asin})...")
             p_data = fetch_amazon_details_puppeteer(clean_asin)
             if p_data.get("price"):
                 details["amazon_price"] = re.sub(r'[^\d]', '', p_data["price"])
@@ -919,6 +901,9 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
                 amazon_product_name = p_data["title"]
                 details["amazon_name"] = amazon_product_name
                 print(f"📦 Puppeteerタイトル取得成功: {amazon_product_name[:30]}...")
+            if p_data.get("imageUrl"):
+                details["image_url"] = p_data["imageUrl"]
+                print(f"🖼️ Puppeteer画像取得成功: {p_data['imageUrl'][:50]}...")
 
     if not details["amazon_url"] and scraped_urls and scraped_urls.get("amazon"):
         details["amazon_url"] = clean_and_convert_scraped_url(scraped_urls["amazon"], "amazon")
@@ -995,7 +980,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     details["yahoo_url"] = ""
 
     if not details["image_url"]:
-        raise ValueError(f"❌ 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIから取得できませんでした。")
+        print(f"⚠️ 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIからもAmazonからも取得できませんでした。プレースホルダーを割り当てます。")
+        details["image_url"] = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=640&q=80"
     return details
 
 def extract_mybest_ranking(html: str, url: str) -> list:
@@ -1043,7 +1029,7 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                                 rating_val = ""
                                 if "aggregateRating" in prod and isinstance(prod["aggregateRating"], dict):
                                     rating_val = str(prod["aggregateRating"].get("ratingValue") or "")
-                                
+                                print(f"DEBUG: Scraped {name} (rating: {rating_val})")
                                 products.append({
                                     "rank": rank,
                                     "name": name,
@@ -1079,7 +1065,8 @@ def extract_mybest_ranking(html: str, url: str) -> list:
                     "name": name,
                     "jan_code": "",
                     "asin": "",
-                    "description": ""
+                    "description": "",
+                    "rating": ""
                 })
         products.sort(key=lambda x: x["rank"])
         
@@ -1325,10 +1312,9 @@ def main():
             if not data.get("products") or len(data["products"]) == 0:
                 raise ValueError("Validation failed: products list is empty")
                 
-            # Puppeteer画像・URLマッピング用準備
             def clean_name_local(s):
                 import re
-                return re.sub(r'[\s\u3000\n\r\t]', '', s.lower()).strip()
+                return re.sub(r'[\s\u3000]', '', s).lower().strip()
             
             scraped_rakuten_map = {}
             scraped_yahoo_map = {}
@@ -1342,21 +1328,8 @@ def main():
                         scraped_yahoo_map[p_clean] = original_p.get("yahoo_scraped_url")
 
             for p in data["products"]:
-                # ratingとmybest_priceの取得
-                rating_val = ""
-                mybest_price_val = ""
-                p_clean = clean_name_local(p.get("name", ""))
-                for orig_p in products:
-                    orig_clean = clean_name_local(orig_p.get("name", ""))
-                    if orig_clean and (orig_clean in p_clean or p_clean in orig_clean):
-                        rating_val = orig_p.get("rating") or ""
-                        mybest_price_val = orig_p.get("mybest_price") or ""
-                        break
-                p["rating"] = rating_val
-                p["mybest_price"] = mybest_price_val
-
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating", "mybest_price"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1367,6 +1340,20 @@ def main():
                     p["jan"] = ""
                 if "asin" not in p:
                     p["asin"] = ""
+                
+                # ratingの引き継ぎ
+                r_val = ""
+                ep_clean = clean_name_local(p.get("name", ""))
+                matched = False
+                for orig_p in products:
+                    if clean_name_local(orig_p.get("name", "")) == ep_clean:
+                        r_val = orig_p.get("rating") or ""
+                        print(f"DEBUG: Matched {p.get('name')} -> rating: {r_val}")
+                        matched = True
+                        break
+                if not matched:
+                    print(f"DEBUG: Match failed for {p.get('name')} (clean: {ep_clean})")
+                p["rating"] = r_val
                 if "recommended_for" not in p:
                     p["recommended_for"] = []
                 
@@ -1419,13 +1406,6 @@ def main():
                         "yahoo": orig_p.get("yahoo_scraped_url", "")
                     }
                     details = fetch_product_details(p["name"], p.get("jan", ""), p.get("asin", ""), scraped_urls)
-                    
-                    # API価格取得失敗時のフォールバック処理
-                    if (not details.get("amazon_price") or details["amazon_price"] == "なし") and p.get("mybest_price"):
-                        details["amazon_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
-                    if (not details.get("rakuten_price") or details["rakuten_price"] == "なし") and p.get("mybest_price"):
-                        details["rakuten_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
-                        
                     p["resolved_details"] = details
                     # アフィリエイトID適用済みのリンクをルートにも代入
                     if details.get("rakuten_url"):
@@ -1434,12 +1414,6 @@ def main():
                         p["yahoo_url"] = details["yahoo_url"]
                 else:
                     details = p["resolved_details"]
-                    # 既存の価格がなしの場合もフォールバック
-                    if (not details.get("amazon_price") or details["amazon_price"] == "なし") and p.get("mybest_price"):
-                        details["amazon_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
-                    if (not details.get("rakuten_price") or details["rakuten_price"] == "なし") and p.get("mybest_price"):
-                        details["rakuten_price"] = re.sub(r'[^\d]', '', p["mybest_price"])
-                        
                     # すでに resolved_details がある場合もルートに適用
                     if details.get("rakuten_url"):
                         p["rakuten_url"] = details["rakuten_url"]
@@ -1484,6 +1458,7 @@ def main():
                         "name": p.get("name", ""),
                         "jan": p.get("jan_code", ""),
                         "asin": p.get("asin", ""),
+                        "rating": p.get("rating", ""),
                         "recommended_for": [],
                         "facts": []
                     })
@@ -1529,7 +1504,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating", "mybest_price"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
