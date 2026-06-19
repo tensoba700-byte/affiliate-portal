@@ -1081,14 +1081,14 @@ def main():
     target_page_id = sys.argv[1]
 
     # ロックファイルの取得（重複実行の防止）
-    lock_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "prepare_stockpile_master.lock")
+    lock_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "prepare_stockpile.lock")
     try:
         global lock_file
         lock_file = open(lock_file_path, "w")
         import fcntl
         fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except (IOError, BlockingIOError):
-        print("❌ エラー: 別のデータ収集プロセス（prepare_stockpile_master.py）が既に起動しています。重複実行を避けるため終了します。")
+        print("❌ エラー: 別のデータ収集プロセス（prepare_stockpile.py）が既に起動しています。重複実行を避けるため終了します。")
         sys.exit(0)
         
     print(f"🔍 Notionから特定の商品ページ（ID: {target_page_id}）を直接取得中...")
