@@ -3,6 +3,11 @@ import os
 import sys
 import re
 
+FORBIDDEN_WORDS = [
+    "マジで", "ヤバい", "神アイテム", "最高", "究極",
+    "劇的", "激変", "驚き", "絶対", "最強", "殿堂入り",
+]
+
 def validate():
     draft_path = "column_draft.json"
     if not os.path.exists(draft_path):
@@ -30,6 +35,11 @@ def validate():
     if unnatural_nda_matches:
         errors.append(f"不自然な日本語表現（名詞などの直後に直接 'んだ' が接続）が検出されました: {unnatural_nda_matches}")
         
+    # 1.5. 誇張・煽り表現の禁止語検出
+    for word in FORBIDDEN_WORDS:
+        if word in json_str:
+            errors.append(f"禁止語（誇張・煽り表現）'{word}' が検出されました")
+
     # 2. アフィリエイト関連リンク・プレースホルダーの検出
     affiliate_patterns = [
         r"amazon\.co\.jp",
