@@ -1352,7 +1352,7 @@ def main():
 
             for p in data["products"]:
                 # スキーマにないキーのチェック
-                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}
+                allowed_keys = {"name", "jan", "asin", "recommended_for", "facts", "unique_points", "free_from", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}
                 if not all(k in allowed_keys for k in p.keys()):
                     raise ValueError(f"Validation failed: product contains invalid keys: {list(p.keys())}")
                 if not p.get("facts") or len(p["facts"]) == 0:
@@ -1527,7 +1527,7 @@ def main():
             extra_keys.append(f"Root: {k}")
     for p in extracted_data.get("products", []):
         for k in p.keys():
-            if k not in {"name", "jan", "asin", "recommended_for", "facts", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}:
+            if k not in {"name", "jan", "asin", "recommended_for", "facts", "unique_points", "free_from", "image_url", "rakuten_url", "yahoo_url", "resolved_details", "rating"}:
                 extra_keys.append(f"Product({p.get('name')}): {k}")
     if not extra_keys:
         print("・スキーマにないキーを出力しない: OK")
