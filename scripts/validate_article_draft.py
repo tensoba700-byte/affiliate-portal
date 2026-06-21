@@ -13,6 +13,12 @@ COLLOQUIAL_PATTERNS = ["だよ", "だね", "んだ"]
 
 NO_INFO_PHRASES = ["該当情報なし"]
 
+NG_PATTERNS = [
+    r'^.{0,30}(製品|美容液|セラム|クリーム|化粧水|導入液|導入美容液)です。',
+    r'^.{0,30}(配合した|含有する|採用した|処方した).{0,20}です。',
+    r'^.{0,30}にこだわった.{0,20}です。',
+]
+
 
 def find_repeated_substrings(text, min_len=8, min_count=3):
     counts = {}
@@ -36,7 +42,8 @@ def validate():
         sys.exit(1)
         
     errors = []
-    
+    warnings = []
+
     # 1. meta
     meta = data.get("meta", {})
     if not isinstance(meta, dict):
@@ -193,6 +200,24 @@ def validate():
     # 10. Tone variety check
     if not any(marker in full_text for marker in ["かも", "てね", "！"]):
         errors.append("語尾が単調です。「かも」「てね」「！」のいずれかを最低1回は使ってください")
+
+    # 11. 商品説明の書き出しパターン警告（製品定義文への収束チェック・警告のみ）
+    if isinstance(products, list):
+        for idx, p in enumerate(products):
+            if not isinstance(p, dict):
+                continue
+            description = p.get("description", "")
+            if not isinstance(description, str) or not description.strip():
+                continue
+            first_sentence = description.split("。", 1)[0] + "。"
+            for pattern in NG_PATTERNS:
+                if re.match(pattern, first_sentence):
+                    warnings.append(f"products[{idx}].description の書き出しが製品定義文に収束しています: '{first_sentence}'")
+                    break
+
+    if warnings:
+        for warn in warnings:
+            print(f"[WARNING] {warn}")
 
     if errors:
         print("Validation FAILED with the following errors:")
