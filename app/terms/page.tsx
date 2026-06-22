@@ -114,7 +114,7 @@ export default function TermsPage() {
 
         <div className="pt-8 border-t border-primary/10 text-right">
           <p className="text-xs font-bold text-muted">最終更新日：2026年4月18日</p>
-          <p className="text-xs font-bold text-muted">みっけ！編集部</p>
+          <p className="text-xs font-bold text-muted">ツキ</p>
         </div>
       </div>
     </div>

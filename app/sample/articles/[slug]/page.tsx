@@ -77,7 +77,7 @@ export default async function SampleArticleDetail({ params }: PageProps) {
           <div className="s-author-chip">
             <div className="s-author-avatar">m</div>
             <div>
-              <div className="s-author-name">みっけ！編集部・検証チーム</div>
+              <div className="s-author-name">ツキ（みっけ！専属ライター）</div>
               <div className="s-author-role">beauty experts</div>
             </div>
           </div>
