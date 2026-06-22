@@ -176,7 +176,7 @@ export default async function ArticleDetail({ params }: { params: Promise<{ slug
             </h1>
             
             <div className="flex items-center justify-center gap-2 mb-6 text-[10px] md:text-xs font-bold text-muted">
-              <span>✍️ 著者: ツキ</span>
+              <Link href="/author/tsuki">✍️ 著者: ツキ</Link>
             </div>
             
             <time dateTime={article.publishedAt} className="text-[10px] md:text-xs font-bold text-muted block mb-6">
