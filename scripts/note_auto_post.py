@@ -35,30 +35,112 @@ def parse_markdown(file_path):
                 
     return meta, body
 
-def extract_summary_paragraphs(body: str, max_paragraphs=3) -> str:
-    """本文から見出しやHTMLを除外した最初の数段落をプレーンテキストで抽出する。"""
-    paragraphs = [p.strip() for p in body.split("\n\n") if p.strip()]
+def split_sentences(text):
+    """文末の文字で分割し、空でない文を返す。"""
+    sentences = re.split(r'(?<=[。！？])', text)
+    return [s.strip() for s in sentences if s.strip()]
+
+def format_paragraph(text):
+    """テキストを最大3文ずつの段落に分割してリストで返す。"""
+    sentences = split_sentences(text)
+    paragraphs = []
+    for i in range(0, len(sentences), 3):
+        chunk = "".join(sentences[i:i+3])
+        paragraphs.append(chunk)
+    return paragraphs
+
+def ensure_single_bold(text):
+    """段落内に太字が1箇所だけ存在することを保証する。無ければ自動で付与する。"""
+    bolds = re.findall(r'\*\*([^*]+)\*\*', text)
+    if bolds:
+        first_bold = bolds[0]
+        text_no_bold = text.replace(f"**{first_bold}**", first_bold)
+        text_no_bold = re.sub(r'\*\*([^*]+)\*\*', r'\1', text_no_bold)
+        return text_no_bold.replace(first_bold, f"**{first_bold}**", 1)
+    else:
+        keywords = [
+            "導入美容液", "美容液", "スキンケア", "化粧水", "洗顔", "浸透", 
+            "使い方", "タイミング", "効果", "水分", "摩擦", "成分", "角層", 
+            "バリア機能", "うるおい", "皮脂", "毛穴", "クレンジング", "乾燥"
+        ]
+        for kw in keywords:
+            if kw in text:
+                return text.replace(kw, f"**{kw}**", 1)
+        
+        brackets = re.findall(r'[「『]([^」』]+)[」』]', text)
+        if brackets:
+            first_bracket = brackets[0]
+            return text.replace(f"「{first_bracket}」", f"**「{first_bracket}」**", 1)
+            
+        kanji_seqs = re.findall(r'[\u4e00-\u9faf]{3,}', text)
+        if kanji_seqs:
+            first_kanji = kanji_seqs[0]
+            return text.replace(first_kanji, f"**{first_kanji}**", 1)
+            
+        return text
+
+def build_note_content(body: str) -> str:
+    """Markdown本文から見出しと段落をパースし、note用ライティングルールに基づいて構成する。"""
+    lines = body.split("\n")
+    intro_paragraphs = []
+    headings = [] # (title, paragraphs) のリスト
     
-    selected = []
-    for p in paragraphs:
-        # 見出し、HTMLタグ、画像、水平線、単なるリンクブロックなどはスキップ
-        if p.startswith("#") or p.startswith("<") or p.startswith("---") or p.startswith("!") or p.startswith("["):
+    current_heading = None
+    current_paragraphs = []
+    in_intro = True
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
             continue
             
-        # HTMLタグの除去
-        p_clean = re.sub(r'<[^>]+>', '', p)
-        # Markdown太字の除去
-        p_clean = re.sub(r'\*\*([^*]+)\*\*', r'\1', p_clean)
-        # Markdownリンクのクリーンアップ: [テキスト](URL) -> テキスト
-        p_clean = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', p_clean)
+        if line.startswith("<") or line.startswith("---") or line.startswith("!") or line.startswith("[") or line.startswith("###"):
+            continue
+            
+        if line.startswith("## "):
+            in_intro = False
+            if current_heading:
+                headings.append((current_heading, current_paragraphs))
+            current_heading = line.replace("## ", "").strip()
+            current_paragraphs = []
+        elif line.startswith("#"):
+            continue
+        else:
+            if in_intro:
+                intro_paragraphs.append(line)
+            else:
+                if current_heading:
+                    current_paragraphs.append(line)
+                    
+    if current_heading:
+        headings.append((current_heading, current_paragraphs))
         
-        if p_clean.strip():
-            selected.append(p_clean.strip())
-            
-        if len(selected) >= max_paragraphs:
+    note_sections = []
+    
+    intro_text_chunks = []
+    for p in intro_paragraphs[:2]:
+        formatted = format_paragraph(p)
+        for chunk in formatted:
+            intro_text_chunks.append(ensure_single_bold(chunk))
+    if intro_text_chunks:
+        note_sections.append("\n\n".join(intro_text_chunks))
+    
+    count = 0
+    for title, paras in headings:
+        if count >= 3:
             break
+        if not paras:
+            continue
             
-    return "\n\n".join(selected)
+        sec_title = f"## {title}"
+        formatted_paras = format_paragraph(paras[0])
+        sec_body = ensure_single_bold(formatted_paras[0])
+        
+        note_sections.append(f"{sec_title}\n\n{sec_body}")
+        count += 1
+        
+    filtered_sections = [s for s in note_sections if s.strip()]
+    return "\n\n---\n\n".join(filtered_sections)
 
 def find_today_column():
     """今日（JST）公開されるコラムを探す。"""
@@ -131,12 +213,12 @@ def post_to_note(file_path, dry_run=False):
         return False
         
     # 本文（要約）の抽出とフッター組み立て（URLは別で入力するため分ける）
-    summary = extract_summary_paragraphs(body, max_paragraphs=3)
-    if not summary:
-        print("❌ Failed to extract content summary.")
+    note_content = build_note_content(body)
+    if not note_content:
+        print("❌ Failed to build note content.")
         return False
         
-    post_intro = f"{summary}\n\n▼続きはこちらから読めるよ\n"
+    post_intro = f"{note_content}\n\n---\n\n▼続きはこちらから読めるよ\n"
     import time
     post_url = f"https://www.mikke-style.com/column/{slug}?t={int(time.time())}"
     
