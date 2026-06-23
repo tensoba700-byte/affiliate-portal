@@ -56,12 +56,20 @@ cat << 'EOF' > "$NOTE_PLIST"
         <string>/Users/tsukika/Desktop/affiliate-portal/scripts/note_auto_post.py</string>
     </array>
     <key>StartCalendarInterval</key>
-    <dict>
-        <key>Hour</key>
-        <integer>21</integer>
-        <key>Minute</key>
-        <integer>0</integer>
-    </dict>
+    <array>
+        <dict>
+            <key>Hour</key>
+            <integer>9</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+        <dict>
+            <key>Hour</key>
+            <integer>21</integer>
+            <key>Minute</key>
+            <integer>0</integer>
+        </dict>
+    </array>
     <key>StandardOutPath</key>
     <string>/Users/tsukika/Desktop/affiliate-portal/note_auto_post.log</string>
     <key>StandardErrorPath</key>

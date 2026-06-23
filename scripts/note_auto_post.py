@@ -73,6 +73,7 @@ def find_today_column():
         print(f"❌ Columns directory not found: {columns_dir}")
         return None
         
+    candidates = []
     for fname in os.listdir(columns_dir):
         if not fname.endswith(".md") or fname == ".gitkeep":
             continue
@@ -82,10 +83,18 @@ def find_today_column():
         if meta and "publishDate" in meta:
             pub_date = meta["publishDate"]
             if pub_date.startswith(today_str):
-                print(f"🎉 Found matching column: {fname} (scheduled at {pub_date})")
-                return fpath
+                if "noteUrl" in meta:
+                    print(f"ℹ️ Column already published to note (has noteUrl): {fname}")
+                    continue
+                candidates.append((pub_date, fpath, fname))
                 
-    print("ℹ️ No columns found for today.")
+    if candidates:
+        candidates.sort(key=lambda x: x[0])
+        pub_date, fpath, fname = candidates[0]
+        print(f"🎉 Found matching column to post: {fname} (scheduled at {pub_date})")
+        return fpath
+                
+    print("ℹ️ No columns found to post for today.")
     return None
 
 def fill_react_textarea(page, selector, value):
@@ -305,6 +314,28 @@ def post_to_note(file_path, dry_run=False):
             published_url = page.url
             print(f"🎉 Successfully posted! URL: {published_url}")
             
+            # Markdownファイルを更新して noteUrl を追加
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                
+                parts = content.split("---", 2)
+                if len(parts) >= 3:
+                    front_matter = parts[1]
+                    body = parts[2]
+                    
+                    if "noteUrl:" not in front_matter:
+                        if not front_matter.endswith("\n"):
+                            front_matter += "\n"
+                        front_matter += f"noteUrl: \"{published_url}\"\n"
+                        
+                        new_content = f"---{front_matter}---{body}"
+                        with open(file_path, "w", encoding="utf-8") as f:
+                            f.write(new_content)
+                        print(f"📝 Updated front matter of {file_path} with noteUrl.")
+            except Exception as fe:
+                print(f"⚠️ Failed to update markdown with noteUrl: {fe}")
+                
             # 結果のログ出力用
             os.makedirs(os.path.join(project_root, "scratch"), exist_ok=True)
             with open(os.path.join(project_root, "scratch", "last_note_published.txt"), "w", encoding="utf-8") as f:
