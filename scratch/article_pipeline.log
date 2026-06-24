@@ -1,8 +1,0 @@
-{
-  "response": {
-    "newConversation": {
-      "prompt": "比較記事自動生成タスクを開始します。まず python3 scripts/cron_article_pipeline_master.py を実行してください。すべての処理が完了したら、git add、git commit、git push を行って終了してください。",
-      "conversationId": "690a0085-18eb-4073-ada9-a503ceff8779"
-    }
-  }
-}
