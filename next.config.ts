@@ -214,6 +214,16 @@ const nextConfig: NextConfig = {
         destination: '/articles',
         permanent: true,
       },
+      {
+        source: '/column/honest-makeup-base',
+        destination: '/column',
+        permanent: true,
+      },
+      {
+        source: '/column/night-pore-reset',
+        destination: '/column',
+        permanent: true,
+      },
     ];
 
     return rawRedirects.map(r => ({
