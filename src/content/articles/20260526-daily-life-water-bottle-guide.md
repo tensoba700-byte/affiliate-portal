@@ -309,4 +309,6 @@ YAHOO: https://store.shopping.yahoo.co.jp/ecjoyecj30/19393999.html
 - [水槽に、<br>生命の輝きを。【水草を育むLED照明6選】](/articles/20260531-aquarium-led-lights)
 - [風格と信頼を、<br>足元に。【ビジネスマンを支えるリーガルの革靴6選】](/articles/20260529-regal-business-shoes)
 - [親子の時間を、<br>もっと自由に。【快適な外出を叶えるベビーカーの選び方6選】](/articles/20260526-stroller-selection-guide)
+- [台所に、<br>職人の意志を置く。【料理好きが認める本格キッチン道具6選】](/articles/20260525-台所に職人の意志を置く料理好きが認める本格キッチン)
+- [朝の5分を、<br>体に返す。【在宅ワーカーが選ぶストレッチ・ケアグッズ6選】](/articles/20260524-朝の5分を体に返す在宅ワーカーが選ぶストレッチケア)
 
