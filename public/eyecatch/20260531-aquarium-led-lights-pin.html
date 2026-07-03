@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <style>@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&family=Outfit:wght@600&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 1000px; height: 1500px; overflow: hidden; background: #F7F7F5; }
+body {
+  font-family: 'Noto Serif JP', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 50px;
+  position: relative;
+}
+.bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+  opacity: 0.15;
+  z-index: -1;
+}
+.header-badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #FF8C00;
+  padding: 12px 36px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.season-copy {
+  font-size: 28px;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.title-container {
+  width: 100%;
+  text-align: center;
+  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin-bottom: 30px;
+}
+.title {
+  font-size: 60px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.images-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  max-height: 620px;
+  margin-bottom: 30px;
+}
+.img-wrapper {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 270px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+.img-wrapper img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.site-logo {
+  font-size: 40px;
+  font-weight: 900;
+  color: #FF8C00;
+  letter-spacing: 1px;
+}
+.site-url {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  color: #666;
+  letter-spacing: 1px;
+}
+</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="header-badge">人気6選</div>
+  <div class="season-copy">夏の新生活をもっと豊かに</div>
+  <div class="title-container">
+    <h1 class="title">水槽に、生命の輝きを<br />水草を<br />【育むLED照明6選】</h1>
+  </div>
+  <div class="images-grid">
+    <div class="img-wrapper"><img src="https://img.my-best.com/product_images/d43daacdd2cec63cf1fcf415f7e7ed09.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=f2445cba69a3b17fc4292934e0ddd4d9" alt="" loading="eager" /></div>
+<div class="img-wrapper"><img src="https://item-shopping.c.yimg.jp/i/l/kokomomozu-store_gt5b68aa85d6" alt="" loading="eager" /></div>
+<div class="img-wrapper"><img src="https://item-shopping.c.yimg.jp/i/l/chanet_223008" alt="" loading="eager" /></div>
+<div class="img-wrapper"><img src="https://img.my-best.com/product_images/f92caa244135f91c23d4d48cef064ca5.jpg?ixlib=rails-4.3.1&q=70&lossless=0&w=800&h=800&fit=clip&s=02a069130b80cfb36f4dd6d482d17092" alt="" loading="eager" /></div>
+
+  </div>
+  <div class="footer">
+    <div class="site-logo">Mikke!</div>
+    <div class="site-url">mikke-style.com</div>
+  </div>
+</body>
+</html>

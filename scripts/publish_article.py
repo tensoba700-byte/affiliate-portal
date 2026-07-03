@@ -247,6 +247,175 @@ def take_eyecatch_screenshot(slug: str) -> bool:
         print(f"❌ Eyecatch screenshot failed: {e}")
         return False
 
+def generate_pinterest_eyecatch_html(slug: str, title: str, category: str, image_urls: list, catch_copy: str) -> str:
+    """
+    Pinterest用の縦型アイキャッチHTML生成 (1000px × 1500px)。
+    """
+    theme = CATEGORY_THEMES.get(category, {'bg1': '#FF9EDB', 'bg2': '#FF69B4', 'accent': '#FFFFFF'})
+    bg1 = theme['bg1']
+    bg2 = theme['bg2']
+    
+    badge = extract_badge(title)
+    
+    # Grid images HTML
+    imgs_html = ""
+    target_count = min(4, len(image_urls))
+    for url in image_urls[:target_count]:
+        imgs_html += f'<div class="img-wrapper"><img src="{url}" alt="" loading="eager" /></div>\n'
+    for _ in range(max(0, 4 - target_count)):
+        imgs_html += '<div class="img-wrapper" style="box-shadow: none; background: transparent;"></div>\n'
+        
+    display_title = format_eyecatch_title(title.replace("<br>", "").replace("<br/>", "").replace("<br />", ""))
+    
+    css = f"""@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@700;900&family=Outfit:wght@600&display=swap');
+* {{ margin: 0; padding: 0; box-sizing: border-box; }}
+html, body {{ width: 1000px; height: 1500px; overflow: hidden; background: #F7F7F5; }}
+body {{
+  font-family: 'Noto Serif JP', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 50px;
+  position: relative;
+}}
+.bg {{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, {bg1} 0%, {bg2} 100%);
+  opacity: 0.15;
+  z-index: -1;
+}}
+.header-badge {{
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #fff;
+  background-color: {bg2};
+  padding: 12px 36px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}}
+.season-copy {{
+  font-size: 28px;
+  color: #555;
+  font-weight: 500;
+  margin-bottom: 20px;
+  text-align: center;
+}}
+.title-container {{
+  width: 100%;
+  text-align: center;
+  padding: 40px 30px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin-bottom: 30px;
+}}
+.title {{
+  font-size: 60px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1.35;
+  word-break: keep-all;
+}}
+.images-grid {{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 30px;
+  width: 100%;
+  flex-grow: 1;
+  align-items: center;
+  justify-content: center;
+  max-height: 620px;
+  margin-bottom: 30px;
+}}
+.img-wrapper {{
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 270px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}}
+.img-wrapper img {{
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}}
+.footer {{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}}
+.site-logo {{
+  font-size: 40px;
+  font-weight: 900;
+  color: {bg2};
+  letter-spacing: 1px;
+}}
+.site-url {{
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  color: #666;
+  letter-spacing: 1px;
+}}
+"""
+    html = f"""<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <style>{css}</style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="header-badge">{badge}</div>
+  <div class="season-copy">{catch_copy}</div>
+  <div class="title-container">
+    <h1 class="title">{display_title}</h1>
+  </div>
+  <div class="images-grid">
+    {imgs_html}
+  </div>
+  <div class="footer">
+    <div class="site-logo">Mikke!</div>
+    <div class="site-url">mikke-style.com</div>
+  </div>
+</body>
+</html>"""
+    path = f"public/eyecatch/{slug}-pin.html"
+    with open(path, 'w', encoding='utf-8') as f: f.write(html)
+    return path
+
+def take_pinterest_eyecatch_screenshot(slug: str) -> bool:
+    """
+    generate-pinterest-eyecatch.js を呼び出して 2:3 スクショを撮影する。
+    """
+    node_bin = "node"
+    script = "scripts/generate-pinterest-eyecatch.js"
+    try:
+        result = subprocess.run(
+            [node_bin, script, slug],
+            capture_output=True, text=True, timeout=90
+        )
+        if result.returncode != 0:
+            print(f"⚠️  pinterest-eyecatch stderr: {result.stderr[:500]}")
+        else:
+            print(f"✅ Pinterest Eyecatch screenshot done for: {slug}")
+        return result.returncode == 0
+    except Exception as e:
+        print(f"❌ Pinterest Eyecatch screenshot failed: {e}")
+        return False
+
 def clean_and_convert_scraped_url(scraped_url: str, mall: str, product_name: str = "") -> str:
     """my-bestのスクレイピングURL等から、自分自身のアフィリエイトURLに再構築して返します。"""
     if not scraped_url:
@@ -713,8 +882,22 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
                     image_urls.append(x['image_url'])
                 break
     generate_eyecatch_html(slug, output_title, category, image_urls, get_seasonal_catch_copy(category))
-
     take_eyecatch_screenshot(slug)
+    
+    # Pinterest用縦長画像の生成
+    generate_pinterest_eyecatch_html(slug, output_title, category, image_urls, get_seasonal_catch_copy(category))
+    take_pinterest_eyecatch_screenshot(slug)
+    
+    # Pinterestに自動投稿
+    try:
+        import sys
+        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+        from pinterest_auto_post import post_article_by_slug
+        print(f"Sharing new article '{slug}' on Pinterest...")
+        post_article_by_slug(slug)
+    except Exception as e:
+        print(f"[WARN] Failed to post to Pinterest: {e}")
+
     return True
 
 import argparse
