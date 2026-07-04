@@ -224,6 +224,16 @@ const nextConfig: NextConfig = {
         destination: '/column',
         permanent: true,
       },
+      {
+        source: '/articles/20260616-article-001',
+        destination: '/articles/20260616-face-wash',
+        permanent: true,
+      },
+      {
+        source: '/articles/20260620-article-002',
+        destination: '/articles/20260620-article-001',
+        permanent: true,
+      },
     ];
 
     return rawRedirects.map(r => ({

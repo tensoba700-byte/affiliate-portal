@@ -133,6 +133,50 @@ def slugify(text: str, category: str = None, publish_date: str = None) -> str:
                 return candidate_slug
             num += 1
 
+def check_recent_duplicate_topic(slug: str, days: int = 21) -> str:
+    """
+    直近days日以内に同じ商品カテゴリ（slugの英語部分、例: cleanser, serum）の記事が
+    既に公開されていないか確認する。見つかれば既存記事のslugを返し、なければ空文字を返す。
+    美容・スキンケア記事の連投によるキーワードカニバリゼーション（例: 洗顔料記事が
+    数日おきに複数公開される事態）を publish 前に検知するためのガード。
+    """
+    m = re.match(r'^(\d{8})-(.+)$', slug)
+    if not m:
+        return ""
+    date_str, slug_part = m.groups()
+    if re.match(r'^article-\d+$', slug_part):
+        return ""  # カテゴリ不明時の連番slugは対象外
+
+    try:
+        new_date = datetime.datetime.strptime(date_str, "%Y%m%d")
+    except ValueError:
+        return ""
+
+    articles_dir = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "src", "content", "articles"
+    )
+    if not os.path.isdir(articles_dir):
+        return ""
+
+    for fname in os.listdir(articles_dir):
+        if not fname.endswith(".md") or fname == "GENERATION_RULES.md":
+            continue
+        existing_slug = fname[:-3]
+        if existing_slug == slug:
+            continue
+        em = re.match(r'^(\d{8})-(.+)$', existing_slug)
+        if not em or em.group(2) != slug_part:
+            continue
+        try:
+            existing_date = datetime.datetime.strptime(em.group(1), "%Y%m%d")
+        except ValueError:
+            continue
+        if abs((new_date - existing_date).days) <= days:
+            return existing_slug
+    return ""
+
+
 def extract_badge(title: str) -> str:
     m = re.search(r'(\d+)選', title)
     if m: return f"人気{m.group(1)}選"
@@ -741,6 +785,12 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     
     output_title = data.get("meta", {}).get("title") or article_title.replace("2024", "2026")
     slug = slug or slugify(output_title, category, publish_date)
+
+    duplicate_slug = check_recent_duplicate_topic(slug)
+    if duplicate_slug:
+        print(f"❌ 重複コンテンツ検知: '{slug}' は直近21日以内に公開済みの '{duplicate_slug}' と同じ商品カテゴリです。")
+        print("👉 キーワードカニバリゼーション防止のため、この記事の公開を中止します。別の商品カテゴリを選定してください。")
+        return False
 
     intro_text = data.get("content", {}).get("intro", "")
     intro_text = intro_text.replace(PR_DISCLOSURE, "").strip()
