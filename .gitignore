@@ -45,3 +45,8 @@ next-env.d.ts
 
 # cache
 /.cache/
+
+# local scratch and logs
+/scratch/
+*.log
+
