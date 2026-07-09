@@ -20,22 +20,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const column = await getColumnBySlug(slug);
   if (!column) return {};
 
-  const now = new Date();
-  if (column.publishDate) {
-    let pubStr = column.publishDate.trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr}T07:00:00+09:00`;
-    } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr.replace(' ', 'T')}:00+09:00`;
-    } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr.replace(' ', 'T')}+09:00`;
-    }
-    const pubDate = new Date(pubStr);
-    if (!isNaN(pubDate.getTime()) && pubDate > now) {
-      return {};
-    }
-  }
-
   const cleanTitle = column.title.replace(/<br\s*\/?>/gi, '');
   const imageUrl = column.coverImage.startsWith('/') 
     ? `https://www.mikke-style.com${column.coverImage}` 
@@ -76,23 +60,6 @@ export default async function ColumnDetailPage({ params }: PageProps) {
 
   if (!column) {
     notFound();
-  }
-
-  // 未来の記事は notFound にする
-  const now = new Date();
-  if (column.publishDate) {
-    let pubStr = column.publishDate.trim();
-    if (/^\d{4}-\d{2}-\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr}T07:00:00+09:00`;
-    } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr.replace(' ', 'T')}:00+09:00`;
-    } else if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}$/.test(pubStr)) {
-      pubStr = `${pubStr.replace(' ', 'T')}+09:00`;
-    }
-    const pubDate = new Date(pubStr);
-    if (!isNaN(pubDate.getTime()) && pubDate > now) {
-      notFound();
-    }
   }
 
   const allColumns = await getAllColumns();
