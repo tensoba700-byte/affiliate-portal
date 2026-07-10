@@ -4,6 +4,7 @@ description: "長時間のマスク着用で起こる肌荒れや蒸れ、乾燥
 category: "skincare"
 publishDate: "2026-07-09 12:00:00"
 eyecatch: "/column-images/col-mask-friction-skin-prevention.png"
+noteUrl: "https://editor.note.com/notes/nb5dcd198cebb/publish/"
 ---
 
 毎日のようにマスクを着用していると、ふと鏡を見たときに肌の赤みやごわつきに気づくことはありませんか。マスクは生活に欠かせないものですが、実は長時間使用することで肌にとっては過酷な環境を作り出してしまうことがあります。

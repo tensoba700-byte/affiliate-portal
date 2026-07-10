@@ -4,6 +4,7 @@ description: "美容液を複数使うとき、どの順番で塗るのが正解
 category: "skincare"
 publishDate: "2026-07-07 12:00:00"
 eyecatch: "/column-images/col-serum-layering-technique.png"
+noteUrl: "https://editor.note.com/notes/nce904dbb2403/publish/"
 ---
 
 お肌の悩みに合わせて複数の美容液を取り入れている方は多いのではないでしょうか。ただ、なんとなく順番に塗るだけでは、配合されている成分のポテンシャルを十分に引き出せていない可能性があります。
