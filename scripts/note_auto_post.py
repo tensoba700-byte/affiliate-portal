@@ -218,9 +218,9 @@ def post_to_note(file_path, dry_run=False):
         print("❌ Failed to build note content.")
         return False
         
+    post_intro = f"{note_content}\n\n---\n\n▼続きはこちらから読めるよ\n"
     import time
     post_url = f"https://www.mikke-style.com/column/{slug}?t={int(time.time())}"
-    full_content = f"{note_content}\n\n---\n\n▼続きはこちらから読めるよ\n{post_url}"
     
     # 環境変数の読み込み
     email = os.getenv("NOTE_EMAIL")
@@ -240,7 +240,8 @@ def post_to_note(file_path, dry_run=False):
     print(f"--- Posting Summary ---")
     print(f"Title: {title}")
     print(f"Image: {image_path if image_path else 'None'}")
-    print(f"Full Content:\n{full_content}")
+    print(f"Body Intro:\n{post_intro}")
+    print(f"URL: {post_url}")
     print(f"----------------------")
     
     state_path = os.path.join(project_root, "scratch", "state.json")
@@ -298,17 +299,43 @@ def post_to_note(file_path, dry_run=False):
             fill_react_textarea(page, 'textarea[placeholder="記事タイトル"]', title)
             page.wait_for_timeout(1000)
             
-            # 本文とURLの入力
-            print("Typing content and URL...")
+            # 本文の入力
+            print("Typing content...")
             editor_el = page.locator('div.ProseMirror[contenteditable="true"]')
             editor_el.focus()
-            page.keyboard.insert_text(full_content)
+            page.keyboard.insert_text(post_intro)
             page.wait_for_timeout(1500)
             
-            # Enterキーを2回押してリンクカード化をトリガー
-            print("Pressing Enter twice to trigger link card...")
+            # 改行してURL入力位置へ
             page.keyboard.press("Enter")
+            page.wait_for_timeout(500)
+            
+            # URLをクリップボード貼り付けイベントで流し込む（リンクカード化を確実にトリガー）
+            print("Pasting URL via ClipboardEvent...")
+            js_paste = """
+            (args) => {
+                const el = document.querySelector('div.ProseMirror[contenteditable="true"]');
+                if (!el) return false;
+                el.focus();
+                
+                const dataTransfer = new DataTransfer();
+                dataTransfer.setData('text/plain', args.url);
+                
+                const event = new ClipboardEvent('paste', {
+                    bubbles: true,
+                    cancelable: true,
+                    clipboardData: dataTransfer
+                });
+                
+                el.dispatchEvent(event);
+                return true;
+            }
+            """
+            page.evaluate(js_paste, {"url": post_url})
             page.wait_for_timeout(1500)
+            
+            # Enterを押してカード化を確定
+            print("Pressing Enter to settle link card...")
             page.keyboard.press("Enter")
             page.wait_for_timeout(6000)  # リンクカード生成処理待ち
             
