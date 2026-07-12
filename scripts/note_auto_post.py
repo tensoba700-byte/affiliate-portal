@@ -296,7 +296,9 @@ def post_to_note(file_path, dry_run=False):
             
             # タイトルの入力
             print("Typing title...")
-            fill_react_textarea(page, 'textarea[placeholder="記事タイトル"]', title)
+            title_el = page.locator('textarea[placeholder="記事タイトル"]')
+            title_el.focus()
+            title_el.fill(title)
             page.wait_for_timeout(1000)
             
             # 本文の入力
