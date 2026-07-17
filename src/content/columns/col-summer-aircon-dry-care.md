@@ -4,6 +4,7 @@ description: "冷房の効いた環境で肌のベタつきや突っ張りを感
 category: "skincare"
 publishDate: "2026-07-11 22:00:00"
 eyecatch: "/column-images/col-summer-aircon-dry-care.png"
+noteUrl: "https://editor.note.com/notes/n2142bc456972/publish/"
 ---
 
 夏場、オフィスや寝室で長時間過ごすと、肌の表面はベタついているのに内側がカサつくような感覚を覚えることはありませんか。これは「インナードライ」と呼ばれる状態で、冷房による急激な水分蒸散が大きな要因の一つです。

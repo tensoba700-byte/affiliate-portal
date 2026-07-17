@@ -4,6 +4,7 @@ description: "気温と湿度が上昇する7月は、皮脂分泌が活発に�
 category: "skincare"
 publishDate: "2026-07-12 12:00:00"
 eyecatch: "/column-images/col-july-pore-tightening-care.png"
+noteUrl: "https://editor.note.com/notes/nf5330377cf2b/publish/"
 ---
 
 日差しが強まり、気温もぐっと上がる7月。この時期は皮脂分泌が活発になり、毛穴の開きや詰まりに頭を抱える機会も増えますよね。気温が1度上がるだけで、皮脂分泌量は約10パーセントも増加すると言われています。

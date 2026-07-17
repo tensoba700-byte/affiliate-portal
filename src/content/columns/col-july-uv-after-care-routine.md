@@ -4,6 +4,7 @@ description: "7月以降も続く紫外線ダメージは、日中のケアと�
 category: "skincare"
 publishDate: "2026-07-12 22:00:00"
 eyecatch: "/column-images/col-july-uv-after-care-routine.png"
+noteUrl: "https://editor.note.com/notes/ndcf9d25a2b07/publish/"
 ---
 
 日差しが本格的になる7月以降、紫外線対策の手を緩めていませんか。実は、紫外線ダメージは肌に蓄積される性質があり、長期間浴び続けることで光老化によるシミやシワ、弾力低下が加速してしまいます。

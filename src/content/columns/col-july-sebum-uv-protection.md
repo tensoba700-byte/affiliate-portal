@@ -4,6 +4,7 @@ description: "7月の高温多湿な環境で気になる皮脂崩れ。紫外�
 category: "skincare"
 publishDate: "2026-07-11 12:00:00"
 eyecatch: "/column-images/col-july-sebum-uv-protection.png"
+noteUrl: "https://editor.note.com/notes/n211cef53a222/publish/"
 ---
 
 気温の上昇とともに、メイクが崩れやすかったり、Tゾーンのテカリが気になったりする機会が増えていませんか。実は、気温が1度上がるごとに皮脂の分泌量は約10パーセントも増加するといわれています。また、湿度の高さは肌表面の水分蒸散を妨げ、バリア機能を揺らがせる要因にもなりかねません。
