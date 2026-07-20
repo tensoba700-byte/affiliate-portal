@@ -764,7 +764,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
                 norm_title = article_title.lower()
                 norm_cat = stock_cat.lower()
                 words = [w for w in re.split(r'[^a-zA-Z0-9\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]+', norm_title) if len(w) >= 2]
-                if words and not any(w in norm_cat for w in words):
+                if stock_cat not in ["美容・スキンケア", "ガジェット", "家電", "暮らし", "ファッション"] and words and not any(w in norm_cat for w in words):
                     print(f"❌ 整合性エラー: 指定タイトル '{article_title}' と stockpile_data.json のカテゴリ '{stock_cat}' が一致しません。")
                     print("👉 prepare_stockpile.py が正しい Notion ページIDで実行されているか確認してください。")
                     return False
