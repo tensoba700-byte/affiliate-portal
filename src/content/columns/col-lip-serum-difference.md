@@ -2,7 +2,7 @@
 title: "縦じわを防いでぷるんと。【リップ美容液の効果的な使い方とリップクリームとの違い】"
 description: "唇の縦じわやカサつきに悩む方へ。リップ美容液とリップクリームの役割の違いや、唇のうるおいを引き出す正しい塗り方、メイク前の裏ワザ、夜の集中ケア方法まで詳しく解説します。"
 category: "skincare"
-publishDate: "2026-06-14 22:00:00"
+publishDate: "2026-07-31 12:00:00"
 eyecatch: "/column-images/col-lip-serum-difference.png"
 ---
 

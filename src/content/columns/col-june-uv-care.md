@@ -2,7 +2,7 @@
 title: "曇り空に油断しないで。【6月の強い紫外線から肌を守る正しいスキンケア知識】"
 description: "梅雨の曇り空や雨の日でも、真夏に近い強さの紫外線が降り注いでいるよ。乾燥やくすみを引き起こすUV-Aから肌を守るための正しい日焼け止めの塗り方や、日焼け後のレスキュー保湿ケアを解説するよ。"
 category: "skincare"
-publishDate: "2026-06-12 08:00:00"
+publishDate: "2026-07-30 22:00:00"
 eyecatch: "/column-images/col-june-uv-care.png"
 ---
 

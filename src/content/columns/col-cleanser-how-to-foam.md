@@ -2,7 +2,7 @@
 title: "肌荒れに悩まない。【洗顔の正しい順番と泡立て方で美肌を育む】"
 description: "毎日欠かさず行う洗顔、実は肌荒れの原因にも美肌育成の鍵にもなるんだ。正しい泡立て方や洗顔のステップを知って、今日から摩擦レス洗顔を始めよう。健やかな肌を目指すための基礎知識をお届けするよ。"
 category: "skincare"
-publishDate: "2026-06-17 12:00:00"
+publishDate: "2026-07-23 12:00:00"
 eyecatch: "/column-images/col-cleanser-how-to-foam.png"
 ---
 

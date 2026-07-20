@@ -2,7 +2,7 @@
 title: "乾燥知らずの潤い肌へ。【保湿クリームの正しい選び方と効果的な使い方】"
 description: "保湿クリームが持つ役割、肌タイプや季節に合わせた最適な選び方、そしてその効果を最大限に引き出す塗布方法まで徹底解説します。しっとり潤いに満ちた健やかな美肌を目指すための基礎知識を分かりやすくお届けします。"
 category: "skincare"
-publishDate: "2026-06-18 12:00:00"
+publishDate: "2026-07-27 22:00:00"
 eyecatch: "/column-images/col-face-cream-how-to-choose.png"
 ---
 

@@ -2,7 +2,7 @@
 title: "くすみ知らずの明るい肌へ。【ピーリング美容液の正しい使い方と効果】"
 description: "「肌のくすみやごわつきが気になる」「ピーリング美容液ってどう使うの？」そんな疑問を持つ方へ。ピーリング美容液のメカニズムから、期待できる効果、正しい使い方、注意点まで徹底解説し、明るく滑らかな肌を手に入れるための知識をお届けします。"
 category: "skincare"
-publishDate: "2026-06-22 22:00:00"
+publishDate: "2026-08-05 22:00:00"
 eyecatch: "/column-images/col-peeling-serum-how-to-use.png"
 ---
 

@@ -2,7 +2,7 @@
 title: "肌に優しいを選びたい。【SPF/PAだけじゃない日焼け止めの選び方】"
 description: "日差しが強くなる季節、日焼け止め選びに迷っていませんか？SPF/PA値だけでなく、肌への優しさや使用シーンに合わせた選び方のコツを徹底解説します。正しい知識で賢く紫外線対策をして、健やかな肌をキープしましょう。"
 category: "skincare"
-publishDate: "2026-06-23 22:00:00"
+publishDate: "2026-08-09 22:00:00"
 eyecatch: "/column-images/col-sunscreen-selection-beyond-spf.png"
 ---
 

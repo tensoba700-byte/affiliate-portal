@@ -2,7 +2,7 @@
 title: "その毛穴悩み、洗い方かも。【酵素洗顔の効果的な使用頻度と正しい手順】"
 description: "毛穴の黒ずみや角栓ケアに役立つ酵素洗顔。化学的な分解作用で汚れをオフする仕組みと、肌負担を抑えた正しい使い方、使用頻度の目安を詳しく解説します。健やかな肌を守るための注意点もあわせてチェックしましょう。"
 category: "skincare"
-publishDate: "2026-06-25 22:00:00"
+publishDate: "2026-07-26 12:00:00"
 eyecatch: "/column-images/col-enzyme-face-wash-guide.png"
 ---
 

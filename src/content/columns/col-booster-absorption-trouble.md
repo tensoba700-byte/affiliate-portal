@@ -2,7 +2,7 @@
 title: "美容成分を無駄にしない。【導入美容液が浸透しない原因と改善法】"
 description: "いつものスキンケアに導入美容液を取り入れているのに、手応えがいまいち……と感じていませんか？肌表面の環境や塗り方を少し変えるだけで、スキンケアの浸透効率はぐっと高まります。成分をしっかり届けるための正しい知識を解説します。"
 category: "skincare"
-publishDate: "2026-06-30 22:00:00"
+publishDate: "2026-07-22 12:00:00"
 eyecatch: "/column-images/col-booster-absorption-trouble.png"
 ---
 
