@@ -2,7 +2,7 @@
 title: "透明感を育む習慣。【くすみをケアするための洗顔・角質ケアの見直し】"
 description: "肌のくすみが気になる方へ。古い角質の蓄積や乾燥、摩擦など、透明感を損なう原因を解説します。健やかなターンオーバーを整え、洗顔と角質ケアの基本を見直すことで、内側から輝くような明るい素肌を目指すための基礎知識をお届けします。"
 category: "skincare"
-publishDate: "2026-07-25 22:00:00"
+publishDate: "2026-07-26 22:00:00"
 eyecatch: "/column-images/col-dullness-clear-skin.png"
 ---
 

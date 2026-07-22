@@ -2,7 +2,7 @@
 title: "夜の肌を格上げ。【睡眠中の水分蒸発を防ぐナイトクリームの活用術】"
 description: "睡眠中の肌は乾燥しやすく、バリア機能が低下しがちです。夜間専用の保湿ケアでうるおいを閉じ込め、翌朝の肌状態を整えるためのナイトクリームの効果的な使い方や、健やかな美肌を育むための習慣を解説します。"
 category: "skincare"
-publishDate: "2026-08-04 22:00:00"
+publishDate: "2026-08-05 22:00:00"
 eyecatch: "/column-images/col-night-cream-sealing-effect.png"
 ---
 

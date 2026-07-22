@@ -2,7 +2,7 @@
 title: "透明感の秘訣。【古い角質を除去する洗顔料とピーリングの使い分け】"
 description: "肌のくすみやごわつきの原因となる古い角質をどうケアするべきか。洗顔料とピーリング剤の違いを正しく理解し、透明感のある素肌を育むための適切なアプローチとケアの注意点を専門的な視点から詳しく解説します。今日から始める理想の角質ケアのヒントを詰め込みました。"
 category: "skincare"
-publishDate: "2026-07-26 22:00:00"
+publishDate: "2026-07-27 22:00:00"
 eyecatch: "/column-images/col-exfoliation-wash-difference.png"
 ---
 

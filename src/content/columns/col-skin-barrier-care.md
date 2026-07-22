@@ -2,7 +2,7 @@
 title: "揺らぎにくい強さを育む。【肌のバリア機能を高める正しい習慣とスキンケア】"
 description: "カサつきや急な肌荒れに悩んでいませんか？皮膚のバリア機能が低下する原因と、うるおいに満ちた健やかな肌をキープするための正しい洗顔・保湿方法を徹底解説。今日から実践できるスキンケア知識をお届けします。"
 category: "skincare"
-publishDate: "2026-08-07 12:00:00"
+publishDate: "2026-08-08 12:00:00"
 eyecatch: "/column-images/col-skin-barrier-care.png"
 ---
 

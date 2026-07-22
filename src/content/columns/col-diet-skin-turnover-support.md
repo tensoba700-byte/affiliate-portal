@@ -2,7 +2,7 @@
 title: "美肌を作る食事術。【ターンオーバーを助けるビタミン摂取の基礎知識】"
 description: "肌の生まれ変わりであるターンオーバーを整えるために、内側からできるケアを解説します。ビタミンやミネラルの重要性や、避けるべき食習慣について学び、健やかな美肌を育むための正しい栄養摂取の基礎知識を身につけましょう。"
 category: "skincare"
-publishDate: "2026-07-25 12:00:00"
+publishDate: "2026-07-26 12:00:00"
 eyecatch: "/column-images/col-diet-skin-turnover-support.png"
 ---
 

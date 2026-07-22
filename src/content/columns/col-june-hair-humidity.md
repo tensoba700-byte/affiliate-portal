@@ -2,7 +2,7 @@
 title: "雨の日の髪、広がり解消。【梅雨の湿気に負けないヘアケアと成分知識】"
 description: "湿気で髪が広がったりうねったりする現象には、明確な理由があります。毛髪構造を理解し、水分バランスを整える正しいヘアケア習慣で、雨の日でもまとまりのある美しいスタイルを保つための知識を徹底解説します。"
 category: "skincare"
-publishDate: "2026-07-29 22:00:00"
+publishDate: "2026-07-30 22:00:00"
 eyecatch: "/column-images/col-june-hair-humidity.png"
 ---
 
