@@ -4,6 +4,7 @@ description: "毎日欠かさず行う洗顔、実は肌荒れの原因にも美
 category: "skincare"
 publishDate: "2026-07-23 12:00:00"
 eyecatch: "/column-images/col-cleanser-how-to-foam.png"
+noteUrl: "https://editor.note.com/notes/nab20236f0a5f/publish/"
 ---
 
 毎日欠かさずしてる洗顔だけど、正しいやり方って実はあんまり知らないかも？って思ったことない？適当にゴシゴシ洗ったり、泡立てが足りなかったりすると、せっかくのスキンケアも台無しになっちゃうんだ。むしろ肌への負担になって、乾燥や肌荒れの原因になっちゃうことだってあるから気をつけたいところだよ。
