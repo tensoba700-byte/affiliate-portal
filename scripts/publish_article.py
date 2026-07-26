@@ -809,7 +809,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     markdown = (
         f'--- \n'
         f'title: "{output_title}"\n'
-        f'coverImage: ""\n'
+        f'coverImage: "/eyecatch/{slug}.png"\n'
         f'excerpt: "{data.get("meta", {}).get("excerpt", "")}"\n'
         f'publishDate: "{publish_date}"\n'
         f'category: "{category}"\n'
@@ -819,12 +819,33 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
 
     markdown += f"## ✅ 選び方のポイント\n<ul>" + "".join([f"<li>{p}</li>" for p in data.get("ui", {}).get("points", [])]) + "</ul>\n\n"
 
+    def clean_brand_and_noise(name):
+        n = re.sub(r'[\s\u3000\(\)\{\}\[\]【】\|｜\-\_\~・]', '', name).lower()
+        # 主要ブランド名のノイズを除去
+        brands = [
+            "花王ニベア花王", "ニベア花王", "花王キュレル", "花王", "資生堂", "コーセーコスメポート", "コーセー", 
+            "ロート製薬メンソレータム", "ロート製薬", "日本ロート製薬", "メンソレータム", "カネボウ化粧品", "カネボウ",
+            "オルビス", "ファンケル", "アテニア", "ちふれ化粧品", "ちふれ", "セザンヌ化粧品", "セザンヌ", "常盤薬品工業", 
+            "近江兄弟社メンターム", "近江兄弟社", "メンターム", "レイス", "シービック", "多田", "プレミアアンチエイジング", 
+            "ランクアップ", "コスメデコルテ", "アルビオン", "キールズ", "アンドビー", "ラロッシュポゼ", "エトヴォス", 
+            "シュウウエムラ", "dhc", "ルルルン", "dr.ルルルン", "ettusais", "エテュセ", "takami", "タカミ", "torriden", "トリデン"
+        ]
+        for b in brands:
+            if n.startswith(b):
+                n = n[len(b):]
+        # その他のノイズ語尾の除去
+        noises = ["無香料", "医薬部外品", "薬用", "人気", "定番", "おすすめ", "コラーゲン", "セラミド", "リップケア", "リップクリーム", "リップバーム"]
+        for ns in noises:
+            n = n.replace(ns, "")
+        return n
+
     for i, p in enumerate(data.get("products", [])):
-        p_name_clean = re.sub(r'[\s\u3000]', '', p['name']).lower()
+        p_clean = clean_brand_and_noise(p['name'])
         notion_p = None
         for x in products:
-            x_name_clean = re.sub(r'[\s\u3000]', '', x['name']).lower()
-            if x_name_clean in p_name_clean or p_name_clean in x_name_clean:
+            x_clean = clean_brand_and_noise(x['name'])
+            # コア部分の相互包含チェック、または長さが十分なら部分一致
+            if p_clean in x_clean or x_clean in p_clean or (len(p_clean) >= 4 and p_clean[:4] in x_clean) or (len(x_clean) >= 4 and x_clean[:4] in p_clean):
                 notion_p = x
                 break
         prod_name = re.sub(r'<br\s*/?>', ' ', p['name'], flags=re.IGNORECASE)

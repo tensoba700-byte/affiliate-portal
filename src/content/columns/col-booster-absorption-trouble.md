@@ -4,6 +4,7 @@ description: "いつものスキンケアに導入美容液を取り入れてい
 category: "skincare"
 publishDate: "2026-07-23 22:00:00"
 eyecatch: "/column-images/col-booster-absorption-trouble.png"
+noteUrl: "https://editor.note.com/notes/n42e550337764/publish/"
 ---
 
 「導入美容液を使っているのに、いまいち効果が実感できない」と感じたことはありませんか？スキンケアの最初にプラスすることで、後のアイテムのなじみをサポートしてくれる導入美容液。しかし、使い方や肌の状態次第では、そのポテンシャルを十分に引き出せていないかもしれません。

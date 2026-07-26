@@ -4,6 +4,7 @@ description: "毛穴の黒ずみや角栓ケアに役立つ酵素洗顔。化学
 category: "skincare"
 publishDate: "2026-07-27 12:00:00"
 eyecatch: "/column-images/col-enzyme-face-wash-guide.png"
+noteUrl: "https://editor.note.com/notes/n80fcefa3da84/publish/"
 ---
 
 毛穴のザラつきや、繰り返す角栓の悩みを抱えている人は多いのではないでしょうか。通常の洗顔だけでは落としきれない汚れには、酵素の力を借りたケアが役立ちます。
