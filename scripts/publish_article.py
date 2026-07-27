@@ -94,6 +94,7 @@ CATEGORY_SLUGS = {
     "アイシャドウ": "eyeshadow",
     "マスカラ": "mascara",
     "チーク": "blush",
+    "乳液": "emulsion",
 }
 
 def slugify(text: str, category: str = None, publish_date: str = None) -> str:
@@ -828,11 +829,11 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
             "オルビス", "ファンケル", "アテニア", "ちふれ化粧品", "ちふれ", "セザンヌ化粧品", "セザンヌ", "常盤薬品工業", 
             "近江兄弟社メンターム", "近江兄弟社", "メンターム", "レイス", "シービック", "多田", "プレミアアンチエイジング", 
             "ランクアップ", "コスメデコルテ", "アルビオン", "キールズ", "アンドビー", "ラロッシュポゼ", "エトヴォス", 
-            "シュウウエムラ", "dhc", "ルルルン", "dr.ルルルン", "ettusais", "エテュセ", "takami", "タカミ", "torriden", "トリデン"
+            "シュウウエムラ", "dhc", "ルルルン", "dr.ルルルン", "ettusais", "エテュセ", "takami", "タカミ", "torriden", "トリデン",
+            "イミュ", "ナチュリエ", "naturie"
         ]
         for b in brands:
-            if n.startswith(b):
-                n = n[len(b):]
+            n = n.replace(b, "")
         # その他のノイズ語尾の除去
         noises = ["無香料", "医薬部外品", "薬用", "人気", "定番", "おすすめ", "コラーゲン", "セラミド", "リップケア", "リップクリーム", "リップバーム"]
         for ns in noises:
