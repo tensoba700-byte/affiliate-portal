@@ -946,10 +946,10 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
     
     image_urls = []
     for p in data.get("products", []):
-        p_name_clean = re.sub(r'[\s\u3000]', '', p['name']).lower()
+        p_clean = clean_brand_and_noise(p['name'])
         for x in products:
-            x_name_clean = re.sub(r'[\s\u3000]', '', x['name']).lower()
-            if x_name_clean in p_name_clean or p_name_clean in x_name_clean:
+            x_clean = clean_brand_and_noise(x['name'])
+            if p_clean in x_clean or x_clean in p_clean or (len(p_clean) >= 4 and p_clean[:4] in x_clean) or (len(x_clean) >= 4 and x_clean[:4] in p_clean):
                 if x.get('image_url'):
                     image_urls.append(x['image_url'])
                 break
