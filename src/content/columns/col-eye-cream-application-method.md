@@ -4,6 +4,7 @@ description: "目元の小ジワやたるみは、デリケートな皮膚特有
 category: "skincare"
 publishDate: "2026-07-28 12:00:00"
 eyecatch: "/column-images/col-eye-cream-application-method.png"
+noteUrl: "https://editor.note.com/notes/n72e20735663b/publish/"
 ---
 
 顔の中でも特に皮膚が薄く、皮脂腺も少ない目元。乾燥や年齢による変化が真っ先に現れやすく、鏡を見るたびに気になってしまう方も多いのではないでしょうか。実は、目元のケアには正しい手順と力加減が不可欠です。

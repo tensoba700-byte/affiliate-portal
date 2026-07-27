@@ -4,6 +4,7 @@ description: "肌のくすみやごわつきの原因となる古い角質をど
 category: "skincare"
 publishDate: "2026-07-27 22:00:00"
 eyecatch: "/column-images/col-exfoliation-wash-difference.png"
+noteUrl: "https://editor.note.com/notes/n6d80483f2324/publish/"
 ---
 
 お肌がなんとなくくすんで見える、あるいは触れたときにザラつきを感じることはありませんか。それは、ターンオーバーの乱れによって不要な角質が肌表面に溜まっているサインかもしれません。
