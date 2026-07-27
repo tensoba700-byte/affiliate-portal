@@ -980,8 +980,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     details["yahoo_url"] = ""
 
     if not details["image_url"]:
-        print(f"⚠️ 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIからもAmazonからも取得できませんでした。プレースホルダーを割り当てます。")
-        details["image_url"] = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=640&q=80"
+        print(f"❌ エラー: 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIからもAmazonからも取得できませんでした。")
+        sys.exit(1)
     return details
 
 def extract_mybest_ranking(html: str, url: str) -> list:
@@ -1388,8 +1388,8 @@ def main():
                 if not image:
                     image = fetch_rakuten_image(p["name"], p.get("jan"))
                 if not image:
-                    print(f"⚠️ Warning: image_url missing for '{p['name']}'. Fallback to placeholder.")
-                    image = "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500"
+                    print(f"❌ エラー: image_url missing for '{p['name']}'. 楽天API・Amazonのいずれからも画像を取得できませんでした。")
+                    sys.exit(1)
                 p["image_url"] = image
                 
                 # APIのレートリミットを考慮したウェイト
