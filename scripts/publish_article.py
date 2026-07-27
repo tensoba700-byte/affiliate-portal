@@ -830,7 +830,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
             "近江兄弟社メンターム", "近江兄弟社", "メンターム", "レイス", "シービック", "多田", "プレミアアンチエイジング", 
             "ランクアップ", "コスメデコルテ", "アルビオン", "キールズ", "アンドビー", "ラロッシュポゼ", "エトヴォス", 
             "シュウウエムラ", "dhc", "ルルルン", "dr.ルルルン", "ettusais", "エテュセ", "takami", "タカミ", "torriden", "トリデン",
-            "イミュ", "ナチュリエ", "naturie"
+            "イミュ", "ナチュリエ", "naturie", "サナ", "sana"
         ]
         for b in brands:
             n = n.replace(b, "")
