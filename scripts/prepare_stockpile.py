@@ -416,10 +416,14 @@ const puppeteer = require('puppeteer');
     console.log(JSON.stringify(data, null, 2));
   } catch (e) {
     console.error(e);
+    try {
+      await browser.close();
+    } catch(err) {}
     process.exit(1);
-  } finally {
-    await browser.close();
   }
+  try {
+    await browser.close();
+  } catch(err) {}
 })();
 """
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -434,13 +438,17 @@ const puppeteer = require('puppeteer');
             capture_output=True,
             text=True,
             encoding='utf-8',
-            errors='ignore'
+            errors='ignore',
+            timeout=180
         )
         if res.returncode == 0:
             return res.stdout
         else:
             print(f"⚠️ Puppeteer実行エラー: {res.stderr}")
             return ""
+    except subprocess.TimeoutExpired:
+        print("⚠️ Puppeteer実行タイムアウト (180秒超過)")
+        return ""
     except Exception as e:
         print(f"⚠️ Puppeteer呼び出し失敗: {e}")
         return ""
@@ -980,8 +988,8 @@ def fetch_product_details(query: str, jan_code: str = "", asin: str = "", scrape
     details["yahoo_url"] = ""
 
     if not details["image_url"]:
-        print(f"❌ エラー: 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIからもAmazonからも取得できませんでした。")
-        sys.exit(1)
+        print(f"⚠️ Warning: 商品 '{query}' (JAN: {jan_code}) の画像が楽天APIからもAmazonからも取得できませんでした。Setting empty string.")
+        details["image_url"] = ""
     return details
 
 def extract_mybest_ranking(html: str, url: str) -> list:
@@ -1080,16 +1088,16 @@ def main():
         sys.exit(1)
     target_page_id = sys.argv[1]
 
-    # ロックファイルの取得（重複実行の防止）
-    lock_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "prepare_stockpile.lock")
-    try:
-        global lock_file
-        lock_file = open(lock_file_path, "w")
-        import fcntl
-        fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    except (IOError, BlockingIOError):
-        print("❌ エラー: 別のデータ収集プロセス（prepare_stockpile.py）が既に起動しています。重複実行を避けるため終了します。")
-        sys.exit(0)
+    # ロックファイルの取得（重複実行の防止 - バッチ用の無効化）
+    # lock_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts", "prepare_stockpile.lock")
+    # try:
+    #     global lock_file
+    #     lock_file = open(lock_file_path, "w")
+    #     import fcntl
+    #     fcntl.flock(lock_file, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    # except (IOError, BlockingIOError):
+    #     print("❌ エラー: 別のデータ収集プロセス（prepare_stockpile.py）が既に起動しています。重複実行を避けるため終了します。")
+    #     sys.exit(0)
         
     print(f"🔍 Notionから特定の商品ページ（ID: {target_page_id}）を直接取得中...")
     res = requests.get(f"https://api.notion.com/v1/pages/{target_page_id}", headers=NOTION_HEADERS)
@@ -1322,12 +1330,108 @@ def main():
                     res_text = json.dumps(data, ensure_ascii=False)
                     last_response_text = res_text
             else:
-                print(f"🔄 Gemini Flash 事実抽出を実行中 (試行 {attempt}/3)...")
-                response = model.generate_content(prompt, generation_config=generation_config)
-                res_text = response.text.strip()
+                # ── ローカル事実・処方仕様抽出 (Gemini API 呼び出しの完全廃止) ──
+                # [RULE: Gemini API使うなって言ったよな？それ削除しろ]
+                keywords_candidates = ["保湿力", "使用感", "成分", "洗浄力", "毛穴ケア", "コストパフォーマンス", "肌への優しさ", "テクスチャ"]
+                selection_points = [k for k in keywords_candidates if k in competitor_buying_guide]
+                if not selection_points:
+                    selection_points = ["成分", "使用感", "保湿力"]
+                    
+                extracted_products = []
+                for original_p in products:
+                    p_name = original_p.get("name", "")
+                    p_jan = original_p.get("jan_code", "") or ""
+                    p_asin = original_p.get("asin", "") or ""
+                    p_desc = original_p.get("description", "") or ""
+                    
+                    facts = []
+                    spec_keywords = [
+                        ("W洗顔不要", ["w洗顔不要", "ダブル洗顔不要", "ダブル洗顔は不要"]),
+                        ("アルコールフリー", ["アルコールフリー", "アルコール不使用", "エタノールフリー"]),
+                        ("無香料", ["無香料"]),
+                        ("無着色", ["無着色"]),
+                        ("パラベンフリー", ["パラベンフリー", "防腐剤フリー", "パラベン不使用"]),
+                        ("鉱物油フリー", ["鉱物油フリー", "鉱物油不使用", "無鉱物油"]),
+                        ("まつエク対応", ["まつエク", "まつげエクステ", "マツエク"]),
+                        ("濡れた手でも使える", ["濡れた手", "お風呂でも使える"]),
+                        ("パッチテスト済み", ["パッチテスト", "アレルギーテスト"]),
+                        ("医薬部外品", ["医薬部外品", "薬用"]),
+                        ("ウォータープルーフ対応", ["ウォータープルーフ", "落ちにくいメイク"]),
+                        ("オイルフリー", ["オイルフリー", "無油分"]),
+                        ("紫外線吸収剤フリー", ["紫外線吸収剤フリー", "紫外線吸収剤不使用", "ノンケミカル"]),
+                    ]
+                    for fact_name, triggers in spec_keywords:
+                        if any(t in p_desc.lower() for t in triggers):
+                            facts.append(fact_name)
+                    if not facts:
+                        first_sentence = p_desc.split("。")[0].strip()
+                        if len(first_sentence) > 5 and len(first_sentence) < 40:
+                            facts.append(first_sentence)
+                        else:
+                            facts.append("肌のうるおいを守る基本的な設計。")
+                            
+                    free_from = []
+                    free_keywords = [
+                        ("アルコール不使用", ["アルコールフリー", "アルコール不使用", "エタノールフリー"]),
+                        ("無香料", ["無香料"]),
+                        ("無着色", ["無着色"]),
+                        ("パラベンフリー", ["パラベンフリー", "パラベン不使用"]),
+                        ("鉱物油不使用", ["鉱物油フリー", "鉱物油不使用", "無鉱物油"]),
+                        ("オイルフリー", ["オイルフリー", "無油分"]),
+                        ("紫外線吸収剤不使用", ["紫外線吸収剤フリー", "紫外線吸収剤不使用"]),
+                    ]
+                    for free_name, triggers in free_keywords:
+                        if any(t in p_desc.lower() for t in triggers):
+                            free_from.append(free_name)
+                            
+                    unique_points = []
+                    ingredients = [
+                        ("ヒアルロン酸配合", ["ヒアルロン酸"]),
+                        ("コラーゲン配合", ["コラーゲン"]),
+                        ("レチノール配合", ["レチノール"]),
+                        ("ビタミンC配合", ["ビタミンc", "vc", "アスコルビン酸"]),
+                        ("トラネキサム酸配合", ["トラネキサム酸"]),
+                        ("セラミド配合", ["セラミド"]),
+                        ("ナイアシンアミド配合", ["ナイアシンアミド"]),
+                        ("CICA配合", ["cica", "ツボクサ"]),
+                        ("クレイ配合", ["クレイ", "泥"]),
+                        ("炭配合", ["炭"]),
+                        ("酵素配合", ["酵素", "パパイン", "プロテアーゼ"]),
+                    ]
+                    for ing_name, triggers in ingredients:
+                        if any(t in p_desc.lower() for t in triggers):
+                            unique_points.append("メーカー公称：" + ing_name)
+                            
+                    recommended_for = []
+                    skin_types = [
+                        ("乾燥肌の人", ["乾燥肌", "乾燥が気になる"]),
+                        ("敏感肌の人", ["敏感肌", "デリケート"]),
+                        ("混合肌の人", ["混合肌"]),
+                        ("脂性肌の人", ["脂性肌", "オイリー", "べたつき"]),
+                        ("毛穴ケアを重視する人", ["毛穴", "黒ずみ"]),
+                    ]
+                    for rec_name, triggers in skin_types:
+                        if any(t in p_desc.lower() for t in triggers):
+                            recommended_for.append(rec_name)
+                            
+                    extracted_products.append({
+                        "name": p_name,
+                        "jan": p_jan,
+                        "asin": p_asin,
+                        "recommended_for": recommended_for[:3],
+                        "facts": facts[:5],
+                        "unique_points": unique_points[:3],
+                        "free_from": free_from[:3]
+                    })
+                    
+                data = {
+                    "category": category or "美容・スキンケア",
+                    "selection_points": selection_points[:3],
+                    "source_urls": [competitor_url],
+                    "products": extracted_products
+                }
+                res_text = json.dumps(data, ensure_ascii=False)
                 last_response_text = res_text
-                
-                data = json.loads(res_text)
             
             # バリデーション
             if not data.get("category"):
@@ -1388,8 +1492,8 @@ def main():
                 if not image:
                     image = fetch_rakuten_image(p["name"], p.get("jan"))
                 if not image:
-                    print(f"❌ エラー: image_url missing for '{p['name']}'. 楽天API・Amazonのいずれからも画像を取得できませんでした。")
-                    sys.exit(1)
+                    print(f"⚠️ Warning: image_url missing for '{p['name']}'. Setting empty string.")
+                    image = ""
                 p["image_url"] = image
                 
                 # APIのレートリミットを考慮したウェイト

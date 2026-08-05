@@ -720,7 +720,7 @@ def truncate_product_name(name: str) -> str:
 # PR開示テキスト（記事の最上部に1回だけ表示）
 PR_DISCLOSURE = "※本記事はアフィリエイト広告を含みます。"
 
-def run_publish(article_title: str, category: str = None, slug: str = None, publish_date: str = None):
+def run_publish(article_title: str, category: str = None, slug: str = None, publish_date: str = None, relaxed_mode: bool = False):
     print(f"🚀 Processing: {article_title}")
     products = get_notion_data(article_title)
     if not products: return False
@@ -741,7 +741,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         sys.path.append(script_dir)
     try:
         from validate_article_draft import validate
-        if not validate():
+        if not validate(relaxed_mode=relaxed_mode):
             return False
     except ImportError as e:
         print(f"❌ Failed to import validator: {e}")
@@ -981,11 +981,12 @@ if __name__ == "__main__":
     parser.add_argument("--category", help="Category of the article")
     parser.add_argument("--slug", help="Slug/URL for the article")
     parser.add_argument("--date", help="Publish date of the article")
+    parser.add_argument("--relaxed", action="store_true", help="Run validator in relaxed mode")
     
     args = parser.parse_args()
     
     if args.title:
-        success = run_publish(args.title, args.category, args.slug, args.date)
+        success = run_publish(args.title, args.category, args.slug, args.date, relaxed_mode=args.relaxed)
         if not success:
             sys.exit(1)
     else:

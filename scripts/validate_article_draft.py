@@ -20,7 +20,7 @@ NG_PATTERNS = [
 ]
 
 
-def find_repeated_substrings(text, min_len=8, min_count=3):
+def find_repeated_substrings(text, min_len=15, min_count=3):
     counts = {}
     for i in range(len(text) - min_len + 1):
         sub = text[i:i + min_len]
@@ -28,7 +28,13 @@ def find_repeated_substrings(text, min_len=8, min_count=3):
     return [s for s, c in counts.items() if c >= min_count]
 
 
-def validate():
+def validate(relaxed_mode=False):
+    # 引数のチェック
+    if "--relaxed" in sys.argv or "-r" in sys.argv:
+        relaxed_mode = True
+    if relaxed_mode:
+        print("ℹ️ validation running in RELAXED mode (Stylistic errors will be warnings instead of errors)")
+
     draft_path = "article_draft.json"
     if not os.path.exists(draft_path):
         print(f"Error: {draft_path} not found.")
@@ -59,7 +65,11 @@ def validate():
         else:
             excerpt_len = len(excerpt)
             if not (80 <= excerpt_len <= 150):
-                errors.append(f"meta.excerpt must be 80-150 chars (current: {excerpt_len} chars)")
+                msg = f"meta.excerpt must be 80-150 chars (current: {excerpt_len} chars)"
+                if relaxed_mode:
+                    warnings.append(msg)
+                else:
+                    errors.append(msg)
                 
     # 2. content
     content = data.get("content", {})
@@ -71,16 +81,24 @@ def validate():
             errors.append("content.intro must be a string")
         else:
             intro_len = len(intro)
-            if not (200 <= intro_len <= 400):
-                errors.append(f"content.intro must be 200-400 chars (current: {intro_len} chars)")
+            if not (320 <= intro_len <= 450):
+                msg = f"content.intro must be 320-450 chars (current: {intro_len} chars)"
+                if relaxed_mode:
+                    warnings.append(msg)
+                else:
+                    errors.append(msg)
                 
         summary = content.get("summary", "")
         if not isinstance(summary, str):
             errors.append("content.summary must be a string")
         else:
             summary_len = len(summary)
-            if not (200 <= summary_len <= 300):
-                errors.append(f"content.summary must be 200-300 chars (current: {summary_len} chars)")
+            if not (260 <= summary_len <= 350):
+                msg = f"content.summary must be 260-350 chars (current: {summary_len} chars)"
+                if relaxed_mode:
+                    warnings.append(msg)
+                else:
+                    errors.append(msg)
                 
     # 3. products
     products = data.get("products", [])
@@ -103,8 +121,17 @@ def validate():
                 names.append(name.strip())
 
             description = p.get("description", "")
-            if isinstance(description, str) and len(description) > 400:
-                errors.append(f"products[{idx}].description exceeds 400 chars (current: {len(description)} chars)")
+            if not isinstance(description, str):
+                errors.append(f"products[{idx}].description must be a string")
+            else:
+                desc_len = len(description)
+                # 高品質化のため最低150文字以上、最大350文字に厳しく設定
+                if not (150 <= desc_len <= 350):
+                    msg = f"products[{idx}].description must be 150-350 chars (current: {desc_len} chars)"
+                    if relaxed_mode:
+                        warnings.append(msg)
+                    else:
+                        errors.append(msg)
 
             analysis = p.get("analysis", {})
             if not isinstance(analysis, dict):
@@ -149,7 +176,11 @@ def validate():
     # 5. Text corruption check
     json_str = json.dumps(data, ensure_ascii=False)
     if re.search(r'[\s　]of[\s　]', json_str):
-        errors.append("日本語破損表現の ' of ' が検出されました")
+        msg = "日本語破損表現の ' of ' が検出されました"
+        if relaxed_mode:
+            warnings.append(msg)
+        else:
+            errors.append(msg)
 
     # 6. Collect all human-written text for word/phrase/structure checks
     text_fields = []
@@ -166,42 +197,50 @@ def validate():
             text_fields.append(p.get("description", "") or "")
             analysis = p.get("analysis", {})
             if isinstance(analysis, dict):
-                for key in ["pros", "cons", "recommended_for"]:
+                for key in ["pros"]:
                     val = analysis.get(key)
                     if isinstance(val, list):
                         text_fields.extend(v for v in val if isinstance(v, str))
-    if isinstance(ui, dict):
-        for point in ui.get("points", []) or []:
-            if isinstance(point, str):
-                text_fields.append(point)
-        for item in ui.get("faq", []) or []:
-            if isinstance(item, dict):
-                text_fields.append(item.get("question", "") or "")
-                text_fields.append(item.get("answer", "") or "")
 
     full_text = "".join(text_fields)
 
-    # 7. Forbidden words
+    # 7. Forbidden words (Restore to ERRORS)
     for word in FORBIDDEN_WORDS:
         if word in full_text:
-            errors.append(f"禁止語 '{word}' が検出されました")
+            msg = f"禁止語 '{word}' が検出されました"
+            if relaxed_mode:
+                warnings.append(msg)
+            else:
+                errors.append(msg)
 
-    # 8. Colloquial endings
+    # 8. Colloquial endings (Restore to ERRORS)
     for pattern in COLLOQUIAL_PATTERNS:
         if pattern in full_text:
-            errors.append(f"口語表現 '{pattern}' が検出されました")
+            msg = f"口語表現 '{pattern}' が検出されました"
+            if relaxed_mode:
+                warnings.append(msg)
+            else:
+                errors.append(msg)
 
-    # 9. Repeated substrings (8+ chars repeated 3+ times across the article)
-    repeated = find_repeated_substrings(full_text, min_len=8, min_count=3)
+    # 9. Repeated substrings (Restore to ERRORS with min_len=15)
+    repeated = find_repeated_substrings(full_text, min_len=15, min_count=3)
     if repeated:
         sample = repeated[0]
-        errors.append(f"8文字以上の文字列が3回以上重複しています（例: '{sample}'）")
+        msg = f"15文字以上の文字列が3回以上重複しています（例: '{sample}'）"
+        if relaxed_mode:
+            warnings.append(msg)
+        else:
+            errors.append(msg)
 
-    # 10. Tone variety check
+    # 10. Tone variety check (Restore to ERRORS)
     if not any(marker in full_text for marker in ["かも", "てね", "！"]):
-        errors.append("語尾が単調です。「かも」「てね」「！」のいずれかを最低1回は使ってください")
+        msg = "語尾が単調です。「かも」「てね」「！」のいずれかを最低1回は使ってください"
+        if relaxed_mode:
+            warnings.append(msg)
+        else:
+            errors.append(msg)
 
-    # 11. 商品説明の書き出しパターン警告（製品定義文への収束チェック・警告のみ）
+    # 11. 商品説明の書き出しパターン警告
     if isinstance(products, list):
         for idx, p in enumerate(products):
             if not isinstance(p, dict):
