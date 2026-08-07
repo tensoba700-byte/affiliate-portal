@@ -967,7 +967,7 @@ def run_publish(article_title: str, category: str = None, slug: str = None, publ
         from pinterest_auto_post import post_article_by_slug
         print(f"Sharing new article '{slug}' on Pinterest...")
         post_article_by_slug(slug)
-    except Exception as e:
+    except BaseException as e:
         print(f"[WARN] Failed to post to Pinterest: {e}")
 
     return True
