@@ -2,7 +2,7 @@
 title: "UVカットを正しく引き出す。【日焼け止めの塗り直しと摩擦レスなオフ術】"
 description: "日焼け止めの効果を維持する2〜3時間ごとの塗り直しの重要性と、肌に負担をかけないクレンジングの極意を解説します。紫外線ダメージを最小限に抑えるための正しいケア習慣を身につけ、健やかな美肌をキープしましょう。"
 category: "skincare"
-publishDate: "2026-08-10 12:00:00"
+publishDate: "2026-08-21 12:00:00"
 eyecatch: "/column-images/col-sunscreen-reapplication.png"
 ---
 

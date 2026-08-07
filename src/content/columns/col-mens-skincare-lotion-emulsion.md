@@ -4,6 +4,7 @@ description: "忙しい毎日を送る男性にこそ知ってほしい、化粧
 category: "skincare"
 publishDate: "2026-08-03 12:00:00"
 eyecatch: "/column-images/col-mens-skincare-lotion-emulsion.png"
+noteUrl: "https://editor.note.com/notes/n1e3dc48d4312/publish/"
 ---
 
 「スキンケアって何から始めればいいのか？」「男だから化粧水や乳液は不要なのでは？」そう考えている男性も多いかもしれません。しかし、実は男性の肌は女性以上にデリケートで、適切なケアが必要です。仕事や趣味で忙しい毎日を送っていても、清潔感のある健やかな肌は、自信に繋がり、ビジネスやプライベートの印象を大きく左右します。

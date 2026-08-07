@@ -2,7 +2,7 @@
 title: "うるおいを肌に刻む。【化粧水の浸透を最大化するベストな使い方】"
 description: "化粧水が肌に浸透しないと感じることはない？その原因と、うるおいを肌の奥まで届ける正しい化粧水の使い方を徹底解説。今日から実践して、見違えるようなもっちり肌を手に入れよう！"
 category: "skincare"
-publishDate: "2026-08-11 12:00:00"
+publishDate: "2026-08-22 12:00:00"
 eyecatch: "/column-images/col-toner-application-method.png"
 ---
 

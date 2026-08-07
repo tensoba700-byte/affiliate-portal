@@ -2,7 +2,7 @@
 title: "内側から乾く肌のサイン。【インナードライ肌の見分け方と潤いケア】"
 description: "テカリと乾燥が混在するインナードライ肌に悩んでいませんか？見分け方から、肌の内側からうるおいを引き出す効果的なスキンケアと生活習慣まで徹底解説。肌悩みを根本からケアし、理想のしっとりもち肌を手に入れましょう。"
 category: "skincare"
-publishDate: "2026-07-29 22:00:00"
+publishDate: "2026-08-11 22:00:00"
 eyecatch: "/column-images/col-inner-dry-skin-care.png"
 ---
 

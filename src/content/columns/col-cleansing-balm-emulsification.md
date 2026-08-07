@@ -2,7 +2,7 @@
 title: "とろけるバームを味方に。【クレンジングバームの正しい乳化方法と毛穴ケア】"
 description: "毛穴悩みやメイクをすっきり落とすクレンジングバーム。その実力を十分に引き出すために欠かせない「正しい乳化」のプロセスや、過乾燥を防ぐ水温、角栓のメカニズムに基づいたスキンケア知識を、美容オタク目線で優しく解説するよ。"
 category: "skincare"
-publishDate: "2026-07-24 22:00:00"
+publishDate: "2026-08-08 22:00:00"
 eyecatch: "/column-images/col-cleansing-balm-emulsification.png"
 ---
 

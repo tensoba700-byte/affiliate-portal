@@ -4,6 +4,7 @@ description: "カサつきや急な肌荒れに悩んでいませんか？皮膚
 category: "skincare"
 publishDate: "2026-08-08 12:00:00"
 eyecatch: "/column-images/col-skin-barrier-care.png"
+noteUrl: "https://editor.note.com/notes/nb30fb0cf88c6/publish/"
 ---
 
 仕事に趣味に、毎日忙しく駆け抜けていると、ふとした時にお肌の調子が崩れてしまうことってあるよね。✨

@@ -2,7 +2,7 @@
 title: "首元まで抜かりなくケア。【年齢が出るデコルテ・首のUVケアと保湿習慣】"
 description: "顔のケアだけで満足していませんか？首やデコルテは年齢サインが出やすく、非常にデリケートな部位です。紫外線対策や保湿ケアの基本を見直し、顔と連続した美しい質感を目指すための正しいスキンケア習慣を解説します。"
 category: "skincare"
-publishDate: "2026-08-05 12:00:00"
+publishDate: "2026-08-16 22:00:00"
 eyecatch: "/column-images/col-neck-decollete-care.png"
 ---
 

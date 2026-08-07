@@ -2,7 +2,7 @@
 title: "一年中降り注ぐ紫外線、油断は禁物！【季節・部位別UVケアの盲点】"
 description: "「夏だけ」なんて思ってない？季節や天気、場所によって変わる紫外線の脅威と、見落としがちな部位のケア方法を徹底解説。一年中輝く美肌のためのUVケア知識をお届けします。"
 category: "skincare"
-publishDate: "2026-08-12 12:00:00"
+publishDate: "2026-08-23 12:00:00"
 eyecatch: "/column-images/col-year-round-uv-care.png"
 ---
 

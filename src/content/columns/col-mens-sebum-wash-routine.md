@@ -4,6 +4,7 @@ description: "日中のテカリやベタつきに悩む方へ。過剰な皮脂
 category: "skincare"
 publishDate: "2026-08-02 12:00:00"
 eyecatch: "/column-images/col-mens-sebum-wash-routine.png"
+noteUrl: "https://editor.note.com/notes/n7c5097a29019/publish/"
 ---
 
 日中のテカリやベタつきが気になることはありませんか。特に男性の肌は皮脂分泌量が多く、ホルモンバランスの影響もあってテカリを感じやすい傾向があります。しかし、ただ闇雲に洗顔を繰り返せば解決するわけではありません。

@@ -2,7 +2,7 @@
 title: "夏の毛穴は詰まりやすい。【過剰な皮脂をコントロールするスキンケア】"
 description: "夏特有のテカリや毛穴トラブルの原因となる過剰な皮脂分泌。皮膚科学の視点から、肌を労りながら毛穴詰まりをケアする正しい洗顔習慣と、インナードライを防ぐ保湿、紫外線対策までを網羅的に解説します。"
 category: "skincare"
-publishDate: "2026-08-09 22:00:00"
+publishDate: "2026-08-20 22:00:00"
 eyecatch: "/column-images/col-summer-sebum-pore-care.png"
 ---
 

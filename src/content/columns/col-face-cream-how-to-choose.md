@@ -4,6 +4,7 @@ description: "保湿クリームが持つ役割、肌タイプや季節に合わ
 category: "skincare"
 publishDate: "2026-07-28 22:00:00"
 eyecatch: "/column-images/col-face-cream-how-to-choose.png"
+noteUrl: "https://editor.note.com/notes/n642c5c061000/publish/"
 ---
 
 乾燥知らずの潤い肌は、多くの方の憧れではないでしょうか。実は、その理想を叶える鍵が「保湿クリーム」にあります。

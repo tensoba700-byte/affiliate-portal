@@ -2,7 +2,7 @@
 title: "湿気でベタつく肌を整える。【夏におすすめのスキンケア成分】"
 description: "気温の上昇とともに気になる皮脂や毛穴のベタつき。夏特有の肌トラブルを予防するために知っておきたい、成分の選び方やスキンケアのポイントを皮膚科学的な視点から解説します。健やかで涼やかな肌を保つためのヒントが満載です。"
 category: "skincare"
-publishDate: "2026-07-30 12:00:00"
+publishDate: "2026-08-12 12:00:00"
 eyecatch: "/column-images/col-july-cooling-ingredients.png"
 ---
 
