@@ -2,7 +2,7 @@
 title: "夏の肌は内側から渇く。【インナードライを放置しないための夏保湿ルール】"
 description: "夏場に起こりやすい「インナードライ肌」のメカニズムを詳しく解説します。肌表面のベタつきの裏に隠れた内部乾燥を見極め、正しい保湿ケアと生活習慣の見直しで、夏の健やかな素肌を守るための具体的な美容知識をお届けします。"
 category: "skincare"
-publishDate: "2026-08-20 12:00:00"
+publishDate: "2026-08-23 12:00:00"
 eyecatch: "/column-images/col-summer-inner-dry-care.png"
 ---
 

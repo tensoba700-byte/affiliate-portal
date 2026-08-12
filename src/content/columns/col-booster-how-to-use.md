@@ -4,6 +4,7 @@ description: "導入美容液（ブースター）の正しい順番や効果的
 category: "skincare"
 publishDate: "2026-08-08 12:00:00"
 eyecatch: "/column-images/col-booster-how-to-use.png"
+noteUrl: "https://editor.note.com/notes/n98200eae92f7/publish/"
 ---
 
 仕事や趣味で毎日を忙しく過ごしていると、丁寧にお手入れをしているつもりでも、なんとなく肌がゴワついたり化粧水がなじみにくく感じたりすることってあるよね。🌸

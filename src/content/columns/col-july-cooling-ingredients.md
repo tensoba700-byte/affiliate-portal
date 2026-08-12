@@ -4,6 +4,7 @@ description: "気温の上昇とともに気になる皮脂や毛穴のベタつ
 category: "skincare"
 publishDate: "2026-08-12 12:00:00"
 eyecatch: "/column-images/col-july-cooling-ingredients.png"
+noteUrl: "https://editor.note.com/notes/n4932a84c14d7/publish/"
 ---
 
 夏本番が近づくと、朝のメイク崩れや日中の顔のテカリが気になり始めますよね。実は、気温が1度上がるだけで、肌の皮脂分泌量は約10%も増えると言われています。汗と皮脂が混ざり合い、毛穴トラブルを招きやすいこの季節を健やかに過ごすためには、どのような対策が必要なのでしょうか。

@@ -4,6 +4,7 @@ description: "湿気で髪が広がったりうねったりする現象には、
 category: "skincare"
 publishDate: "2026-08-12 22:00:00"
 eyecatch: "/column-images/col-june-hair-humidity.png"
+noteUrl: "https://editor.note.com/notes/n6d0659ed8759/publish/"
 ---
 
 湿気が高まる季節になると、朝のセットが台無しになったり、髪の広がりやうねりに悩まされたりすることは多いものです。なぜ雨の日になると髪は扱いづらくなってしまうのでしょうか。

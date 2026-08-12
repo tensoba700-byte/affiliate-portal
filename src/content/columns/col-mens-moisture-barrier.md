@@ -2,7 +2,7 @@
 title: "清潔感を磨く身だしなみ。【メンズ洗顔後の保湿不足が招く乾燥とテカリ対策】"
 description: "男性特有の肌の特徴を理解し、洗顔後の乾燥や過剰なテカリを抑えるための正しいスキンケアを解説します。清潔感をキープするための保湿の重要性や、摩擦を防ぐ洗顔のコツを習得し、健やかな肌を目指しましょう。"
 category: "skincare"
-publishDate: "2026-08-14 22:00:00"
+publishDate: "2026-08-17 22:00:00"
 eyecatch: "/column-images/col-mens-moisture-barrier.png"
 ---
 
