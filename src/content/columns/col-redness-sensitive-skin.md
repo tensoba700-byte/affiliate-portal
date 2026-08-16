@@ -2,7 +2,7 @@
 title: "鏡を見るたび、ため息…【敏感肌・ゆらぎ肌と上手に付き合うための赤みケア】"
 description: "顔の赤みにお悩みではありませんか？敏感肌やゆらぎ肌は赤みが出やすい傾向があります。その原因を理解し、今日から実践できる具体的なケア方法で、健やかな肌を目指しましょう。専門知識を分かりやすく解説します。"
 category: "skincare"
-publishDate: "2026-08-22 12:00:00"
+publishDate: "2026-08-25 22:00:00"
 eyecatch: "/column-images/col-redness-sensitive-skin.png"
 ---
 

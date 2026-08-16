@@ -62,8 +62,8 @@ def reschedule_columns():
     # 現在のpublishDateの古い順、同値ならファイル名順でソート
     unpublished.sort(key=lambda x: (x["publish_date"], x["filename"]))
 
-    # 本日(2026-08-13)の12:00:00を起点にする
-    start_dt = datetime.datetime(2026, 8, 13, 12, 0, 0)
+    # 本日(2026-08-17)の12:00:00を起点にする
+    start_dt = datetime.datetime(2026, 8, 17, 12, 0, 0)
     current_dt = start_dt
     
     print(f"📅 Start datetime set to: {start_dt}")

@@ -4,6 +4,7 @@ description: "肌に優しくメイクを落としたいなら、クレンジン
 category: "skincare"
 publishDate: "2026-08-13 12:00:00"
 eyecatch: "/column-images/col-cleansing-gel-how-to.png"
+noteUrl: "https://editor.note.com/notes/n3e5cae6f54a7/publish/"
 ---
 
 毎日のメイクオフは、肌の健康を左右する大切なステップです。
